@@ -3,8 +3,8 @@
 //![main]
 #include <vector>
 
-#include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/nucleotide/rna5.hpp>
 
 int main()
 {

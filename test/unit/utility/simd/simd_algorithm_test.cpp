@@ -10,11 +10,10 @@
 #include <iostream>
 #include <numeric>
 
+#include <seqan3/test/simd_utility.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
-
-#include <seqan3/test/simd_utility.hpp>
 
 TEST(simd_algorithm, fill)
 {
@@ -125,7 +124,7 @@ TYPED_TEST(simd_algorithm_extract, extract_half)
     TypeParam vec = seqan3::simd::iota<TypeParam>(0);
 
     // + 1 needed for emulated types without arch specification (simd length = 1).
-    for (size_t idx = 0; idx < (TestFixture::simd_length + 1)/ 2; ++idx)
+    for (size_t idx = 0; idx < (TestFixture::simd_length + 1) / 2; ++idx)
     {
         EXPECT_EQ(seqan3::detail::extract_half<0>(vec)[idx], vec[idx]);
         EXPECT_EQ(seqan3::detail::extract_half<1>(vec)[idx], vec[idx + TestFixture::simd_length / 2]);
@@ -172,7 +171,6 @@ template <typename t>
 class simd_algorithm_upcast : public ::testing::Test
 {
 public:
-
     static constexpr auto target_list_signed()
     {
         if constexpr (sizeof(t) == 1)
@@ -196,11 +194,11 @@ public:
     using target_list_signed_t = decltype(target_list_signed());
     using target_list_unsigned_t = decltype(target_list_unsigned());
 
-    using type_list_signed_8  = seqan3::type_list<int8_t, int16_t, int32_t, int64_t>;
+    using type_list_signed_8 = seqan3::type_list<int8_t, int16_t, int32_t, int64_t>;
     using type_list_signed_16 = seqan3::type_list<int16_t, int32_t, int64_t>;
     using type_list_signed_32 = seqan3::type_list<int32_t, int64_t>;
 
-    using type_list_unsigned_8  = seqan3::type_list<uint8_t, uint16_t, uint32_t, uint64_t>;
+    using type_list_unsigned_8 = seqan3::type_list<uint8_t, uint16_t, uint32_t, uint64_t>;
     using type_list_unsigned_16 = seqan3::type_list<uint16_t, uint32_t, uint64_t>;
     using type_list_unsigned_32 = seqan3::type_list<uint32_t, uint64_t>;
 };
@@ -212,36 +210,38 @@ TYPED_TEST(simd_algorithm_upcast, signed)
 {
     using list = typename TestFixture::target_list_signed_t;
 
-    seqan3::detail::for_each<list>([this] (auto type_id)
-    {
-        using target_type = typename decltype(type_id)::type;
-        using src_simd_t = seqan3::simd::simd_type_t<TypeParam>;
-        using target_simd_t = seqan3::simd::simd_type_t<target_type>;
+    seqan3::detail::for_each<list>(
+        [this](auto type_id)
+        {
+            using target_type = typename decltype(type_id)::type;
+            using src_simd_t = seqan3::simd::simd_type_t<TypeParam>;
+            using target_simd_t = seqan3::simd::simd_type_t<target_type>;
 
-        src_simd_t s = seqan3::simd::fill<src_simd_t>(-10);
-        target_simd_t t = seqan3::simd::upcast<target_simd_t>(s);
+            src_simd_t s = seqan3::simd::fill<src_simd_t>(-10);
+            target_simd_t t = seqan3::simd::upcast<target_simd_t>(s);
 
-        // Need to compare elementwise since the simd types are not equal and not comparable with `SIMD_EQ`.
-        for (size_t i  = 0; i < seqan3::simd::simd_traits<target_simd_t>::length; ++i)
-            EXPECT_EQ(t[i], static_cast<target_type>(static_cast<TypeParam>(-10)));
-    });
+            // Need to compare elementwise since the simd types are not equal and not comparable with `SIMD_EQ`.
+            for (size_t i = 0; i < seqan3::simd::simd_traits<target_simd_t>::length; ++i)
+                EXPECT_EQ(t[i], static_cast<target_type>(static_cast<TypeParam>(-10)));
+        });
 }
 
 TYPED_TEST(simd_algorithm_upcast, unsigned)
 {
     using list = typename TestFixture::target_list_unsigned_t;
 
-    seqan3::detail::for_each<list>([this] (auto type_id)
-    {
-        using target_type = typename decltype(type_id)::type;
-        using src_simd_t = seqan3::simd::simd_type_t<TypeParam>;
-        using target_simd_t = seqan3::simd::simd_type_t<target_type>;
+    seqan3::detail::for_each<list>(
+        [this](auto type_id)
+        {
+            using target_type = typename decltype(type_id)::type;
+            using src_simd_t = seqan3::simd::simd_type_t<TypeParam>;
+            using target_simd_t = seqan3::simd::simd_type_t<target_type>;
 
-        src_simd_t s = seqan3::simd::fill<src_simd_t>(-10);
-        target_simd_t t = seqan3::simd::upcast<target_simd_t>(s);
+            src_simd_t s = seqan3::simd::fill<src_simd_t>(-10);
+            target_simd_t t = seqan3::simd::upcast<target_simd_t>(s);
 
-        // Need to compare elementwise since the simd types are not equal and not comparable with `SIMD_EQ`.
-        for (size_t i  = 0; i < seqan3::simd::simd_traits<target_simd_t>::length; ++i)
-            EXPECT_EQ(t[i], static_cast<target_type>(static_cast<TypeParam>(-10)));
-    });
+            // Need to compare elementwise since the simd types are not equal and not comparable with `SIMD_EQ`.
+            for (size_t i = 0; i < seqan3::simd::simd_traits<target_simd_t>::length; ++i)
+                EXPECT_EQ(t[i], static_cast<target_type>(static_cast<TypeParam>(-10)));
+        });
 }

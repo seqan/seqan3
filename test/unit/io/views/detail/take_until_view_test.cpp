@@ -102,7 +102,10 @@ void do_concepts(adaptor_t && adaptor, bool const_it)
 
 TEST(view_take_until, unix_eol)
 {
-    auto is_newline = [] (char c) { return c == '\n'; };
+    auto is_newline = [](char c)
+    {
+        return c == '\n';
+    };
     do_test(seqan3::detail::take_until, is_newline, "foo\nbar");
 }
 
@@ -111,18 +114,29 @@ TEST(view_take_until, functor_fail)
     using namespace std::literals;
 
     std::string vec{"foo"};
-    auto is_newline = [](char c){return c == '\n'; };
+    auto is_newline = [](char c)
+    {
+        return c == '\n';
+    };
     EXPECT_RANGE_EQ("foo"sv, vec | seqan3::detail::take_until(is_newline));
 }
 
 TEST(view_take_until, concepts)
 {
-    auto is_newline = [] (char c) { return c == '\n'; };
+    auto is_newline = [](char c)
+    {
+        return c == '\n';
+    };
     auto adapt = seqan3::detail::take_until(is_newline);
     do_concepts(adapt, true);
 
     // mutable adapters make the view lose const-iterability
-    auto adapt2 = seqan3::detail::take_until([count = 0] (char c) mutable { ++count; return c == '\n'; });
+    auto adapt2 = seqan3::detail::take_until(
+        [count = 0](char c) mutable
+        {
+            ++count;
+            return c == '\n';
+        });
     do_concepts(adapt2, false);
 }
 
@@ -132,7 +146,10 @@ TEST(view_take_until, concepts)
 
 TEST(view_take_until_or_throw, unix_eol)
 {
-    auto is_newline = [] (char c) { return c == '\n'; };
+    auto is_newline = [](char c)
+    {
+        return c == '\n';
+    };
     do_test(seqan3::detail::take_until_or_throw, is_newline, "foo\nbar");
 }
 
@@ -140,14 +157,20 @@ TEST(view_take_until_or_throw, functor_fail)
 {
     std::string vec{"foo"};
 
-    auto is_newline = [] (char c) { return c == '\n'; };
-    EXPECT_THROW(std::ranges::for_each(vec | seqan3::detail::take_until_or_throw(is_newline), [](auto &&){}),
+    auto is_newline = [](char c)
+    {
+        return c == '\n';
+    };
+    EXPECT_THROW(std::ranges::for_each(vec | seqan3::detail::take_until_or_throw(is_newline), [](auto &&) {}),
                  seqan3::unexpected_end_of_input);
 }
 
 TEST(view_take_until_or_throw, concepts)
 {
-    auto is_newline = [](char c){return c == '\n'; };
+    auto is_newline = [](char c)
+    {
+        return c == '\n';
+    };
     do_concepts(seqan3::detail::take_until_or_throw(is_newline), true);
 }
 
@@ -157,7 +180,10 @@ TEST(view_take_until_or_throw, concepts)
 
 TEST(take_until_and_consume, unix_eol)
 {
-    auto is_newline = [] (char c) { return c == '\n'; };
+    auto is_newline = [](char c)
+    {
+        return c == '\n';
+    };
     do_test(seqan3::detail::take_until_and_consume, is_newline, "foo\n\n\n\nbar");
 }
 
@@ -168,7 +194,12 @@ TEST(take_until_and_consume, consume)
     std::string vec{"foo\n\n\n\nbar"};
     auto input_view = vec | seqan3::views::single_pass_input;
 
-    auto take_until = input_view | seqan3::detail::take_until_and_consume([] (char c) { return c == '\n'; });
+    auto take_until = input_view
+                    | seqan3::detail::take_until_and_consume(
+                          [](char c)
+                          {
+                              return c == '\n';
+                          });
 
     // consumes "foo\n\n\n\n"
     EXPECT_RANGE_EQ("foo"sv, take_until);
@@ -182,12 +213,18 @@ TEST(take_until_and_consume, functor_fail)
     using namespace std::literals;
 
     std::string vec{"foo"};
-    auto is_newline = [](char c){return c == '\n'; };
+    auto is_newline = [](char c)
+    {
+        return c == '\n';
+    };
     EXPECT_RANGE_EQ("foo"sv, vec | seqan3::detail::take_until_and_consume(is_newline));
 }
 
 TEST(take_until_and_consume, concepts)
 {
-    auto is_newline = [](char c){return c == '\n'; };
+    auto is_newline = [](char c)
+    {
+        return c == '\n';
+    };
     do_concepts(seqan3::detail::take_until_and_consume(is_newline), true);
 }

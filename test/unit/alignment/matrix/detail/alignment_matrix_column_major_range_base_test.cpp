@@ -14,7 +14,6 @@
 class test_matrix : public seqan3::detail::alignment_matrix_column_major_range_base<test_matrix>
 {
 public:
-
     using base_t = seqan3::detail::alignment_matrix_column_major_range_base<test_matrix>;
 
     using element_type = int;
@@ -62,13 +61,13 @@ public:
     }
 
     template <std::random_access_iterator iter_t>
-    constexpr void before_column_iterator_increment(iter_t ) noexcept
+    constexpr void before_column_iterator_increment(iter_t) noexcept
     {
         ++num_pre;
     }
 
     template <std::random_access_iterator iter_t>
-    constexpr void after_column_iterator_increment(iter_t ) noexcept
+    constexpr void after_column_iterator_increment(iter_t) noexcept
     {
         ++num_post;
     }
@@ -77,7 +76,6 @@ public:
 class alignment_matrix_column_major_range_base_test : public ::testing::Test
 {
 protected:
-
     alignment_matrix_column_major_range_base_test()
     {
         matrix.num_cols = 4;
@@ -119,7 +117,8 @@ TEST_F(alignment_matrix_column_major_range_base_test, begin_end)
 TEST_F(alignment_matrix_column_major_range_base_test, iterate_columns)
 {
     size_t count = 0;
-    for (auto it = matrix.begin(); it != matrix.end(); ++it, ++count);
+    for (auto it = matrix.begin(); it != matrix.end(); ++it, ++count)
+        ;
     EXPECT_EQ(count, 4u);
 }
 
@@ -128,7 +127,8 @@ TEST_F(alignment_matrix_column_major_range_base_test, iterate_num_rows)
     auto it = matrix.begin();
     auto col = *it;
     size_t count = 0;
-    for (auto it = col.begin(); it != col.end(); ++it, ++count);
+    for (auto it = col.begin(); it != col.end(); ++it, ++count)
+        ;
     EXPECT_EQ(count, 5u);
 }
 

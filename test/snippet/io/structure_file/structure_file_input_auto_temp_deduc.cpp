@@ -1,10 +1,10 @@
+#include <filesystem>
 #include <sstream>
 
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/structure/wuss.hpp>
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/io/structure_file/output.hpp>
-#include <filesystem>
 
 auto input = R"(> S.cerevisiae_tRNA-PHE M10740/1-73
 GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA
@@ -25,9 +25,7 @@ int main()
         fout.emplace_back("GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA"_rna4,
                           "S.cerevisiae_tRNA-PHE M10740/1-73",
                           "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))."_wuss51);
-        fout.emplace_back("UUGGAGUACACAACCUGUACACUCUUUC"_rna4,
-                          "example",
-                          "..(((((..(((...)))..)))))..."_wuss51);
+        fout.emplace_back("UUGGAGUACACAACCUGUACACUCUUUC"_rna4, "example", "..(((((..(((...)))..)))))..."_wuss51);
     }
 
     seqan3::structure_file_input sf{tmp_file}; // Vienna with RNA sequences assumed, use regular std::ifstream as stream

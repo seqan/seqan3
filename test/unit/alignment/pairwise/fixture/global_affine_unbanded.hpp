@@ -24,6 +24,7 @@ using seqan3::operator""_dna4;
 
 namespace seqan3::test::alignment::fixture::global::affine::unbanded
 {
+// clang-format off
 
 inline constexpr auto align_config = seqan3::align_cfg::method_global{}
                                    | seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
@@ -662,5 +663,6 @@ static auto aa27_blosum62_gap_1_open_10_empty_both = [] ()
         }
     };
 }();
+// clang-format on
 
 } // namespace seqan3::test::alignment::fixture::global::affine::unbanded

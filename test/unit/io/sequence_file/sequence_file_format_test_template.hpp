@@ -21,33 +21,30 @@
 #include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/pretty_printing.hpp>
-#include <seqan3/utility/views/zip.hpp>
 #include <seqan3/utility/views/convert.hpp>
+#include <seqan3/utility/views/zip.hpp>
 
 using seqan3::operator""_dna5;
 using seqan3::operator""_phred42;
 
 struct sequence_file_data : public ::testing::Test
 {
-    std::vector<std::string> ids
-    {
-        { "ID1" },
-        { "ID2" },
-        { "ID3 lala" },
+    std::vector<std::string> ids{
+        {"ID1"},
+        {"ID2"},
+        {"ID3 lala"},
     };
 
-    std::vector<seqan3::dna5_vector> seqs
-    {
-        { "ACGTTTTTTTTTTTTTTT"_dna5 },
-        { "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"_dna5 },
-        { "ACGTTTA"_dna5 },
+    std::vector<seqan3::dna5_vector> seqs{
+        {"ACGTTTTTTTTTTTTTTT"_dna5},
+        {"ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"_dna5},
+        {"ACGTTTA"_dna5},
     };
 
-    std::vector<std::vector<seqan3::phred42>> quals
-    {
-        { "!##$%&'()*+,-./++-"_phred42 },
-        { "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE"_phred42 },
-        { "!!!!!!!"_phred42 },
+    std::vector<std::vector<seqan3::phred42>> quals{
+        {"!##$%&'()*+,-./++-"_phred42},
+        {"!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE"_phred42},
+        {"!!!!!!!"_phred42},
     };
 
     std::ostringstream ostream{};
@@ -174,8 +171,9 @@ TYPED_TEST_P(sequence_file_write, arg_handling_id_empty)
 {
     if constexpr (!std::same_as<TypeParam, seqan3::format_sam>)
     {
-        seqan3::sequence_file_output fout{this->ostream, TypeParam{}, seqan3::fields<seqan3::field::seq,
-                                                                                     seqan3::field::id>{}};
+        seqan3::sequence_file_output fout{this->ostream,
+                                          TypeParam{},
+                                          seqan3::fields<seqan3::field::seq, seqan3::field::id>{}};
         EXPECT_THROW((fout.emplace_back(this->seqs[0], std::string_view{""}, std::ignore)), std::runtime_error);
     }
 }
@@ -193,8 +191,9 @@ TYPED_TEST_P(sequence_file_write, arg_handling_seq_empty)
 {
     if constexpr (!std::same_as<TypeParam, seqan3::format_sam>)
     {
-        seqan3::sequence_file_output fout{this->ostream, TypeParam{}, seqan3::fields<seqan3::field::seq,
-                                                                                     seqan3::field::id>{}};
+        seqan3::sequence_file_output fout{this->ostream,
+                                          TypeParam{},
+                                          seqan3::fields<seqan3::field::seq, seqan3::field::id>{}};
         EXPECT_THROW((fout.emplace_back(std::string_view{""}, this->ids[0], std::ignore)), std::runtime_error);
     }
 }

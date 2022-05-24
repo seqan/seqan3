@@ -7,7 +7,7 @@ int main()
 
     seqan3::dna4 letter{'C'_dna4};
 
-    letter.assign_char('F'); // Characters other than IUPAC characters are implicitly converted to A.
+    letter.assign_char('F');                // Characters other than IUPAC characters are implicitly converted to A.
     seqan3::debug_stream << letter << '\n'; // prints "A"
 
     // IUPAC characters are implicitly converted to their best fitting representative
@@ -22,6 +22,6 @@ int main()
     seqan3::debug_stream << letter.assign_char('H') << '\n'; // prints "A"
     seqan3::debug_stream << letter.assign_char('V') << '\n'; // prints "A"
 
-    letter.assign_char('a'); // Lower case letters are the same as their upper case equivalent.
+    letter.assign_char('a');                // Lower case letters are the same as their upper case equivalent.
     seqan3::debug_stream << letter << '\n'; // prints "A"
 }

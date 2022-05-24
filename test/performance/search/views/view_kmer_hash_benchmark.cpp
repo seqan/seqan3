@@ -13,7 +13,7 @@
 #include <seqan3/test/performance/units.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
-    #include <seqan/index.h>
+#    include <seqan/index.h>
 #endif // SEQAN3_HAS_SEQAN2
 
 inline benchmark::Counter bp_per_second(size_t const basepairs)
@@ -35,8 +35,7 @@ inline seqan3::shape make_gapped_shape(size_t const k)
     return shape;
 }
 
-
-static void arguments(benchmark::internal::Benchmark* b)
+static void arguments(benchmark::internal::Benchmark * b)
 {
     for (int32_t sequence_length : {1'000, 50'000, /*1'000'000*/})
     {
@@ -105,7 +104,7 @@ static void naive_kmer_hash(benchmark::State & state)
     {
         // creates a initial subrange covering exactly 'k-1' characters
         auto subrange_begin = begin(seq);
-        auto subrange_end   = std::ranges::next(subrange_begin, k - 1, end(seq));
+        auto subrange_end = std::ranges::next(subrange_begin, k - 1, end(seq));
 
         // slide over the range
         while (subrange_end != end(seq))

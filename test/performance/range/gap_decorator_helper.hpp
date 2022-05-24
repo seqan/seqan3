@@ -5,6 +5,8 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <benchmark/benchmark.h>
+
 #include <chrono>
 #include <cmath>
 #include <cstring>
@@ -12,15 +14,13 @@
 #include <seqan3/std/ranges>
 #include <utility>
 
-#include <benchmark/benchmark.h>
-
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
+#include <seqan3/alignment/decorator/gap_decorator.hpp>
 #include <seqan3/alignment/exception.hpp>
 #include <seqan3/alphabet/all.hpp>
-#include <seqan3/alignment/decorator/gap_decorator.hpp>
 
-#define SEQAN3_LEN_LONG 1<<18
-#define SEQAN3_LEN_SHORT 1<<12
+#define SEQAN3_LEN_LONG 1 << 18
+#define SEQAN3_LEN_SHORT 1 << 12
 
 /*
  * Apply benchmarks with custom ranges for grid parameters sequence length and gap
@@ -32,14 +32,15 @@
  *  | !SEQAN3_LONG_TESTS  |  1 << [4:2:12]   | [1, 5, 50] %
  *  | SEQAN3_LONG_TESTS   |  1 << [4:2:18]   | [1, 5, 25, 50, 75] %
  */
-void custom_arguments(benchmark::internal::Benchmark* b) {
+void custom_arguments(benchmark::internal::Benchmark * b)
+{
     std::vector<long long int> gap_percentages{1, 5, 50};
     long long int seq_len_max = SEQAN3_LEN_SHORT;
 
-    #ifdef SEQAN3_LONG_TESTS
-        seq_len_max = SEQAN3_LEN_LONG;
-        gap_percentages = {1, 5, 25, 50, 75};
-    #endif
+#ifdef SEQAN3_LONG_TESTS
+    seq_len_max = SEQAN3_LEN_LONG;
+    gap_percentages = {1, 5, 25, 50, 75};
+#endif
 
     for (long long int seq_len = 16; seq_len <= seq_len_max; seq_len <<= 2)
     {
@@ -71,7 +72,12 @@ void sample(std::vector<size_type> & gap_vector, size_type size, double gap_dens
     for (size_type i = 0; i < size; ++i)
     {
         double y = uni(generator);
-        auto it = std::find_if(cumsum.begin(), cumsum.end(), [y](double bar){ return y <= bar; });
+        auto it = std::find_if(cumsum.begin(),
+                               cumsum.end(),
+                               [y](double bar)
+                               {
+                                   return y <= bar;
+                               });
         gap_vector[i] = it - cumsum.begin();
         gap_acc += gap_vector[i];
         if (gap_acc >= gap_density * size)
@@ -120,8 +126,8 @@ void resize(std::vector<size_type> & gaps, sequence_type & seq, unsigned int seq
         }
         ++gap_pos;
     }
-    seq.resize(std::max<size_type>(1, letter_acc));  // resize ungapped sequence
-    gaps.resize(gap_pos);      // trim sampled gap vector
+    seq.resize(std::max<size_type>(1, letter_acc)); // resize ungapped sequence
+    gaps.resize(gap_pos);                           // trim sampled gap vector
 }
 
 /* Helper function to prepare a gapped sequence for the benchmark (case gap_flag=true)
@@ -134,7 +140,9 @@ void resize(std::vector<size_type> & gaps, sequence_type & seq, unsigned int seq
  * gap_decorator    reference to gap decorator
  */
 template <typename gap_decorator_t>
-void insert_gaps(std::vector<typename gap_decorator_t::size_type> & gaps, gap_decorator_t & gap_decorator, typename gap_decorator_t::size_type target_len)
+void insert_gaps(std::vector<typename gap_decorator_t::size_type> & gaps,
+                 gap_decorator_t & gap_decorator,
+                 typename gap_decorator_t::size_type target_len)
 {
     typename gap_decorator_t::size_type gap_acc = 0;
     typename gap_decorator_t::size_type insert_pos = 0;

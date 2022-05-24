@@ -23,15 +23,15 @@ auto fn = [](auto id)
 
     static_assert(std::is_same_v<id_t, std::type_identity<type>>, "id is of type std::type_identity<type>");
 
-    if constexpr(std::is_same_v<type, bool>)
+    if constexpr (std::is_same_v<type, bool>)
         return true;
-    else if constexpr(std::is_same_v<type, int>)
+    else if constexpr (std::is_same_v<type, int>)
         return true;
-    else if constexpr(std::is_same_v<type, float>)
+    else if constexpr (std::is_same_v<type, float>)
         return true;
-    else if constexpr(std::is_same_v<type, incomplete::type>)
+    else if constexpr (std::is_same_v<type, incomplete::type>)
         return false;
 };
 
-static_assert(seqan3::detail::all_of<seqan3::type_list<int, float, bool>>(fn)); // evalates to true
+static_assert(seqan3::detail::all_of<seqan3::type_list<int, float, bool>>(fn));                    // evalates to true
 static_assert(!seqan3::detail::all_of<seqan3::type_list<int, float, bool, incomplete::type>>(fn)); // evalates to false

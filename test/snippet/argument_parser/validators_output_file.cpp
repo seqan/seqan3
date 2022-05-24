@@ -1,8 +1,9 @@
-#include <seqan3/argument_parser/all.hpp>
-#include <seqan3/core/debug_stream.hpp>
 #include <filesystem>
 
-int main(int argc, const char ** argv)
+#include <seqan3/argument_parser/all.hpp>
+#include <seqan3/core/debug_stream.hpp>
+
+int main(int argc, char const ** argv)
 {
     seqan3::argument_parser myparser{"Test", argc, argv}; // initialize
 
@@ -10,14 +11,21 @@ int main(int argc, const char ** argv)
     std::filesystem::path myfile{};
 
     // Use the seqan3::output_file_open_options to indicate that you allow overwriting existing output files, ...
-    myparser.add_option(myfile, 'f', "file", "Output file containing the processed sequences.",
-                        seqan3::option_spec::standard,
-                        seqan3::output_file_validator{seqan3::output_file_open_options::open_or_create, {"fa","fasta"}});
+    myparser.add_option(
+        myfile,
+        'f',
+        "file",
+        "Output file containing the processed sequences.",
+        seqan3::option_spec::standard,
+        seqan3::output_file_validator{seqan3::output_file_open_options::open_or_create, {"fa", "fasta"}});
 
     // ... or that you will throw a seqan3::validation_error if the user specified output file already exists
-    myparser.add_option(myfile, 'g', "file2", "Output file containing the processed sequences.",
+    myparser.add_option(myfile,
+                        'g',
+                        "file2",
+                        "Output file containing the processed sequences.",
                         seqan3::option_spec::standard,
-                        seqan3::output_file_validator{seqan3::output_file_open_options::create_new, {"fa","fasta"}});
+                        seqan3::output_file_validator{seqan3::output_file_open_options::create_new, {"fa", "fasta"}});
     //! [validator_call]
 
     // an exception will be thrown if the user specifies a filename

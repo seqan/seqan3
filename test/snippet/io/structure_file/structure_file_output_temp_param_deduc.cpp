@@ -1,5 +1,6 @@
-#include <seqan3/io/structure_file/output.hpp>
 #include <filesystem>
+
+#include <seqan3/io/structure_file/output.hpp>
 
 int main()
 {

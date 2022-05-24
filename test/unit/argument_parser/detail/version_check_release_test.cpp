@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 #if !defined(NDEBUG)
-    #define NDEBUG // test in release mode
+#    define NDEBUG // test in release mode
 #endif
 
 #include <string>

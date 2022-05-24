@@ -7,8 +7,8 @@
 namespace seqan3::detail::adl_only
 {
 // Poison-pill overload to prevent non-ADL forms of unqualified lookup.
-template <typename ...args_t>
-void begin(args_t ...) = delete;
+template <typename... args_t>
+void begin(args_t...) = delete;
 
 struct begin_cpo : public detail::customisation_point_object<begin_cpo, 1>
 {
@@ -17,19 +17,17 @@ struct begin_cpo : public detail::customisation_point_object<begin_cpo, 1>
     using base_t::base_t;
 
     // range.begin(), member access
-//! [SEQAN3_CPO_OVERLOAD]
+    //! [SEQAN3_CPO_OVERLOAD]
     template <typename range_t>
         requires true // further constraints
-    static constexpr auto SEQAN3_CPO_OVERLOAD(seqan3::detail::priority_tag<1>, range_t && range)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(seqan3::detail::priority_tag<1>, range_t && range)(
         /*return*/ std::forward<range_t>(range).begin() /*;*/
     );
-//! [SEQAN3_CPO_OVERLOAD]
+    //! [SEQAN3_CPO_OVERLOAD]
 
     // begin(range), ADL access
     template <typename range_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(seqan3::detail::priority_tag<0>, range_t && range)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(seqan3::detail::priority_tag<0>, range_t && range)(
         /*return*/ begin(std::forward<range_t>(range)) /*;*/
     );
 };
@@ -44,7 +42,6 @@ namespace seqan3
 inline constexpr auto begin = detail::adl_only::begin_cpo{};
 } // namespace seqan3
 //! [CPO Instance]
-
 
 //! [ADL Definition]
 namespace other_library
@@ -65,7 +62,7 @@ std::vector<int> vec{};
 
 static_assert(std::same_as<decltype(seqan3::begin(vec)), decltype(vec.begin())>); // same iterator type
 
-static_assert(noexcept(vec.begin())); // is noexcept
+static_assert(noexcept(vec.begin()));                                 // is noexcept
 static_assert(noexcept(seqan3::begin(vec)) == noexcept(vec.begin())); // perfect noexcept-forwarding
 //! [CPO Member overload]
 
@@ -75,7 +72,7 @@ other_library::foo foo{};
 
 static_assert(std::same_as<decltype(seqan3::begin(foo)), decltype(begin(foo))>); // same value type
 
-static_assert(!noexcept(begin(foo))); // isn't noexcept
+static_assert(!noexcept(begin(foo)));                                // isn't noexcept
 static_assert(noexcept(seqan3::begin(foo)) == noexcept(begin(foo))); // perfect noexcept-forwarding
 //! [CPO ADL overload]
 

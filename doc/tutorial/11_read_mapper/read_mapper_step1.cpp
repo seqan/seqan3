@@ -28,19 +28,34 @@ void initialise_argument_parser(seqan3::argument_parser & parser, cmd_arguments 
     parser.info.author = "E. coli";
     parser.info.short_description = "Map reads against a reference.";
     parser.info.version = "1.0.0";
-    parser.add_option(args.reference_path, 'r', "reference", "The path to the reference.",
+    parser.add_option(args.reference_path,
+                      'r',
+                      "reference",
+                      "The path to the reference.",
                       seqan3::option_spec::required,
-                      seqan3::input_file_validator{{"fa","fasta"}});
-    parser.add_option(args.query_path, 'q', "query", "The path to the query.",
+                      seqan3::input_file_validator{{"fa", "fasta"}});
+    parser.add_option(args.query_path,
+                      'q',
+                      "query",
+                      "The path to the query.",
                       seqan3::option_spec::required,
-                      seqan3::input_file_validator{{"fq","fastq"}});
-    parser.add_option(args.index_path, 'i', "index", "The path to the index.",
+                      seqan3::input_file_validator{{"fq", "fastq"}});
+    parser.add_option(args.index_path,
+                      'i',
+                      "index",
+                      "The path to the index.",
                       seqan3::option_spec::required,
                       seqan3::input_file_validator{{"index"}});
-    parser.add_option(args.sam_path, 'o', "output", "The output SAM file path.",
+    parser.add_option(args.sam_path,
+                      'o',
+                      "output",
+                      "The output SAM file path.",
                       seqan3::option_spec::standard,
                       seqan3::output_file_validator{seqan3::output_file_open_options::create_new, {"sam"}});
-    parser.add_option(args.errors, 'e', "error", "Maximum allowed errors.",
+    parser.add_option(args.errors,
+                      'e',
+                      "error",
+                      "Maximum allowed errors.",
                       seqan3::option_spec::standard,
                       seqan3::arithmetic_range_validator{0, 4});
 }

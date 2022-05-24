@@ -51,13 +51,9 @@ TEST(align_config_output, sequence2_id)
 
 TEST(align_config_output, combine_outputs)
 {
-    seqan3::configuration cfg = seqan3::align_cfg::output_score{} |
-                                seqan3::align_cfg::output_end_position{} |
-                                seqan3::align_cfg::output_begin_position{} |
-                                seqan3::align_cfg::output_alignment{} |
-                                seqan3::align_cfg::output_sequence1_id{} |
-                                seqan3::align_cfg::output_sequence2_id{};
-
+    seqan3::configuration cfg = seqan3::align_cfg::output_score{} | seqan3::align_cfg::output_end_position{}
+                              | seqan3::align_cfg::output_begin_position{} | seqan3::align_cfg::output_alignment{}
+                              | seqan3::align_cfg::output_sequence1_id{} | seqan3::align_cfg::output_sequence2_id{};
 
     EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_score>());
     EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_end_position>());

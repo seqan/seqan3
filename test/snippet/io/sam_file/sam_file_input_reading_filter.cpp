@@ -17,10 +17,11 @@ int main()
 {
     seqan3::sam_file_input fin{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
 
-    auto minimum_length10_filter = std::views::filter([] (auto const & rec)
-    {
-        return std::ranges::size(rec.sequence()) >= 10;
-    });
+    auto minimum_length10_filter = std::views::filter(
+        [](auto const & rec)
+        {
+            return std::ranges::size(rec.sequence()) >= 10;
+        });
 
     for (auto & rec : fin | minimum_length10_filter) // only records with sequence length >= 10 will "appear"
         seqan3::debug_stream << rec.id() << '\n';

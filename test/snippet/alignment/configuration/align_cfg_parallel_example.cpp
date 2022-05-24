@@ -1,5 +1,6 @@
-#include <seqan3/alignment/configuration/align_config_parallel.hpp>
 #include <thread>
+
+#include <seqan3/alignment/configuration/align_config_parallel.hpp>
 
 int main()
 {

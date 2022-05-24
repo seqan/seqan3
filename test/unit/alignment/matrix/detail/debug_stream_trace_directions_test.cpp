@@ -25,8 +25,9 @@ TEST(debug_stream_test, ascii)
 {
     std::stringstream s{};
     seqan3::debug_stream_type stream{s};
-    stream << N << ";" << D << ";" << U << ";" << L << ";" << (D|U) << ";" << (D|L) << ";" << (U|L) << ";" << (D|U|L);
-    stream << ";" << u << ";" << l << ";" << (D|u) << ";" << (D|u|l) << ";" << (D|U|u|L|l);
+    stream << N << ";" << D << ";" << U << ";" << L << ";" << (D | U) << ";" << (D | L) << ";" << (U | L) << ";"
+           << (D | U | L);
+    stream << ";" << u << ";" << l << ";" << (D | u) << ";" << (D | u | l) << ";" << (D | U | u | L | l);
 
     EXPECT_EQ(s.str(), "N;D;U;L;DU;DL;UL;DUL;u;l;Du;Dul;DUuLl");
 }
@@ -36,8 +37,9 @@ TEST(debug_stream_test, unicode)
     std::stringstream s{};
     seqan3::debug_stream_type stream{s};
     stream << seqan3::fmtflags2::utf8;
-    stream << N << ";" << D << ";" << U << ";" << L << ";" << (D|U) << ";" << (D|L) << ";" << (U|L) << ";" << (D|U|L);
-    stream << ";" << u << ";" << l << ";" << (D|u) << ";" << (D|u|l) << ";" << (D|U|u|L|l);
+    stream << N << ";" << D << ";" << U << ";" << L << ";" << (D | U) << ";" << (D | L) << ";" << (U | L) << ";"
+           << (D | U | L);
+    stream << ";" << u << ";" << l << ";" << (D | u) << ";" << (D | u | l) << ";" << (D | U | u | L | l);
 
     EXPECT_EQ(s.str(), "↺;↖;↑;←;↖↑;↖←;↑←;↖↑←;⇡;⇠;↖⇡;↖⇡⇠;↖↑⇡←⇠");
 }

@@ -17,15 +17,15 @@ int main()
 
     // ... e.g. compute and alignment
 
-    using alignment_type = std::pair<std::vector<seqan3::gapped<seqan3::dna5>>,
-                                     std::vector<seqan3::gapped<seqan3::dna5>>>;
+    using alignment_type =
+        std::pair<std::vector<seqan3::gapped<seqan3::dna5>>, std::vector<seqan3::gapped<seqan3::dna5>>>;
 
     alignment_type dummy_alignment{}; // an empty dummy alignment
 
-    using types        = seqan3::type_list<std::vector<seqan3::dna5>, std::string, alignment_type>;
+    using types = seqan3::type_list<std::vector<seqan3::dna5>, std::string, alignment_type>;
     using types_as_ids = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::alignment>;
     // the record type specifies the fields we want to write
-    using record_type  = seqan3::record<types, types_as_ids>;
+    using record_type = seqan3::record<types, types_as_ids>;
 
     // initialize record
     record_type rec{read, ref_id, dummy_alignment};

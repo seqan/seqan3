@@ -28,8 +28,8 @@ inline void order_search_vector(std::vector<T> & v, auto const & search)
 }
 
 // Reorder the search and blocks_length s.t. all fields are in the order from left to right.
-inline void get_ordered_search(auto const & search, auto const & blocks_length,
-                               auto & ordered_search, auto & ordered_blocks_length)
+inline void
+get_ordered_search(auto const & search, auto const & blocks_length, auto & ordered_search, auto & ordered_blocks_length)
 {
     ordered_blocks_length.resize(search.blocks());
     for (uint8_t i = 0; i < search.blocks(); ++i)
@@ -96,8 +96,8 @@ void search_scheme_error_distribution(std::vector<std::vector<t>> & res, auto co
 }
 
 // Construct a trivial search scheme with one search and a specified number of blocks.
-inline detail::search_scheme_dyn_type trivial_search_scheme(uint8_t const min_error, uint8_t const max_error,
-                                                            uint8_t const blocks)
+inline detail::search_scheme_dyn_type
+trivial_search_scheme(uint8_t const min_error, uint8_t const max_error, uint8_t const blocks)
 {
     detail::search_scheme_dyn_type search_scheme(1);
     auto & search = search_scheme.front();
@@ -114,4 +114,4 @@ inline detail::search_scheme_dyn_type trivial_search_scheme(uint8_t const min_er
     return search_scheme;
 }
 
-} // namespace std
+} // namespace seqan3

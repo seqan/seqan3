@@ -6,7 +6,7 @@ int main()
 {
     seqan3::sequence_file_input fin{"my.fastq"};
 
-    for (auto && record: fin)
+    for (auto && record : fin)
     {
         seqan3::debug_stream << "id: " << record.id() << '\n';
         seqan3::debug_stream << "sequence: " << record.sequence() << '\n';

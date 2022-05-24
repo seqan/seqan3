@@ -5,16 +5,16 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
 #include <iostream>
 #include <seqan3/std/ranges>
-
-#include <gtest/gtest.h>
 
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/alphabet/mask/masked.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
-#include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/alphabet/views/complement.hpp>
+#include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/utility/range/concept.hpp>
 #include <seqan3/utility/views/elements.hpp>
@@ -46,11 +46,11 @@ TEST(view_get, basic)
 TEST(view_get, advanced)
 {
     // TODO remove const-ness from input vector once alphabet_proxy inherits it's alphabet
-    std::vector<seqan3::qualified<seqan3::masked<seqan3::dna4>,
-                                  seqan3::phred42>> const t{{{'A'_dna4, seqan3::mask::masked}, '!'_phred42},
-                                                            {{'C'_dna4, seqan3::mask::unmasked}, '"'_phred42},
-                                                            {{'G'_dna4, seqan3::mask::masked}, '#'_phred42},
-                                                            {{'T'_dna4, seqan3::mask::unmasked}, '$'_phred42}};
+    std::vector<seqan3::qualified<seqan3::masked<seqan3::dna4>, seqan3::phred42>> const t{
+        {{'A'_dna4, seqan3::mask::masked}, '!'_phred42},
+        {{'C'_dna4, seqan3::mask::unmasked}, '"'_phred42},
+        {{'G'_dna4, seqan3::mask::masked}, '#'_phred42},
+        {{'T'_dna4, seqan3::mask::unmasked}, '$'_phred42}};
 
     // functor notation
     std::vector<seqan3::masked<seqan3::dna4>> expected_sequence{{'A'_dna4, seqan3::mask::masked},

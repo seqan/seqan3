@@ -3,7 +3,7 @@
 
 #include <seqan3/utility/type_traits/function_traits.hpp>
 
-std::function my_caller = [] (size_t position, std::string & sequence)
+std::function my_caller = [](size_t position, std::string & sequence)
 {
     assert(position < sequence.size());
     return sequence[position];

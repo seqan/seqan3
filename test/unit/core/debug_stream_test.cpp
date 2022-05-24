@@ -73,7 +73,7 @@ TEST(debug_stream_test, range)
     o.flush();
     EXPECT_EQ(o.str(), "[1,4,5,7,32,321]");
 
-    std::vector<std::vector<int>> const vec2 = {{1, 2, 33}, {22,11}};
+    std::vector<std::vector<int>> const vec2 = {{1, 2, 33}, {22, 11}};
     my_stream << vec2;
     o.flush();
     EXPECT_EQ(o.str(), "[1,4,5,7,32,321][[1,2,33],[22,11]]");
@@ -184,7 +184,7 @@ TEST(debug_stream_test, tuple)
     o.flush();
     EXPECT_EQ(o.str(), "(32,dummy)(32)");
 
-    std::tuple<size_t, std::pair<size_t, size_t>> t2{2, {3,2}};
+    std::tuple<size_t, std::pair<size_t, size_t>> t2{2, {3, 2}};
     my_stream << t2;
     o.flush();
     EXPECT_EQ(o.str(), "(32,dummy)(32)(2,(3,2))");

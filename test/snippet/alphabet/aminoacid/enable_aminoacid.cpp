@@ -9,7 +9,7 @@ struct your_aa : seqan3::aminoacid_empty_base
     //...
 };
 
-}
+} // namespace your_namespace
 
 static_assert(seqan3::enable_aminoacid<your_namespace::your_aa> == true);
 
@@ -29,6 +29,6 @@ constexpr bool enable_aminoacid(your_aa) noexcept
     return true;
 }
 
-}
+} // namespace your_namespace2
 
 static_assert(seqan3::enable_aminoacid<your_namespace2::your_aa> == true);

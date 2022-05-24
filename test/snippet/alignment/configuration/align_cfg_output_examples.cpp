@@ -16,19 +16,19 @@ int main()
 
     // Compute only the score:
     for (auto res : seqan3::align_pairwise(p, config | seqan3::align_cfg::output_score{}))
-        seqan3::debug_stream << res << "\n";  // prints: {score: -4}
+        seqan3::debug_stream << res << "\n"; // prints: {score: -4}
 
     // Compute only the alignment:
     for (auto res : seqan3::align_pairwise(p, config | seqan3::align_cfg::output_alignment{}))
         seqan3::debug_stream << res << "\n"; // prints: {alignment: (ACGTA-G-C-,A-GTACGACG)}
 
     // Compute the score and the alignment:
-    for (auto res : seqan3::align_pairwise(p, config |
-                                              seqan3::align_cfg::output_score{} |
-                                              seqan3::align_cfg::output_alignment{}))
+    for (auto res :
+         seqan3::align_pairwise(p, config | seqan3::align_cfg::output_score{} | seqan3::align_cfg::output_alignment{}))
         seqan3::debug_stream << res << "\n"; // prints: {score: -4, alignment: (ACGTA-G-C-,A-GTACGACG)}
 
     // By default compute everything:
     for (auto res : seqan3::align_pairwise(p, config))
-        seqan3::debug_stream << res << "\n"; // prints {id: 0, score: -4, begin: (0,0), end: (7,9) alignment: (ACGTA-G-C-,A-GTACGACG)}
+        seqan3::debug_stream
+            << res << "\n"; // prints {id: 0, score: -4, begin: (0,0), end: (7,9) alignment: (ACGTA-G-C-,A-GTACGACG)}
 }

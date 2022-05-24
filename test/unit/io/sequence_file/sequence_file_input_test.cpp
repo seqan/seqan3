@@ -33,29 +33,16 @@ TEST(sequence_file_input_iterator, concepts)
 
 struct sequence_file_input_f : public ::testing::Test
 {
-    std::string input
-    {
-        ">TEST 1\n"
-        "ACGT\n"
-        ">Test2\n"
-        "AGGCTGN\n"
-        ">Test3\n"
-        "GGAGTATAATATATATATATATAT\n"
-    };
+    std::string input{">TEST 1\n"
+                      "ACGT\n"
+                      ">Test2\n"
+                      "AGGCTGN\n"
+                      ">Test3\n"
+                      "GGAGTATAATATATATATATATAT\n"};
 
-    seqan3::dna5_vector seq_comp[3]
-    {
-        "ACGT"_dna5,
-        "AGGCTGN"_dna5,
-        "GGAGTATAATATATATATATATAT"_dna5
-    };
+    seqan3::dna5_vector seq_comp[3]{"ACGT"_dna5, "AGGCTGN"_dna5, "GGAGTATAATATATATATATATAT"_dna5};
 
-    std::string id_comp[3]
-    {
-        "TEST 1",
-        "Test2",
-        "Test3"
-    };
+    std::string id_comp[3]{"TEST 1", "Test2", "Test3"};
 };
 
 TEST_F(sequence_file_input_f, concepts)
@@ -78,7 +65,7 @@ TEST_F(sequence_file_input_f, construct_by_filename)
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
         }
 
-        EXPECT_NO_THROW( seqan3::sequence_file_input<>{filename.get_path()} );
+        EXPECT_NO_THROW(seqan3::sequence_file_input<>{filename.get_path()});
     }
 
     // correct format check is done by tests of that format
@@ -87,14 +74,12 @@ TEST_F(sequence_file_input_f, construct_by_filename)
     {
         seqan3::test::tmp_filename filename{"sequence_file_input_constructor.xyz"};
         std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-        EXPECT_THROW( seqan3::sequence_file_input<>{filename.get_path()} ,
-                      seqan3::unhandled_extension_error );
+        EXPECT_THROW(seqan3::sequence_file_input<>{filename.get_path()}, seqan3::unhandled_extension_error);
     }
 
     /* non-existent file */
     {
-        EXPECT_THROW( seqan3::sequence_file_input<>{"/dev/nonexistant/foobarOOO"},
-                      seqan3::file_open_error);
+        EXPECT_THROW(seqan3::sequence_file_input<>{"/dev/nonexistant/foobarOOO"}, seqan3::file_open_error);
     }
 
     /* filename + fields */
@@ -107,27 +92,27 @@ TEST_F(sequence_file_input_f, construct_by_filename)
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
         }
 
-        EXPECT_NO_THROW(( seqan3::sequence_file_input<seqan3::sequence_file_input_default_traits_dna,
-                                                      fields_seq,
-                                                      seqan3::type_list<seqan3::format_fasta>>{filename.get_path(),
-                                                                                               fields_seq{}} ));
+        EXPECT_NO_THROW(
+            (seqan3::sequence_file_input<seqan3::sequence_file_input_default_traits_dna,
+                                         fields_seq,
+                                         seqan3::type_list<seqan3::format_fasta>>{filename.get_path(), fields_seq{}}));
     }
 }
 
 TEST_F(sequence_file_input_f, construct_from_stream)
 {
     /* stream + format_tag */
-    EXPECT_NO_THROW(( seqan3::sequence_file_input<seqan3::sequence_file_input_default_traits_dna,
-                                                  default_fields,
-                                                  seqan3::type_list<seqan3::format_fasta>>{std::istringstream{input},
-                                                                                           seqan3::format_fasta{}} ));
+    EXPECT_NO_THROW((seqan3::sequence_file_input<seqan3::sequence_file_input_default_traits_dna,
+                                                 default_fields,
+                                                 seqan3::type_list<seqan3::format_fasta>>{std::istringstream{input},
+                                                                                          seqan3::format_fasta{}}));
 
     /* stream + format_tag + fields */
-    EXPECT_NO_THROW(( seqan3::sequence_file_input<seqan3::sequence_file_input_default_traits_dna,
-                                                  default_fields,
-                                                  seqan3::type_list<seqan3::format_fasta>>{std::istringstream{input},
-                                                                                           seqan3::format_fasta{},
-                                                                                           default_fields{}} ));
+    EXPECT_NO_THROW((seqan3::sequence_file_input<seqan3::sequence_file_input_default_traits_dna,
+                                                 default_fields,
+                                                 seqan3::type_list<seqan3::format_fasta>>{std::istringstream{input},
+                                                                                          seqan3::format_fasta{},
+                                                                                          default_fields{}}));
 }
 
 TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
@@ -143,10 +128,10 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
     /* default template args */
     {
         using t = seqan3::sequence_file_input<>;
-        EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
+        EXPECT_TRUE((std::is_same_v<typename t::traits_type, comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, default_fields>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
-        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats, comp2>));
+        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type, comp3>));
     }
 
     /* guided filename constructor */
@@ -160,10 +145,10 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
         seqan3::sequence_file_input fin{filename.get_path()};
 
         using t = decltype(fin);
-        EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
+        EXPECT_TRUE((std::is_same_v<typename t::traits_type, comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, default_fields>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
-        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats, comp2>));
+        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type, comp3>));
     }
 
     /* guided filename constructor + custom fields */
@@ -177,10 +162,10 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
         seqan3::sequence_file_input fin{filename.get_path(), seqan3::fields<seqan3::field::seq>{}};
 
         using t = decltype(fin);
-        EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
+        EXPECT_TRUE((std::is_same_v<typename t::traits_type, comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, seqan3::fields<seqan3::field::seq>>)); // changed
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
-        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats, comp2>));
+        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type, comp3>));
     }
 
     /* guided stream constructor */
@@ -189,10 +174,10 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
         seqan3::sequence_file_input fin{ext, seqan3::format_fasta{}};
 
         using t = decltype(fin);
-        EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
+        EXPECT_TRUE((std::is_same_v<typename t::traits_type, comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, default_fields>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      seqan3::type_list<seqan3::format_fasta>>)); // changed
-        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats, seqan3::type_list<seqan3::format_fasta>>)); // changed
+        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type, comp3>));
     }
 
     /* guided stream temporary constructor */
@@ -200,10 +185,10 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
         seqan3::sequence_file_input fin{std::istringstream{input}, seqan3::format_fasta{}};
 
         using t = decltype(fin);
-        EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
+        EXPECT_TRUE((std::is_same_v<typename t::traits_type, comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, default_fields>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      seqan3::type_list<seqan3::format_fasta>>)); // changed
-        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats, seqan3::type_list<seqan3::format_fasta>>)); // changed
+        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type, comp3>));
     }
 }
 
@@ -232,7 +217,7 @@ TEST_F(sequence_file_input_f, record_reading)
     size_t counter = 0;
     for (auto & rec : fin)
     {
-        EXPECT_RANGE_EQ(rec.id(),  id_comp[counter]);
+        EXPECT_RANGE_EQ(rec.id(), id_comp[counter]);
         EXPECT_RANGE_EQ(rec.sequence(), seq_comp[counter]);
         EXPECT_TRUE(empty(rec.base_qualities()));
 
@@ -248,10 +233,10 @@ TEST_F(sequence_file_input_f, record_reading_struct_bind)
     seqan3::sequence_file_input fin{std::istringstream{input}, seqan3::format_fasta{}};
 
     size_t counter = 0;
-    for (auto & [ seq, id, qual ] : fin)
+    for (auto & [seq, id, qual] : fin)
     {
         EXPECT_RANGE_EQ(seq, seq_comp[counter]);
-        EXPECT_RANGE_EQ(id,  id_comp[counter]);
+        EXPECT_RANGE_EQ(id, id_comp[counter]);
         EXPECT_TRUE(empty(qual));
 
         counter++;
@@ -262,15 +247,12 @@ TEST_F(sequence_file_input_f, record_reading_struct_bind)
 
 TEST_F(sequence_file_input_f, record_reading_custom_options)
 {
-    std::istringstream istream{std::string
-    {
-        ">ID1 lala\n"
-        "ACGTTTTTTTTTTTTTTT\n"
-        ">ID2\n"
-        "ACGTTTTTTT\n"
-        ">ID3 lala\n"
-        "ACGTTTA\n"
-    }};
+    std::istringstream istream{std::string{">ID1 lala\n"
+                                           "ACGTTTTTTTTTTTTTTT\n"
+                                           ">ID2\n"
+                                           "ACGTTTTTTT\n"
+                                           ">ID3 lala\n"
+                                           "ACGTTTA\n"}};
 
     /* record based reading */
     seqan3::sequence_file_input fin{istream, seqan3::format_fasta{}};
@@ -288,15 +270,16 @@ TEST_F(sequence_file_input_f, file_view)
 {
     seqan3::sequence_file_input fin{std::istringstream{input}, seqan3::format_fasta{}};
 
-    auto minimum_length_filter = std::views::filter([] (auto const & rec)
-    {
-        return size(rec.sequence()) >= 5;
-    });
+    auto minimum_length_filter = std::views::filter(
+        [](auto const & rec)
+        {
+            return size(rec.sequence()) >= 5;
+        });
 
     size_t counter = 1; // the first record will be filtered out
     for (auto & rec : fin | minimum_length_filter)
     {
-        EXPECT_RANGE_EQ(rec.id(),  id_comp[counter]);
+        EXPECT_RANGE_EQ(rec.id(), id_comp[counter]);
         EXPECT_RANGE_EQ(rec.sequence(), seq_comp[counter]);
         EXPECT_TRUE(empty(rec.base_qualities()));
 
@@ -317,7 +300,7 @@ void decompression_impl(fixture_t & fix, input_file_t & fin)
     for (auto & rec : fin)
     {
         EXPECT_RANGE_EQ(rec.sequence(), fix.seq_comp[counter]);
-        EXPECT_RANGE_EQ(rec.id(),  fix.id_comp[counter]);
+        EXPECT_RANGE_EQ(rec.id(), fix.id_comp[counter]);
         EXPECT_TRUE(empty(rec.base_qualities()));
 
         counter++;
@@ -327,13 +310,12 @@ void decompression_impl(fixture_t & fix, input_file_t & fin)
 }
 
 #if defined(SEQAN3_HAS_ZLIB)
-std::string input_gz
-{
-    '\x1F','\x8B','\x08','\x00','\x33','\xBF','\x13','\x5C','\x00','\x03','\xB3','\x53','\x08','\x71','\x0D','\x0E',
-    '\x51','\x30','\xE4','\x72','\x74','\x76','\x0F','\xE1','\xB2','\x0B','\x49','\x2D','\x2E','\x31','\xE2','\x72',
-    '\x74','\x77','\x77','\x0E','\x71','\xF7','\xE3','\xB2','\x53','\x00','\xF1','\x8D','\xB9','\xDC','\xDD','\x1D',
-    '\xDD','\x43','\x1C','\x43','\x1C','\x1D','\x43','\x50','\x21','\x17','\x00','\xEF','\x24','\xC2','\xE9','\x3E',
-    '\x00','\x00','\x00',
+std::string input_gz{
+    '\x1F', '\x8B', '\x08', '\x00', '\x33', '\xBF', '\x13', '\x5C', '\x00', '\x03', '\xB3', '\x53', '\x08', '\x71',
+    '\x0D', '\x0E', '\x51', '\x30', '\xE4', '\x72', '\x74', '\x76', '\x0F', '\xE1', '\xB2', '\x0B', '\x49', '\x2D',
+    '\x2E', '\x31', '\xE2', '\x72', '\x74', '\x77', '\x77', '\x0E', '\x71', '\xF7', '\xE3', '\xB2', '\x53', '\x00',
+    '\xF1', '\x8D', '\xB9', '\xDC', '\xDD', '\x1D', '\xDD', '\x43', '\x1C', '\x43', '\x1C', '\x1D', '\x43', '\x50',
+    '\x21', '\x17', '\x00', '\xEF', '\x24', '\xC2', '\xE9', '\x3E', '\x00', '\x00', '\x00',
 };
 
 TEST_F(sequence_file_input_f, decompression_by_filename_gz)
@@ -360,28 +342,23 @@ TEST_F(sequence_file_input_f, decompression_by_stream_gz)
 
 TEST_F(sequence_file_input_f, read_empty_gz_file)
 {
-    std::string empty_zipped_file
-    {
-        '\x1f', '\x8b', '\x08', '\x08', '\x5a', '\x07', '\x98', '\x5c',
-        '\x00', '\x03', '\x66', '\x6f', '\x6f', '\x00', '\x03', '\x00',
-        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
-    };
+    std::string empty_zipped_file{'\x1f', '\x8b', '\x08', '\x08', '\x5a', '\x07', '\x98', '\x5c',
+                                  '\x00', '\x03', '\x66', '\x6f', '\x6f', '\x00', '\x03', '\x00',
+                                  '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'};
     seqan3::sequence_file_input fin{std::istringstream{empty_zipped_file}, seqan3::format_fasta{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
 
-std::string input_bgzf
-{
-    '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42', '\x43',
-    '\x02', '\x00', '\x4A', '\x00', '\xB3', '\x53', '\x08', '\x71', '\x0D', '\x0E', '\x51', '\x30', '\xE4', '\x72',
-    '\x74', '\x76', '\x0F', '\xE1', '\xB2', '\x0B', '\x49', '\x2D', '\x2E', '\x31', '\xE2', '\x72', '\x74', '\x77',
-    '\x77', '\x0E', '\x71', '\xF7', '\xE3', '\xB2', '\x53', '\x00', '\xF1', '\x8D', '\xB9', '\xDC', '\xDD', '\x1D',
-    '\xDD', '\x43', '\x1C', '\x43', '\x1C', '\x1D', '\x43', '\x50', '\x21', '\x17', '\x00', '\xEF', '\x24', '\xC2',
-    '\xE9', '\x3E', '\x00', '\x00', '\x00', '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00',
-    '\xFF', '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00', '\x00', '\x00', '\x00',
-    '\x00', '\x00', '\x00', '\x00', '\x00'
-};
+std::string input_bgzf{'\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00',
+                       '\x42', '\x43', '\x02', '\x00', '\x4A', '\x00', '\xB3', '\x53', '\x08', '\x71', '\x0D', '\x0E',
+                       '\x51', '\x30', '\xE4', '\x72', '\x74', '\x76', '\x0F', '\xE1', '\xB2', '\x0B', '\x49', '\x2D',
+                       '\x2E', '\x31', '\xE2', '\x72', '\x74', '\x77', '\x77', '\x0E', '\x71', '\xF7', '\xE3', '\xB2',
+                       '\x53', '\x00', '\xF1', '\x8D', '\xB9', '\xDC', '\xDD', '\x1D', '\xDD', '\x43', '\x1C', '\x43',
+                       '\x1C', '\x1D', '\x43', '\x50', '\x21', '\x17', '\x00', '\xEF', '\x24', '\xC2', '\xE9', '\x3E',
+                       '\x00', '\x00', '\x00', '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00',
+                       '\xFF', '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00', '\x00',
+                       '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'};
 
 TEST_F(sequence_file_input_f, bgzf_decompression_by_filename_bgzf)
 {
@@ -420,11 +397,9 @@ TEST_F(sequence_file_input_f, decompression_by_stream_bgzf)
 
 TEST_F(sequence_file_input_f, read_empty_bgzf_file)
 {
-    std::string empty_bgzf_file
-    {
-        '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF',
-        '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00',
-        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
+    std::string empty_bgzf_file{
+        '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42', '\x43',
+        '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
     };
     seqan3::sequence_file_input fin{std::istringstream{empty_bgzf_file}, seqan3::format_fasta{}};
 
@@ -433,15 +408,13 @@ TEST_F(sequence_file_input_f, read_empty_bgzf_file)
 #endif
 
 #if defined(SEQAN3_HAS_BZIP2)
-std::string input_bz2
-{
-    '\x42','\x5A','\x68','\x39','\x31','\x41','\x59','\x26','\x53','\x59','\x8D','\xD7','\xE7','\xD6','\x00','\x00',
-    '\x06','\x5F','\x80','\x00','\x10','\x40','\x00','\x38','\x01','\x2A','\x81','\x0C','\x00','\x02','\x00','\x0C',
-    '\x00','\x20','\x00','\x54','\x44','\x34','\xC0','\x00','\x4A','\x9B','\x44','\x68','\x9E','\x48','\x5D','\x34',
-    '\x67','\x4F','\x24','\xFC','\x6F','\x10','\xC5','\xA0','\x3C','\x12','\x61','\xDD','\xE9','\x45','\xA5','\xD4',
-    '\x26','\x31','\xBC','\xF1','\x49','\x61','\x81','\xA2','\xEE','\x48','\xA7','\x0A','\x12','\x11','\xBA','\xFC',
-    '\xFA','\xC0'
-};
+std::string input_bz2{'\x42', '\x5A', '\x68', '\x39', '\x31', '\x41', '\x59', '\x26', '\x53', '\x59', '\x8D', '\xD7',
+                      '\xE7', '\xD6', '\x00', '\x00', '\x06', '\x5F', '\x80', '\x00', '\x10', '\x40', '\x00', '\x38',
+                      '\x01', '\x2A', '\x81', '\x0C', '\x00', '\x02', '\x00', '\x0C', '\x00', '\x20', '\x00', '\x54',
+                      '\x44', '\x34', '\xC0', '\x00', '\x4A', '\x9B', '\x44', '\x68', '\x9E', '\x48', '\x5D', '\x34',
+                      '\x67', '\x4F', '\x24', '\xFC', '\x6F', '\x10', '\xC5', '\xA0', '\x3C', '\x12', '\x61', '\xDD',
+                      '\xE9', '\x45', '\xA5', '\xD4', '\x26', '\x31', '\xBC', '\xF1', '\x49', '\x61', '\x81', '\xA2',
+                      '\xEE', '\x48', '\xA7', '\x0A', '\x12', '\x11', '\xBA', '\xFC', '\xFA', '\xC0'};
 
 TEST_F(sequence_file_input_f, decompression_by_filename_bz2)
 {
@@ -467,10 +440,20 @@ TEST_F(sequence_file_input_f, decompression_by_stream_bz2)
 
 TEST_F(sequence_file_input_f, read_empty_bz2_file)
 {
-    std::string empty_zipped_file
-    {
-        '\x42', '\x5a', '\x68', '\x39', '\x17', '\x72', '\x45', '\x38', '\x50', '\x90', '\x00', '\x00', '\x00', '\x00'
-    };
+    std::string empty_zipped_file{'\x42',
+                                  '\x5a',
+                                  '\x68',
+                                  '\x39',
+                                  '\x17',
+                                  '\x72',
+                                  '\x45',
+                                  '\x38',
+                                  '\x50',
+                                  '\x90',
+                                  '\x00',
+                                  '\x00',
+                                  '\x00',
+                                  '\x00'};
     seqan3::sequence_file_input fin{std::istringstream{empty_zipped_file}, seqan3::format_fasta{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());

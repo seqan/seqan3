@@ -1,21 +1,21 @@
 #if SEQAN3_WITH_CEREAL
 
-#include "cleanup.hpp"
+#    include "cleanup.hpp"
 seqan3::cleanup index_file{"index.file"};
 
 //![solution]
-#include <fstream>
+#    include <fstream>
 
-#include <cereal/archives/binary.hpp>
+#    include <seqan3/search/fm_index/fm_index.hpp>
 
-#include <seqan3/search/fm_index/fm_index.hpp>
+#    include <cereal/archives/binary.hpp>
 
 int main()
 {
     using namespace seqan3::literals;
 
-    seqan3::dna4_vector
-                text{"CGCTGTCTGAAGGATGAGTGTCAGCCAGTGTAACCCGATGAGCTACCCAGTAGTCGAACTGGGCCAGACAACCCGGCGCTAATGCACTCA"_dna4};
+    seqan3::dna4_vector text{
+        "CGCTGTCTGAAGGATGAGTGTCAGCCAGTGTAACCCGATGAGCTACCCAGTAGTCGAACTGGGCCAGACAACCCGGCGCTAATGCACTCA"_dna4};
     seqan3::fm_index index{text};
 
     {

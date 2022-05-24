@@ -17,16 +17,14 @@ int main()
 
     // results in: [81, 70, 27, 109, 182, 216, 97, 134, 26, 107, 175]
     // representing the k-mers [CCAC, CACG, ACGT, CGTC, GTCG, TCGA, CGAC, GACG, ACGG, CGGT, GGTT]
-    auto example_a =  text | seqan3::views::kmer_hash(seqan3::shape{seqan3::ungapped{4}});
+    auto example_a = text | seqan3::views::kmer_hash(seqan3::shape{seqan3::ungapped{4}});
     seqan3::debug_stream << example_a << '\n';
 
-    auto example_b = text | seqan3::views::kmer_hash(seqan3::shape{seqan3::ungapped{4}})
-                          | seqan3::views::minimiser(5);
+    auto example_b = text | seqan3::views::kmer_hash(seqan3::shape{seqan3::ungapped{4}}) | seqan3::views::minimiser(5);
     // results in: [27, 97, 26] representing the k-mers [ACGT, CGAC, ACGG]
     seqan3::debug_stream << example_b << '\n';
 
-    auto example_c = text | seqan3::views::kmer_hash(0b10101_shape)
-                          | seqan3::views::minimiser(4);
+    auto example_c = text | seqan3::views::kmer_hash(0b10101_shape) | seqan3::views::minimiser(4);
     // results in: [9, 18, 11] representing the k-mers [A.G.C, C.A.G, A.G.T]
     seqan3::debug_stream << example_c << '\n';
 }

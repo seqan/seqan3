@@ -48,15 +48,13 @@ TEST(random_sequence_generator, sequence_collection)
 
     std::vector<seqan3::dna5_vector> sequences(4);
 
-    std::ranges::generate(sequences, [&]()
-    {
-        return random_sequence_generator(random_engine);
-    });
+    std::ranges::generate(sequences,
+                          [&]()
+                          {
+                              return random_sequence_generator(random_engine);
+                          });
 
-    std::vector<seqan3::dna5_vector> resulting_sequences = {"TA"_dna5,
-                                                            "GANG"_dna5,
-                                                            "TGNTCC"_dna5,
-                                                            "NNGC"_dna5};
+    std::vector<seqan3::dna5_vector> resulting_sequences = {"TA"_dna5, "GANG"_dna5, "TGNTCC"_dna5, "NNGC"_dna5};
     EXPECT_EQ(sequences, resulting_sequences);
 }
 
@@ -68,17 +66,16 @@ TEST(random_sequence_generator, sequence_pairs)
 
     std::vector<std::tuple<seqan3::dna5_vector, seqan3::dna5_vector>> sequence_pairs(3);
 
-    std::ranges::generate(sequence_pairs, [&]() -> std::tuple<seqan3::dna5_vector, seqan3::dna5_vector>
-    {
-        return {random_sequence_generator(random_engine), random_sequence_generator(random_engine)};
-    });
+    std::ranges::generate(
+        sequence_pairs,
+        [&]() -> std::tuple<seqan3::dna5_vector, seqan3::dna5_vector>
+        {
+            return {random_sequence_generator(random_engine), random_sequence_generator(random_engine)};
+        });
 
-    std::vector<std::tuple<seqan3::dna5_vector, seqan3::dna5_vector>> resulting_pairs
-    {
-        {"TA"_dna5, "GANG"_dna5},
-        {"TGNTCC"_dna5, "NNGC"_dna5},
-        {"GG"_dna5, "AA"_dna5}
-    };
+    std::vector<std::tuple<seqan3::dna5_vector, seqan3::dna5_vector>> resulting_pairs{{"TA"_dna5, "GANG"_dna5},
+                                                                                      {"TGNTCC"_dna5, "NNGC"_dna5},
+                                                                                      {"GG"_dna5, "AA"_dna5}};
 
     EXPECT_EQ(sequence_pairs, resulting_pairs);
 }

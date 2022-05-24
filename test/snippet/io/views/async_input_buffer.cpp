@@ -1,13 +1,13 @@
-#include <cstdlib>                              // std::rand
-#include <future>                               // std::async
-#include <string>                               // std::string
+#include <cstdlib> // std::rand
+#include <future>  // std::async
+#include <string>  // std::string
 
-#include <seqan3/core/debug_stream.hpp>         // seqan3::debug_stream
-#include <seqan3/io/sequence_file/input.hpp>    // seqan3::sequence_file_input
-#include <seqan3/io/views/async_input_buffer.hpp>   // seqan3::views::async_input_buffer
+#include <seqan3/core/debug_stream.hpp>           // seqan3::debug_stream
+#include <seqan3/io/sequence_file/input.hpp>      // seqan3::sequence_file_input
+#include <seqan3/io/views/async_input_buffer.hpp> // seqan3::views::async_input_buffer
 
 std::string fasta_file =
-R"(> seq1
+    R"(> seq1
 ACGACTACGACGATCATCGATCGATCGATCGATCGATCGATCGATCGTACTACGATCGATCG
 > seq2
 ACGACTACGACGATCATCGATCGATCGATCGATCGATCGATCGATCGTACTACGATCGATCG
@@ -47,16 +47,15 @@ int main()
 
     // create a lambda function that iterates over the async buffer when called
     // (the buffer gets dynamically refilled as soon as possible)
-    auto worker = [&v] ()
+    auto worker = [&v]()
     {
         for (auto & record : v)
         {
             // pretend we are doing some work
             std::this_thread::sleep_for(std::chrono::milliseconds(std::rand() % 1000));
             // print current thread and sequence ID
-            seqan3::debug_stream << "Thread: " << std::this_thread::get_id()             << '\t'
-                                 << "Seq:    " << record.id() << '\n';
-
+            seqan3::debug_stream << "Thread: " << std::this_thread::get_id() << '\t' << "Seq:    " << record.id()
+                                 << '\n';
         }
     };
 

@@ -5,15 +5,15 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
+#include <algorithm>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include <gtest/gtest.h>
-
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
-#include <algorithm>
 #include <seqan3/test/pretty_printing.hpp>
 
 #include "sequence_file_format_test_template.hpp"
@@ -21,33 +21,25 @@
 template <>
 struct sequence_file_read<seqan3::format_sam> : public sequence_file_data
 {
-    std::string standard_input
-    {
-R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-
+    std::string standard_input{
+        R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-
 ID2	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE
 ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!
-)"
-    };
+)"};
 
-    std::string illegal_alphabet_character_input
-    {
-R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTT?TTTTTTT	!##$%&'()*+,-./++-
-)"
-    };
+    std::string illegal_alphabet_character_input{
+        R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTT?TTTTTTT	!##$%&'()*+,-./++-
+)"};
 
-    std::string standard_output
-    {
-R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-
+    std::string standard_output{
+        R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-
 ID2	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE
 ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!
-)"
-    };
+)"};
 
-    std::string no_or_ill_formatted_id_input
-    {
-R"(*	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-
-)"
-	};
+    std::string no_or_ill_formatted_id_input{
+        R"(*	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-
+)"};
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -81,46 +73,40 @@ struct read_sam : sequence_file_read<seqan3::format_sam>
 
 TEST_F(read_sam, tags)
 {
-    std::string input
-    {
-R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-	FI:i:1
+    std::string input{
+        R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-	FI:i:1
 ID2	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE	AS:i:3
 ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!	TI:i:2
-)"
-    };
+)"};
     do_read_test(input);
 }
 
 TEST_F(read_sam, mixed_issues)
 {
-  std::string input
-  {
-R"(ID1	0	BABABA	200	0	*	BABABA	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-	FI:i:1
+    std::string input{
+        R"(ID1	0	BABABA	200	0	*	BABABA	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-	FI:i:1
 ID2	0	*	0	0	BABA	*	30	0	ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE
 ID3 lala	0	*	0	0	HAHAHAHA+	*	0	0	ACGTTTA	!!!!!!!
-)"
-    };
+)"};
     do_read_test(input);
 }
 
 TEST_F(read_sam, no_qual)
 {
-   std::string input
-   {
-R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	*
+    std::string input{
+        R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	*
 ID2	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE
 ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!
-)"
-    };
+)"};
 
-    quals[0] = { ""_phred42 };
+    quals[0] = {""_phred42};
     do_read_test(input);
 }
 
 TEST_F(read_sam, qual_too_short)
 {
     std::stringstream istream{std::string{
-R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()-./++-
+        R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()-./++-
 )"}};
 
     seqan3::sequence_file_input fin{istream, seqan3::format_sam{}};
@@ -130,7 +116,7 @@ R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()-./++-
 TEST_F(read_sam, qual_too_long)
 {
     std::stringstream istream{std::string{
-R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-+
+        R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-+
 )"}};
 
     seqan3::sequence_file_input fin{istream, seqan3::format_sam{}};
@@ -140,7 +126,7 @@ R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-+
 TEST_F(read_sam, no_seq)
 {
     std::stringstream istream{std::string{
-R"(ID 1	0	*	0	0	*	*	0	0	*	!##$%&'()*+,-./++-
+        R"(ID 1	0	*	0	0	*	*	0	0	*	!##$%&'()*+,-./++-
 )"}};
 
     seqan3::sequence_file_input fin{istream, seqan3::format_sam{}};
@@ -152,25 +138,17 @@ R"(ID 1	0	*	0	0	*	*	0	0	*	!##$%&'()*+,-./++-
 // ----------------------------------------------------------------------------
 struct write : public ::testing::Test
 {
-    std::vector<seqan3::dna5_vector> seqs
-    {
+    std::vector<seqan3::dna5_vector> seqs{
         "ACGT"_dna5,
         "AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN"_dna5,
-        "GGAGTATAATATATATATATAT"_dna5
-    };
+        "GGAGTATAATATATATATATAT"_dna5};
 
-    std::vector<std::string> ids
-    {
-        "TEST 1",
-        "Test2",
-        "Test3"
-    };
+    std::vector<std::string> ids{"TEST 1", "Test2", "Test3"};
 
-    std::vector<std::vector<seqan3::phred42>> quals
-    {
-        { "!##$"_phred42 },
-        { "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDBDDEBDBEEBEBE"_phred42 },
-        { "!!*+,-./+*+,-./+!!FF!!"_phred42 },
+    std::vector<std::vector<seqan3::phred42>> quals{
+        {"!##$"_phred42},
+        {"!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDBDDEBDBEEBEBE"_phred42},
+        {"!!*+,-./+*+,-./+!!FF!!"_phred42},
     };
 
     seqan3::sequence_file_output_options options{};
@@ -178,9 +156,9 @@ struct write : public ::testing::Test
 
     void do_write_test()
     {
-    	seqan3::sequence_file_output fout{ostream, seqan3::format_sam{}};
+        seqan3::sequence_file_output fout{ostream, seqan3::format_sam{}};
         for (unsigned i = 0; i < 3; ++i)
-            EXPECT_NO_THROW(( fout.emplace_back(seqs[i], ids[i], quals[i]) ));
+            EXPECT_NO_THROW((fout.emplace_back(seqs[i], ids[i], quals[i])));
         ostream.flush();
     }
 
@@ -188,20 +166,18 @@ struct write : public ::testing::Test
     {
         seqan3::sequence_file_output fout{ostream, seqan3::format_sam{}};
         for (unsigned i = 0; i < 3; ++i)
-            EXPECT_NO_THROW(( fout.emplace_back(seqs[i], ids[i], ""_phred42) ));
+            EXPECT_NO_THROW((fout.emplace_back(seqs[i], ids[i], ""_phred42)));
         ostream.flush();
     }
 };
 
 TEST_F(write, no_id)
 {
-    std::string comp
-    {
-R"(*	0	*	0	0	*	*	0	0	ACGT	!##$
+    std::string comp{
+        R"(*	0	*	0	0	*	*	0	0	ACGT	!##$
 Test2	0	*	0	0	*	*	0	0	AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDBDDEBDBEEBEBE
 Test3	0	*	0	0	*	*	0	0	GGAGTATAATATATATATATAT	!!*+,-./+*+,-./+!!FF!!
-)"
-    };
+)"};
 
     ids[0] = "";
     do_write_test();
@@ -211,13 +187,11 @@ Test3	0	*	0	0	*	*	0	0	GGAGTATAATATATATATATAT	!!*+,-./+*+,-./+!!FF!!
 
 TEST_F(write, no_seq)
 {
-    std::string comp
-    {
-R"(TEST 1	0	*	0	0	*	*	0	0	*	*
+    std::string comp{
+        R"(TEST 1	0	*	0	0	*	*	0	0	*	*
 Test2	0	*	0	0	*	*	0	0	AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN	*
 Test3	0	*	0	0	*	*	0	0	GGAGTATAATATATATATATAT	*
-)"
-    };
+)"};
 
     seqs[0] = ""_dna5;
     do_write_test_no_qual();
@@ -228,13 +202,11 @@ Test3	0	*	0	0	*	*	0	0	GGAGTATAATATATATATATAT	*
 // No qualities given
 TEST_F(write, no_qual)
 {
-    std::string comp
-    {
-R"(TEST 1	0	*	0	0	*	*	0	0	ACGT	*
+    std::string comp{
+        R"(TEST 1	0	*	0	0	*	*	0	0	ACGT	*
 Test2	0	*	0	0	*	*	0	0	AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN	*
 Test3	0	*	0	0	*	*	0	0	GGAGTATAATATATATATATAT	*
-)"
-    };
+)"};
 
     do_write_test_no_qual();
 

@@ -9,7 +9,7 @@ namespace my
 {
 // You can create a permanent alias:
 inline auto const deep_reverse = seqan3::views::deep{std::views::reverse};
-}
+} // namespace my
 
 int main()
 {
@@ -20,6 +20,6 @@ int main()
     seqan3::debug_stream << (sequences | std::views::reverse) << '\n'; // [CCCGGG,AAATTT]
 
     // These two are equivalent:
-    seqan3::debug_stream << (sequences | my::deep_reverse) << '\n'; // [TTTAAA,GGGCCC]
+    seqan3::debug_stream << (sequences | my::deep_reverse) << '\n';                         // [TTTAAA,GGGCCC]
     seqan3::debug_stream << (sequences | seqan3::views::deep{std::views::reverse}) << '\n'; // [TTTAAA,GGGCCC]
 }

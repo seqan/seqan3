@@ -13,12 +13,16 @@
 #include "pairwise_alignment_single_test_template.hpp"
 
 using pairwise_global_affine_unbanded_testing_types = ::testing::Types<
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::global::affine::unbanded::aa27_blosum62_gap_1_open_10>,
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::global::affine::unbanded::aa27_blosum62_gap_1_open_10_small>,
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::global::affine::unbanded::aa27_blosum62_gap_1_open_10_empty_first>,
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::global::affine::unbanded::aa27_blosum62_gap_1_open_10_empty_second>,
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::global::affine::unbanded::aa27_blosum62_gap_1_open_10_empty_both>
-    >;
+    pairwise_alignment_fixture<
+        &seqan3::test::alignment::fixture::global::affine::unbanded::aa27_blosum62_gap_1_open_10>,
+    pairwise_alignment_fixture<
+        &seqan3::test::alignment::fixture::global::affine::unbanded::aa27_blosum62_gap_1_open_10_small>,
+    pairwise_alignment_fixture<
+        &seqan3::test::alignment::fixture::global::affine::unbanded::aa27_blosum62_gap_1_open_10_empty_first>,
+    pairwise_alignment_fixture<
+        &seqan3::test::alignment::fixture::global::affine::unbanded::aa27_blosum62_gap_1_open_10_empty_second>,
+    pairwise_alignment_fixture<
+        &seqan3::test::alignment::fixture::global::affine::unbanded::aa27_blosum62_gap_1_open_10_empty_both>>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_global_affine_unbanded_aa27,
                                pairwise_alignment_test,

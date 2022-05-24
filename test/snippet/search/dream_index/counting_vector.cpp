@@ -15,15 +15,15 @@ int main()
 
     auto agent = ibf.membership_agent();
 
-    counts += agent.bulk_contains(712); // `counts` contains the number of occurrences of 712 in each bin.
+    counts += agent.bulk_contains(712);     // `counts` contains the number of occurrences of 712 in each bin.
     seqan3::debug_stream << counts << '\n'; // prints [0,0,0,1,0,0,0,0,0,0,0,0]
 
-    counts += agent.bulk_contains(237); // `counts` contains the number of occurrences of 712 and 237 in each bin.
+    counts += agent.bulk_contains(237);     // `counts` contains the number of occurrences of 712 and 237 in each bin.
     seqan3::debug_stream << counts << '\n'; // prints [0,0,0,1,0,0,0,0,0,1,0,0]
 
     counts += agent.bulk_contains(126); // `counts` contains the number of occurrences of 712, 237 and 126 in each bin.
     seqan3::debug_stream << counts << '\n'; // prints [1,0,0,2,0,0,0,0,0,2,0,0]
 
-    counts += counts; // multiple counts can also be added together
+    counts += counts;                       // multiple counts can also be added together
     seqan3::debug_stream << counts << '\n'; // prints [2,0,0,4,0,0,0,0,0,4,0,0]
 }

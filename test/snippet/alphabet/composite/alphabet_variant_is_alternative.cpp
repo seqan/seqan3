@@ -1,7 +1,8 @@
+#include <gtest/gtest.h>
+
 #include <seqan3/alphabet/composite/alphabet_variant.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
-#include <gtest/gtest.h>
 
 int main()
 {

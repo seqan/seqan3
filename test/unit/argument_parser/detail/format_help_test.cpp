@@ -5,10 +5,10 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
 #include <fstream>
 #include <seqan3/std/ranges>
-
-#include <gtest/gtest.h>
 
 #include <seqan3/argument_parser/argument_parser.hpp>
 #include <seqan3/argument_parser/detail/format_help.hpp>
@@ -19,10 +19,10 @@ std::string expected;
 int option_value{5};
 bool flag_value{};
 std::vector<std::string> pos_opt_value{};
-const char * argv0[] = {"./help_add_test --version-check false"};
-const char * argv1[] = {"./help_add_test --version-check false", "-h"};
-const char * argv2[] = {"./help_add_test --version-check false", "-hh"};
-const char * argv3[] = {"./help_add_test --version-check false", "--version"};
+char const * argv0[] = {"./help_add_test --version-check false"};
+char const * argv1[] = {"./help_add_test --version-check false", "-h"};
+char const * argv2[] = {"./help_add_test --version-check false", "-hh"};
+char const * argv3[] = {"./help_add_test --version-check false", "--version"};
 
 std::string const basic_options_str = "OPTIONS\n"
                                       "\n"
@@ -43,7 +43,8 @@ std::string const basic_options_str = "OPTIONS\n"
 std::string const basic_version_str = "VERSION\n"
                                       "    Last update:\n"
                                       "    test_parser version:\n"
-                                      "    SeqAn version: " + std::string{seqan3::seqan3_version_cstring} + "\n";
+                                      "    SeqAn version: "
+                                    + std::string{seqan3::seqan3_version_cstring} + "\n";
 
 std::string license_text()
 {
@@ -65,14 +66,16 @@ struct test_accessor
 {
     static void set_terminal_width(seqan3::argument_parser & parser, unsigned terminal_width)
     {
-        std::visit([terminal_width](auto & f)
-        {
-            if constexpr(std::is_same_v<decltype(f), seqan3::detail::format_help &>)
-                f.layout = seqan3::detail::format_help::console_layout_struct{terminal_width};
-        }, parser.format);
+        std::visit(
+            [terminal_width](auto & f)
+            {
+                if constexpr (std::is_same_v<decltype(f), seqan3::detail::format_help &>)
+                    f.layout = seqan3::detail::format_help::console_layout_struct{terminal_width};
+            },
+            parser.format);
     }
 };
-} // seqan3::detail
+} // namespace seqan3::detail
 
 using seqan3::detail::test_accessor;
 
@@ -103,10 +106,8 @@ TEST(help_page_printing, no_information)
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser\n"
                "===========\n"
-               "\n" +
-               basic_options_str +
-               "\n" +
-               basic_version_str;
+               "\n"
+             + basic_options_str + "\n" + basic_version_str;
     EXPECT_EQ(std_cout, expected);
 }
 
@@ -121,12 +122,9 @@ TEST(help_page_printing, with_short_copyright)
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser\n"
                "===========\n"
-               "\n" +
-               basic_options_str +
-               "\n" +
-               basic_version_str +
-               "\n" +
-               "LEGAL\n"
+               "\n"
+             + basic_options_str + "\n" + basic_version_str + "\n"
+             + "LEGAL\n"
                "    test_parser Copyright: short\n"
                "    SeqAn Copyright: 2006-2021 Knut Reinert, FU-Berlin; released under the\n"
                "    3-clause BSDL.\n";
@@ -143,12 +141,9 @@ TEST(help_page_printing, with_long_copyright)
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser\n"
                "===========\n"
-               "\n" +
-               basic_options_str +
-               "\n" +
-               basic_version_str +
-               "\n" +
-               "LEGAL\n"
+               "\n"
+             + basic_options_str + "\n" + basic_version_str + "\n"
+             + "LEGAL\n"
                "    SeqAn Copyright: 2006-2021 Knut Reinert, FU-Berlin; released under the\n"
                "    3-clause BSDL.\n"
                "    For full copyright and/or warranty information see --copyright.\n";
@@ -165,12 +160,9 @@ TEST(help_page_printing, with_citation)
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser\n"
                "===========\n"
-               "\n" +
-               basic_options_str +
-               "\n" +
-               basic_version_str +
-               "\n" +
-               "LEGAL\n"
+               "\n"
+             + basic_options_str + "\n" + basic_version_str + "\n"
+             + "LEGAL\n"
                "    SeqAn Copyright: 2006-2021 Knut Reinert, FU-Berlin; released under the\n"
                "    3-clause BSDL.\n"
                "    In your academic works please cite: citation\n";
@@ -187,12 +179,9 @@ TEST(help_page_printing, with_author)
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser\n"
                "===========\n"
-               "\n" +
-               basic_options_str +
-               "\n" +
-               basic_version_str +
-               "\n" +
-               "LEGAL\n"
+               "\n"
+             + basic_options_str + "\n" + basic_version_str + "\n"
+             + "LEGAL\n"
                "    Author: author\n"
                "    SeqAn Copyright: 2006-2021 Knut Reinert, FU-Berlin; released under the\n"
                "    3-clause BSDL.\n";
@@ -209,12 +198,9 @@ TEST(help_page_printing, with_email)
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser\n"
                "===========\n"
-               "\n" +
-               basic_options_str +
-               "\n" +
-               basic_version_str +
-               "\n" +
-               "LEGAL\n"
+               "\n"
+             + basic_options_str + "\n" + basic_version_str + "\n"
+             + "LEGAL\n"
                "    Contact: email\n"
                "    SeqAn Copyright: 2006-2021 Knut Reinert, FU-Berlin; released under the\n"
                "    3-clause BSDL.\n";
@@ -231,10 +217,8 @@ TEST(help_page_printing, empty_advanced_help)
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser\n"
                "===========\n"
-               "\n" +
-               basic_options_str +
-               "\n" +
-               basic_version_str;
+               "\n"
+             + basic_options_str + "\n" + basic_version_str;
     EXPECT_EQ(std_cout, expected);
 }
 
@@ -248,8 +232,8 @@ TEST(help_page_printing, empty_version_call)
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser\n"
                "===========\n"
-               "\n" +
-               basic_version_str;
+               "\n"
+             + basic_version_str;
     EXPECT_EQ(std_cout, expected);
 }
 
@@ -267,10 +251,9 @@ TEST(help_page_printing, version_call)
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser\n"
                "===========\n"
-               "\n" +
-               basic_version_str +
-               "\n" +
-               "URL\n"
+               "\n"
+             + basic_version_str + "\n"
+             + "URL\n"
                "    https://seqan.de\n";
     EXPECT_EQ(std_cout, expected);
 }
@@ -287,10 +270,8 @@ TEST(help_page_printing, do_not_print_hidden_options)
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser\n"
                "===========\n"
-               "\n" +
-               basic_options_str +
-               "\n" +
-               basic_version_str;
+               "\n"
+             + basic_options_str + "\n" + basic_version_str;
     EXPECT_EQ(std_cout, expected);
 }
 
@@ -299,15 +280,15 @@ TEST(help_page_printing, advanced_options)
     int32_t option_value{5};
     bool flag_value{};
 
-    auto set_up = [&option_value, &flag_value] (seqan3::argument_parser & parser)
+    auto set_up = [&option_value, &flag_value](seqan3::argument_parser & parser)
     {
         // default or required information are always displayed
         parser.add_section("default section", seqan3::option_spec::required);
         parser.add_subsection("default subsection", seqan3::option_spec::required); // same as DEFAULT
         parser.add_option(option_value, 'i', "int", "this is a int option.", seqan3::option_spec::required);
         parser.add_flag(flag_value, 'g', "goo", "this is a flag.", seqan3::option_spec::required); // same as DEFAULT
-        parser.add_list_item("-s, --some", "list item.", seqan3::option_spec::required); // same as DEFAULT
-        parser.add_line("some line.", true, seqan3::option_spec::required); // same as DEFAULT
+        parser.add_list_item("-s, --some", "list item.", seqan3::option_spec::required);           // same as DEFAULT
+        parser.add_line("some line.", true, seqan3::option_spec::required);                        // same as DEFAULT
 
         // advanced information
         parser.add_section("advanced section", seqan3::option_spec::advanced);
@@ -335,9 +316,9 @@ TEST(help_page_printing, advanced_options)
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser\n"
                "===========\n"
-               "\n" +
-               basic_options_str +
                "\n"
+             + basic_options_str
+             + "\n"
                "DEFAULT SECTION\n"
                "\n"
                "  default subsection\n"
@@ -348,8 +329,8 @@ TEST(help_page_printing, advanced_options)
                "    -s, --some\n"
                "          list item.\n"
                "    some line.\n"
-               "\n" +
-               basic_version_str;
+               "\n"
+             + basic_version_str;
     EXPECT_EQ(std_cout, expected);
 
     // with -hh everything is shown
@@ -361,9 +342,9 @@ TEST(help_page_printing, advanced_options)
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser\n"
                "===========\n"
-               "\n" +
-               basic_options_str +
                "\n"
+             + basic_options_str
+             + "\n"
                "DEFAULT SECTION\n"
                "\n"
                "  default subsection\n"
@@ -385,8 +366,8 @@ TEST(help_page_printing, advanced_options)
                "    -s, --some\n"
                "          list item.\n"
                "    some line.\n"
-               "\n"+
-               basic_version_str;
+               "\n"
+             + basic_version_str;
     EXPECT_EQ(std_cout, expected);
 }
 
@@ -417,9 +398,16 @@ TEST(help_page_printing, full_information)
     parser6.info.description.push_back("description2");
     parser6.info.short_description = "so short";
     parser6.add_option(option_value, 'i', "int", "this is a int option.");
-    parser6.add_option(enum_option_value, 'e', "enum", "this is an enum option.", seqan3::option_spec::standard,
+    parser6.add_option(enum_option_value,
+                       'e',
+                       "enum",
+                       "this is an enum option.",
+                       seqan3::option_spec::standard,
                        seqan3::value_list_validator{seqan3::enumeration_names<foo> | std::views::values});
-    parser6.add_option(required_option, 'r', "required-int", "this is another int option.",
+    parser6.add_option(required_option,
+                       'r',
+                       "required-int",
+                       "this is another int option.",
                        seqan3::option_spec::required);
     parser6.add_section("Flags");
     parser6.add_subsection("SubFlags");
@@ -449,9 +437,9 @@ TEST(help_page_printing, full_information)
                "          this is not a list.\n"
                "    ARGUMENT-2 (List of std::string)\n"
                "          this is a positional option. Default: [].\n"
-               "\n" +
-               basic_options_str +
-               "    -i, --int (signed 32 bit integer)\n"
+               "\n"
+             + basic_options_str
+             + "    -i, --int (signed 32 bit integer)\n"
                "          this is a int option. Default: 5.\n"
                "    -e, --enum (foo)\n"
                "          this is an enum option. Default: one. Value must be one of\n"
@@ -470,15 +458,15 @@ TEST(help_page_printing, full_information)
                "    example\n"
                "\n"
                "    example2\n"
-               "\n" +
-               basic_version_str;
+               "\n"
+             + basic_version_str;
     EXPECT_EQ(std_cout, expected);
 }
 
 TEST(help_page_printing, copyright)
 {
     // Tests the --copyright call.
-    const char * argvCopyright[] = {"./copyright", "--copyright"};
+    char const * argvCopyright[] = {"./copyright", "--copyright"};
     seqan3::argument_parser copyright("myApp", 2, argvCopyright);
 
     std::string license_string = license_text();
@@ -496,7 +484,7 @@ TEST(help_page_printing, copyright)
                    "================================================================================\n"
                    "This program contains SeqAn code licensed under the following terms:\n"
                    "--------------------------------------------------------------------------------\n"
-                   + license_string;
+                 + license_string;
 
         EXPECT_EQ(std_cout, expected);
     }
@@ -517,7 +505,7 @@ TEST(help_page_printing, copyright)
                    "================================================================================\n"
                    "This program contains SeqAn code licensed under the following terms:\n"
                    "--------------------------------------------------------------------------------\n"
-                   + license_string;
+                 + license_string;
 
         EXPECT_EQ(std_cout, expected);
     }
@@ -537,7 +525,7 @@ TEST(help_page_printing, copyright)
                    "================================================================================\n"
                    "This program contains SeqAn code licensed under the following terms:\n"
                    "--------------------------------------------------------------------------------\n"
-                   + license_string;
+                 + license_string;
 
         EXPECT_EQ(std_cout, expected);
     }
@@ -548,7 +536,7 @@ TEST(parse_test, subcommand_argument_parser)
     int option_value{};
     std::string option_value2{};
 
-    const char * argv[]{"./test_parser", "-h"};
+    char const * argv[]{"./test_parser", "-h"};
     seqan3::argument_parser top_level_parser{"test_parser",
                                              2,
                                              argv,
@@ -578,12 +566,12 @@ TEST(parse_test, subcommand_argument_parser)
                            "    The following options below belong to the top-level parser and need to be\n"
                            "    specified before the subcommand key word. Every argument after the\n"
                            "    subcommand key word is passed on to the corresponding sub-parser.\n"
-                           "\n" +
-                           basic_options_str +
-                           "    -f, --foo (signed 32 bit integer)\n"
+                           "\n"
+                         + basic_options_str
+                         + "    -f, --foo (signed 32 bit integer)\n"
                            "          foo bar. Default: 0.\n"
-                           "\n" +
-                           basic_version_str;
+                           "\n"
+                         + basic_version_str;
 
     EXPECT_EQ(std_cout, expected);
 }

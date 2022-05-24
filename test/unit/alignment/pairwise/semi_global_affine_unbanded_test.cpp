@@ -13,11 +13,10 @@
 #include "pairwise_alignment_single_test_template.hpp"
 
 using pairwise_semiglobal_affine_unbanded_testing_types = ::testing::Types<
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::semi_global::affine::unbanded::dna4_01_semi_first>,
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::semi_global::affine::unbanded::dna4_02_semi_first>,
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::semi_global::affine::unbanded::dna4_03_semi_second>,
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::semi_global::affine::unbanded::dna4_04_semi_second>
-    >;
+    pairwise_alignment_fixture<&seqan3::test::alignment::fixture::semi_global::affine::unbanded::dna4_01_semi_first>,
+    pairwise_alignment_fixture<&seqan3::test::alignment::fixture::semi_global::affine::unbanded::dna4_02_semi_first>,
+    pairwise_alignment_fixture<&seqan3::test::alignment::fixture::semi_global::affine::unbanded::dna4_03_semi_second>,
+    pairwise_alignment_fixture<&seqan3::test::alignment::fixture::semi_global::affine::unbanded::dna4_04_semi_second>>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_semiglobal_affine_unbanded,
                                pairwise_alignment_test,

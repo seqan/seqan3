@@ -18,11 +18,17 @@
 
 struct is_integral_fn
 {
-    bool operator()(...) { return false; }
+    bool operator()(...)
+    {
+        return false;
+    }
 
     template <typename identity_t>
-        requires std::integral<typename identity_t::type>
-    bool operator()(identity_t) { return true; }
+        requires std::integral<typename identity_t::type> bool
+    operator()(identity_t)
+    {
+        return true;
+    }
 };
 
 TEST(pack_algorithm, all_of_in_type_list)

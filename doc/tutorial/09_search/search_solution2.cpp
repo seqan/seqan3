@@ -1,14 +1,14 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/search/search.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
+#include <seqan3/search/search.hpp>
 
 using namespace seqan3::literals;
 
 void run_text_single()
 {
-    seqan3::dna4_vector
-                text{"CGCTGTCTGAAGGATGAGTGTCAGCCAGTGTAACCCGATGAGCTACCCAGTAGTCGAACTGGGCCAGACAACCCGGCGCTAATGCACTCA"_dna4};
+    seqan3::dna4_vector text{
+        "CGCTGTCTGAAGGATGAGTGTCAGCCAGTGTAACCCGATGAGCTACCCAGTAGTCGAACTGGGCCAGACAACCCGGCGCTAATGCACTCA"_dna4};
     seqan3::fm_index index{text};
 
     seqan3::debug_stream << "=====   Running on a single text   =====\n"
@@ -34,7 +34,7 @@ void run_text_collection()
 
 int main()
 {
-   run_text_single();
-   seqan3::debug_stream << '\n';
-   run_text_collection();
+    run_text_single();
+    seqan3::debug_stream << '\n';
+    run_text_collection();
 }

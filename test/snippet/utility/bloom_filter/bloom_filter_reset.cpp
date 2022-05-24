@@ -7,8 +7,7 @@ int main()
 {
     using namespace seqan3::literals;
 
-    seqan3::bloom_filter bf{seqan3::bin_size{8192u},
-                            seqan3::hash_function_count{2u}};
+    seqan3::bloom_filter bf{seqan3::bin_size{8192u}, seqan3::hash_function_count{2u}};
 
     auto const sequence1 = "ACTGACTGACTGATC"_dna4;
     auto const sequence2 = "GTGACTGACTGACTCG"_dna4;

@@ -16,7 +16,6 @@ template <typename derived_t, typename value_t = std::string>
 class base1
 {
 public:
-
     value_t func1() const
     {
         return {"instance of base1"};
@@ -28,7 +27,6 @@ template <typename derived_t, typename value_t = int, typename parameter_t = int
 class base2
 {
 public:
-
     value_t func2(parameter_t const p) const
     {
         return static_cast<value_t>(p);
@@ -36,7 +34,7 @@ public:
 };
 
 // The derived class that inherits from a variadic crtp pattern.
-template <typename ...bases_t>
+template <typename... bases_t>
 class derived : public seqan3::detail::invoke_deferred_crtp_base<bases_t, derived<bases_t...>>...
 {};
 

@@ -20,7 +20,7 @@ int main()
 
     for (auto & [flag, mapq] : fin) // the order is the same as specified in fields!
     {
-        seqan3::debug_stream << "flag:  "            << flag << '\n';
+        seqan3::debug_stream << "flag:  " << flag << '\n';
         seqan3::debug_stream << "mapping quality:  " << mapq << '\n';
     }
 }

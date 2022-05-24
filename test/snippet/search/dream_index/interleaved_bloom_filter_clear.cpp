@@ -30,7 +30,6 @@ int main()
 
     auto agent = ibf.counting_agent();
 
-
     // Count all 5-mers of sequence1 for all bins
     seqan3::debug_stream << agent.bulk_count(sequence1 | hash_adaptor) << '\n'; // [11,0,0,0,9,0,0,0]
 
@@ -39,7 +38,6 @@ int main()
 
     // After clearing, no 5-mers are found in bin 0
     seqan3::debug_stream << agent.bulk_count(sequence1 | hash_adaptor) << '\n'; // [0,0,0,0,9,0,0,0]
-
 
     // Search for specific values
     seqan3::debug_stream << agent.bulk_count(std::views::iota(0u, 1024u)) << '\n'; // [0,0,0,0,7,0,0,10]

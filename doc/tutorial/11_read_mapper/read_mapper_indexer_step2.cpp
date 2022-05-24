@@ -12,8 +12,7 @@ struct reference_storage_t
 //! [reference_storage_t]
 
 //! [read_reference]
-void read_reference(std::filesystem::path const & reference_path,
-                    reference_storage_t & storage)
+void read_reference(std::filesystem::path const & reference_path, reference_storage_t & storage)
 //! [read_reference]
 {
     seqan3::sequence_file_input reference_in{reference_path};
@@ -24,8 +23,7 @@ void read_reference(std::filesystem::path const & reference_path,
     }
 }
 
-void run_program(std::filesystem::path const & reference_path,
-                 std::filesystem::path const & index_path)
+void run_program(std::filesystem::path const & reference_path, std::filesystem::path const & index_path)
 {
     seqan3::debug_stream << "reference_file_path: " << reference_path << '\n';
     seqan3::debug_stream << "index_path           " << index_path << '\n';
@@ -45,10 +43,16 @@ void initialise_argument_parser(seqan3::argument_parser & parser, cmd_arguments 
     parser.info.author = "E. coli";
     parser.info.short_description = "Creates an index over a reference.";
     parser.info.version = "1.0.0";
-    parser.add_option(args.reference_path, 'r', "reference", "The path to the reference.",
+    parser.add_option(args.reference_path,
+                      'r',
+                      "reference",
+                      "The path to the reference.",
                       seqan3::option_spec::required,
-                      seqan3::input_file_validator{{"fa","fasta"}});
-    parser.add_option(args.index_path, 'o', "output", "The output index file path.",
+                      seqan3::input_file_validator{{"fa", "fasta"}});
+    parser.add_option(args.index_path,
+                      'o',
+                      "output",
+                      "The output index file path.",
                       seqan3::option_spec::standard,
                       seqan3::output_file_validator{seqan3::output_file_open_options::create_new, {"index"}});
 }

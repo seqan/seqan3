@@ -8,10 +8,9 @@
 #include <benchmark/benchmark.h>
 
 #include <cstring>
+#include <seqan3/std/charconv>
 #include <sstream>
 #include <string_view>
-
-#include <seqan3/std/charconv>
 
 // -----------------------------------------------------------------------------
 // to_chars for integral types

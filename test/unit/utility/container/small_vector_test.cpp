@@ -65,12 +65,12 @@ TEST(small_vector, concepts)
 TEST(small_vector, construct_from_array)
 {
     // Deduce value type and N
-    EXPECT_TRUE((std::same_as<decltype(seqan3::small_vector{std::array{'h','e','l','l','o'}}),
-                 seqan3::small_vector<char, 5>>));
+    EXPECT_TRUE((std::same_as<decltype(seqan3::small_vector{std::array{'h', 'e', 'l', 'l', 'o'}}),
+                              seqan3::small_vector<char, 5>>));
 
     // construct from different sized array (size has to be smaller)
-    EXPECT_TRUE((std::same_as<decltype(seqan3::small_vector<char, 10>{std::array{'h','e','l','l','o'}}),
-                 seqan3::small_vector<char, 10>>));
+    EXPECT_TRUE((std::same_as<decltype(seqan3::small_vector<char, 10>{std::array{'h', 'e', 'l', 'l', 'o'}}),
+                              seqan3::small_vector<char, 10>>));
 }
 
 TEST(small_vector, construct_from_built_in_array)
@@ -104,19 +104,18 @@ constexpr bool comparison_test()
     res = res && (t1 >= t2);
     res = res && (t1 != t3);
 
-    res = res && (t3 <  t1);
+    res = res && (t3 < t1);
     res = res && (t3 <= t1);
-    res = res && (t1 <  t4);
+    res = res && (t1 < t4);
     res = res && (t1 <= t4);
 
-    res = res && (t1 >  t3);
+    res = res && (t1 > t3);
     res = res && (t1 >= t3);
-    res = res && (t4 >  t1);
+    res = res && (t4 > t1);
     res = res && (t4 >= t1);
 
     return true;
 }
-
 
 TEST(small_vector, comparison)
 {
@@ -126,7 +125,7 @@ TEST(small_vector, comparison)
 
 constexpr bool begin_end_test()
 {
-    std::array src{'h','e','l','l','o'};
+    std::array src{'h', 'e', 'l', 'l', 'o'};
     seqan3::small_vector vec{src};
 
     auto it_s = src.begin();
@@ -141,7 +140,7 @@ constexpr bool begin_end_test()
 
 constexpr bool cbegin_cend_test()
 {
-    std::array src{'h','e','l','l','o'};
+    std::array src{'h', 'e', 'l', 'l', 'o'};
     seqan3::small_vector vec{src};
 
     auto it_s = src.cbegin();
@@ -177,7 +176,7 @@ TEST(small_string, size_and_maxsize)
 
     // capacity != size
     {
-        constexpr seqan3::small_vector<char, 10> vec{'h','e','l','l','o'};
+        constexpr seqan3::small_vector<char, 10> vec{'h', 'e', 'l', 'l', 'o'};
         constexpr auto size = vec.size();
         constexpr auto msize = vec.max_size();
 
@@ -320,7 +319,7 @@ constexpr bool insert_test()
     t0.clear();
     t0.insert(t0.cend(), t1.begin() + 1, t1.begin() + 3);
 
-    t0.insert(t0.cend(),   t1.cend() - 2, t1.cend());
+    t0.insert(t0.cend(), t1.cend() - 2, t1.cend());
     t0.insert(t0.cbegin(), t1.cbegin(), t1.cbegin() + 1);
     res = res && (t0 == t1);
 
@@ -366,7 +365,7 @@ constexpr bool push_pop_test()
 
     // push_back
     t0.push_back('A');
-    bool res = (t0 ==  (seqan3::small_vector<char, 20>{'A'}));
+    bool res = (t0 == (seqan3::small_vector<char, 20>{'A'}));
     t0.push_back('C');
     res = res && (t0 == (seqan3::small_vector<char, 20>{'A', 'C'}));
 
@@ -416,6 +415,6 @@ TEST(small_vector, resize)
 
 TEST(small_vector, serialisation)
 {
-    seqan3::small_vector hello{std::array{'h','e','l','l','o'}};
+    seqan3::small_vector hello{std::array{'h', 'e', 'l', 'l', 'o'}};
     seqan3::test::do_serialisation(hello);
 }

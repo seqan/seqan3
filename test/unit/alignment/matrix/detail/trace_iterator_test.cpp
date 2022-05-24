@@ -29,14 +29,10 @@ struct trace_iterator_fixture : public ::testing::Test
     static constexpr seqan3::detail::trace_directions L = seqan3::detail::trace_directions::left;
     static constexpr seqan3::detail::trace_directions LO = seqan3::detail::trace_directions::left_open;
 
-    seqan3::detail::two_dimensional_matrix<seqan3::detail::trace_directions> matrix{seqan3::detail::number_rows{3},
-                                                                                    seqan3::detail::number_cols{4},
-                                                                                    std::vector
-    {
-        N,           LO, L,          L,
-        UO, D | LO | UO, L, D | L | UO,
-        U,       LO | U, D,          L
-    }};
+    seqan3::detail::two_dimensional_matrix<seqan3::detail::trace_directions> matrix{
+        seqan3::detail::number_rows{3},
+        seqan3::detail::number_cols{4},
+        std::vector{N, LO, L, L, UO, D | LO | UO, L, D | L | UO, U, LO | U, D, L}};
 
     using trace_iterator_type = seqan3::detail::trace_iterator<decltype(matrix.begin())>;
     using path_type = std::ranges::subrange<trace_iterator_type, std::default_sentinel_t>;
@@ -63,92 +59,92 @@ TEST_F(trace_iterator_fixture, type_deduction)
 
 TEST_F(trace_iterator_fixture, trace_path_2_3)
 {
-    EXPECT_RANGE_EQ((std::vector{L, L, L, U, U}),
-                    path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
-                                                       seqan3::detail::column_index_type{3}}));
+    EXPECT_RANGE_EQ(
+        (std::vector{L, L, L, U, U}),
+        path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2}, seqan3::detail::column_index_type{3}}));
 }
 
 TEST_F(trace_iterator_fixture, trace_path_2_2)
 {
-    EXPECT_RANGE_EQ((std::vector{D, D}),
-                    path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
-                                                       seqan3::detail::column_index_type{2}}));
+    EXPECT_RANGE_EQ(
+        (std::vector{D, D}),
+        path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2}, seqan3::detail::column_index_type{2}}));
 }
 
 TEST_F(trace_iterator_fixture, trace_path_2_1)
 {
-    EXPECT_RANGE_EQ((std::vector{U, U, L}),
-                    path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
-                                                       seqan3::detail::column_index_type{1}}));
+    EXPECT_RANGE_EQ(
+        (std::vector{U, U, L}),
+        path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2}, seqan3::detail::column_index_type{1}}));
 }
 
 TEST_F(trace_iterator_fixture, trace_path_2_0)
 {
-    EXPECT_RANGE_EQ((std::vector{U, U}),
-                    path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
-                                                       seqan3::detail::column_index_type{0}}));
+    EXPECT_RANGE_EQ(
+        (std::vector{U, U}),
+        path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2}, seqan3::detail::column_index_type{0}}));
 }
 
 TEST_F(trace_iterator_fixture, trace_path_1_3)
 {
-    EXPECT_RANGE_EQ((std::vector{D, L, L}),
-                    path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1},
-                                                       seqan3::detail::column_index_type{3}}));
+    EXPECT_RANGE_EQ(
+        (std::vector{D, L, L}),
+        path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1}, seqan3::detail::column_index_type{3}}));
 }
 
 TEST_F(trace_iterator_fixture, trace_path_1_2)
 {
-    EXPECT_RANGE_EQ((std::vector{L, L, U}),
-                    path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1},
-                                                       seqan3::detail::column_index_type{2}}));
+    EXPECT_RANGE_EQ(
+        (std::vector{L, L, U}),
+        path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1}, seqan3::detail::column_index_type{2}}));
 }
 
 TEST_F(trace_iterator_fixture, trace_path_1_1)
 {
-    EXPECT_RANGE_EQ((std::vector{D}),
-                    path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1},
-                                                       seqan3::detail::column_index_type{1}}));
+    EXPECT_RANGE_EQ(
+        (std::vector{D}),
+        path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1}, seqan3::detail::column_index_type{1}}));
 }
 
 TEST_F(trace_iterator_fixture, trace_path_1_0)
 {
-    EXPECT_RANGE_EQ((std::vector{U}),
-                    path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1},
-                                                       seqan3::detail::column_index_type{0}}));
+    EXPECT_RANGE_EQ(
+        (std::vector{U}),
+        path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1}, seqan3::detail::column_index_type{0}}));
 }
 
 TEST_F(trace_iterator_fixture, trace_path_0_3)
 {
-    EXPECT_RANGE_EQ((std::vector{L, L, L}),
-                    path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0},
-                                                       seqan3::detail::column_index_type{3}}));
+    EXPECT_RANGE_EQ(
+        (std::vector{L, L, L}),
+        path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0}, seqan3::detail::column_index_type{3}}));
 }
 
 TEST_F(trace_iterator_fixture, trace_path_0_2)
 {
-    EXPECT_RANGE_EQ((std::vector{L, L}),
-                    path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0},
-                                                       seqan3::detail::column_index_type{2}}));
+    EXPECT_RANGE_EQ(
+        (std::vector{L, L}),
+        path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0}, seqan3::detail::column_index_type{2}}));
 }
 
 TEST_F(trace_iterator_fixture, trace_path_0_1)
 {
-    EXPECT_RANGE_EQ((std::vector{L}),
-                    path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0},
-                                                       seqan3::detail::column_index_type{1}}));
+    EXPECT_RANGE_EQ(
+        (std::vector{L}),
+        path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0}, seqan3::detail::column_index_type{1}}));
 }
 
 TEST_F(trace_iterator_fixture, trace_path_0_0)
 {
-    EXPECT_RANGE_EQ((std::vector<seqan3::detail::trace_directions>{}),
-                    path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0},
-                                                       seqan3::detail::column_index_type{0}}));
+    EXPECT_RANGE_EQ(
+        (std::vector<seqan3::detail::trace_directions>{}),
+        path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0}, seqan3::detail::column_index_type{0}}));
 }
 
 TEST_F(trace_iterator_fixture, coordinate)
 {
-    auto p = path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
-                                                seqan3::detail::column_index_type{3}});
+    auto p =
+        path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2}, seqan3::detail::column_index_type{3}});
     auto it = p.begin();
 
     EXPECT_EQ(it.coordinate().row, 2u);
@@ -190,19 +186,26 @@ struct iterator_fixture<trace_iterator_fixture> : public trace_iterator_fixture
     {
         auto begin()
         {
-            return iterator_type{matrix.begin() + seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
-                                                                                seqan3::detail::column_index_type{3}}};
+            return iterator_type{matrix.begin()
+                                 + seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
+                                                                 seqan3::detail::column_index_type{3}}};
         }
 
         auto begin() const
         {
-            return const_iterator_type{matrix.cbegin() +
-                                       seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
-                                                                     seqan3::detail::column_index_type{3}}};
+            return const_iterator_type{matrix.cbegin()
+                                       + seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
+                                                                       seqan3::detail::column_index_type{3}}};
         }
 
-        auto end() { return std::default_sentinel; }
-        auto end() const { return std::default_sentinel; }
+        auto end()
+        {
+            return std::default_sentinel;
+        }
+        auto end() const
+        {
+            return std::default_sentinel;
+        }
 
         decltype(base_t::matrix) matrix;
     };

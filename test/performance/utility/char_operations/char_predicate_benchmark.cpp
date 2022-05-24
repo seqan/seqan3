@@ -5,17 +5,17 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <benchmark/benchmark.h>
+
 #include <algorithm>
 #include <cctype>
 #include <cstring>
-
-#include <benchmark/benchmark.h>
 
 #include <seqan3/test/seqan2.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 
 #if SEQAN3_HAS_SEQAN2
-#include <seqan/stream.h>
+#    include <seqan/stream.h>
 #endif
 
 enum class tag

@@ -7,9 +7,10 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/search/kmer_index/shape.hpp>
 #include <algorithm>
 #include <seqan3/std/ranges>
+
+#include <seqan3/search/kmer_index/shape.hpp>
 
 using seqan3::operator""_shape;
 

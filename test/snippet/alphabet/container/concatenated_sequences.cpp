@@ -13,10 +13,10 @@ int main()
 
     std::vector<seqan3::dna4_vector> concat2{"ACTA"_dna4, "AGGA"_dna4};
 
-    concat1 = concat2;               // you can assign from other ranges
+    concat1 = concat2; // you can assign from other ranges
 
-    concat2[0] = "ATTA"_dna4;        // this works for vector of vector
-    concat1[0][1] = 'T'_dna4;        // and this works for concatenated_sequences
+    concat2[0] = "ATTA"_dna4;                   // this works for vector of vector
+    concat1[0][1] = 'T'_dna4;                   // and this works for concatenated_sequences
     seqan3::debug_stream << concat1[0] << '\n'; // "ATTA"
 
     // if you know that you will be adding ten vectors of length ten:

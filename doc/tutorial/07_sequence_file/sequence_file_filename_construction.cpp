@@ -21,4 +21,5 @@ int main()
 
 // this makes the snippet an executable
 #undef main
-int main() {} // do nothing
+int main()
+{} // do nothing

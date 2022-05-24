@@ -107,7 +107,7 @@ TEST(view_take_line, eol_at_first_position)
     using sbt = std::istreambuf_iterator<char>;
 
     std::istringstream vec{"\n\nfoo"};
-    auto stream_view = std::ranges::subrange<decltype(sbt{vec}), decltype(sbt{})> {sbt{vec}, sbt{}};
+    auto stream_view = std::ranges::subrange<decltype(sbt{vec}), decltype(sbt{})>{sbt{vec}, sbt{}};
 
     EXPECT_RANGE_EQ(""sv, stream_view | seqan3::detail::take_line);
     EXPECT_RANGE_EQ("foo"sv, stream_view | seqan3::detail::take_line);
@@ -135,7 +135,7 @@ TEST(view_take_line_or_throw, windows_eol)
 TEST(view_take_line_or_throw, no_eol)
 {
     std::string vec{"foo"};
-    EXPECT_THROW(std::ranges::for_each(vec | seqan3::detail::take_line_or_throw, [](auto &&){}),
+    EXPECT_THROW(std::ranges::for_each(vec | seqan3::detail::take_line_or_throw, [](auto &&) {}),
                  seqan3::unexpected_end_of_input);
 }
 
@@ -167,6 +167,6 @@ TEST(view_take_line, reverse_bug)
     EXPECT_TRUE((std::ranges::output_range<decltype(v1), char>));
 
     // No build failure, but wrong results:
-//     auto v2 = v1 | std::views::reverse;
-//     EXPECT_EQ("oof", std::string(v2));
+    //     auto v2 = v1 | std::views::reverse;
+    //     EXPECT_EQ("oof", std::string(v2));
 }

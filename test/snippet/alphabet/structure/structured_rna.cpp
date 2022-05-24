@@ -10,12 +10,12 @@ int main()
 
     seqan3::structured_rna<seqan3::rna4, seqan3::dot_bracket3> letter{'G'_rna4, '('_db3};
 
-    seqan3::debug_stream << seqan3::to_rank(letter) << ' ' // 7
-                         << seqan3::to_rank(get<0>(letter)) << ' ' // 2
+    seqan3::debug_stream << seqan3::to_rank(letter) << ' '           // 7
+                         << seqan3::to_rank(get<0>(letter)) << ' '   // 2
                          << seqan3::to_rank(get<1>(letter)) << '\n'; // 1
 
-    seqan3::debug_stream << seqan3::to_char(letter) << ' ' // G
-                         << seqan3::to_char(get<0>(letter)) << ' ' // G
+    seqan3::debug_stream << seqan3::to_char(letter) << ' '           // G
+                         << seqan3::to_char(get<0>(letter)) << ' '   // G
                          << seqan3::to_char(get<1>(letter)) << '\n'; // (
 
     // Modify:

@@ -50,8 +50,8 @@ void seqan3_align_pairwise_edit_distance_benchmark(benchmark::State & state,
     }
 
     std::conditional_t<collection_benchmark, decltype(std::views::all), decltype(std::views::single)> view_adaptor{};
-    state.counters["cells"] = seqan3::test::pairwise_cell_updates(view_adaptor(sequence_pair_or_pairs),
-                                                                  edit_distance_cfg);
+    state.counters["cells"] =
+        seqan3::test::pairwise_cell_updates(view_adaptor(sequence_pair_or_pairs), edit_distance_cfg);
     state.counters["CUPS"] = seqan3::test::cell_updates_per_second(state.counters["cells"]);
     state.counters["total"] = total;
 }

@@ -5,19 +5,19 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <benchmark/benchmark.h>
+
 #include <deque>
 #include <list>
 #include <vector>
 
-#include <benchmark/benchmark.h>
+#include <sdsl/int_vector.hpp>
 
 #include <seqan3/alignment/decorator/gap_decorator.hpp>
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/alphabet/container/bitpacked_sequence.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/utility/container/small_vector.hpp>
-
-#include <sdsl/int_vector.hpp>
 
 template <typename t>
 using sdsl_int_vec = sdsl::int_vector<sizeof(t) * 8>;
@@ -35,9 +35,8 @@ void sequential_read(benchmark::State & state)
     auto cont_rando = seqan3::test::generate_sequence<alphabet_t>(10'000, 0, 0);
     container_t<alphabet_t> source(cont_rando.begin(), cont_rando.end());
 
-    using source_ref_t = std::conditional_t<const_qualified,
-                                            container_t<alphabet_t> const &,
-                                            container_t<alphabet_t> &>;
+    using source_ref_t =
+        std::conditional_t<const_qualified, container_t<alphabet_t> const &, container_t<alphabet_t> &>;
 
     source_ref_t source_ref{source};
 

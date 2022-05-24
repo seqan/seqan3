@@ -18,7 +18,10 @@
 
 TEST(search_cfg_on_result, with_captureless_lambda)
 {
-    seqan3::search_cfg::on_result on_result_cfg{[] (auto && result) { return result; }};
+    seqan3::search_cfg::on_result on_result_cfg{[](auto && result)
+                                                {
+                                                    return result;
+                                                }};
 
     EXPECT_TRUE((std::invocable<decltype(on_result_cfg.callback), int>));
     EXPECT_EQ((std::invoke(on_result_cfg.callback, 10)), 10);
@@ -27,7 +30,10 @@ TEST(search_cfg_on_result, with_captureless_lambda)
 TEST(search_cfg_on_result, with_capturing_lambda)
 {
     int global_result = 0;
-    seqan3::search_cfg::on_result on_result_cfg{[&] (auto && result) { global_result = result; }};
+    seqan3::search_cfg::on_result on_result_cfg{[&](auto && result)
+                                                {
+                                                    global_result = result;
+                                                }};
 
     EXPECT_TRUE((std::invocable<decltype(on_result_cfg.callback), int>));
     EXPECT_EQ(global_result, 0);

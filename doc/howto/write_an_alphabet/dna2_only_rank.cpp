@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 //! [struct]
-#include <seqan3/alphabet/concept.hpp>                   // alphabet concept checks
+#include <seqan3/alphabet/concept.hpp> // alphabet concept checks
 
 struct dna2
 {
@@ -15,12 +15,12 @@ struct dna2
 //! [struct]
 
 //! [alphabet_concept]
-static_assert(seqan3::alphabet<dna2> == false);          // NOT an alphabet
+static_assert(seqan3::alphabet<dna2> == false); // NOT an alphabet
 //! [alphabet_concept]
 
 //! [other_concepts]
-static_assert(std::copy_constructible<dna2>);             // ok
+static_assert(std::copy_constructible<dna2>);       // ok
 static_assert(std::totally_ordered<dna2> == false); // NO comparison operators
-static_assert(seqan3::semialphabet<dna2> == false);      // NOT a semialphabet
-static_assert(seqan3::alphabet<dna2> == false);          // NOT an alphabet
+static_assert(seqan3::semialphabet<dna2> == false); // NOT a semialphabet
+static_assert(seqan3::alphabet<dna2> == false);     // NOT an alphabet
 //! [other_concepts]

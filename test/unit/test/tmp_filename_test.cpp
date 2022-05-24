@@ -71,11 +71,11 @@ TEST(tmp_filename_dtr, dtr)
 class read_only_directory
 {
 public:
-    read_only_directory() = delete; //< Deleted.
-    read_only_directory(read_only_directory const &) = delete; //< Deleted.
-    read_only_directory(read_only_directory &&) = default; //< Defaulted.
+    read_only_directory() = delete;                                        //< Deleted.
+    read_only_directory(read_only_directory const &) = delete;             //< Deleted.
+    read_only_directory(read_only_directory &&) = default;                 //< Defaulted.
     read_only_directory & operator=(read_only_directory const &) = delete; //< Deleted.
-    read_only_directory & operator=(read_only_directory &&) = default; //< Defaulted.
+    read_only_directory & operator=(read_only_directory &&) = default;     //< Defaulted.
 
     /*!\brief Construct a directory from a given path.
      * \throws if std::filesystem::create_directory throws.

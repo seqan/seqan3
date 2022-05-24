@@ -5,18 +5,18 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <benchmark/benchmark.h>
+
 #include <algorithm>
 #include <cstring>
-
-#include <benchmark/benchmark.h>
 
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/test/seqan2.hpp>
 
 #if SEQAN3_HAS_SEQAN2
-#include <seqan/align.h>
-#include <seqan/basic.h>
-#include <seqan/modifier.h>
+#    include <seqan/align.h>
+#    include <seqan/basic.h>
+#    include <seqan/modifier.h>
 #endif
 
 template <typename rank_t>
@@ -59,8 +59,14 @@ BENCHMARK_TEMPLATE(assign_rank, char);
 BENCHMARK_TEMPLATE(assign_rank, char32_t);
 /* alphabet variant */
 BENCHMARK_TEMPLATE(assign_rank, seqan3::gapped<seqan3::dna4>);
-BENCHMARK_TEMPLATE(assign_rank, seqan3::alphabet_variant<seqan3::gap, seqan3::dna4, seqan3::dna5, seqan3::dna15,
-                                                         seqan3::rna15, seqan3::rna4, seqan3::rna5>);
+BENCHMARK_TEMPLATE(assign_rank,
+                   seqan3::alphabet_variant<seqan3::gap,
+                                            seqan3::dna4,
+                                            seqan3::dna5,
+                                            seqan3::dna15,
+                                            seqan3::rna15,
+                                            seqan3::rna4,
+                                            seqan3::rna5>);
 BENCHMARK_TEMPLATE(assign_rank, seqan3::alphabet_variant<seqan3::dna4, char>);
 /* alphabet tuple */
 BENCHMARK_TEMPLATE(assign_rank, seqan3::masked<seqan3::dna4>);

@@ -10,15 +10,15 @@ int main()
 
     seqan3::qualified<seqan3::dna4, seqan3::phred42> letter{'A'_dna4, '('_phred42};
 
-    seqan3::debug_stream << seqan3::to_rank(letter) << ' ' // 7
-                         << seqan3::to_rank(get<0>(letter)) << ' ' // 0
+    seqan3::debug_stream << seqan3::to_rank(letter) << ' '           // 7
+                         << seqan3::to_rank(get<0>(letter)) << ' '   // 0
                          << seqan3::to_rank(get<1>(letter)) << '\n'; // 7
 
-    seqan3::debug_stream << seqan3::to_char(letter) << ' ' // A
-                         << seqan3::to_char(get<0>(letter)) << ' ' // A
+    seqan3::debug_stream << seqan3::to_char(letter) << ' '           // A
+                         << seqan3::to_char(get<0>(letter)) << ' '   // A
                          << seqan3::to_char(get<1>(letter)) << '\n'; // (
 
-    seqan3::debug_stream << seqan3::to_phred(letter) << ' ' // 7
+    seqan3::debug_stream << seqan3::to_phred(letter) << ' '           // 7
                          << seqan3::to_phred(get<1>(letter)) << '\n'; // 7
 
     // Modify:

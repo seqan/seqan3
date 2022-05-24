@@ -1,12 +1,12 @@
 #if SEQAN3_WITH_CEREAL
-#include <fstream>
-#include <vector>
+#    include <fstream>
+#    include <vector>
 
-#include <cereal/archives/binary.hpp> // includes the cereal::BinaryInputArchive and cereal::BinaryOutputArchive
-#include <cereal/types/vector.hpp>    // includes cerealisation support for std::vector
+#    include <seqan3/core/debug_stream.hpp>
+#    include <seqan3/test/tmp_filename.hpp>
 
-#include <seqan3/core/debug_stream.hpp>
-#include <seqan3/test/tmp_filename.hpp>
+#    include <cereal/archives/binary.hpp> // includes the cereal::BinaryInputArchive and cereal::BinaryOutputArchive
+#    include <cereal/types/vector.hpp>    // includes cerealisation support for std::vector
 
 // Written for std::vector, other types also work.
 void load(std::vector<int16_t> & data, seqan3::test::tmp_filename & tmp_file)
@@ -30,13 +30,13 @@ int main()
     // could be used, e.g. fm_index.
     seqan3::test::tmp_filename tmp_file{"data.out"}; // This is a temporary file, use any other filename.
 
-    std::vector<int16_t> vec{1,2,3,4};
-    store(vec, tmp_file);                            // Calls store on a std::vector.
+    std::vector<int16_t> vec{1, 2, 3, 4};
+    store(vec, tmp_file); // Calls store on a std::vector.
     // This vector is needed to load the information into it.
     std::vector<int16_t> vec2;
-    load(vec2, tmp_file);                            // Calls load on a std::vector.
+    load(vec2, tmp_file); // Calls load on a std::vector.
 
-    seqan3::debug_stream << vec << '\n';             // Prints [1,2,3,4].
+    seqan3::debug_stream << vec << '\n'; // Prints [1,2,3,4].
 
     return 0;
 }

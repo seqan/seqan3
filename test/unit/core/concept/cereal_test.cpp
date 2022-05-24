@@ -13,12 +13,11 @@
 #include <seqan3/core/concept/cereal.hpp>
 
 #if SEQAN3_WITH_CEREAL
-#include <cereal/archives/xml.hpp>
-#include <cereal/archives/json.hpp>
-#include <cereal/archives/binary.hpp>
-#include <cereal/archives/portable_binary.hpp>
-
-#include <cereal/types/array.hpp>
+#    include <cereal/archives/binary.hpp>
+#    include <cereal/archives/json.hpp>
+#    include <cereal/archives/portable_binary.hpp>
+#    include <cereal/archives/xml.hpp>
+#    include <cereal/types/array.hpp>
 #endif
 
 #if SEQAN3_WITH_CEREAL
@@ -71,7 +70,8 @@ TEST(cereal, cereal_text_archive)
     EXPECT_FALSE((seqan3::cereal_text_archive<cereal::PortableBinaryInputArchive>));
 }
 
-struct my_struct{};
+struct my_struct
+{};
 
 TEST(cereal, cerealisable)
 {

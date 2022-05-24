@@ -1,14 +1,11 @@
 #include <seqan3/test/snippet/create_temporary_snippet_file.hpp>
-seqan3::test::create_temporary_snippet_file my_fasta
-{
-    "my.fasta",
-R"//![fasta_file](
+seqan3::test::create_temporary_snippet_file my_fasta{"my.fasta",
+                                                     R"//![fasta_file](
 >seq1
 AVAV
 >seq2
 AVAVA
-)//![fasta_file]"
-}; // std::filesystem::current_path() / "my.fasta" will be deleted after the execution
+)//![fasta_file]"}; // std::filesystem::current_path() / "my.fasta" will be deleted after the execution
 
 //![main]
 #include <seqan3/io/sequence_file/all.hpp>

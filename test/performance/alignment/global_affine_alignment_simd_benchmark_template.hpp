@@ -21,16 +21,16 @@
 #include <seqan3/utility/views/zip.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
-    #include <seqan/align.h>
-    #include <seqan/align_parallel.h>
+#    include <seqan/align.h>
+#    include <seqan/align_parallel.h>
 #endif
 
 // Globally defined constants to ensure same test data.
 inline constexpr size_t sequence_length = 150;
 #ifndef NDEBUG
-inline constexpr size_t set_size        = 16;
+inline constexpr size_t set_size = 16;
 #else
-inline constexpr size_t set_size        = 1024;
+inline constexpr size_t set_size = 1024;
 #endif // NDEBUG
 
 // We don't know if the system supports hyper-threading so we use only half the threads so that the
@@ -45,13 +45,11 @@ uint32_t get_number_of_threads()
 //  seqan3 pairwise alignment
 // ----------------------------------------------------------------------------
 
-template <typename alphabet_t, typename ...align_configs_t>
-void seqan3_affine_accelerated(benchmark::State & state, alphabet_t, align_configs_t && ...configs)
+template <typename alphabet_t, typename... align_configs_t>
+void seqan3_affine_accelerated(benchmark::State & state, alphabet_t, align_configs_t &&... configs)
 {
     size_t sequence_length_variance = state.range(0);
-    auto data = seqan3::test::generate_sequence_pairs<alphabet_t>(sequence_length,
-                                                                  set_size,
-                                                                  sequence_length_variance);
+    auto data = seqan3::test::generate_sequence_pairs<alphabet_t>(sequence_length, set_size, sequence_length_variance);
 
     int64_t total = 0;
     auto accelerate_config = (configs | ...);
@@ -72,15 +70,14 @@ void seqan3_affine_accelerated(benchmark::State & state, alphabet_t, align_confi
 //  seqan2 pairwise alignment
 // ----------------------------------------------------------------------------
 
-template <typename alphabet_t, typename ...args_t>
-void seqan2_affine_accelerated(benchmark::State & state, alphabet_t, args_t && ...args)
+template <typename alphabet_t, typename... args_t>
+void seqan2_affine_accelerated(benchmark::State & state, alphabet_t, args_t &&... args)
 {
     std::tuple captured_args{args...};
 
     size_t sequence_length_variance = state.range(0);
-    auto [vec1, vec2] = seqan3::test::generate_sequence_pairs_seqan2<alphabet_t>(sequence_length,
-                                                                                 set_size,
-                                                                                 sequence_length_variance);
+    auto [vec1, vec2] =
+        seqan3::test::generate_sequence_pairs_seqan2<alphabet_t>(sequence_length, set_size, sequence_length_variance);
 
     auto scoring_scheme = std::get<0>(captured_args);
     auto exec = std::get<1>(captured_args);

@@ -8,10 +8,8 @@ using uint8x4_t = seqan3::simd::simd_type_t<uint8_t, 4>;
 
 int main()
 {
-    std::array<uint8x4_t, 4> matrix{{uint8x4_t{0, 1, 2, 3},
-                                     uint8x4_t{0, 1, 2, 3},
-                                     uint8x4_t{0, 1, 2, 3},
-                                     uint8x4_t{0, 1, 2, 3}}};
+    std::array<uint8x4_t, 4> matrix{
+        {uint8x4_t{0, 1, 2, 3}, uint8x4_t{0, 1, 2, 3}, uint8x4_t{0, 1, 2, 3}, uint8x4_t{0, 1, 2, 3}}};
     seqan3::simd::transpose(matrix);
 
     seqan3::debug_stream << matrix[0] << '\n'; // [0,0,0,0]

@@ -58,9 +58,12 @@ public:
     }
     auto values_to_cmp()
     {
-        return std::make_tuple(/*low */'A'_dna4, 'A'_dna5,
-                               /*mid */'C'_dna4, 'C'_dna5,
-                               /*high*/'T'_dna4, 'T'_dna5);
+        return std::make_tuple(/*low */ 'A'_dna4,
+                               'A'_dna5,
+                               /*mid */ 'C'_dna4,
+                               'C'_dna5,
+                               /*high*/ 'T'_dna4,
+                               'T'_dna5);
     }
 };
 

@@ -18,9 +18,8 @@ template <typename t>
 class align_config_scoring_scheme_test : public ::testing::Test
 {
 public:
-
     using scheme_t = std::tuple_element_t<0, t>;
-    using alph_t   = std::tuple_element_t<1, t>;
+    using alph_t = std::tuple_element_t<1, t>;
 };
 
 using test_types = ::testing::Types<std::tuple<seqan3::aminoacid_scoring_scheme<int8_t>, seqan3::aa27>,
@@ -35,7 +34,7 @@ TYPED_TEST(align_config_scoring_scheme_test, config_element)
 
 TYPED_TEST(align_config_scoring_scheme_test, configuration)
 {
-    using alph_t   = typename TestFixture::alph_t;
+    using alph_t = typename TestFixture::alph_t;
     using scheme_t = typename TestFixture::scheme_t;
     {
         seqan3::align_cfg::scoring_scheme elem{scheme_t{}};

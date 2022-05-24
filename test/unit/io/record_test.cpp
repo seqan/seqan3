@@ -5,10 +5,10 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
 #include <algorithm>
 #include <sstream>
-
-#include <gtest/gtest.h>
 
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
@@ -47,7 +47,7 @@ TEST(fields, usage)
     EXPECT_TRUE(default_fields::contains(seqan3::field::qual));
     EXPECT_FALSE(default_fields::contains(seqan3::field::user_defined_0));
     EXPECT_EQ(default_fields::index_of(seqan3::field::seq), 0ul);
-    EXPECT_EQ(default_fields::index_of(seqan3::field::id),  1ul);
+    EXPECT_EQ(default_fields::index_of(seqan3::field::id), 1ul);
     EXPECT_EQ(default_fields::index_of(seqan3::field::qual), 2ul);
     EXPECT_EQ(default_fields::index_of(seqan3::field::user_defined_0), default_fields::npos);
 }
@@ -58,20 +58,17 @@ TEST(fields, usage)
 
 struct record : public ::testing::Test
 {
-    using types        = seqan3::type_list<std::string, seqan3::dna4_vector>;
+    using types = seqan3::type_list<std::string, seqan3::dna4_vector>;
     using types_as_ids = seqan3::fields<seqan3::field::id, seqan3::field::seq>;
-    using record_type  = seqan3::record<types, types_as_ids>;
+    using record_type = seqan3::record<types, types_as_ids>;
 };
 
 TEST_F(record, definition_tuple_traits)
 {
-    EXPECT_TRUE((std::is_same_v<typename record_type::base_type,
-                                std::tuple<std::string, seqan3::dna4_vector>>));
+    EXPECT_TRUE((std::is_same_v<typename record_type::base_type, std::tuple<std::string, seqan3::dna4_vector>>));
 
-    EXPECT_TRUE((std::is_same_v<std::tuple_element_t<0, record_type>,
-                                std::string>));
-    EXPECT_TRUE((std::is_same_v<std::tuple_element_t<1, record_type>,
-                                seqan3::dna4_vector>));
+    EXPECT_TRUE((std::is_same_v<std::tuple_element_t<0, record_type>, std::string>));
+    EXPECT_TRUE((std::is_same_v<std::tuple_element_t<1, record_type>, seqan3::dna4_vector>));
     EXPECT_EQ(std::tuple_size_v<record_type>, 2ul);
 
     EXPECT_TRUE(seqan3::tuple_like<record_type>);

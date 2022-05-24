@@ -15,7 +15,7 @@ int main()
 
     auto rna4_view = vector | seqan3::views::convert<seqan3::rna4>;
 
-    for (auto && chr: rna4_view) // converts lazily on-the-fly
+    for (auto && chr : rna4_view) // converts lazily on-the-fly
     {
         static_assert(std::same_as<decltype(chr), seqan3::rna4 &&>);
     }

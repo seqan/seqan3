@@ -83,17 +83,15 @@ TEST(rna15, string_literal)
 
 TEST(rna15, char_is_valid)
 {
-    constexpr auto validator = seqan3::is_char<'A'> || seqan3::is_char<'C'> || seqan3::is_char<'G'> ||
-                               seqan3::is_char<'T'> || seqan3::is_char<'U'> || seqan3::is_char<'a'> ||
-                               seqan3::is_char<'c'> || seqan3::is_char<'g'> || seqan3::is_char<'t'> ||
-                               seqan3::is_char<'u'> || seqan3::is_char<'N'> || seqan3::is_char<'n'> ||
-                               seqan3::is_char<'R'> || seqan3::is_char<'Y'> || seqan3::is_char<'S'> ||
-                               seqan3::is_char<'W'> || seqan3::is_char<'K'> || seqan3::is_char<'M'> ||
-                               seqan3::is_char<'B'> || seqan3::is_char<'D'> || seqan3::is_char<'H'> ||
-                               seqan3::is_char<'V'> || seqan3::is_char<'r'> || seqan3::is_char<'y'> ||
-                               seqan3::is_char<'s'> || seqan3::is_char<'w'> || seqan3::is_char<'k'> ||
-                               seqan3::is_char<'m'> || seqan3::is_char<'b'> || seqan3::is_char<'d'> ||
-                               seqan3::is_char<'h'> || seqan3::is_char<'v'>;
+    constexpr auto validator =
+        seqan3::is_char<'A'> || seqan3::is_char<'C'> || seqan3::is_char<'G'> || seqan3::is_char<'T'>
+        || seqan3::is_char<'U'> || seqan3::is_char<'a'> || seqan3::is_char<'c'> || seqan3::is_char<'g'>
+        || seqan3::is_char<'t'> || seqan3::is_char<'u'> || seqan3::is_char<'N'> || seqan3::is_char<'n'>
+        || seqan3::is_char<'R'> || seqan3::is_char<'Y'> || seqan3::is_char<'S'> || seqan3::is_char<'W'>
+        || seqan3::is_char<'K'> || seqan3::is_char<'M'> || seqan3::is_char<'B'> || seqan3::is_char<'D'>
+        || seqan3::is_char<'H'> || seqan3::is_char<'V'> || seqan3::is_char<'r'> || seqan3::is_char<'y'>
+        || seqan3::is_char<'s'> || seqan3::is_char<'w'> || seqan3::is_char<'k'> || seqan3::is_char<'m'>
+        || seqan3::is_char<'b'> || seqan3::is_char<'d'> || seqan3::is_char<'h'> || seqan3::is_char<'v'>;
     for (char c : std::views::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
         EXPECT_EQ(seqan3::rna15::char_is_valid(c), validator(c));
 }

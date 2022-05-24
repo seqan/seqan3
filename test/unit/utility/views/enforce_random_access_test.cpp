@@ -63,7 +63,6 @@ public:
 class sentinel_pseudo_random_access_range : public common_pseudo_random_access_range
 {
 public:
-
     template <typename u_iterator_t>
     class test_iterator : public seqan3::detail::inherited_iterator_base<test_iterator<u_iterator_t>, u_iterator_t>
     {
@@ -105,8 +104,7 @@ public:
             return this->base() - this->last;
         }
 
-        friend typename base_t::difference_type operator-(std::default_sentinel_t const &,
-                                                          test_iterator const & rhs)
+        friend typename base_t::difference_type operator-(std::default_sentinel_t const &, test_iterator const & rhs)
         {
             return rhs.last - rhs.base();
         }
@@ -139,9 +137,8 @@ template <typename t>
 class enforce_random_access_test : public ::testing::Test
 {};
 
-using testing_types = ::testing::Types<std::vector<int>,
-                                       common_pseudo_random_access_range,
-                                       sentinel_pseudo_random_access_range>;
+using testing_types =
+    ::testing::Types<std::vector<int>, common_pseudo_random_access_range, sentinel_pseudo_random_access_range>;
 
 TYPED_TEST_SUITE(enforce_random_access_test, testing_types, );
 

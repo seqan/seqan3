@@ -5,9 +5,9 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <sstream>
-
 #include <gtest/gtest.h>
+
+#include <sstream>
 
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
@@ -42,88 +42,64 @@ struct sam_file_data : public ::testing::Test
         header.ref_dict[header.ref_ids()[0]] = 0; // set up header which is otherwise done on file level
     }
 
-    std::vector<seqan3::dna5_vector> seqs
-    {
-        "ACGT"_dna5,
-        "AGGCTGNAG"_dna5,
-        "GGAGTATA"_dna5
+    std::vector<seqan3::dna5_vector> seqs{"ACGT"_dna5, "AGGCTGNAG"_dna5, "GGAGTATA"_dna5};
+
+    std::vector<std::string> ids{"read1", "read2", "read3"};
+
+    std::vector<std::vector<seqan3::phred42>> quals{
+        {"!##$"_phred42},
+        {"!##$&'()*"_phred42},
+        {"!!*+,-./"_phred42},
     };
 
-    std::vector<std::string> ids
-    {
-        "read1",
-        "read2",
-        "read3"
-    };
-
-    std::vector<std::vector<seqan3::phred42>> quals
-    {
-        { "!##$"_phred42 },
-        { "!##$&'()*"_phred42 },
-        { "!!*+,-./"_phred42 },
-    };
-
-    std::vector<int32_t> offsets
-    {
-        1,
-        0,
-        1
-    };
+    std::vector<int32_t> offsets{1, 0, 1};
 
     seqan3::dna5_vector ref_seq = "ACTGATCGAGAGGATCTAGAGGAGATCGTAGGAC"_dna5;
 
     std::vector<seqan3::gapped<seqan3::dna5>> ref_seq_gapped1 = {'A'_dna5, 'C'_dna5, 'T'_dna5, seqan3::gap{}};
-    std::vector<seqan3::gapped<seqan3::dna5>> ref_seq_gapped2 = {'C'_dna5, 'T'_dna5, 'G'_dna5, 'A'_dna5,
-                                                                 'T'_dna5, 'C'_dna5, 'G'_dna5, 'A'_dna5, 'G'_dna5};
-    std::vector<seqan3::gapped<seqan3::dna5>> ref_seq_gapped3 = {'T'_dna5, seqan3::gap{}, 'G'_dna5, seqan3::gap{},
-                                                                 'A'_dna5, seqan3::gap{}, 'T'_dna5, 'C'_dna5};
+    std::vector<seqan3::gapped<seqan3::dna5>> ref_seq_gapped2 =
+        {'C'_dna5, 'T'_dna5, 'G'_dna5, 'A'_dna5, 'T'_dna5, 'C'_dna5, 'G'_dna5, 'A'_dna5, 'G'_dna5};
+    std::vector<seqan3::gapped<seqan3::dna5>> ref_seq_gapped3 =
+        {'T'_dna5, seqan3::gap{}, 'G'_dna5, seqan3::gap{}, 'A'_dna5, seqan3::gap{}, 'T'_dna5, 'C'_dna5};
 
     std::string ref_id = "ref";
 
-    std::vector<int32_t> ref_offsets
-    {
-        0,
-        1,
-        2
-    };
+    std::vector<int32_t> ref_offsets{0, 1, 2};
 
-    std::vector<std::pair<std::vector<seqan3::gapped<seqan3::dna5>>,
-                          std::vector<seqan3::gapped<seqan3::dna5>>>> alignments
-    {
-        {ref_seq_gapped1, std::vector<seqan3::gapped<seqan3::dna5>>{'C'_dna5, seqan3::gap{}, 'G'_dna5, 'T'_dna5}},
-        {ref_seq_gapped2, std::vector<seqan3::gapped<seqan3::dna5>>{'A'_dna5, 'G'_dna5, 'G'_dna5, 'C'_dna5, 'T'_dna5,
-                                                                    'G'_dna5, 'N'_dna5, seqan3::gap{}, 'A'_dna5}},
-        {ref_seq_gapped3, std::vector<seqan3::gapped<seqan3::dna5>>{'G'_dna5, seqan3::gap{}, 'A'_dna5, 'G'_dna5,
-                                                                    'T'_dna5, 'A'_dna5, seqan3::gap{}, 'T'_dna5}}
-    };
+    std::vector<std::pair<std::vector<seqan3::gapped<seqan3::dna5>>, std::vector<seqan3::gapped<seqan3::dna5>>>>
+        alignments{
+            {ref_seq_gapped1, std::vector<seqan3::gapped<seqan3::dna5>>{'C'_dna5, seqan3::gap{}, 'G'_dna5, 'T'_dna5}},
+            {ref_seq_gapped2,
+             std::vector<seqan3::gapped<seqan3::dna5>>{'A'_dna5,
+                                                       'G'_dna5,
+                                                       'G'_dna5,
+                                                       'C'_dna5,
+                                                       'T'_dna5,
+                                                       'G'_dna5,
+                                                       'N'_dna5,
+                                                       seqan3::gap{},
+                                                       'A'_dna5}},
+            {ref_seq_gapped3,
+             std::vector<seqan3::gapped<seqan3::dna5>>{'G'_dna5,
+                                                       seqan3::gap{},
+                                                       'A'_dna5,
+                                                       'G'_dna5,
+                                                       'T'_dna5,
+                                                       'A'_dna5,
+                                                       seqan3::gap{},
+                                                       'T'_dna5}}};
 
-    std::vector<seqan3::sam_flag> flags
-    {
-        seqan3::sam_flag{41u},
-        seqan3::sam_flag{42u},
-        seqan3::sam_flag{43u}
-    };
+    std::vector<seqan3::sam_flag> flags{seqan3::sam_flag{41u}, seqan3::sam_flag{42u}, seqan3::sam_flag{43u}};
 
-    std::vector<uint8_t> mapqs
-    {
-        61u,
-        62u,
-        63u
-    };
+    std::vector<uint8_t> mapqs{61u, 62u, 63u};
 
-    std::vector<std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t>> mates
-    {
-        {0, 9, 300},
-        {0, 9, 300},
-        {0, 9, 300}
-    };
+    std::vector<std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t>> mates{{0, 9, 300},
+                                                                                           {0, 9, 300},
+                                                                                           {0, 9, 300}};
 
-    std::vector<seqan3::sam_tag_dictionary> tag_dicts
-    {
-        seqan3::sam_tag_dictionary{},
-        seqan3::sam_tag_dictionary{},
-        seqan3::sam_tag_dictionary{}
-    };
+    std::vector<seqan3::sam_tag_dictionary> tag_dicts{seqan3::sam_tag_dictionary{},
+                                                      seqan3::sam_tag_dictionary{},
+                                                      seqan3::sam_tag_dictionary{}};
 
     std::vector<seqan3::dna5_vector> ref_sequences{};
     std::vector<std::string> ref_ids{};
@@ -280,7 +256,7 @@ TYPED_TEST_P(sam_file_read, read_in_alignment_only_with_ref)
         }
     }
 
-    {   // empty cigar
+    { // empty cigar
         typename TestFixture::stream_type istream{this->empty_cigar};
         seqan3::sam_file_input fin{istream,
                                    this->ref_ids,
@@ -308,7 +284,7 @@ TYPED_TEST_P(sam_file_read, read_in_alignment_only_without_ref)
         }
     }
 
-    {   // empty cigar
+    { // empty cigar
         typename TestFixture::stream_type istream{this->empty_cigar};
         seqan3::sam_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::alignment>{}};
 
@@ -319,7 +295,7 @@ TYPED_TEST_P(sam_file_read, read_in_alignment_only_without_ref)
 
 TYPED_TEST_P(sam_file_read, read_mate_but_not_ref_id_with_ref)
 {
-    {   /*with reference information*/
+    { /*with reference information*/
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
         seqan3::sam_file_input fin{istream,
                                    this->ref_ids,
@@ -337,7 +313,7 @@ TYPED_TEST_P(sam_file_read, read_mate_but_not_ref_id_without_ref)
 {
     std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t> mate;
 
-    {   /*no reference information*/
+    { /*no reference information*/
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
         seqan3::sam_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::mate>{}};
 
@@ -349,16 +325,27 @@ TYPED_TEST_P(sam_file_read, read_mate_but_not_ref_id_without_ref)
 
 TYPED_TEST_P(sam_file_read, cigar_vector)
 {
-    std::vector<std::vector<seqan3::cigar>> expected
-    {
-        {{1, 'S'_cigar_operation}, {1, 'M'_cigar_operation}, {1, 'D'_cigar_operation}, {1, 'M'_cigar_operation},
-         {1, 'I'_cigar_operation}},
-        {{1, 'H'_cigar_operation}, {7, 'M'_cigar_operation}, {1, 'D'_cigar_operation}, {1, 'M'_cigar_operation},
-         {1, 'S'_cigar_operation}, {2, 'H'_cigar_operation}},
-        {{1, 'S'_cigar_operation}, {1, 'M'_cigar_operation}, {1, 'P'_cigar_operation}, {1, 'M'_cigar_operation},
-         {1, 'I'_cigar_operation}, {1, 'M'_cigar_operation}, {1, 'I'_cigar_operation}, {1, 'D'_cigar_operation},
-         {1, 'M'_cigar_operation}, {1, 'S'_cigar_operation}}
-    };
+    std::vector<std::vector<seqan3::cigar>> expected{{{1, 'S'_cigar_operation},
+                                                      {1, 'M'_cigar_operation},
+                                                      {1, 'D'_cigar_operation},
+                                                      {1, 'M'_cigar_operation},
+                                                      {1, 'I'_cigar_operation}},
+                                                     {{1, 'H'_cigar_operation},
+                                                      {7, 'M'_cigar_operation},
+                                                      {1, 'D'_cigar_operation},
+                                                      {1, 'M'_cigar_operation},
+                                                      {1, 'S'_cigar_operation},
+                                                      {2, 'H'_cigar_operation}},
+                                                     {{1, 'S'_cigar_operation},
+                                                      {1, 'M'_cigar_operation},
+                                                      {1, 'P'_cigar_operation},
+                                                      {1, 'M'_cigar_operation},
+                                                      {1, 'I'_cigar_operation},
+                                                      {1, 'M'_cigar_operation},
+                                                      {1, 'I'_cigar_operation},
+                                                      {1, 'D'_cigar_operation},
+                                                      {1, 'M'_cigar_operation},
+                                                      {1, 'S'_cigar_operation}}};
 
     typename TestFixture::stream_type istream{this->simple_three_reads_input};
     seqan3::sam_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::cigar>{}};
@@ -370,13 +357,13 @@ TYPED_TEST_P(sam_file_read, cigar_vector)
 
 TYPED_TEST_P(sam_file_read, format_error_ref_id_not_in_reference_information)
 {
-    {   // with reference information given
+    { // with reference information given
         typename TestFixture::stream_type istream{this->unknown_ref};
         seqan3::sam_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
         EXPECT_THROW((fin.begin()), seqan3::format_error);
     }
 
-    {   // with reference information in the header
+    { // with reference information in the header
         typename TestFixture::stream_type istream{this->unknown_ref_header};
         seqan3::sam_file_input fin{istream, TypeParam{}};
         EXPECT_THROW((fin.begin()), seqan3::format_error);
@@ -441,7 +428,7 @@ TYPED_TEST_P(sam_file_write, write_empty_members)
         seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
         using default_align_t = std::pair<std::span<seqan3::gapped<char>>, std::span<seqan3::gapped<char>>>;
-        using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
+        using default_mate_t = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
 
         fout.emplace_back(&(this->header),
                           std::string_view{},
@@ -465,16 +452,24 @@ TYPED_TEST_P(sam_file_write, default_options_all_members_specified)
 {
     this->tag_dicts[0]["NM"_tag] = 7;
     this->tag_dicts[0]["AS"_tag] = 2;
-    this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3,4,5};
+    this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3, 4, 5};
 
     {
         seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
         for (size_t i = 0; i < 3; ++i)
         {
-            ASSERT_NO_THROW(fout.emplace_back(&(this->header), this->ids[i], this->flags[i], 0/*ref_id*/,
-                                              this->ref_offsets[i], this->mapqs[i], this->alignments[i],
-                                              this->offsets[i], this->mates[i], this->seqs[i], this->quals[i],
+            ASSERT_NO_THROW(fout.emplace_back(&(this->header),
+                                              this->ids[i],
+                                              this->flags[i],
+                                              0 /*ref_id*/,
+                                              this->ref_offsets[i],
+                                              this->mapqs[i],
+                                              this->alignments[i],
+                                              this->offsets[i],
+                                              this->mates[i],
+                                              this->seqs[i],
+                                              this->quals[i],
                                               this->tag_dicts[i]));
         }
     }
@@ -487,29 +482,53 @@ TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
 {
     this->tag_dicts[0]["NM"_tag] = 7;
     this->tag_dicts[0]["AS"_tag] = 2;
-    this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3,4,5};
+    this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3, 4, 5};
 
     {
         // header ref_id_type is std::string
         seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
         // std::string
-        ASSERT_NO_THROW(fout.emplace_back(&(this->header), this->ids[0], this->flags[0],
-        /*----------------------->*/      this->ref_id,
-                                          this->ref_offsets[0], this->mapqs[0], this->alignments[0], this->offsets[0],
-                                          this->mates[0], this->seqs[0], this->quals[0], this->tag_dicts[0]));
+        ASSERT_NO_THROW(fout.emplace_back(&(this->header),
+                                          this->ids[0],
+                                          this->flags[0],
+                                          /*----------------------->*/ this->ref_id,
+                                          this->ref_offsets[0],
+                                          this->mapqs[0],
+                                          this->alignments[0],
+                                          this->offsets[0],
+                                          this->mates[0],
+                                          this->seqs[0],
+                                          this->quals[0],
+                                          this->tag_dicts[0]));
 
         // std::string_view
-        ASSERT_NO_THROW(fout.emplace_back(&(this->header), this->ids[1], this->flags[1],
-        /*----------------------->*/      std::string_view{this->ref_id},
-                                          this->ref_offsets[1], this->mapqs[1], this->alignments[1], this->offsets[1],
-                                          this->mates[1], this->seqs[1], this->quals[1], this->tag_dicts[1]));
+        ASSERT_NO_THROW(fout.emplace_back(&(this->header),
+                                          this->ids[1],
+                                          this->flags[1],
+                                          /*----------------------->*/ std::string_view{this->ref_id},
+                                          this->ref_offsets[1],
+                                          this->mapqs[1],
+                                          this->alignments[1],
+                                          this->offsets[1],
+                                          this->mates[1],
+                                          this->seqs[1],
+                                          this->quals[1],
+                                          this->tag_dicts[1]));
 
         // view on string
-        ASSERT_NO_THROW(fout.emplace_back(&(this->header), this->ids[2], this->flags[2],
-        /*----------------------->*/      this->ref_id | std::views::take(20),
-                                          this->ref_offsets[2], this->mapqs[2], this->alignments[2], this->offsets[2],
-                                          this->mates[2], this->seqs[2], this->quals[2], this->tag_dicts[2]));
+        ASSERT_NO_THROW(fout.emplace_back(&(this->header),
+                                          this->ids[2],
+                                          this->flags[2],
+                                          /*----------------------->*/ this->ref_id | std::views::take(20),
+                                          this->ref_offsets[2],
+                                          this->mapqs[2],
+                                          this->alignments[2],
+                                          this->offsets[2],
+                                          this->mates[2],
+                                          this->seqs[2],
+                                          this->quals[2],
+                                          this->tag_dicts[2]));
     }
 
     this->ostream.flush();
@@ -548,9 +567,17 @@ TYPED_TEST_P(sam_file_write, with_header)
 
         for (size_t i = 0; i < 3; ++i)
         {
-            ASSERT_NO_THROW(fout.emplace_back(&header, this->ids[i], this->flags[i], 0/*ref_id*/,
-                                              this->ref_offsets[i], this->mapqs[i], this->alignments[i],
-                                              this->offsets[i], this->mates[i], this->seqs[i], this->quals[i],
+            ASSERT_NO_THROW(fout.emplace_back(&header,
+                                              this->ids[i],
+                                              this->flags[i],
+                                              0 /*ref_id*/,
+                                              this->ref_offsets[i],
+                                              this->mapqs[i],
+                                              this->alignments[i],
+                                              this->offsets[i],
+                                              this->mates[i],
+                                              this->seqs[i],
+                                              this->quals[i],
                                               this->tag_dicts[i]));
         }
     }
@@ -562,20 +589,31 @@ TYPED_TEST_P(sam_file_write, with_header)
 
 TYPED_TEST_P(sam_file_write, cigar_vector)
 {
-    std::vector<std::vector<seqan3::cigar>> cigar_v
-    {
-        {{1, 'S'_cigar_operation}, {1, 'M'_cigar_operation}, {1, 'D'_cigar_operation}, {1, 'M'_cigar_operation},
-         {1, 'I'_cigar_operation}},
-        {{1, 'H'_cigar_operation}, {7, 'M'_cigar_operation}, {1, 'D'_cigar_operation}, {1, 'M'_cigar_operation},
-         {1, 'S'_cigar_operation}, {2, 'H'_cigar_operation}},
-        {{1, 'S'_cigar_operation}, {1, 'M'_cigar_operation}, {1, 'P'_cigar_operation}, {1, 'M'_cigar_operation},
-         {1, 'I'_cigar_operation}, {1, 'M'_cigar_operation}, {1, 'I'_cigar_operation}, {1, 'D'_cigar_operation},
-         {1, 'M'_cigar_operation}, {1, 'S'_cigar_operation}}
-    };
+    std::vector<std::vector<seqan3::cigar>> cigar_v{{{1, 'S'_cigar_operation},
+                                                     {1, 'M'_cigar_operation},
+                                                     {1, 'D'_cigar_operation},
+                                                     {1, 'M'_cigar_operation},
+                                                     {1, 'I'_cigar_operation}},
+                                                    {{1, 'H'_cigar_operation},
+                                                     {7, 'M'_cigar_operation},
+                                                     {1, 'D'_cigar_operation},
+                                                     {1, 'M'_cigar_operation},
+                                                     {1, 'S'_cigar_operation},
+                                                     {2, 'H'_cigar_operation}},
+                                                    {{1, 'S'_cigar_operation},
+                                                     {1, 'M'_cigar_operation},
+                                                     {1, 'P'_cigar_operation},
+                                                     {1, 'M'_cigar_operation},
+                                                     {1, 'I'_cigar_operation},
+                                                     {1, 'M'_cigar_operation},
+                                                     {1, 'I'_cigar_operation},
+                                                     {1, 'D'_cigar_operation},
+                                                     {1, 'M'_cigar_operation},
+                                                     {1, 'S'_cigar_operation}}};
 
     this->tag_dicts[0]["NM"_tag] = 7;
     this->tag_dicts[0]["AS"_tag] = 2;
-    this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3,4,5};
+    this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3, 4, 5};
 
     {
         seqan3::sam_file_output fout{this->ostream, TypeParam{}}; // default fields contain CIGAR and alignment
@@ -584,7 +622,7 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
             ASSERT_NO_THROW(fout.emplace_back(this->seqs[i],
                                               this->ids[i],
                                               this->offsets[i],
-                                              0/*ref_id*/,
+                                              0 /*ref_id*/,
                                               this->ref_offsets[i],
                                               this->alignments[i],
                                               cigar_v[i],
@@ -605,25 +643,35 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
 
     // 2. Write only the cigar, not the alignment
     {
-        seqan3::sam_file_output fout{this->ostream, TypeParam{}, seqan3::fields<seqan3::field::header_ptr,
-                                                                                seqan3::field::id,
-                                                                                seqan3::field::flag,
-                                                                                seqan3::field::ref_id,
-                                                                                seqan3::field::ref_offset,
-                                                                                seqan3::field::mapq,
-                                                                                seqan3::field::cigar,
-                                                                                     // cigar instead of alignment
-                                                                                seqan3::field::offset,
-                                                                                seqan3::field::mate,
-                                                                                seqan3::field::seq,
-                                                                                seqan3::field::qual,
-                                                                                seqan3::field::tags>{}};
+        seqan3::sam_file_output fout{this->ostream,
+                                     TypeParam{},
+                                     seqan3::fields<seqan3::field::header_ptr,
+                                                    seqan3::field::id,
+                                                    seqan3::field::flag,
+                                                    seqan3::field::ref_id,
+                                                    seqan3::field::ref_offset,
+                                                    seqan3::field::mapq,
+                                                    seqan3::field::cigar,
+                                                    // cigar instead of alignment
+                                                    seqan3::field::offset,
+                                                    seqan3::field::mate,
+                                                    seqan3::field::seq,
+                                                    seqan3::field::qual,
+                                                    seqan3::field::tags>{}};
 
         for (size_t i = 0ul; i < 3ul; ++i)
         {
-            ASSERT_NO_THROW(fout.emplace_back(&(this->header), this->ids[i], this->flags[i], 0/*ref_id*/,
-                                              this->ref_offsets[i], this->mapqs[i], cigar_v[i],
-                                              this->offsets[i], this->mates[i], this->seqs[i], this->quals[i],
+            ASSERT_NO_THROW(fout.emplace_back(&(this->header),
+                                              this->ids[i],
+                                              this->flags[i],
+                                              0 /*ref_id*/,
+                                              this->ref_offsets[i],
+                                              this->mapqs[i],
+                                              cigar_v[i],
+                                              this->offsets[i],
+                                              this->mates[i],
+                                              this->seqs[i],
+                                              this->quals[i],
                                               this->tag_dicts[i]));
         }
     }
@@ -644,10 +692,18 @@ TYPED_TEST_P(sam_file_write, special_cases)
         seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
         // std::string
-        ASSERT_NO_THROW(fout.emplace_back(&(this->header), this->ids[0], this->flags[0], rid,
-                                          this->ref_offsets[0], this->mapqs[0], this->alignments[0], this->offsets[0],
-                                          mate, this->seqs[0], this->quals[0], this->tag_dicts[0]));
-
+        ASSERT_NO_THROW(fout.emplace_back(&(this->header),
+                                          this->ids[0],
+                                          this->flags[0],
+                                          rid,
+                                          this->ref_offsets[0],
+                                          this->mapqs[0],
+                                          this->alignments[0],
+                                          this->offsets[0],
+                                          mate,
+                                          this->seqs[0],
+                                          this->quals[0],
+                                          this->tag_dicts[0]));
     }
 
     this->ostream.flush();
@@ -662,10 +718,18 @@ TYPED_TEST_P(sam_file_write, special_cases)
         seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
         // std::string
-        ASSERT_NO_THROW(fout.emplace_back(&(this->header), this->ids[0], this->flags[0], std::string(""),
-                                          this->ref_offsets[0], this->mapqs[0], this->alignments[0], this->offsets[0],
-                                          mate_str, this->seqs[0], this->quals[0], this->tag_dicts[0]));
-
+        ASSERT_NO_THROW(fout.emplace_back(&(this->header),
+                                          this->ids[0],
+                                          this->flags[0],
+                                          std::string(""),
+                                          this->ref_offsets[0],
+                                          this->mapqs[0],
+                                          this->alignments[0],
+                                          this->offsets[0],
+                                          mate_str,
+                                          this->seqs[0],
+                                          this->quals[0],
+                                          this->tag_dicts[0]));
     }
 
     this->ostream.flush();
@@ -677,17 +741,32 @@ TYPED_TEST_P(sam_file_write, format_errors)
     seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
     // ensure that only a ref_id that is listed in the header is allowed
-    EXPECT_THROW(fout.emplace_back(&(this->header), this->ids[0], this->flags[0],
+    EXPECT_THROW(fout.emplace_back(&(this->header),
+                                   this->ids[0],
+                                   this->flags[0],
                                    std::string("ref_id_that_does_not_exist"),
-                                   this->ref_offsets[0], this->mapqs[0], this->alignments[0],
-                                   this->offsets[0], this->mates[0], this->seqs[0], this->quals[0],
+                                   this->ref_offsets[0],
+                                   this->mapqs[0],
+                                   this->alignments[0],
+                                   this->offsets[0],
+                                   this->mates[0],
+                                   this->seqs[0],
+                                   this->quals[0],
                                    this->tag_dicts[0]),
                  seqan3::format_error);
 
     // no negative values except -1 are allowed fot the ref offset
-    EXPECT_THROW(fout.emplace_back(&(this->header), this->ids[0], this->flags[0], this->ref_id,
-                                   -3, this->mapqs[0], this->alignments[0],
-                                   this->offsets[0], this->mates[0], this->seqs[0], this->quals[0],
+    EXPECT_THROW(fout.emplace_back(&(this->header),
+                                   this->ids[0],
+                                   this->flags[0],
+                                   this->ref_id,
+                                   -3,
+                                   this->mapqs[0],
+                                   this->alignments[0],
+                                   this->offsets[0],
+                                   this->mates[0],
+                                   this->seqs[0],
+                                   this->quals[0],
                                    this->tag_dicts[0]),
                  seqan3::format_error);
 }

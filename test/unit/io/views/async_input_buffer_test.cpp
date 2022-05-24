@@ -23,8 +23,8 @@
 
 using seqan3::operator""_dna4;
 
-using iterator_type = std::ranges::iterator_t<
-    decltype(std::declval<seqan3::dna4_vector&>() | seqan3::views::async_input_buffer(3))>;
+using iterator_type =
+    std::ranges::iterator_t<decltype(std::declval<seqan3::dna4_vector &>() | seqan3::views::async_input_buffer(3))>;
 
 template <>
 struct iterator_fixture<iterator_type> : public ::testing::Test
@@ -85,7 +85,10 @@ TEST(async_input_buffer, destruct_with_full_buffer)
 
         // consume five elements (construction already consumes one)
         auto b = std::ranges::begin(v1);
-        ++b; ++b; ++b; ++b;
+        ++b;
+        ++b;
+        ++b;
+        ++b;
 
         /* Give time to rebuffer next five elements so the queue will not be empty.
          * This is not required for this test to be successful, but it is the only

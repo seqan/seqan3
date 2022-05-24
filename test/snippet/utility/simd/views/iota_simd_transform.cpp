@@ -11,10 +11,11 @@ int main()
 {
     // Generate ascending simd index using a iota view in combination with a transfor view.
     auto simd_iota_view = std::views::iota(0, 10)
-                        | std::views::transform([] (uint16_t const idx)
-                        {
-                            return seqan3::simd::fill<uint16x8_t>(idx);
-                        });
+                        | std::views::transform(
+                              [](uint16_t const idx)
+                              {
+                                  return seqan3::simd::fill<uint16x8_t>(idx);
+                              });
 
     for (auto && simd_id : simd_iota_view)
         seqan3::debug_stream << simd_id << '\n'; // [0, 0, ..., 0], [1, 1, ..., 1], ... [9, 9, ..., 9]

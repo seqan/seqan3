@@ -30,8 +30,10 @@ TEST(tmp_directory, unique)
     EXPECT_TRUE(t2.empty());
 
     // checking they are inside of /tmp
-    EXPECT_TRUE(std::filesystem::equivalent(std::filesystem::temp_directory_path(), std::filesystem::path{t1.path()}.parent_path()));
-    EXPECT_TRUE(std::filesystem::equivalent(std::filesystem::temp_directory_path(), std::filesystem::path{t2.path()}.parent_path()));
+    EXPECT_TRUE(std::filesystem::equivalent(std::filesystem::temp_directory_path(),
+                                            std::filesystem::path{t1.path()}.parent_path()));
+    EXPECT_TRUE(std::filesystem::equivalent(std::filesystem::temp_directory_path(),
+                                            std::filesystem::path{t2.path()}.parent_path()));
 }
 
 // move construction
@@ -80,7 +82,6 @@ TEST(tmp_directory, move_assignable)
     EXPECT_FALSE(std::filesystem::exists(p1));
     EXPECT_FALSE(std::filesystem::exists(p2));
     EXPECT_FALSE(std::filesystem::exists(p3));
-
 }
 
 // check destructor does all its cleanups
@@ -180,5 +181,4 @@ TEST(tmp_directory_throw, directory_not_writeable)
     std::filesystem::permissions(temporary_tmp_folder.path(),
                                  std::filesystem::perms::owner_write,
                                  std::filesystem::perm_options::add);
-
 }

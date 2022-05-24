@@ -21,7 +21,7 @@ namespace seqan3
 {
 struct my_tuple
 {
-    int   el0;
+    int el0;
     float el1;
 
     constexpr bool operator==(my_tuple const & rhs) const

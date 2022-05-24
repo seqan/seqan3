@@ -7,16 +7,17 @@
 
 #include <seqan3/core/platform.hpp>
 
-#include "alphabet_test_template.hpp"
 #include "alphabet_constexpr_test_template.hpp"
-#include "semi_alphabet_test_template.hpp"
+#include "alphabet_test_template.hpp"
 #include "semi_alphabet_constexpr_test_template.hpp"
+#include "semi_alphabet_test_template.hpp"
 
 // Tests the ADL-capabilities of the alphabet customisation point objects
 
 //![my_alph]
-#include <cstddef>                      // for size_t
-#include <seqan3/alphabet/concept.hpp>  // for seqan3::alphabet
+#include <cstddef> // for size_t
+
+#include <seqan3/alphabet/concept.hpp> // for seqan3::alphabet
 
 namespace my_namespace
 {
@@ -42,9 +43,15 @@ constexpr my_alph & assign_rank_to(size_t const r, my_alph & a) noexcept
 {
     switch (r)
     {
-        case 0:  a = my_alph::ZERO; return a;
-        case 1:  a = my_alph::ONE;  return a;
-        default: a = my_alph::TWO;  return a;
+    case 0:
+        a = my_alph::ZERO;
+        return a;
+    case 1:
+        a = my_alph::ONE;
+        return a;
+    default:
+        a = my_alph::TWO;
+        return a;
     }
 }
 
@@ -52,9 +59,12 @@ constexpr char to_char(my_alph const a) noexcept
 {
     switch (a)
     {
-        case my_alph::ZERO: return '0';
-        case my_alph::ONE:  return '1';
-        default:            return '2';
+    case my_alph::ZERO:
+        return '0';
+    case my_alph::ONE:
+        return '1';
+    default:
+        return '2';
     }
 }
 
@@ -62,9 +72,15 @@ constexpr my_alph & assign_char_to(char const c, my_alph & a) noexcept
 {
     switch (c)
     {
-        case '0': a = my_alph::ZERO; return a;
-        case '1': a = my_alph::ONE;  return a;
-        default:  a = my_alph::TWO;  return a;
+    case '0':
+        a = my_alph::ZERO;
+        return a;
+    case '1':
+        a = my_alph::ONE;
+        return a;
+    default:
+        a = my_alph::TWO;
+        return a;
     }
 }
 

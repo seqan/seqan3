@@ -99,28 +99,22 @@ TEST(dna16sam, string_literal)
     v.resize(5, 'A'_dna16sam);
     EXPECT_EQ(v, "AAAAA"_dna16sam);
 
-    std::vector<seqan3::dna16sam> w{'A'_dna16sam,
-                                     '='_dna16sam,
-                                     'G'_dna16sam,
-                                     'T'_dna16sam,
-                                     'U'_dna16sam,
-                                     'N'_dna16sam};
+    std::vector<seqan3::dna16sam> w{'A'_dna16sam, '='_dna16sam, 'G'_dna16sam, 'T'_dna16sam, 'U'_dna16sam, 'N'_dna16sam};
     EXPECT_EQ(w, "A=GTTN"_dna16sam);
 }
 
 TEST(dna16sam, char_is_valid)
 {
-    constexpr auto validator = seqan3::is_char<'A'> || seqan3::is_char<'C'> || seqan3::is_char<'G'> ||
-                               seqan3::is_char<'T'> || seqan3::is_char<'U'> || seqan3::is_char<'a'> ||
-                               seqan3::is_char<'c'> || seqan3::is_char<'g'> || seqan3::is_char<'t'> ||
-                               seqan3::is_char<'u'> || seqan3::is_char<'N'> || seqan3::is_char<'n'> ||
-                               seqan3::is_char<'R'> || seqan3::is_char<'Y'> || seqan3::is_char<'S'> ||
-                               seqan3::is_char<'W'> || seqan3::is_char<'K'> || seqan3::is_char<'M'> ||
-                               seqan3::is_char<'B'> || seqan3::is_char<'D'> || seqan3::is_char<'H'> ||
-                               seqan3::is_char<'V'> || seqan3::is_char<'r'> || seqan3::is_char<'y'> ||
-                               seqan3::is_char<'s'> || seqan3::is_char<'w'> || seqan3::is_char<'k'> ||
-                               seqan3::is_char<'m'> || seqan3::is_char<'b'> || seqan3::is_char<'d'> ||
-                               seqan3::is_char<'h'> || seqan3::is_char<'v'> || seqan3::is_char<'='>;
+    constexpr auto validator =
+        seqan3::is_char<'A'> || seqan3::is_char<'C'> || seqan3::is_char<'G'> || seqan3::is_char<'T'>
+        || seqan3::is_char<'U'> || seqan3::is_char<'a'> || seqan3::is_char<'c'> || seqan3::is_char<'g'>
+        || seqan3::is_char<'t'> || seqan3::is_char<'u'> || seqan3::is_char<'N'> || seqan3::is_char<'n'>
+        || seqan3::is_char<'R'> || seqan3::is_char<'Y'> || seqan3::is_char<'S'> || seqan3::is_char<'W'>
+        || seqan3::is_char<'K'> || seqan3::is_char<'M'> || seqan3::is_char<'B'> || seqan3::is_char<'D'>
+        || seqan3::is_char<'H'> || seqan3::is_char<'V'> || seqan3::is_char<'r'> || seqan3::is_char<'y'>
+        || seqan3::is_char<'s'> || seqan3::is_char<'w'> || seqan3::is_char<'k'> || seqan3::is_char<'m'>
+        || seqan3::is_char<'b'> || seqan3::is_char<'d'> || seqan3::is_char<'h'> || seqan3::is_char<'v'>
+        || seqan3::is_char<'='>;
 
     for (char c : std::views::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
         EXPECT_EQ(seqan3::dna16sam::char_is_valid(c), validator(c));

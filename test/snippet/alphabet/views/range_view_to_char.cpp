@@ -26,9 +26,15 @@ int main()
     auto v3 = qvec | seqan3::views::to_char;
     seqan3::debug_stream << v3 << '\n'; // [!,(,&,$,(,%,?,1,8]
 
-    std::vector<seqan3::dna4q> qcvec{{'C'_dna4, '!'_phred42}, {'A'_dna4, '('_phred42}, {'G'_dna4, '&'_phred42},
-                                     {'T'_dna4, '$'_phred42}, {'G'_dna4, '('_phred42}, {'A'_dna4, '%'_phred42},
-                                     {'C'_dna4, '?'_phred42}, {'T'_dna4, '1'_phred42}, {'A'_dna4, '8'_phred42}};
+    std::vector<seqan3::dna4q> qcvec{{'C'_dna4, '!'_phred42},
+                                     {'A'_dna4, '('_phred42},
+                                     {'G'_dna4, '&'_phred42},
+                                     {'T'_dna4, '$'_phred42},
+                                     {'G'_dna4, '('_phred42},
+                                     {'A'_dna4, '%'_phred42},
+                                     {'C'_dna4, '?'_phred42},
+                                     {'T'_dna4, '1'_phred42},
+                                     {'A'_dna4, '8'_phred42}};
     auto v4 = qcvec | seqan3::views::to_char;
     seqan3::debug_stream << v4 << '\n'; // [C,A,G,T,G,A,C,T,A]
 }

@@ -2,8 +2,8 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/search/configuration/max_error.hpp>
 #include <seqan3/search/configuration/hit.hpp>
+#include <seqan3/search/configuration/max_error.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/search/search.hpp>
 
@@ -16,8 +16,8 @@ int main()
                                           "GGCCAGACAACCCGGCGCTAATGCACTCA"_dna4};
     seqan3::dna4_vector query{"GCT"_dna4};
 
-    seqan3::configuration const search_config = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
-                                                seqan3::search_cfg::hit_all_best{};
+    seqan3::configuration const search_config =
+        seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} | seqan3::search_cfg::hit_all_best{};
 
     // Always provide a unified interface over the found hits independent of the index its text layout.
     seqan3::debug_stream << "Search in text collection:\n";

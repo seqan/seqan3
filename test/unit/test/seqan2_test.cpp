@@ -15,7 +15,7 @@
 // Note: this file will only test regressions encountered with seqan2 compatibility and has no claim to be complete
 
 #ifdef SEQAN3_HAS_SEQAN2
-#include <seqan/sequence.h>
+#    include <seqan/sequence.h>
 
 template <typename T>
 class seqan2_container : public ::testing::Test
@@ -89,11 +89,14 @@ TYPED_TEST(seqan2_container, std_iterator)
 }
 
 template <typename range_t>
-concept SeqAn2Range = requires(range_t range)
-{
-    {seqan::begin(range)} -> std::same_as<std::ranges::iterator_t<range_t>>;
-    {seqan::end(range)} -> std::same_as<std::ranges::iterator_t<range_t>>;
-};
+concept SeqAn2Range = requires (range_t range) {
+                          {
+                              seqan::begin(range)
+                              } -> std::same_as<std::ranges::iterator_t<range_t>>;
+                          {
+                              seqan::end(range)
+                              } -> std::same_as<std::ranges::iterator_t<range_t>>;
+                      };
 
 TYPED_TEST(seqan2_container, seqan_range_concept)
 {

@@ -26,7 +26,7 @@ TYPED_TEST_SUITE_P(bi_fm_index_cursor_test);
 
 TYPED_TEST_P(bi_fm_index_cursor_test, cursor)
 {
-    typename TypeParam::index_type bi_fm{this->text1};  // "AACGATCGGA"
+    typename TypeParam::index_type bi_fm{this->text1}; // "AACGATCGGA"
 
     seqan3::fm_index fm_fwd{this->text1};
     seqan3::fm_index fm_rev{this->rev_text2};
@@ -37,7 +37,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, cursor)
 
 TYPED_TEST_P(bi_fm_index_cursor_test, extend)
 {
-    typename TypeParam::index_type bi_fm{seqan3::views::slice(this->text, 0, 11)};  // "ACGGTAGGACG"
+    typename TypeParam::index_type bi_fm{seqan3::views::slice(this->text, 0, 11)}; // "ACGGTAGGACG"
     using result_t = std::vector<std::pair<uint64_t, uint64_t>>;
 
     auto it = bi_fm.cursor();
@@ -57,7 +57,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, extend)
 
 TYPED_TEST_P(bi_fm_index_cursor_test, extend_char)
 {
-    typename TypeParam::index_type bi_fm{seqan3::views::slice(this->text, 0, 11)};  // "ACGGTAGGACG"
+    typename TypeParam::index_type bi_fm{seqan3::views::slice(this->text, 0, 11)}; // "ACGGTAGGACG"
     using result_t = std::vector<std::pair<uint64_t, uint64_t>>;
 
     auto it = bi_fm.cursor();
@@ -85,14 +85,15 @@ TYPED_TEST_P(bi_fm_index_cursor_test, extend_char)
 
 TYPED_TEST_P(bi_fm_index_cursor_test, extend_range)
 {
-    typename TypeParam::index_type bi_fm{seqan3::views::slice(this->text, 0, 11)};  // "ACGGTAGGACG"
+    typename TypeParam::index_type bi_fm{seqan3::views::slice(this->text, 0, 11)}; // "ACGGTAGGACG"
     using result_t = std::vector<std::pair<uint64_t, uint64_t>>;
 
     auto it = bi_fm.cursor();
     EXPECT_FALSE(it.extend_left(this->pattern1)); // ""
     // sentinel position included
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (result_t{{0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7},
-                                                       {0, 8}, {0, 9}, {0, 10}, {0, 11}}));
+    EXPECT_EQ(
+        seqan3::uniquify(it.locate()),
+        (result_t{{0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}, {0, 8}, {0, 9}, {0, 10}, {0, 11}}));
     EXPECT_TRUE(it.extend_left(seqan3::views::slice(this->text, 1, 3))); // "CG"
     EXPECT_EQ(seqan3::uniquify(it.locate()), (result_t{{0, 1}, {0, 9}}));
     EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text, 3, 6))); // "CGGTA"
@@ -105,7 +106,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, extend_range)
 
 TYPED_TEST_P(bi_fm_index_cursor_test, extend_and_cycle)
 {
-    typename TypeParam::index_type bi_fm{seqan3::views::slice(this->text, 0, 11)};  // "ACGGTAGGACG"
+    typename TypeParam::index_type bi_fm{seqan3::views::slice(this->text, 0, 11)}; // "ACGGTAGGACG"
     using result_t = std::vector<std::pair<uint64_t, uint64_t>>;
 
     auto it = bi_fm.cursor();
@@ -126,7 +127,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, extend_and_cycle)
 
 TYPED_TEST_P(bi_fm_index_cursor_test, extend_range_and_cycle)
 {
-    typename TypeParam::index_type bi_fm{seqan3::views::slice(this->text, 0, 14)};  // "ACGGTAGGACGTAG"
+    typename TypeParam::index_type bi_fm{seqan3::views::slice(this->text, 0, 14)}; // "ACGGTAGGACGTAG"
     using result_t = std::vector<std::pair<uint64_t, uint64_t>>;
 
     auto it = bi_fm.cursor();
@@ -140,7 +141,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, extend_range_and_cycle)
 #ifndef NDEBUG
     EXPECT_DEATH(it.cycle_front(), "");
 #endif
-    EXPECT_FALSE(it.extend_left(this->pattern2)); // "AG" ("TT")
+    EXPECT_FALSE(it.extend_left(this->pattern2));                         // "AG" ("TT")
     EXPECT_TRUE(it.extend_left(seqan3::views::slice(this->text, 9, 12))); // "CGTAG"
     EXPECT_EQ(seqan3::uniquify(it.locate()), (result_t{{0, 9}}));
 #ifndef NDEBUG
@@ -152,7 +153,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, extend_range_and_cycle)
 
 TYPED_TEST_P(bi_fm_index_cursor_test, to_fwd_cursor)
 {
-    typename TypeParam::index_type bi_fm{this->text};   // "ACGGTAGGACGTAGC"
+    typename TypeParam::index_type bi_fm{this->text}; // "ACGGTAGGACGTAGC"
     using result_t = std::vector<std::pair<uint64_t, uint64_t>>;
 
     {
@@ -173,9 +174,9 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_fwd_cursor)
         EXPECT_EQ(seqan3::uniquify(it.locate()), (result_t{{0, 3}, {0, 10}}));
 
         auto fwd_it = it.to_fwd_cursor();
-    #ifndef NDEBUG
+#ifndef NDEBUG
         EXPECT_DEATH(fwd_it.cycle_back(), "");
-    #endif
+#endif
         EXPECT_TRUE(fwd_it.extend_right());
         EXPECT_EQ(seqan3::uniquify(fwd_it.locate()), (result_t{{0, 10}}));
         EXPECT_RANGE_EQ(fwd_it.path_label(this->text), seqan3::views::slice(this->text, 10, 15)); // "GTAGC"
@@ -195,5 +196,12 @@ TYPED_TEST_P(bi_fm_index_cursor_test, serialisation)
     seqan3::test::do_serialisation(it);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(bi_fm_index_cursor_test, cursor, extend, extend_char, extend_range, extend_and_cycle,
-                            extend_range_and_cycle, to_fwd_cursor, serialisation);
+REGISTER_TYPED_TEST_SUITE_P(bi_fm_index_cursor_test,
+                            cursor,
+                            extend,
+                            extend_char,
+                            extend_range,
+                            extend_and_cycle,
+                            extend_range_and_cycle,
+                            to_fwd_cursor,
+                            serialisation);

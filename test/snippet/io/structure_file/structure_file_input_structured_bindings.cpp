@@ -16,19 +16,18 @@ int main()
 {
     using seqan3::get;
 
-    using structure_file_input_t = seqan3::structure_file_input<seqan3::structure_file_input_default_traits_aa,
-                                                                seqan3::fields<seqan3::field::seq,
-                                                                               seqan3::field::id,
-                                                                               seqan3::field::structure>,
-                                                                seqan3::type_list<seqan3::format_vienna>>;
+    using structure_file_input_t =
+        seqan3::structure_file_input<seqan3::structure_file_input_default_traits_aa,
+                                     seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::structure>,
+                                     seqan3::type_list<seqan3::format_vienna>>;
 
     structure_file_input_t fin{std::istringstream{input}, seqan3::format_vienna{}};
 
     for (auto & [seq, id, structure] : fin)
     {
-        seqan3::debug_stream << "ID: "        << id                                  << '\n';
+        seqan3::debug_stream << "ID: " << id << '\n';
         // sequence and structure are converted to char on-the-fly
-        seqan3::debug_stream << "SEQ: "       << (seq | seqan3::views::to_char)       << '\n';
+        seqan3::debug_stream << "SEQ: " << (seq | seqan3::views::to_char) << '\n';
         seqan3::debug_stream << "STRUCTURE: " << (structure | seqan3::views::to_char) << '\n';
     }
 }

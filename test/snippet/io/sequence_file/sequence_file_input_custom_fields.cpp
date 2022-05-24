@@ -22,7 +22,7 @@ int main()
     for (auto & [id, seq, qual] : fin) // the order is now different, "id" comes first, because it was specified first
     {
         seqan3::debug_stream << "ID:  " << id << '\n';
-        seqan3::debug_stream << "SEQ: "  << seq << '\n';
+        seqan3::debug_stream << "SEQ: " << seq << '\n';
         seqan3::debug_stream << "QUAL: " << qual << '\n';
     }
 }

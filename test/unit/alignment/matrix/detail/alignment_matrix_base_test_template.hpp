@@ -7,8 +7,9 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/std/ranges>
+
+#include <seqan3/alignment/configuration/align_config_band.hpp>
 
 template <typename t>
 struct alignment_matrix_base_test : public ::testing::Test
@@ -135,5 +136,10 @@ TYPED_TEST_P(alignment_matrix_base_test, empty_col_row)
     }
 }
 
-REGISTER_TYPED_TEST_SUITE_P(alignment_matrix_base_test, range_concepts, begin_end, basic_construction, empty_row,
-                            empty_col, empty_col_row);
+REGISTER_TYPED_TEST_SUITE_P(alignment_matrix_base_test,
+                            range_concepts,
+                            begin_end,
+                            basic_construction,
+                            empty_row,
+                            empty_col,
+                            empty_col_row);

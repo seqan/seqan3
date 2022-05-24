@@ -14,7 +14,7 @@
 // Some test namespace to check if namespace information are preserved within the naming.
 namespace foo
 {
-template <typename ...type>
+template <typename... type>
 struct bar
 {};
 } // namespace foo
@@ -22,8 +22,13 @@ struct bar
 // Some types to test if type inspection works as expected.
 // Note that the returned name might differ between compiler vendors and thus must be adapted accordingly
 // in case this tests fails for those vendors.
-using reflection_types = ::testing::Types<char, char16_t const, char32_t &, short *, double const * const,
-                                          foo::bar<char> const &, foo::bar<foo::bar<char, double>>>;
+using reflection_types = ::testing::Types<char,
+                                          char16_t const,
+                                          char32_t &,
+                                          short *,
+                                          double const * const,
+                                          foo::bar<char> const &,
+                                          foo::bar<foo::bar<char, double>>>;
 
 // Helper type list to use some traits functions on type lists.
 using as_type_list_t = seqan3::detail::transfer_template_args_onto_t<reflection_types, seqan3::type_list>;
@@ -32,8 +37,13 @@ template <typename param_type>
 class type_inspection : public ::testing::Test
 {
     // The corresponding list of names that should be generated. Must have the same order as `reflection_types`.
-    inline static const std::vector names{"char", "char16_t const", "char32_t &", "short*", "double const* const",
-                                          "foo::bar<char> const &", "foo::bar<foo::bar<char, double> >"};
+    static inline const std::vector names{"char",
+                                          "char16_t const",
+                                          "char32_t &",
+                                          "short*",
+                                          "double const* const",
+                                          "foo::bar<char> const &",
+                                          "foo::bar<foo::bar<char, double> >"};
 
 public:
     // Returns the name of the type according to the list of names defined above.

@@ -36,23 +36,14 @@ TEST(dot_bracket3, concept_check)
 // assign_char functions
 TEST(dot_bracket3, assign_char)
 {
-    std::vector<char> input
-    {
-        '.', '(', ')',
-        ':', ',', '-', '_', '~', ';',
-        '<', '>', '[', ']', '{', '}',
-        'H', 'B', 'E', 'G', 'I', 'T', 'S'
-    };
+    std::vector<char> input{'.', '(', ')', ':', ',', '-', '_', '~', ';', '<', '>',
+                            '[', ']', '{', '}', 'H', 'B', 'E', 'G', 'I', 'T', 'S'};
 
-    std::vector<seqan3::dot_bracket3> cmp
-    {
-        '.'_db3, '('_db3, ')'_db3,
-        '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3,
-        '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3,
-        '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3
-    };
+    std::vector<seqan3::dot_bracket3> cmp{'.'_db3, '('_db3, ')'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3,
+                                          '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3,
+                                          '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3};
 
-    for (auto [ ch, cm ] : seqan3::views::zip(input, cmp))
+    for (auto [ch, cm] : seqan3::views::zip(input, cmp))
         EXPECT_EQ((seqan3::assign_char_to(ch, seqan3::dot_bracket3{})), cm);
 }
 

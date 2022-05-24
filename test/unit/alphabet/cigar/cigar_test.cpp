@@ -9,8 +9,8 @@
 
 #include <seqan3/alphabet/cigar/cigar.hpp>
 
-#include "../semi_alphabet_test_template.hpp"
 #include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 
 using seqan3::get;
 
@@ -54,7 +54,7 @@ TEST(cigar, assign_string)
     seqan3::cigar c1{};
     c1.assign_string("223M");
     EXPECT_EQ(uint32_t{223}, seqan3::to_rank(get<0>(c1)));
-    EXPECT_EQ('M',           get<1>(c1).to_char());
+    EXPECT_EQ('M', get<1>(c1).to_char());
 }
 
 TEST(cigar, constexpr_char_literal)

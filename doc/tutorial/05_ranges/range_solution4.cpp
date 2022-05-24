@@ -1,9 +1,9 @@
 #include <vector>
 
-#include <seqan3/alphabet/container/bitpacked_sequence.hpp>     // include bitpacked sequence
+#include <seqan3/alphabet/container/bitpacked_sequence.hpp> // include bitpacked sequence
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/argument_parser/all.hpp>                       // include argument parser
-#include <seqan3/core/debug_stream.hpp>                         // for debug_stream
+#include <seqan3/argument_parser/all.hpp> // include argument parser
+#include <seqan3/core/debug_stream.hpp>   // for debug_stream
 
 int main(int argc, char ** argv)
 {
@@ -17,9 +17,9 @@ int main(int argc, char ** argv)
 
     try
     {
-         myparser.parse();
+        myparser.parse();
     }
-    catch (seqan3::argument_parser_error const & ext)                     // catch user errors
+    catch (seqan3::argument_parser_error const & ext) // catch user errors
     {
         seqan3::debug_stream << "[Error] " << ext.what() << "\n";
         return -1;
@@ -29,8 +29,7 @@ int main(int argc, char ** argv)
     {
         seqan3::bitpacked_sequence<seqan3::dna4> vector;
         vector.resize(size, 'A'_dna4);
-        seqan3::debug_stream << "Allocated seqan3::bitpacked_sequence<seqan3::dna4> of size "
-                             << vector.size() << '\n';
+        seqan3::debug_stream << "Allocated seqan3::bitpacked_sequence<seqan3::dna4> of size " << vector.size() << '\n';
     }
     else
     {

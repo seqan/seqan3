@@ -22,269 +22,138 @@ struct debug_matrix_test : public ::testing::Test
     std::vector<seqan3::dna4> first_sequence = "AACACGTTAACCGGTT"_dna4;
     std::vector<seqan3::dna4> second_sequence = "ACGTACGT"_dna4;
 
-    std::vector<bool> masking_matrix
-    {
-        1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-        1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-        1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  1,
-        1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  1,
-        1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  1,
-        0,  1,  1,  1,  1,  1,  1,  0,  0,  0,  1,  1,  1,  1,  1,  0,  1,
-        0,  0,  1,  1,  1,  1,  0,  0,  0,  0,  0,  1,  1,  1,  0,  0,  1,
-        0,  0,  0,  1,  1,  0,  0,  0,  0,  0,  0,  0,  1,  1,  0,  0,  1,
-        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1
-    };
+    std::vector<bool> masking_matrix{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1,
+                                     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                     1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0,
+                                     1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0,
+                                     0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
 
-    std::vector<bool> transposed_masking_matrix
-    {
-        1,  1,  1,  1,  1,  0,  0,  0,  0,
-        1,  1,  1,  1,  1,  1,  0,  0,  0,
-        1,  1,  1,  1,  1,  1,  1,  0,  0,
-        1,  1,  1,  1,  1,  1,  1,  1,  0,
-        1,  1,  1,  1,  1,  1,  1,  1,  0,
-        1,  1,  1,  1,  1,  1,  1,  0,  0,
-        1,  1,  1,  1,  1,  1,  0,  0,  0,
-        1,  1,  1,  1,  1,  0,  0,  0,  0,
-        1,  1,  1,  1,  1,  0,  0,  0,  0,
-        1,  1,  1,  1,  1,  0,  0,  0,  0,
-        1,  1,  1,  1,  1,  1,  0,  0,  0,
-        1,  1,  1,  1,  1,  1,  1,  0,  0,
-        1,  1,  1,  1,  1,  1,  1,  1,  0,
-        1,  1,  1,  1,  1,  1,  1,  1,  0,
-        1,  1,  1,  1,  1,  1,  0,  0,  0,
-        1,  1,  0,  0,  0,  0,  0,  0,  0,
-        1,  1,  1,  1,  1,  1,  1,  1,  1
-    };
+    std::vector<bool> transposed_masking_matrix{
+        1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1,
+        1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0,
+        0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1,
+        1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1,
+        1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
-    std::vector<bool> masking_matrix_s9u_7u
-    {
-        1,  1,  1,  1,  1,  1,  1,
-        1,  1,  1,  1,  1,  1,  1,
-        1,  1,  1,  1,  1,  1,  1,
-        1,  1,  1,  1,  1,  1,  1,
-        1,  1,  1,  1,  1,  1,  1,
-        0,  1,  1,  1,  1,  1,  1,
-        0,  0,  1,  1,  1,  1,  0,
-        0,  0,  0,  1,  1,  0,  0,
-        0,  0,  0,  0,  0,  0,  0
-    };
+    std::vector<bool> masking_matrix_s9u_7u{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1,
+                                            0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    std::vector<bool> transposed_masking_matrix_s7u_9u
-    {
-        1,  1,  1,  1,  1,  0,  0,  0,  0,
-        1,  1,  1,  1,  1,  1,  0,  0,  0,
-        1,  1,  1,  1,  1,  1,  1,  0,  0,
-        1,  1,  1,  1,  1,  1,  1,  1,  0,
-        1,  1,  1,  1,  1,  1,  1,  1,  0,
-        1,  1,  1,  1,  1,  1,  1,  0,  0,
-        1,  1,  1,  1,  1,  1,  0,  0,  0
-    };
+    std::vector<bool> transposed_masking_matrix_s7u_9u{1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1,
+                                                       1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1,
+                                                       1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0};
 
-    std::vector<int> scores
-    {
-       -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,-16,
-       -1, -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,
-       -2, -1, -1, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,
-       -3, -2, -2, -2, -2, -3, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,
-       -4, -3, -3, -3, -3, -3, -4, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,
-       -5, -4, -3, -4, -3, -4, -4, -4, -4, -4, -5, -6, -7, -8, -9,-10,-11,
-       -6, -5, -4, -3, -4, -3, -4, -5, -5, -5, -5, -5, -6, -7, -8, -9,-10,
-       -7, -6, -5, -4, -4, -4, -3, -4, -5, -6, -6, -6, -6, -6, -7, -8, -9,
-       -8, -7, -6, -5, -5, -5, -4, -3, -4, -5, -6, -7, -7, -7, -7, -7, -8
-    };
+    std::vector<int> scores{
+        -0,  -1,  -2,  -3,  -4,  -5,  -6,  -7,  -8,  -9,  -10, -11, -12, -13, -14, -15, -16, -1,  -0,  -1, -2,  -3,
+        -4,  -5,  -6,  -7,  -8,  -9,  -10, -11, -12, -13, -14, -15, -2,  -1,  -1,  -1,  -2,  -3,  -4,  -5, -6,  -7,
+        -8,  -9,  -10, -11, -12, -13, -14, -3,  -2,  -2,  -2,  -2,  -3,  -3,  -4,  -5,  -6,  -7,  -8,  -9, -10, -11,
+        -12, -13, -4,  -3,  -3,  -3,  -3,  -3,  -4,  -3,  -4,  -5,  -6,  -7,  -8,  -9,  -10, -11, -12, -5, -4,  -3,
+        -4,  -3,  -4,  -4,  -4,  -4,  -4,  -5,  -6,  -7,  -8,  -9,  -10, -11, -6,  -5,  -4,  -3,  -4,  -3, -4,  -5,
+        -5,  -5,  -5,  -5,  -6,  -7,  -8,  -9,  -10, -7,  -6,  -5,  -4,  -4,  -4,  -3,  -4,  -5,  -6,  -6, -6,  -6,
+        -6,  -7,  -8,  -9,  -8,  -7,  -6,  -5,  -5,  -5,  -4,  -3,  -4,  -5,  -6,  -7,  -7,  -7,  -7,  -7, -8};
 
     seqan3::detail::row_wise_matrix<int> score_matrix{seqan3::detail::number_rows{9u},
                                                       seqan3::detail::number_cols{17u},
                                                       scores};
 
-    seqan3::detail::row_wise_matrix<int> transposed_score_matrix
-    {
+    seqan3::detail::row_wise_matrix<int> transposed_score_matrix{
         seqan3::detail::number_rows{17u},
         seqan3::detail::number_cols{9u},
-        std::vector
-        {
-           -0, -1, -2, -3, -4, -5, -6, -7, -8,
-           -1, -0, -1, -2, -3, -4, -5, -6, -7,
-           -2, -1, -1, -2, -3, -3, -4, -5, -6,
-           -3, -2, -1, -2, -3, -4, -3, -4, -5,
-           -4, -3, -2, -2, -3, -3, -4, -4, -5,
-           -5, -4, -3, -3, -3, -4, -3, -4, -5,
-           -6, -5, -4, -3, -4, -4, -4, -3, -4,
-           -7, -6, -5, -4, -3, -4, -5, -4, -3,
-           -8, -7, -6, -5, -4, -4, -5, -5, -4,
-           -9, -8, -7, -6, -5, -4, -5, -6, -5,
-          -10, -9, -8, -7, -6, -5, -5, -6, -6,
-          -11,-10, -9, -8, -7, -6, -5, -6, -7,
-          -12,-11,-10, -9, -8, -7, -6, -6, -7,
-          -13,-12,-11,-10, -9, -8, -7, -6, -7,
-          -14,-13,-12,-11,-10, -9, -8, -7, -7,
-          -15,-14,-13,-12,-11,-10, -9, -8, -7,
-          -16,-15,-14,-13,-12,-11,-10, -9, -8
-        }
-    };
+        std::vector{-0,  -1, -2, -3, -4,  -5,  -6,  -7,  -8,  -1,  -0,  -1, -2, -3, -4, -5,  -6,  -7,  -2,  -1,
+                    -1,  -2, -3, -3, -4,  -5,  -6,  -3,  -2,  -1,  -2,  -3, -4, -3, -4, -5,  -4,  -3,  -2,  -2,
+                    -3,  -3, -4, -4, -5,  -5,  -4,  -3,  -3,  -3,  -4,  -3, -4, -5, -6, -5,  -4,  -3,  -4,  -4,
+                    -4,  -3, -4, -7, -6,  -5,  -4,  -3,  -4,  -5,  -4,  -3, -8, -7, -6, -5,  -4,  -4,  -5,  -5,
+                    -4,  -9, -8, -7, -6,  -5,  -4,  -5,  -6,  -5,  -10, -9, -8, -7, -6, -5,  -5,  -6,  -6,  -11,
+                    -10, -9, -8, -7, -6,  -5,  -6,  -7,  -12, -11, -10, -9, -8, -7, -6, -6,  -7,  -13, -12, -11,
+                    -10, -9, -8, -7, -6,  -7,  -14, -13, -12, -11, -10, -9, -8, -7, -7, -15, -14, -13, -12, -11,
+                    -10, -9, -8, -7, -16, -15, -14, -13, -12, -11, -10, -9, -8}};
 
-    seqan3::detail::row_wise_matrix<std::optional<int>> masked_score_matrix
-    {
+    seqan3::detail::row_wise_matrix<std::optional<int>> masked_score_matrix{
         seqan3::detail::number_rows{9u},
         seqan3::detail::number_cols{17u},
-        std::vector<std::optional<int>>
-        {
-            -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,-16,
-            -1, -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,
-            -2, -1, -1, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,inf,-14,
-            -3, -2, -2, -2, -2, -3, -3, -4, -5, -6, -7, -8, -9,-10,-11,inf,-13,
-            -4, -3, -3, -3, -3, -3, -4, -3, -4, -5, -6, -7, -8, -9,-10,inf,-12,
-           inf, -4, -3, -4, -3, -4, -4,inf,inf,inf, -5, -6, -7, -8, -9,inf,-11,
-           inf,inf, -4, -3, -4, -3,inf,inf,inf,inf,inf, -5, -6, -7,inf,inf,-10,
-           inf,inf,inf, -4, -4,inf,inf,inf,inf,inf,inf,inf, -6, -6,inf,inf, -9,
-           inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf, -8
-        }
-    };
+        std::vector<std::optional<int>>{
+            -0,  -1,  -2,  -3,  -4,  -5,  -6,  -7,  -8,  -9,  -10, -11, -12, -13, -14, -15, -16, -1,  -0,  -1,
+            -2,  -3,  -4,  -5,  -6,  -7,  -8,  -9,  -10, -11, -12, -13, -14, -15, -2,  -1,  -1,  -1,  -2,  -3,
+            -4,  -5,  -6,  -7,  -8,  -9,  -10, -11, -12, inf, -14, -3,  -2,  -2,  -2,  -2,  -3,  -3,  -4,  -5,
+            -6,  -7,  -8,  -9,  -10, -11, inf, -13, -4,  -3,  -3,  -3,  -3,  -3,  -4,  -3,  -4,  -5,  -6,  -7,
+            -8,  -9,  -10, inf, -12, inf, -4,  -3,  -4,  -3,  -4,  -4,  inf, inf, inf, -5,  -6,  -7,  -8,  -9,
+            inf, -11, inf, inf, -4,  -3,  -4,  -3,  inf, inf, inf, inf, inf, -5,  -6,  -7,  inf, inf, -10, inf,
+            inf, inf, -4,  -4,  inf, inf, inf, inf, inf, inf, inf, -6,  -6,  inf, inf, -9,  inf, inf, inf, inf,
+            inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, inf, -8}};
 
-    seqan3::detail::row_wise_matrix<int> score_matrix_s9u_7u
-    {
+    seqan3::detail::row_wise_matrix<int> score_matrix_s9u_7u{
         seqan3::detail::number_rows{9u},
         seqan3::detail::number_cols{7u},
-        std::vector
-        {
-           -0, -1, -2, -3, -4, -5, -6,
-           -1, -0, -1, -2, -3, -4, -5,
-           -2, -1, -1, -1, -2, -3, -4,
-           -3, -2, -2, -2, -2, -3, -3,
-           -4, -3, -3, -3, -3, -3, -4,
-           -5, -4, -3, -4, -3, -4, -4,
-           -6, -5, -4, -3, -4, -3, -4,
-           -7, -6, -5, -4, -4, -4, -3,
-           -8, -7, -6, -5, -5, -5, -4
-        }
-    };
+        std::vector{-0, -1, -2, -3, -4, -5, -6, -1, -0, -1, -2, -3, -4, -5, -2, -1, -1, -1, -2, -3, -4,
+                    -3, -2, -2, -2, -2, -3, -3, -4, -3, -3, -3, -3, -3, -4, -5, -4, -3, -4, -3, -4, -4,
+                    -6, -5, -4, -3, -4, -3, -4, -7, -6, -5, -4, -4, -4, -3, -8, -7, -6, -5, -5, -5, -4}};
 
-    seqan3::detail::row_wise_matrix<int> transposed_score_matrix_s9u_7u
-    {
+    seqan3::detail::row_wise_matrix<int> transposed_score_matrix_s9u_7u{
         seqan3::detail::number_rows{7u},
         seqan3::detail::number_cols{9u},
-        std::vector
-        {
-           -0, -1, -2, -3, -4, -5, -6, -7, -8,
-           -1, -0, -1, -2, -3, -4, -5, -6, -7,
-           -2, -1, -1, -2, -3, -3, -4, -5, -6,
-           -3, -2, -1, -2, -3, -4, -3, -4, -5,
-           -4, -3, -2, -2, -3, -3, -4, -4, -5,
-           -5, -4, -3, -3, -3, -4, -3, -4, -5,
-           -6, -5, -4, -3, -4, -4, -4, -3, -4
-        }
-    };
+        std::vector{-0, -1, -2, -3, -4, -5, -6, -7, -8, -1, -0, -1, -2, -3, -4, -5, -6, -7, -2, -1, -1,
+                    -2, -3, -3, -4, -5, -6, -3, -2, -1, -2, -3, -4, -3, -4, -5, -4, -3, -2, -2, -3, -3,
+                    -4, -4, -5, -5, -4, -3, -3, -3, -4, -3, -4, -5, -6, -5, -4, -3, -4, -4, -4, -3, -4}};
 
-    seqan3::detail::row_wise_matrix<int> score_matrix_s4u_17u
-    {
+    seqan3::detail::row_wise_matrix<int> score_matrix_s4u_17u{
         seqan3::detail::number_rows{4u},
         seqan3::detail::number_cols{17u},
-        std::vector
-        {
-           -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,-16,
-           -1, -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,
-           -2, -1, -1, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,
-           -3, -2, -2, -2, -2, -3, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13
-        }
-    };
+        std::vector{-0, -1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12, -13, -14, -15, -16,
+                    -1, -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,  -10, -11, -12, -13, -14, -15,
+                    -2, -1, -1, -1, -2, -3, -4, -5, -6, -7, -8,  -9,  -10, -11, -12, -13, -14,
+                    -3, -2, -2, -2, -2, -3, -3, -4, -5, -6, -7,  -8,  -9,  -10, -11, -12, -13}};
 
-    seqan3::detail::trace_directions N{},
-        D{seqan3::detail::trace_directions::diagonal},
-        L{seqan3::detail::trace_directions::left},
-        U{seqan3::detail::trace_directions::up},
-        DL{D|L}, DU{D|U}, UL{U|L}, DUL{D|U|L};
+    seqan3::detail::trace_directions N{}, D{seqan3::detail::trace_directions::diagonal},
+        L{seqan3::detail::trace_directions::left}, U{seqan3::detail::trace_directions::up}, DL{D | L}, DU{D | U},
+        UL{U | L}, DUL{D | U | L};
 
-    std::vector<seqan3::detail::trace_directions> traces
-    {
-        N,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,
-        U,  D,  DL, L,  DL, L,  L,  L,  L,  DL, DL, L,  L,  L,  L,  L,  L,
-        U,  U,  D,  D,  L,  DL, L,  L,  L,  L,  L,  DL, DL, L,  L,  L,  L,
-        U,  U,  DU, DU, D,  DL, D,  L,  L,  L,  L,  L,  L,  DL, DL, L,  L,
-        U,  U,  DU, DU, DU, D,  DUL,D,  DL, L,  L,  L,  L,  L,  L,  DL, DL,
-        U,  DU, D,  DUL,D,  DUL,D,  U,  D,  D,  DL, L,  L,  L,  L,  L,  L,
-        U,  U,  U,  D,  UL, D,  L,  DUL,DU, DU, D,  D,  DL, L,  L,  L,  L,
-        U,  U,  U,  U,  D,  U,  D,  L,  L,  DUL,DU, DU, D,  D,  DL, L,  L,
-        U,  U,  U,  U,  DU, DU, U,  D,  DL, L,  L,  DUL,DU, DU, D,  D,  DL
-    };
+    std::vector<seqan3::detail::trace_directions> traces{
+        N,  L,  L,  L,  L,  L,   L,  L,  L,  L, L,   L,  L,   L,  L,  L, L, U,   D,  DL, L,  DL, L,   L, L,   L,
+        DL, DL, L,  L,  L,  L,   L,  L,  U,  U, D,   D,  L,   DL, L,  L, L, L,   L,  DL, DL, L,  L,   L, L,   U,
+        U,  DU, DU, D,  DL, D,   L,  L,  L,  L, L,   L,  DL,  DL, L,  L, U, U,   DU, DU, DU, D,  DUL, D, DL,  L,
+        L,  L,  L,  L,  L,  DL,  DL, U,  DU, D, DUL, D,  DUL, D,  U,  D, D, DL,  L,  L,  L,  L,  L,   L, U,   U,
+        U,  D,  UL, D,  L,  DUL, DU, DU, D,  D, DL,  L,  L,   L,  L,  U, U, U,   U,  D,  U,  D,  L,   L, DUL, DU,
+        DU, D,  D,  DL, L,  L,   U,  U,  U,  U, DU,  DU, U,   D,  DL, L, L, DUL, DU, DU, D,  D,  DL};
 
     seqan3::detail::row_wise_matrix<seqan3::detail::trace_directions> trace_matrix{seqan3::detail::number_rows{9u},
                                                                                    seqan3::detail::number_cols{17u},
                                                                                    traces};
 
-    seqan3::detail::row_wise_matrix<seqan3::detail::trace_directions> transposed_trace_matrix
-    {
+    seqan3::detail::row_wise_matrix<seqan3::detail::trace_directions> transposed_trace_matrix{
         seqan3::detail::number_rows{17u},
         seqan3::detail::number_cols{9u},
-        std::vector
-        {
-            N,  L,  L,  L,  L,  L,  L,  L,  L,
-            U,  D,  L,  L,  L,  DL, L,  L,  L,
-            U,  DU, D,  DL, DL, D,  L,  L,  L,
-            U,  U,  D,  DL, DL, DUL,D,  L,  L,
-            U,  DU, U,  D,  DL, D,  UL, D,  DL,
-            U,  U,  DU, DU, D,  DUL,D,  L,  DL,
-            U,  U,  U,  D,  DUL,D,  U,  D,  L,
-            U,  U,  U,  U,  D,  L,  DUL,U,  D,
-            U,  U,  U,  U,  DU, D,  DL, U,  DU,
-            U,  DU, U,  U,  U,  D,  DL, DUL,U,
-            U,  DU, U,  U,  U,  DU, D,  DL, U,
-            U,  U,  DU, U,  U,  U,  D,  DL, DUL,
-            U,  U,  DU, U,  U,  U,  DU, D,  DL,
-            U,  U,  U,  DU, U,  U,  U,  D,  DL,
-            U,  U,  U,  DU, U,  U,  U,  DU, D,
-            U,  U,  U,  U,  DU, U,  U,  U,  D,
-            U,  U,  U,  U,  DU, U,  U,  U,  DU
-        }
-    };
+        std::vector{N,   L,  L, L,   L,  L, L,   L,  L,  U,  D,   L, L,  L,  DL,  L,  L,  L, U,  DU,  D,  DL,
+                    DL,  D,  L, L,   L,  U, U,   D,  DL, DL, DUL, D, L,  L,  U,   DU, U,  D, DL, D,   UL, D,
+                    DL,  U,  U, DU,  DU, D, DUL, D,  L,  DL, U,   U, U,  D,  DUL, D,  U,  D, L,  U,   U,  U,
+                    U,   D,  L, DUL, U,  D, U,   U,  U,  U,  DU,  D, DL, U,  DU,  U,  DU, U, U,  U,   D,  DL,
+                    DUL, U,  U, DU,  U,  U, U,   DU, D,  DL, U,   U, U,  DU, U,   U,  U,  D, DL, DUL, U,  U,
+                    DU,  U,  U, U,   DU, D, DL,  U,  U,  U,  DU,  U, U,  U,  D,   DL, U,  U, U,  DU,  U,  U,
+                    U,   DU, D, U,   U,  U, U,   DU, U,  U,  U,   D, U,  U,  U,   U,  DU, U, U,  U,   DU}};
 
-    seqan3::detail::row_wise_matrix<seqan3::detail::trace_directions> masked_trace_matrix
-    {
+    seqan3::detail::row_wise_matrix<seqan3::detail::trace_directions> masked_trace_matrix{
         seqan3::detail::number_rows{9u},
         seqan3::detail::number_cols{17u},
-        std::vector
-        {
-            N,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,
-            U,  D,  DL, L,  DL, L,  L,  L,  L,  DL, DL, L,  L,  L,  L,  L,  L,
-            U,  U,  D,  D,  L,  DL, L,  L,  L,  L,  L,  DL, DL, L,  L,  N,  L,
-            U,  U,  DU, DU, D,  DL, D,  L,  L,  L,  L,  L,  L,  DL, DL, N,  L,
-            U,  U,  DU, DU, DU, D,  DUL,D,  DL, L,  L,  L,  L,  L,  L,  N,  DL,
-            N,  DU, D,  DUL,D,  DUL,D,  N,  N,  N,  DL, L,  L,  L,  L,  N,  L,
-            N,  N,  U,  D,  UL, D,  N,  N,  N,  N,  N,  D,  DL, L,  N,  N,  L,
-            N,  N,  N,  U,  D,  N,  N,  N,  N,  N,  N,  N,  D,  D,  N,  N,  L,
-            N,  N,  N,  N,  N,  N,  N,  N,  N,  N,  N,  N,  N,  N , N,  N,  DL
-        }
-    };
+        std::vector{N,  L,  L,  L, L,  L, L,  L, L,  L, L,   L, L,   L,  L, L, L, U,  D,  DL, L,  DL, L,   L, L,  L,
+                    DL, DL, L,  L, L,  L, L,  L, U,  U, D,   D, L,   DL, L, L, L, L,  L,  DL, DL, L,  L,   N, L,  U,
+                    U,  DU, DU, D, DL, D, L,  L, L,  L, L,   L, DL,  DL, N, L, U, U,  DU, DU, DU, D,  DUL, D, DL, L,
+                    L,  L,  L,  L, L,  N, DL, N, DU, D, DUL, D, DUL, D,  N, N, N, DL, L,  L,  L,  L,  N,   L, N,  N,
+                    U,  D,  UL, D, N,  N, N,  N, N,  D, DL,  L, N,   N,  L, N, N, N,  U,  D,  N,  N,  N,   N, N,  N,
+                    N,  D,  D,  N, N,  L, N,  N, N,  N, N,   N, N,   N,  N, N, N, N,  N,  N,  N,  N,  DL}};
 
-    seqan3::detail::row_wise_matrix<seqan3::detail::trace_directions> trace_matrix_s9u_7u
-    {
+    seqan3::detail::row_wise_matrix<seqan3::detail::trace_directions> trace_matrix_s9u_7u{
         seqan3::detail::number_rows{9u},
         seqan3::detail::number_cols{7u},
-        std::vector
-        {
-            N,  L,  L,  L,  L,  L,  L,
-            U,  D,  DL, L,  DL, L,  L,
-            U,  U,  D,  D,  L,  DL, L,
-            U,  U,  DU, DU, D,  DL, D,
-            U,  U,  DU, DU, DU, D,  DUL,
-            U,  DU, D,  DUL,D,  DUL,D,
-            U,  U,  U,  D,  UL, D,  L,
-            U,  U,  U,  U,  D,  U,  D,
-            U,  U,  U,  U,  DU, DU, U
-        }
-    };
+        std::vector{N, L, L,  L,  L,  L,  L, U, D, DL, L,  DL, L, L,   U, U,  D, D,   L,  DL,  L,
+                    U, U, DU, DU, D,  DL, D, U, U, DU, DU, DU, D, DUL, U, DU, D, DUL, D,  DUL, D,
+                    U, U, U,  D,  UL, D,  L, U, U, U,  U,  D,  U, D,   U, U,  U, U,   DU, DU,  U}};
 
-    seqan3::detail::row_wise_matrix<seqan3::detail::trace_directions> trace_matrix_s4u_17u
-    {
+    seqan3::detail::row_wise_matrix<seqan3::detail::trace_directions> trace_matrix_s4u_17u{
         seqan3::detail::number_rows{4u},
         seqan3::detail::number_cols{17u},
-        std::vector
-        {
-            N,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,
-            U,  D,  DL, L,  DL, L,  L,  L,  L,  DL, DL, L,  L,  L,  L,  L,  L,
-            U,  U,  D,  D,  L,  DL, L,  L,  L,  L,  L,  DL, DL, L,  L,  L,  L,
-            U,  U,  DU, DU, D,  DL, D,  L,  L,  L,  L,  L,  L,  DL, DL, L,  L
-        }
-    };
+        std::vector{N,  L, L, L,  L,  L, L, L,  L,  L, L,  L, L, L, L, L, L,  U, D,  DL, L, DL, L,
+                    L,  L, L, DL, DL, L, L, L,  L,  L, L,  U, U, D, D, L, DL, L, L,  L,  L, L,  DL,
+                    DL, L, L, L,  L,  U, U, DU, DU, D, DL, D, L, L, L, L, L,  L, DL, DL, L, L}};
 
     template <typename score_matrix_t>
     void test_score_matrix(score_matrix_t && matrix)
@@ -377,7 +246,8 @@ TEST_F(debug_matrix_test, construct_with_references)
 TEST_F(debug_matrix_test, construct_with_move)
 {
     using debug_matrix_type = decltype(seqan3::detail::debug_matrix{std::move(score_matrix),
-                                                    std::move(first_sequence), std::move(second_sequence)});
+                                                                    std::move(first_sequence),
+                                                                    std::move(second_sequence)});
     using matrix_type = typename debug_matrix_traits<debug_matrix_type>::matrix_type;
     using first_sequence_type = typename debug_matrix_traits<debug_matrix_type>::first_sequence_type;
     using second_sequence_type = typename debug_matrix_traits<debug_matrix_type>::second_sequence_type;
@@ -627,10 +497,10 @@ TEST_F(trace_matrix_test, equal)
     // last entry of second row
     std::vector<seqan3::detail::trace_directions> traces_unequal{traces};
     traces_unequal[2 * 16] = seqan3::detail::trace_directions::up;
-    seqan3::detail::row_wise_matrix<seqan3::detail::trace_directions>
-        trace_matrix_unequal{seqan3::detail::number_rows{9u},
-                             seqan3::detail::number_cols{17u},
-                             std::move(traces_unequal)};
+    seqan3::detail::row_wise_matrix<seqan3::detail::trace_directions> trace_matrix_unequal{
+        seqan3::detail::number_rows{9u},
+        seqan3::detail::number_cols{17u},
+        std::move(traces_unequal)};
 
     seqan3::detail::debug_matrix matrix{trace_matrix};
 
@@ -646,10 +516,10 @@ TEST_F(trace_matrix_test, not_equal)
     // last entry of second row
     std::vector<seqan3::detail::trace_directions> traces_unequal{traces};
     traces_unequal[2 * 16] = seqan3::detail::trace_directions::up;
-    seqan3::detail::row_wise_matrix<seqan3::detail::trace_directions>
-        trace_matrix_unequal{seqan3::detail::number_rows{9u},
-                             seqan3::detail::number_cols{17u},
-                             std::move(traces_unequal)};
+    seqan3::detail::row_wise_matrix<seqan3::detail::trace_directions> trace_matrix_unequal{
+        seqan3::detail::number_rows{9u},
+        seqan3::detail::number_cols{17u},
+        std::move(traces_unequal)};
 
     seqan3::detail::debug_matrix matrix{trace_matrix};
 

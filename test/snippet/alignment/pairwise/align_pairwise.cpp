@@ -9,23 +9,23 @@
 int main()
 {
     using namespace seqan3::literals;
-//![start]
+    //![start]
 
     // Configure the alignment kernel.
     auto config = seqan3::align_cfg::method_global{} | seqan3::align_cfg::edit_scheme;
 
     {
-    //![example1]
-    std::pair p{"ACGTAGC"_dna4, "AGTACGACG"_dna4};
-    auto result = seqan3::align_pairwise(p, config);
-    //![example1]
+        //![example1]
+        std::pair p{"ACGTAGC"_dna4, "AGTACGACG"_dna4};
+        auto result = seqan3::align_pairwise(p, config);
+        //![example1]
     }
 
     {
-    //![example2]
-    std::vector vec{"ACCA"_dna4, "ATTA"_dna4};
-    auto result = seqan3::align_pairwise(std::tie(vec[0], vec[1]), config);
-    //![example2]
+        //![example2]
+        std::vector vec{"ACCA"_dna4, "ATTA"_dna4};
+        auto result = seqan3::align_pairwise(std::tie(vec[0], vec[1]), config);
+        //![example2]
     }
 
     //![example3]
@@ -43,6 +43,6 @@ int main()
     for (auto const & res : seqan3::align_pairwise(vec, edit_config))
         seqan3::debug_stream << "The score: " << res.score() << "\n";
     //![example3]
-//![end]
+    //![end]
 }
 //![end]

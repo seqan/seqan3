@@ -5,10 +5,10 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <benchmark/benchmark.h>
+
 #include <random>
 #include <vector>
-
-#include <benchmark/benchmark.h>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/views/translate.hpp>
@@ -19,15 +19,18 @@
 #include <seqan3/utility/views/to.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
-#include <seqan/seq_io.h>
-#include <seqan/sequence.h>
-#include <seqan/translation.h>
+#    include <seqan/seq_io.h>
+#    include <seqan/sequence.h>
+#    include <seqan/translation.h>
 #endif
 
 // Tags used to define the benchmark type
-struct baseline_tag{}; // Baseline where view is applied and only iterating the output range is benchmarked
-struct translate_tag{}; // Benchmark view_translate followed by std::views::join
-struct translate_join_tag{}; // Benchmark seqan3::views::translate_join
+struct baseline_tag
+{}; // Baseline where view is applied and only iterating the output range is benchmarked
+struct translate_tag
+{}; // Benchmark view_translate followed by std::views::join
+struct translate_join_tag
+{}; // Benchmark seqan3::views::translate_join
 
 // ============================================================================
 //  sequential_read
@@ -79,7 +82,8 @@ BENCHMARK_TEMPLATE(sequential_read, translate_join_tag);
 // ============================================================================
 
 template <typename rng_t>
-void random_access_impl(benchmark::State & state, rng_t && rng,
+void random_access_impl(benchmark::State & state,
+                        rng_t && rng,
                         std::vector<size_t> const & access_positions_outer,
                         std::vector<size_t> const & access_positions_inner)
 {
@@ -144,8 +148,7 @@ void copy_impl(benchmark::State & state,
     for (auto _ : state)
     {
         std::vector<seqan3::aa27_vector> translated_aa_sequences{};
-        benchmark::DoNotOptimize(translated_aa_sequences = dna_sequence_collection
-                                                         | adaptor
+        benchmark::DoNotOptimize(translated_aa_sequences = dna_sequence_collection | adaptor
                                                          | seqan3::views::to<std::vector<seqan3::aa27_vector>>);
     }
 }
@@ -204,9 +207,9 @@ BENCHMARK_TEMPLATE(copy, translate_join_tag);
 
 #ifdef SEQAN3_HAS_SEQAN2
 BENCHMARK_TEMPLATE(copy, seqan::Serial, seqan::Owner<>);
-BENCHMARK_TEMPLATE(copy, seqan::Serial, seqan::Owner<seqan::ConcatDirect<> >);
+BENCHMARK_TEMPLATE(copy, seqan::Serial, seqan::Owner<seqan::ConcatDirect<>>);
 BENCHMARK_TEMPLATE(copy, seqan::Parallel, seqan::Owner<>);
-BENCHMARK_TEMPLATE(copy, seqan::Parallel, seqan::Owner<seqan::ConcatDirect<> >);
+BENCHMARK_TEMPLATE(copy, seqan::Parallel, seqan::Owner<seqan::ConcatDirect<>>);
 #endif // SEQAN3_HAS_SEQAN2
 
 // ============================================================================

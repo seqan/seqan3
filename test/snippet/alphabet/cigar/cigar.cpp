@@ -10,6 +10,6 @@ int main()
     letter.assign_string("10D");
     seqan3::debug_stream << letter << '\n'; // prints "10D"
 
-    letter.assign_string("20Z"); // Unknown strings are implicitly converted to 0P.
+    letter.assign_string("20Z");            // Unknown strings are implicitly converted to 0P.
     seqan3::debug_stream << letter << '\n'; // prints "0P"
 }

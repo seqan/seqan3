@@ -1,15 +1,16 @@
 //![start]
 #include <iostream>
-#include <vector>
-#include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/std/ranges>
+#include <vector>
+
+#include <seqan3/alphabet/nucleotide/all.hpp>
 
 using seqan3::operator""_dna5;
 
 template <std::ranges::forward_range urng_t> // the underlying range type
 struct my_iterator : std::ranges::iterator_t<urng_t>
 {
-//![start]
+    //![start]
     //![static_assert]
     static_assert(seqan3::nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>,
                   "You can only iterate over ranges of nucleotides!");
@@ -19,8 +20,8 @@ struct my_iterator : std::ranges::iterator_t<urng_t>
     using base_t = std::ranges::iterator_t<urng_t>;
 
     // these member types are just exposed from the base type
-    using value_type            = typename std::iterator_traits<base_t>::value_type;
-    using pointer               = typename std::iterator_traits<base_t>::pointer;
+    using value_type = typename std::iterator_traits<base_t>::value_type;
+    using pointer = typename std::iterator_traits<base_t>::pointer;
     //![solution1a]
     //![reference]
     // If the value_type is seqan3::dna5, the reference type of the vector is
@@ -28,19 +29,19 @@ struct my_iterator : std::ranges::iterator_t<urng_t>
     // in the vector through it's iterator.
     // This won't work anymore, because now we are creating new values on access
     // so we now need to change this type to reflect that:
-    using reference             = value_type;
+    using reference = value_type;
     //![reference]
 
     //![solution1b]
     // this member type is explicitly set to forward_iterator_tag because we are not
     // implementing the remaining requirements
-    using iterator_category     = std::forward_iterator_tag;
+    using iterator_category = std::forward_iterator_tag;
 
     // the following operators need to be explicitly defined, because the inherited
     // version has wrong return types (base_t instead of my_iterator)
     my_iterator & operator++()
     {
-        base_t::operator++();       // call the implementation of the base type
+        base_t::operator++(); // call the implementation of the base type
         return *this;
     }
 
@@ -71,7 +72,7 @@ struct my_iterator : std::ranges::iterator_t<urng_t>
     }
     //![dereference]
 
-//![end]
+    //![end]
 };
 
 // verify that your type models the concept

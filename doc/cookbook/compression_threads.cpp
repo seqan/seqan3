@@ -1,6 +1,6 @@
 #if defined(SEQAN3_HAS_ZLIB)
 //![example]
-#include <seqan3/io/all.hpp>
+#    include <seqan3/io/all.hpp>
 
 // The `bgzf_thread_count` is a variable that can only be changed during the runtime of a program.
 // The following does not work, the value must be overwritten within a function:

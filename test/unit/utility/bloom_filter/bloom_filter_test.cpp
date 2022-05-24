@@ -41,20 +41,15 @@ TYPED_TEST(bloom_filter_test, construction)
 
     // num hash functions defaults to two
     TypeParam bf1{TestFixture::make_bf(seqan3::bin_size{1024u})};
-    TypeParam bf2{TestFixture::make_bf(seqan3::bin_size{1024u},
-                                       seqan3::hash_function_count{2u})};
+    TypeParam bf2{TestFixture::make_bf(seqan3::bin_size{1024u}, seqan3::hash_function_count{2u})};
     EXPECT_TRUE(bf1 == bf2);
 
     // bin_size parameter is too small
     EXPECT_THROW((TestFixture::make_bf(seqan3::bin_size{0u})), std::logic_error);
     // not enough hash functions
-    EXPECT_THROW((TestFixture::make_bf(seqan3::bin_size{32u},
-                                       seqan3::hash_function_count{0u})),
-                 std::logic_error);
+    EXPECT_THROW((TestFixture::make_bf(seqan3::bin_size{32u}, seqan3::hash_function_count{0u})), std::logic_error);
     // too many hash functions
-    EXPECT_THROW((TestFixture::make_bf(seqan3::bin_size{32u},
-                                       seqan3::hash_function_count{6u})),
-                 std::logic_error);
+    EXPECT_THROW((TestFixture::make_bf(seqan3::bin_size{32u}, seqan3::hash_function_count{6u})), std::logic_error);
 }
 
 TYPED_TEST(bloom_filter_test, member_getter)
@@ -63,8 +58,7 @@ TYPED_TEST(bloom_filter_test, member_getter)
     EXPECT_EQ(t1.bit_size(), 1024u);
     EXPECT_EQ(t1.hash_function_count(), 2u);
 
-    TypeParam t2{TestFixture::make_bf(seqan3::bin_size{1019u},
-                                       seqan3::hash_function_count{3u})};
+    TypeParam t2{TestFixture::make_bf(seqan3::bin_size{1019u}, seqan3::hash_function_count{3u})};
     EXPECT_EQ(t2.bit_size(), 1019u);
     EXPECT_EQ(t2.hash_function_count(), 3u);
 }
@@ -83,8 +77,7 @@ TYPED_TEST(bloom_filter_test, contains)
 TYPED_TEST(bloom_filter_test, emplace)
 {
     // 1. Test uncompressed Bloom Filter directly because the compressed one is not mutable.
-    seqan3::bloom_filter bf{seqan3::bin_size{1024u},
-                            seqan3::hash_function_count{2u}};
+    seqan3::bloom_filter bf{seqan3::bin_size{1024u}, seqan3::hash_function_count{2u}};
 
     for (size_t hash : std::views::iota(0u, 64u))
         bf.emplace(hash);
@@ -98,8 +91,7 @@ TYPED_TEST(bloom_filter_test, emplace)
 TYPED_TEST(bloom_filter_test, counting)
 {
     // 1. Test uncompressed Bloom Filter directly because the compressed one is not mutable.
-    seqan3::bloom_filter bf{seqan3::bin_size{1024u},
-                            seqan3::hash_function_count{2u}};
+    seqan3::bloom_filter bf{seqan3::bin_size{1024u}, seqan3::hash_function_count{2u}};
 
     for (size_t hash : std::views::iota(0u, 128u))
         bf.emplace(hash);
@@ -117,8 +109,7 @@ TYPED_TEST(bloom_filter_test, counting)
 TYPED_TEST(bloom_filter_test, reset)
 {
     // 1. Test uncompressed Bloom Filter directly because the compressed one is not mutable.
-    seqan3::bloom_filter bf{seqan3::bin_size{1024u},
-                            seqan3::hash_function_count{2u}};
+    seqan3::bloom_filter bf{seqan3::bin_size{1024u}, seqan3::hash_function_count{2u}};
 
     for (size_t hash : std::views::iota(0u, 64u))
         bf.emplace(hash);

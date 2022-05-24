@@ -17,21 +17,20 @@
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/alphabet/aminoacid/aa20.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/test/performance/units.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
+#include <seqan3/test/performance/units.hpp>
 #include <seqan3/test/seqan2.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
-    #include <seqan/align.h>
+#    include <seqan/align.h>
 #endif
 
-constexpr auto nt_score_scheme = seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
-                                                                   seqan3::mismatch_score{-5}};
-constexpr auto affine_cfg = seqan3::align_cfg::method_global{} |
-                            seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
-                                                               seqan3::align_cfg::extension_score{-1}} |
-                            seqan3::align_cfg::scoring_scheme{nt_score_scheme};
+constexpr auto nt_score_scheme = seqan3::nucleotide_scoring_scheme{seqan3::match_score{4}, seqan3::mismatch_score{-5}};
+constexpr auto affine_cfg =
+    seqan3::align_cfg::method_global{}
+    | seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10}, seqan3::align_cfg::extension_score{-1}}
+    | seqan3::align_cfg::scoring_scheme{nt_score_scheme};
 
 // ============================================================================
 //  affine; score; dna4; single

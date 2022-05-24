@@ -14,12 +14,12 @@
 
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
+#include <seqan3/alphabet/nucleotide/dna15.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/nucleotide/dna15.hpp>
+#include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/alphabet/views/complement.hpp>
 #include <seqan3/alphabet/views/translate.hpp>
@@ -59,18 +59,18 @@ struct translate_single_view_test_fixture : public range_test_fixture
     {
         switch (translation_frames)
         {
-            case seqan3::translation_frames::forward_frame0:
-                return "TYVR"_aa27;
-            case seqan3::translation_frames::reverse_frame0:
-                return "YVRT"_aa27;
-            case seqan3::translation_frames::forward_frame1:
-                return "RTYV"_aa27;
-            case seqan3::translation_frames::reverse_frame1:
-                return "TYVR"_aa27;
-            case seqan3::translation_frames::forward_frame2:
-                return "VRT"_aa27;
-            case seqan3::translation_frames::reverse_frame2:
-                return "RTY"_aa27;
+        case seqan3::translation_frames::forward_frame0:
+            return "TYVR"_aa27;
+        case seqan3::translation_frames::reverse_frame0:
+            return "YVRT"_aa27;
+        case seqan3::translation_frames::forward_frame1:
+            return "RTYV"_aa27;
+        case seqan3::translation_frames::reverse_frame1:
+            return "TYVR"_aa27;
+        case seqan3::translation_frames::forward_frame2:
+            return "VRT"_aa27;
+        case seqan3::translation_frames::reverse_frame2:
+            return "RTY"_aa27;
         }
         return {};
     }
@@ -135,30 +135,30 @@ struct translate_view_test_fixture : public range_test_fixture
     {
         switch (translation_frames)
         {
-            case seqan3::translation_frames::forward_frame0:
-                return {"TYVR"_aa27};
-            case seqan3::translation_frames::reverse_frame0:
-                return {"YVRT"_aa27};
-            case seqan3::translation_frames::forward_frame1:
-                return {"RTYV"_aa27};
-            case seqan3::translation_frames::reverse_frame1:
-                return {"TYVR"_aa27};
-            case seqan3::translation_frames::forward_frame2:
-                return {"VRT"_aa27};
-            case seqan3::translation_frames::reverse_frame2:
-                return {"RTY"_aa27};
-            case seqan3::translation_frames::forward_reverse0:
-                return {"TYVR"_aa27, "YVRT"_aa27};
-            case seqan3::translation_frames::forward_reverse1:
-                return {"RTYV"_aa27, "TYVR"_aa27};
-            case seqan3::translation_frames::forward_reverse2:
-                return {"VRT"_aa27, "RTY"_aa27};
-            case seqan3::translation_frames::forward_frames:
-                return {"TYVR"_aa27, "RTYV"_aa27, "VRT"_aa27};
-            case seqan3::translation_frames::reverse_frames:
-                return {"YVRT"_aa27, "TYVR"_aa27, "RTY"_aa27};
-            case seqan3::translation_frames::six_frames:
-                return {"TYVR"_aa27, "RTYV"_aa27, "VRT"_aa27, "YVRT"_aa27, "TYVR"_aa27, "RTY"_aa27};
+        case seqan3::translation_frames::forward_frame0:
+            return {"TYVR"_aa27};
+        case seqan3::translation_frames::reverse_frame0:
+            return {"YVRT"_aa27};
+        case seqan3::translation_frames::forward_frame1:
+            return {"RTYV"_aa27};
+        case seqan3::translation_frames::reverse_frame1:
+            return {"TYVR"_aa27};
+        case seqan3::translation_frames::forward_frame2:
+            return {"VRT"_aa27};
+        case seqan3::translation_frames::reverse_frame2:
+            return {"RTY"_aa27};
+        case seqan3::translation_frames::forward_reverse0:
+            return {"TYVR"_aa27, "YVRT"_aa27};
+        case seqan3::translation_frames::forward_reverse1:
+            return {"RTYV"_aa27, "TYVR"_aa27};
+        case seqan3::translation_frames::forward_reverse2:
+            return {"VRT"_aa27, "RTY"_aa27};
+        case seqan3::translation_frames::forward_frames:
+            return {"TYVR"_aa27, "RTYV"_aa27, "VRT"_aa27};
+        case seqan3::translation_frames::reverse_frames:
+            return {"YVRT"_aa27, "TYVR"_aa27, "RTY"_aa27};
+        case seqan3::translation_frames::six_frames:
+            return {"TYVR"_aa27, "RTYV"_aa27, "VRT"_aa27, "YVRT"_aa27, "TYVR"_aa27, "RTY"_aa27};
         }
 
         return {};
@@ -198,12 +198,8 @@ class translate_adaptor_test : public ::testing::Test
 {};
 
 // add all alphabets here
-using nucleotide_types = ::testing::Types<seqan3::dna4,
-                                          seqan3::dna5,
-                                          seqan3::dna15,
-                                          seqan3::rna4,
-                                          seqan3::rna5,
-                                          seqan3::rna15>;
+using nucleotide_types =
+    ::testing::Types<seqan3::dna4, seqan3::dna5, seqan3::dna15, seqan3::rna4, seqan3::rna5, seqan3::rna15>;
 
 TYPED_TEST_SUITE(translate_adaptor_test, nucleotide_types, );
 
@@ -212,9 +208,8 @@ TYPED_TEST(translate_adaptor_test, view_translate_single_exceptions)
     auto vec = std::string_view{"ACGTACGTACGTA"} | seqan3::views::char_to<TypeParam>;
 
     // Construct with multiple frames
-    EXPECT_THROW(seqan3::views::translate_single(vec,
-                                                 seqan3::translation_frames::forward_frames),
-                                                 std::invalid_argument);
+    EXPECT_THROW(seqan3::views::translate_single(vec, seqan3::translation_frames::forward_frames),
+                 std::invalid_argument);
 
     // Construct with default (empty) frame
     auto view = seqan3::views::translate_single(vec, seqan3::translation_frames{});
@@ -244,13 +239,15 @@ TYPED_TEST(translate_adaptor_test, view_translate_single)
     EXPECT_RANGE_EQ("TYVR"_aa27, seqan3::views::translate_single(vec, seqan3::translation_frames::forward_frame0));
 
     // combinability
-    EXPECT_RANGE_EQ("CMHA"_aa27, vec | seqan3::views::complement
-                                     | seqan3::views::translate_single(seqan3::translation_frames::forward_frame0));
+    EXPECT_RANGE_EQ("CMHA"_aa27,
+                    vec | seqan3::views::complement
+                        | seqan3::views::translate_single(seqan3::translation_frames::forward_frame0));
 
     // combinability
-    EXPECT_RANGE_EQ("AHMC"_aa27, vec | seqan3::views::complement
-                                     | seqan3::views::translate_single(seqan3::translation_frames::forward_frame0)
-                                     | std::views::reverse);
+    EXPECT_RANGE_EQ("AHMC"_aa27,
+                    vec | seqan3::views::complement
+                        | seqan3::views::translate_single(seqan3::translation_frames::forward_frame0)
+                        | std::views::reverse);
 }
 
 TYPED_TEST(translate_adaptor_test, view_translate)
@@ -293,8 +290,8 @@ TYPED_TEST(translate_adaptor_test, view_translate)
     EXPECT_RANGE_EQ(v4[5], "RTY"_aa27);
 
     // user-defined frame combination
-    seqan3::translation_frames frames = seqan3::translation_frames::forward_frame0 |
-                                        seqan3::translation_frames::forward_frame2;
+    seqan3::translation_frames frames =
+        seqan3::translation_frames::forward_frame0 | seqan3::translation_frames::forward_frame2;
     auto v5 = vec | seqan3::views::translate(frames);
     EXPECT_EQ(v5.size(), 2u);
     EXPECT_RANGE_EQ(v5[0], "TYVR"_aa27);
@@ -313,16 +310,14 @@ TYPED_TEST(translate_adaptor_test, view_translate)
     EXPECT_RANGE_EQ(v7[1], "MHAC"_aa27);
 
     // combinability
-    auto v8 = vec
-            | seqan3::views::complement
-            | seqan3::views::translate(seqan3::translation_frames::forward_reverse0)
+    auto v8 = vec | seqan3::views::complement | seqan3::views::translate(seqan3::translation_frames::forward_reverse0)
             | std::views::take(1);
     EXPECT_EQ(v8.size(), 1u);
     EXPECT_RANGE_EQ(v8[0], "CMHA"_aa27);
 
     // combinability and function syntax
-    auto v9 = seqan3::detail::view_translate(seqan3::views::complement(vec),
-                                             seqan3::translation_frames::forward_reverse0);
+    auto v9 =
+        seqan3::detail::view_translate(seqan3::views::complement(vec), seqan3::translation_frames::forward_reverse0);
     EXPECT_EQ(v9.size(), 2u);
     EXPECT_RANGE_EQ(v9[0], "CMHA"_aa27);
     EXPECT_RANGE_EQ(v9[1], "MHAC"_aa27);

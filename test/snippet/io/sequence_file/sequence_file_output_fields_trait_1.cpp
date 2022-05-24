@@ -25,7 +25,7 @@ int main()
                                                                                {'A'_dna5, '1'_phred42},
                                                                                {'C'_dna5, '3'_phred42}};
 
-        auto view_on_seq  = seqan3::views::elements<0>(seq_qual);
+        auto view_on_seq = seqan3::views::elements<0>(seq_qual);
         auto view_on_qual = seqan3::views::elements<1>(seq_qual);
 
         // ...

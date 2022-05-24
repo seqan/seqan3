@@ -93,10 +93,10 @@ TEST_F(structure_file_input_class, construct_by_filename)
         using fields_seq = seqan3::fields<seqan3::field::seq>;
 
         seqan3::test::tmp_filename filename = create_file("> ID\nACGU\n....\n");
-        EXPECT_NO_THROW((seqan3::structure_file_input<seqan3::structure_file_input_default_traits_rna,
-                                                      fields_seq,
-                                                      seqan3::type_list<seqan3::format_vienna>>{filename.get_path(),
-                                                                                                fields_seq{}}));
+        EXPECT_NO_THROW((
+            seqan3::structure_file_input<seqan3::structure_file_input_default_traits_rna,
+                                         fields_seq,
+                                         seqan3::type_list<seqan3::format_vienna>>{filename.get_path(), fields_seq{}}));
     }
 }
 
@@ -112,21 +112,22 @@ TEST_F(structure_file_input_class, construct_from_stream)
                                                                                             seqan3::format_vienna{}}));
 
     /* stream + format_tag + fields */
-    EXPECT_NO_THROW((seqan3::structure_file_input<seqan3::structure_file_input_default_traits_rna,
-                                                  fields_seq_id_structure,
-                                                  seqan3::type_list<seqan3::format_vienna>>{std::istringstream{str},
-                                                                                            seqan3::format_vienna{},
-                                                                                            fields_seq_id_structure{}}));
+    EXPECT_NO_THROW(
+        (seqan3::structure_file_input<seqan3::structure_file_input_default_traits_rna,
+                                      fields_seq_id_structure,
+                                      seqan3::type_list<seqan3::format_vienna>>{std::istringstream{str},
+                                                                                seqan3::format_vienna{},
+                                                                                fields_seq_id_structure{}}));
 }
 
 TEST_F(structure_file_input_class, default_template_args)
 {
     /* default template args */
     using t = seqan3::structure_file_input<>;
-    EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
+    EXPECT_TRUE((std::is_same_v<typename t::traits_type, comp0>));
     EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-    EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
-    EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
+    EXPECT_TRUE((std::is_same_v<typename t::valid_formats, comp2>));
+    EXPECT_TRUE((std::is_same_v<typename t::stream_char_type, comp3>));
 }
 
 TEST_F(structure_file_input_class, guided_filename_constructor)
@@ -136,10 +137,10 @@ TEST_F(structure_file_input_class, guided_filename_constructor)
     seqan3::structure_file_input fin{filename.get_path()};
 
     using t = decltype(fin);
-    EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
+    EXPECT_TRUE((std::is_same_v<typename t::traits_type, comp0>));
     EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-    EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
-    EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
+    EXPECT_TRUE((std::is_same_v<typename t::valid_formats, comp2>));
+    EXPECT_TRUE((std::is_same_v<typename t::stream_char_type, comp3>));
 }
 
 TEST_F(structure_file_input_class, guided_filename_constructor_and_custom_fields)
@@ -149,10 +150,10 @@ TEST_F(structure_file_input_class, guided_filename_constructor_and_custom_fields
     seqan3::structure_file_input fin{filename.get_path(), seqan3::fields<seqan3::field::seq>{}};
 
     using t = decltype(fin);
-    EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
+    EXPECT_TRUE((std::is_same_v<typename t::traits_type, comp0>));
     EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, seqan3::fields<seqan3::field::seq>>));
-    EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
-    EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
+    EXPECT_TRUE((std::is_same_v<typename t::valid_formats, comp2>));
+    EXPECT_TRUE((std::is_same_v<typename t::stream_char_type, comp3>));
 }
 
 TEST_F(structure_file_input_class, guided_stream_constructor)
@@ -161,10 +162,10 @@ TEST_F(structure_file_input_class, guided_stream_constructor)
     seqan3::structure_file_input fin{std::istringstream{"> ID\nACGU\n....\n"}, seqan3::format_vienna{}};
 
     using t = decltype(fin);
-    EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
+    EXPECT_TRUE((std::is_same_v<typename t::traits_type, comp0>));
     EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-    EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      seqan3::type_list<seqan3::format_vienna>>));
-    EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
+    EXPECT_TRUE((std::is_same_v<typename t::valid_formats, seqan3::type_list<seqan3::format_vienna>>));
+    EXPECT_TRUE((std::is_same_v<typename t::stream_char_type, comp3>));
 }
 
 TEST_F(structure_file_input_class, amino_acids_traits)
@@ -173,10 +174,10 @@ TEST_F(structure_file_input_class, amino_acids_traits)
     seqan3::structure_file_input<seqan3::structure_file_input_default_traits_aa> fin{filename.get_path()};
 
     using t = decltype(fin);
-    EXPECT_TRUE((std::is_same_v<typename t::traits_type,        seqan3::structure_file_input_default_traits_aa>));
+    EXPECT_TRUE((std::is_same_v<typename t::traits_type, seqan3::structure_file_input_default_traits_aa>));
     EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-    EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
-    EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
+    EXPECT_TRUE((std::is_same_v<typename t::valid_formats, comp2>));
+    EXPECT_TRUE((std::is_same_v<typename t::stream_char_type, comp3>));
 }
 
 TEST_F(structure_file_input_class, modified_traits)
@@ -192,65 +193,50 @@ TEST_F(structure_file_input_class, modified_traits)
     //! [structure_file_input_class mod_traits]
 
     using t = decltype(fin);
-    EXPECT_TRUE((std::is_same_v<typename t::traits_type,        my_traits>));
+    EXPECT_TRUE((std::is_same_v<typename t::traits_type, my_traits>));
     EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-    EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
-    EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
+    EXPECT_TRUE((std::is_same_v<typename t::valid_formats, comp2>));
+    EXPECT_TRUE((std::is_same_v<typename t::stream_char_type, comp3>));
 }
 
 struct structure_file_input_read : public ::testing::Test
 {
     size_t const num_records = 2ul;
 
-    std::string const input
-    {
-        ">S.cerevisiae_tRNA-PHE M10740/1-73\n"
-        "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
-        "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
-        "> example\n"
-        "UUGGAGUACACAACCUGUACACUCUUUC\n"
-        "..(((((..(((...)))..)))))... (-3.71)\n"
-    };
+    std::string const input{">S.cerevisiae_tRNA-PHE M10740/1-73\n"
+                            "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
+                            "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
+                            "> example\n"
+                            "UUGGAGUACACAACCUGUACACUCUUUC\n"
+                            "..(((((..(((...)))..)))))... (-3.71)\n"};
 
-    seqan3::rna5_vector const seq_comp[2]
-    {
+    seqan3::rna5_vector const seq_comp[2]{
         "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA"_rna5,
-        "UUGGAGUACACAACCUGUACACUCUUUC"_rna5
-    };
+        "UUGGAGUACACAACCUGUACACUCUUUC"_rna5};
 
-    std::string const id_comp[2]
-    {
-        "S.cerevisiae_tRNA-PHE M10740/1-73",
-        "example"
-    };
+    std::string const id_comp[2]{"S.cerevisiae_tRNA-PHE M10740/1-73", "example"};
 
-    double const energy_comp[2]
-    {
-        -17.5, -3.71
-    };
+    double const energy_comp[2]{-17.5, -3.71};
 
-    std::vector<seqan3::wuss51> const structure_comp[2]
-    {
+    std::vector<seqan3::wuss51> const structure_comp[2]{
         "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))."_wuss51,
-        "..(((((..(((...)))..)))))..."_wuss51
-    };
+        "..(((((..(((...)))..)))))..."_wuss51};
 
-    std::vector<uint8_t> const interaction_comp[2]
-    {
-        {
-            71, 70, 69, 68, 67, 66, 65, 24, 23, 22, 21, 12, 11, 10,  9, 42, 41, 40, 39, 29,
-            28, 27, 26, 64, 63, 62, 61, 60, 52, 51, 50, 49, 48,  6,  5,  4,  3,  2,  1,  0
-        },
-        {
-            24, 23, 22, 21, 20, 17, 16, 15, 11, 10,  9,  6,  5,  4,  3,  2
-        }
-    };
+    std::vector<uint8_t> const interaction_comp[2]{{71, 70, 69, 68, 67, 66, 65, 24, 23, 22, 21, 12, 11, 10,
+                                                    9,  42, 41, 40, 39, 29, 28, 27, 26, 64, 63, 62, 61, 60,
+                                                    52, 51, 50, 49, 48, 6,  5,  4,  3,  2,  1,  0},
+                                                   {24, 23, 22, 21, 20, 17, 16, 15, 11, 10, 9, 6, 5, 4, 3, 2}};
 
     template <typename bpp_type>
     void bpp_test(bpp_type & bpp, std::vector<uint8_t> const & bpp_comp)
     {
         size_t idx = 0ul;
-        auto interactions = bpp | std::views::filter([] (auto & set) { return set.size() == 1; });
+        auto interactions = bpp
+                          | std::views::filter(
+                                [](auto & set)
+                                {
+                                    return set.size() == 1;
+                                });
         for (auto & elem : interactions)
         {
             EXPECT_EQ(elem.begin()->second, bpp_comp[idx++]);
@@ -259,11 +245,10 @@ struct structure_file_input_read : public ::testing::Test
     }
 
 #if defined(SEQAN3_HAS_ZLIB) || defined(SEQAN3_HAS_BZIP2)
-    template<typename input_file_t>
+    template <typename input_file_t>
     void decompression_impl(input_file_t & fin)
     {
-        size_t
-        counter = 0ul;
+        size_t counter = 0ul;
         for (auto & rec : fin)
         {
             EXPECT_RANGE_EQ(rec.sequence(), seq_comp[counter]);
@@ -324,7 +309,7 @@ TEST_F(structure_file_input_read, record_struct_bind)
                                                     seqan3::field::energy>{}};
 
     size_t counter = 0ul;
-    for (auto & [ sequence, id, bpp, structure, energy ] : fin)
+    for (auto & [sequence, id, bpp, structure, energy] : fin)
     {
         EXPECT_RANGE_EQ(sequence, seq_comp[counter]);
         EXPECT_RANGE_EQ(id, id_comp[counter]);
@@ -340,11 +325,11 @@ TEST_F(structure_file_input_read, record_custom_fields)
 {
     /* record based reading */
     seqan3::structure_file_input fin{std::istringstream{input},
-                             seqan3::format_vienna{},
-                             seqan3::fields<seqan3::field::id, seqan3::field::structured_seq>{}};
+                                     seqan3::format_vienna{},
+                                     seqan3::fields<seqan3::field::id, seqan3::field::structured_seq>{}};
 
     size_t counter = 0ul;
-    for (auto & [ id, seq_structure ] : fin)
+    for (auto & [id, seq_structure] : fin)
     {
         EXPECT_RANGE_EQ(id, id_comp[counter]);
         EXPECT_RANGE_EQ(seq_structure | seqan3::views::convert<seqan3::rna5>, seq_comp[counter]);
@@ -364,10 +349,11 @@ TEST_F(structure_file_input_read, record_file_view)
                                                     seqan3::field::structure,
                                                     seqan3::field::energy>{}};
 
-    auto minimum_length_filter = std::views::filter([] (auto const & rec)
-    {
-        return size(rec.sequence()) >= 5;
-    });
+    auto minimum_length_filter = std::views::filter(
+        [](auto const & rec)
+        {
+            return size(rec.sequence()) >= 5;
+        });
 
     size_t counter = 0ul; // the first record will be filtered out
     for (auto & rec : fin | minimum_length_filter)
@@ -388,20 +374,19 @@ TEST_F(structure_file_input_read, record_file_view)
 // ----------------------------------------------------------------------------
 
 #if defined(SEQAN3_HAS_ZLIB)
-std::string input_gz
-{
-    '\x1F','\x8B','\x08','\x00','\x00','\x00','\x00','\x00','\x00','\x03','\x55','\x8E','\xC1','\x0A','\xC2','\x40',
-    '\x0C','\x44','\xEF','\xF9','\x8A','\x3D','\x76','\x0F','\x5D','\x5B','\x14','\x7A','\x2B','\x84','\x20','\xF1',
-    '\xA2','\x88','\x92','\xB3','\x14','\xD9','\x43','\x41','\x41','\xB4','\x14','\x3F','\xDF','\x64','\x23','\x52',
-    '\x27','\xB0','\x64','\x1E','\x61','\x66','\xFB','\x70','\x4E','\xD7','\xFC','\xCC','\xF3','\xF8','\x1A','\x87',
-    '\x7C','\x99','\x4E','\x07','\xAC','\x8F','\xBB','\x6D','\xD8','\xB7','\x4D','\xB7','\x69','\x56','\x6D','\xDD',
-    '\xAD','\x81','\x89','\x19','\x45','\x04','\x99','\x84','\x90','\x45','\x58','\xBD','\x0E','\x31','\xA9','\x45',
-    '\x12','\x46','\x2C','\x07','\x86','\x59','\x48','\x81','\x8E','\x90','\x32','\x3D','\xB0','\x13','\x34','\x47',
-    '\x08','\x95','\x2B','\x25','\x7F','\x5D','\x51','\xF5','\x07','\x9C','\x98','\xAA','\x05','\x8E','\x0B','\x25',
-    '\xE8','\x43','\x7E','\x0F','\xF7','\xC7','\x2D','\x83','\xD7','\x0A','\x5A','\x13','\x96','\x6E','\x5B','\x85',
-    '\xF4','\x3F','\x04','\xBF','\x08','\xCF','\x29','\xB9','\xF1','\x1B','\x0F','\x1F','\xA0','\x5A','\xBE','\x54',
-    '\xFC','\x00','\x00','\x00'
-};
+std::string input_gz{
+    '\x1F', '\x8B', '\x08', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x03', '\x55', '\x8E', '\xC1', '\x0A',
+    '\xC2', '\x40', '\x0C', '\x44', '\xEF', '\xF9', '\x8A', '\x3D', '\x76', '\x0F', '\x5D', '\x5B', '\x14', '\x7A',
+    '\x2B', '\x84', '\x20', '\xF1', '\xA2', '\x88', '\x92', '\xB3', '\x14', '\xD9', '\x43', '\x41', '\x41', '\xB4',
+    '\x14', '\x3F', '\xDF', '\x64', '\x23', '\x52', '\x27', '\xB0', '\x64', '\x1E', '\x61', '\x66', '\xFB', '\x70',
+    '\x4E', '\xD7', '\xFC', '\xCC', '\xF3', '\xF8', '\x1A', '\x87', '\x7C', '\x99', '\x4E', '\x07', '\xAC', '\x8F',
+    '\xBB', '\x6D', '\xD8', '\xB7', '\x4D', '\xB7', '\x69', '\x56', '\x6D', '\xDD', '\xAD', '\x81', '\x89', '\x19',
+    '\x45', '\x04', '\x99', '\x84', '\x90', '\x45', '\x58', '\xBD', '\x0E', '\x31', '\xA9', '\x45', '\x12', '\x46',
+    '\x2C', '\x07', '\x86', '\x59', '\x48', '\x81', '\x8E', '\x90', '\x32', '\x3D', '\xB0', '\x13', '\x34', '\x47',
+    '\x08', '\x95', '\x2B', '\x25', '\x7F', '\x5D', '\x51', '\xF5', '\x07', '\x9C', '\x98', '\xAA', '\x05', '\x8E',
+    '\x0B', '\x25', '\xE8', '\x43', '\x7E', '\x0F', '\xF7', '\xC7', '\x2D', '\x83', '\xD7', '\x0A', '\x5A', '\x13',
+    '\x96', '\x6E', '\x5B', '\x85', '\xF4', '\x3F', '\x04', '\xBF', '\x08', '\xCF', '\x29', '\xB9', '\xF1', '\x1B',
+    '\x0F', '\x1F', '\xA0', '\x5A', '\xBE', '\x54', '\xFC', '\x00', '\x00', '\x00'};
 
 TEST_F(structure_file_input_read, decompression_by_filename_gz)
 {
@@ -427,19 +412,15 @@ TEST_F(structure_file_input_read, decompression_by_stream_gz)
 
 TEST_F(structure_file_input_read, read_empty_gz_file)
 {
-    std::string empty_zipped_file
-    {
-        '\x1f', '\x8b', '\x08', '\x08', '\x5a', '\x07', '\x98', '\x5c',
-        '\x00', '\x03', '\x66', '\x6f', '\x6f', '\x00', '\x03', '\x00',
-        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
-    };
+    std::string empty_zipped_file{'\x1f', '\x8b', '\x08', '\x08', '\x5a', '\x07', '\x98', '\x5c',
+                                  '\x00', '\x03', '\x66', '\x6f', '\x6f', '\x00', '\x03', '\x00',
+                                  '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'};
     seqan3::structure_file_input fin{std::istringstream{empty_zipped_file}, seqan3::format_vienna{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
 
-std::string input_bgzf
-{
+std::string input_bgzf{
     '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42', '\x43',
     '\x02', '\x00', '\xB6', '\x00', '\x55', '\x8E', '\xC1', '\x0A', '\x02', '\x31', '\x0C', '\x44', '\xEF', '\xF9',
     '\x8A', '\x1E', '\xDB', '\xC3', '\xD6', '\x96', '\x55', '\x7A', '\x5B', '\x08', '\x41', '\xE2', '\x45', '\x11',
@@ -455,8 +436,7 @@ std::string input_bgzf
     '\xA3', '\x61', '\xBD', '\x4F', '\xD1', '\xC1', '\x07', '\x38', '\xAB', '\x49', '\x82', '\x0C', '\x01', '\x00',
     '\x00', '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42',
     '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
-    '\x00'
-};
+    '\x00'};
 
 TEST_F(structure_file_input_read, decompression_by_filename_bgzf)
 {
@@ -482,12 +462,9 @@ TEST_F(structure_file_input_read, decompression_by_stream_bgzf)
 
 TEST_F(structure_file_input_read, read_empty_bgzf_file)
 {
-    std::string empty_bgzf_file
-    {
-        '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF',
-        '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00',
-        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
-    };
+    std::string empty_bgzf_file{'\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF',
+                                '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00',
+                                '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'};
     seqan3::structure_file_input fin{std::istringstream{empty_bgzf_file}, seqan3::format_vienna{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());
@@ -496,22 +473,21 @@ TEST_F(structure_file_input_read, read_empty_bgzf_file)
 #endif
 
 #if defined(SEQAN3_HAS_BZIP2)
-std::string input_bz2
-{
-    '\x42','\x5A','\x68','\x39','\x31','\x41','\x59','\x26','\x53','\x59','\xC7','\x0B','\xB5','\x7F','\x00','\x00',
-    '\x36','\x5F','\x80','\x6E','\x50','\x40','\x63','\xEC','\x81','\x2A','\xC3','\x5A','\x00','\xAA','\x26','\x5D',
-    '\x40','\x30','\x00','\xB8','\x84','\x53','\xC5','\x00','\x68','\x00','\x03','\x40','\x34','\x69','\xEA','\x18',
-    '\x01','\x93','\x4D','\x06','\x43','\x04','\x34','\xC4','\x68','\xC0','\x94','\xD3','\x52','\xA7','\xEA','\x9B',
-    '\x14','\xF2','\x69','\x1E','\xA7','\xA9','\xEA','\x68','\xC0','\x23','\x4D','\x35','\x85','\x85','\xCA','\x54',
-    '\xA4','\x4F','\xB6','\x4C','\xD9','\xCB','\x3C','\xCD','\x51','\x11','\xE5','\x16','\xEB','\x96','\x5A','\x11',
-    '\x7E','\x14','\xC1','\x50','\xCB','\x07','\x06','\x2B','\x15','\x01','\x5B','\x6E','\xD5','\x48','\x26','\xEA',
-    '\xCA','\x37','\x7B','\xE7','\xE9','\x9E','\xDD','\x0D','\x2B','\x79','\xF1','\xF4','\xB6','\x8B','\x78','\xB2',
-    '\x4D','\x0A','\x53','\x43','\x4D','\x0D','\x48','\xD0','\x98','\xDC','\xC4','\xC4','\x8C','\x7F','\x69','\x94',
-    '\x48','\xA2','\x99','\x15','\x53','\xA1','\x44','\xC1','\x31','\x02','\x5A','\xF5','\x91','\xA7','\x00','\x40',
-    '\x10','\xC2','\x66','\x06','\x02','\xE0','\x81','\x10','\x09','\x94','\x46','\x6E','\x8E','\xBD','\x26','\x2C',
-    '\xED','\x8D','\x97','\xE4','\x47','\xD1','\x4A','\x42','\x0F','\xC5','\xDC','\x91','\x4E','\x14','\x24','\x31',
-    '\xC2','\xED','\x5F','\xC0'
-};
+std::string input_bz2{
+    '\x42', '\x5A', '\x68', '\x39', '\x31', '\x41', '\x59', '\x26', '\x53', '\x59', '\xC7', '\x0B', '\xB5', '\x7F',
+    '\x00', '\x00', '\x36', '\x5F', '\x80', '\x6E', '\x50', '\x40', '\x63', '\xEC', '\x81', '\x2A', '\xC3', '\x5A',
+    '\x00', '\xAA', '\x26', '\x5D', '\x40', '\x30', '\x00', '\xB8', '\x84', '\x53', '\xC5', '\x00', '\x68', '\x00',
+    '\x03', '\x40', '\x34', '\x69', '\xEA', '\x18', '\x01', '\x93', '\x4D', '\x06', '\x43', '\x04', '\x34', '\xC4',
+    '\x68', '\xC0', '\x94', '\xD3', '\x52', '\xA7', '\xEA', '\x9B', '\x14', '\xF2', '\x69', '\x1E', '\xA7', '\xA9',
+    '\xEA', '\x68', '\xC0', '\x23', '\x4D', '\x35', '\x85', '\x85', '\xCA', '\x54', '\xA4', '\x4F', '\xB6', '\x4C',
+    '\xD9', '\xCB', '\x3C', '\xCD', '\x51', '\x11', '\xE5', '\x16', '\xEB', '\x96', '\x5A', '\x11', '\x7E', '\x14',
+    '\xC1', '\x50', '\xCB', '\x07', '\x06', '\x2B', '\x15', '\x01', '\x5B', '\x6E', '\xD5', '\x48', '\x26', '\xEA',
+    '\xCA', '\x37', '\x7B', '\xE7', '\xE9', '\x9E', '\xDD', '\x0D', '\x2B', '\x79', '\xF1', '\xF4', '\xB6', '\x8B',
+    '\x78', '\xB2', '\x4D', '\x0A', '\x53', '\x43', '\x4D', '\x0D', '\x48', '\xD0', '\x98', '\xDC', '\xC4', '\xC4',
+    '\x8C', '\x7F', '\x69', '\x94', '\x48', '\xA2', '\x99', '\x15', '\x53', '\xA1', '\x44', '\xC1', '\x31', '\x02',
+    '\x5A', '\xF5', '\x91', '\xA7', '\x00', '\x40', '\x10', '\xC2', '\x66', '\x06', '\x02', '\xE0', '\x81', '\x10',
+    '\x09', '\x94', '\x46', '\x6E', '\x8E', '\xBD', '\x26', '\x2C', '\xED', '\x8D', '\x97', '\xE4', '\x47', '\xD1',
+    '\x4A', '\x42', '\x0F', '\xC5', '\xDC', '\x91', '\x4E', '\x14', '\x24', '\x31', '\xC2', '\xED', '\x5F', '\xC0'};
 
 TEST_F(structure_file_input_read, decompression_by_filename_bz2)
 {
@@ -537,10 +513,20 @@ TEST_F(structure_file_input_read, decompression_by_stream_bz2)
 
 TEST_F(structure_file_input_read, read_empty_bz2_file)
 {
-    std::string empty_zipped_file
-    {
-        '\x42', '\x5a', '\x68', '\x39', '\x17', '\x72', '\x45', '\x38', '\x50', '\x90', '\x00', '\x00', '\x00', '\x00'
-    };
+    std::string empty_zipped_file{'\x42',
+                                  '\x5a',
+                                  '\x68',
+                                  '\x39',
+                                  '\x17',
+                                  '\x72',
+                                  '\x45',
+                                  '\x38',
+                                  '\x50',
+                                  '\x90',
+                                  '\x00',
+                                  '\x00',
+                                  '\x00',
+                                  '\x00'};
     seqan3::structure_file_input fin{std::istringstream{empty_zipped_file}, seqan3::format_vienna{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());

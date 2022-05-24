@@ -7,10 +7,10 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/alphabet/aminoacid/aa20.hpp>
 #include <seqan3/alphabet/mask/masked.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/aminoacid/aa20.hpp>
 
 #include "../alphabet_constexpr_test_template.hpp"
 #include "../alphabet_test_template.hpp"

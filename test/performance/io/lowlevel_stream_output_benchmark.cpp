@@ -18,7 +18,7 @@
 #include <seqan3/test/tmp_filename.hpp>
 
 #if SEQAN3_HAS_SEQAN2
-#include <seqan/stream.h>
+#    include <seqan/stream.h>
 #endif
 
 enum class tag
@@ -63,24 +63,24 @@ void write_all(benchmark::State & state)
             {
                 return seqan3::detail::fast_ostreambuf_iterator<char>{*os.rdbuf()};
             }
-        #ifdef SEQAN3_HAS_SEQAN2
+#ifdef SEQAN3_HAS_SEQAN2
             else if constexpr (id == tag::seqan2_stream_it || id == tag::seqan2_stream_it_write_range)
             {
                 return seqan::Iter<std::ofstream, seqan::StreamIterator<seqan::Output>>{os};
             }
-        #endif
+#endif
         }();
 
         if constexpr (id == tag::seqan3_streambuf_it_write_range)
         {
             it.write_range(sequence);
         }
-        #ifdef SEQAN3_HAS_SEQAN2
+#ifdef SEQAN3_HAS_SEQAN2
         else if constexpr (id == tag::seqan2_stream_it_write_range)
         {
             seqan::write(it, seqan2_sequence);
         }
-        #endif
+#endif
         else
         {
             for (auto chr : sequence)

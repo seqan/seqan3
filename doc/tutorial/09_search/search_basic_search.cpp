@@ -1,6 +1,6 @@
-#include <seqan3/core/debug_stream.hpp>       // pretty printing
-#include <seqan3/search/search.hpp>
+#include <seqan3/core/debug_stream.hpp> // pretty printing
 #include <seqan3/search/fm_index/fm_index.hpp>
+#include <seqan3/search/search.hpp>
 
 using namespace std::string_literals; // for using the ""s string literal
 

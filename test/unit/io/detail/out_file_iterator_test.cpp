@@ -7,9 +7,8 @@
 
 #include <gtest/gtest.h>
 
-#include <vector>
-
 #include <iterator>
+#include <vector>
 
 #include <seqan3/io/detail/out_file_iterator.hpp>
 
@@ -25,18 +24,12 @@ TEST(out_file_iterator, concepts)
 TEST(out_file_iterator, member_types)
 {
     using it_t = seqan3::detail::out_file_iterator<std::vector<int>>;
-    EXPECT_TRUE((std::is_same_v<typename it_t::value_type,
-                                void>));
-    EXPECT_TRUE((std::is_same_v<typename it_t::reference,
-                                void>));
-    EXPECT_TRUE((std::is_same_v<typename it_t::const_reference,
-                                void>));
-    EXPECT_TRUE((std::is_same_v<typename it_t::difference_type,
-                                std::ptrdiff_t>));
-    EXPECT_TRUE((std::is_same_v<typename it_t::size_type,
-                                void>));
-    EXPECT_TRUE((std::is_same_v<typename it_t::iterator_category,
-                                std::output_iterator_tag>));
+    EXPECT_TRUE((std::is_same_v<typename it_t::value_type, void>));
+    EXPECT_TRUE((std::is_same_v<typename it_t::reference, void>));
+    EXPECT_TRUE((std::is_same_v<typename it_t::const_reference, void>));
+    EXPECT_TRUE((std::is_same_v<typename it_t::difference_type, std::ptrdiff_t>));
+    EXPECT_TRUE((std::is_same_v<typename it_t::size_type, void>));
+    EXPECT_TRUE((std::is_same_v<typename it_t::iterator_category, std::output_iterator_tag>));
 }
 
 TEST(out_file_iterator, operations)

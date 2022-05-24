@@ -13,12 +13,10 @@ int main()
 
     seqan3::structure_file_output fout{std::ostringstream{}, seqan3::format_vienna{}};
 
-    std::vector<std::tuple<seqan3::rna5_vector, std::string, std::vector<seqan3::wuss51>>> range
-    {
-        { "ACGT"_rna5, "First", "...."_wuss51 },
-        { "NATA"_rna5, "2nd",   "...."_wuss51 },
-        { "GATA"_rna5, "Third", "...."_wuss51 }
-    }; // a range of "records"
+    std::vector<std::tuple<seqan3::rna5_vector, std::string, std::vector<seqan3::wuss51>>> range{
+        {"ACGT"_rna5, "First", "...."_wuss51},
+        {"NATA"_rna5, "2nd", "...."_wuss51},
+        {"GATA"_rna5, "Third", "...."_wuss51}}; // a range of "records"
 
     range | fout;
     // the same as:

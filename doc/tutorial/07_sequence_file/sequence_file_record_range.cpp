@@ -12,11 +12,11 @@ int main()
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
-//![record_range]
-for (auto & record : file)
-{
-    // do something with my record
-}
+    //![record_range]
+    for (auto & record : file)
+    {
+        // do something with my record
+    }
 //![record_range]
 #pragma GCC diagnostic pop
 }

@@ -82,14 +82,15 @@ TEST(type_reduce, random_access_overload)
 
     auto v = seqan3::views::type_reduce(urange);
 
-    EXPECT_TRUE((std::same_as<decltype(v), std::ranges::subrange<typename std::deque<int>::iterator,
-                                                                 typename std::deque<int>::iterator>>));
+    EXPECT_TRUE(
+        (std::same_as<decltype(v),
+                      std::ranges::subrange<typename std::deque<int>::iterator, typename std::deque<int>::iterator>>));
     EXPECT_RANGE_EQ(v, urange);
 }
 
 TEST(type_reduce, generic_overload)
 {
-    {   // bidirectional container
+    { // bidirectional container
         std::list<int> urange{1, 2, 3, 4, 5, 6};
 
         auto v = seqan3::views::type_reduce(urange);
@@ -98,10 +99,15 @@ TEST(type_reduce, generic_overload)
         EXPECT_RANGE_EQ(v, urange);
     }
 
-    {   // view
+    { // view
         std::array<int, 6> urange{1, 2, 3, 4, 5, 6};
 
-        auto v = urange | std::views::filter([] (int) { return true; });
+        auto v = urange
+               | std::views::filter(
+                     [](int)
+                     {
+                         return true;
+                     });
         auto v2 = seqan3::views::type_reduce(v);
 
         EXPECT_SAME_TYPE(decltype(v2), std::views::all_t<decltype(v)>);

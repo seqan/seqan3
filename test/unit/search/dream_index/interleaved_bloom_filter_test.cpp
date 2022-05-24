@@ -41,25 +41,22 @@ TYPED_TEST(interleaved_bloom_filter_test, construction)
 
     // num hash functions defaults to two
     TypeParam ibf1{TestFixture::make_ibf(seqan3::bin_count{64u}, seqan3::bin_size{1024u})};
-    TypeParam ibf2{TestFixture::make_ibf(seqan3::bin_count{64u},
-                                         seqan3::bin_size{1024u},
-                                         seqan3::hash_function_count{2u})};
+    TypeParam ibf2{
+        TestFixture::make_ibf(seqan3::bin_count{64u}, seqan3::bin_size{1024u}, seqan3::hash_function_count{2u})};
     EXPECT_TRUE(ibf1 == ibf2);
 
-     // bin_size parameter is too small
+    // bin_size parameter is too small
     EXPECT_THROW((TestFixture::make_ibf(seqan3::bin_count{64u}, seqan3::bin_size{0u})), std::logic_error);
     // not enough bins
     EXPECT_THROW((TestFixture::make_ibf(seqan3::bin_count{0u}, seqan3::bin_size{32u})), std::logic_error);
     // not enough hash functions
-    EXPECT_THROW((TestFixture::make_ibf(seqan3::bin_count{64u},
-                                        seqan3::bin_size{32u},
-                                        seqan3::hash_function_count{0u})),
-                 std::logic_error);
+    EXPECT_THROW(
+        (TestFixture::make_ibf(seqan3::bin_count{64u}, seqan3::bin_size{32u}, seqan3::hash_function_count{0u})),
+        std::logic_error);
     // too many hash functions
-    EXPECT_THROW((TestFixture::make_ibf(seqan3::bin_count{64u},
-                                        seqan3::bin_size{32u},
-                                        seqan3::hash_function_count{6u})),
-                 std::logic_error);
+    EXPECT_THROW(
+        (TestFixture::make_ibf(seqan3::bin_count{64u}, seqan3::bin_size{32u}, seqan3::hash_function_count{6u})),
+        std::logic_error);
 }
 
 TYPED_TEST(interleaved_bloom_filter_test, member_getter)
@@ -70,9 +67,8 @@ TYPED_TEST(interleaved_bloom_filter_test, member_getter)
     EXPECT_EQ(t1.bit_size(), 65'536ull);
     EXPECT_EQ(t1.hash_function_count(), 2u);
 
-    TypeParam t2{TestFixture::make_ibf(seqan3::bin_count{73u},
-                                       seqan3::bin_size{1019u},
-                                       seqan3::hash_function_count{3u})};
+    TypeParam t2{
+        TestFixture::make_ibf(seqan3::bin_count{73u}, seqan3::bin_size{1019u}, seqan3::hash_function_count{3u})};
     EXPECT_EQ(t2.bin_count(), 73u);
     EXPECT_EQ(t2.bin_size(), 1019u);
     EXPECT_EQ(t2.bit_size(), 130'432ull);
@@ -129,7 +125,7 @@ TYPED_TEST(interleaved_bloom_filter_test, emplace)
     // 2. Construct either the uncompressed or compressed interleaved_bloom_filter and test set with bulk_contains
     TypeParam ibf2{ibf};
     auto agent = ibf2.membership_agent();
-    std::vector<bool> expected(64, 1); // every hash value should be set for every bin
+    std::vector<bool> expected(64, 1);          // every hash value should be set for every bin
     for (size_t hash : std::views::iota(0, 64)) // test correct resize for each bin individually
     {
         auto & res = agent.bulk_contains(hash);
@@ -155,7 +151,7 @@ TYPED_TEST(interleaved_bloom_filter_test, clear)
     TypeParam ibf2{ibf};
     auto agent = ibf2.membership_agent();
     std::vector<bool> expected(64, 1); // every hash value should be set for every bin...
-    expected[17] = 0; // ...except bin 17
+    expected[17] = 0;                  // ...except bin 17
     for (size_t hash : std::views::iota(0, 64))
     {
         auto & res = agent.bulk_contains(hash);
@@ -182,9 +178,9 @@ TYPED_TEST(interleaved_bloom_filter_test, clear_range)
     TypeParam ibf2{ibf};
     auto agent = ibf2.membership_agent();
     std::vector<bool> expected(64, 1); // every hash value should be set for every bin...
-    expected[8] = 0; // ...except bin 8
-    expected[17] = 0; // ...except bin 17
-    expected[45] = 0; // ...except bin 45
+    expected[8] = 0;                   // ...except bin 8
+    expected[17] = 0;                  // ...except bin 17
+    expected[45] = 0;                  // ...except bin 45
     for (size_t hash : std::views::iota(0, 64))
     {
         auto & res = agent.bulk_contains(hash);
@@ -328,7 +324,10 @@ TYPED_TEST(interleaved_bloom_filter_test, increase_bin_number_to)
     {
         seqan3::interleaved_bloom_filter ibf{seqan3::bin_count{64u}, seqan3::bin_size{1024u}};
         std::ranges::for_each(hashes,
-                              [&ibf, &current_bin] (auto const h) { ibf.emplace(h, seqan3::bin_index{current_bin}); });
+                              [&ibf, &current_bin](auto const h)
+                              {
+                                  ibf.emplace(h, seqan3::bin_index{current_bin});
+                              });
 
         ibf.increase_bin_number_to(seqan3::bin_count{73u});
 
@@ -337,7 +336,7 @@ TYPED_TEST(interleaved_bloom_filter_test, increase_bin_number_to)
 
         std::vector<bool> expected(73, 0);
         expected[current_bin] = 1; // none of the bins except current_bin stores the hash values.
-        TypeParam tibf{ibf}; // test output on compressed and uncompressed
+        TypeParam tibf{ibf};       // test output on compressed and uncompressed
         auto agent = tibf.membership_agent();
         for (size_t const h : hashes)
         {

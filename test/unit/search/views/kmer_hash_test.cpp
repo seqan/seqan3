@@ -5,6 +5,8 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
 #include <forward_list>
 #include <list>
 #include <type_traits>
@@ -19,8 +21,6 @@
 
 #include "../../range/iterator_test_template.hpp"
 
-#include <gtest/gtest.h>
-
 using seqan3::operator""_dna4;
 using seqan3::operator""_dna5;
 using seqan3::operator""_shape;
@@ -28,10 +28,13 @@ using result_t = std::vector<size_t>;
 
 static constexpr auto ungapped_view = seqan3::views::kmer_hash(seqan3::ungapped{3});
 static constexpr auto gapped_view = seqan3::views::kmer_hash(0b101_shape);
-static constexpr auto prefix_until_first_thymine = std::views::take_while([] (seqan3::dna4 const x)
-                                                   { return x != 'T'_dna4; });
+static constexpr auto prefix_until_first_thymine = std::views::take_while(
+    [](seqan3::dna4 const x)
+    {
+        return x != 'T'_dna4;
+    });
 
-using iterator_type = std::ranges::iterator_t<decltype(std::declval<seqan3::dna4_vector&>() | gapped_view)>;
+using iterator_type = std::ranges::iterator_t<decltype(std::declval<seqan3::dna4_vector &>() | gapped_view)>;
 
 template <>
 struct iterator_fixture<iterator_type> : public ::testing::Test
@@ -50,10 +53,12 @@ using test_type = ::testing::Types<iterator_type>;
 INSTANTIATE_TYPED_TEST_SUITE_P(iterator_fixture, iterator_fixture, test_type, );
 
 template <typename T>
-class kmer_hash_ungapped_test: public ::testing::Test {};
+class kmer_hash_ungapped_test : public ::testing::Test
+{};
 
 template <typename T>
-class kmer_hash_gapped_test: public ::testing::Test {};
+class kmer_hash_gapped_test : public ::testing::Test
+{};
 
 using underlying_range_types = ::testing::Types<std::vector<seqan3::dna4>,
                                                 std::vector<seqan3::dna4> const,
@@ -96,7 +101,7 @@ TYPED_TEST(kmer_hash_gapped_test, combined_with_container)
         TypeParam text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
         result_t gapped1{2, 7, 8, 14, 1};
         EXPECT_RANGE_EQ(gapped1, text1 | gapped_view);
-        EXPECT_RANGE_EQ(result_t{2}, text1 | prefix_until_first_thymine| gapped_view);
+        EXPECT_RANGE_EQ(result_t{2}, text1 | prefix_until_first_thymine | gapped_view);
     }
     {
         TypeParam text2{'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4}; // AAAAA
@@ -152,12 +157,12 @@ TYPED_TEST(kmer_hash_ungapped_test, invalid_sizes)
     EXPECT_THROW(text1 | seqan3::views::kmer_hash(seqan3::ungapped{33}), std::invalid_argument);
     if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
     {
-       EXPECT_NO_THROW(text1 | std::views::reverse | seqan3::views::kmer_hash(seqan3::ungapped{32}));
-       EXPECT_THROW(text1 | std::views::reverse | seqan3::views::kmer_hash(seqan3::ungapped{33}),
-                    std::invalid_argument);
+        EXPECT_NO_THROW(text1 | std::views::reverse | seqan3::views::kmer_hash(seqan3::ungapped{32}));
+        EXPECT_THROW(text1 | std::views::reverse | seqan3::views::kmer_hash(seqan3::ungapped{33}),
+                     std::invalid_argument);
     }
 
-    EXPECT_NO_THROW(text1 | seqan3::views::kmer_hash(0xFFFFFFFE001_shape)); // size=44, count=32
+    EXPECT_NO_THROW(text1 | seqan3::views::kmer_hash(0xFFFFFFFE001_shape));                      // size=44, count=32
     EXPECT_THROW(text1 | seqan3::views::kmer_hash(0xFFFFFFFFE009_shape), std::invalid_argument); // size=44, count=33
 
     std::vector<seqan3::dna5> dna5_text{};

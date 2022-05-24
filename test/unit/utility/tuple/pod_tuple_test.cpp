@@ -5,9 +5,9 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <type_traits>
-
 #include <gtest/gtest.h>
+
+#include <type_traits>
 
 #include <seqan3/utility/tuple/pod_tuple.hpp>
 
@@ -122,7 +122,7 @@ TEST(pod_tuple, stdget_i)
 TEST(pod_tuple_struct_binding, struct_binding)
 {
     seqan3::pod_tuple<int, long, float> t0{4, 7l, 3.0f};
-    auto [ i, l, f ] = t0;
+    auto [i, l, f] = t0;
 
     EXPECT_EQ(i, 4);
     EXPECT_EQ(l, 7l);

@@ -7,12 +7,12 @@
 
 #include <gtest/gtest.h>
 
+#include <concepts>
 #include <fstream>
 #include <iostream>
 #include <string>
 
 #include <seqan3/io/stream/concept.hpp>
-#include <concepts>
 #include <seqan3/test/tmp_filename.hpp>
 
 template <typename T>

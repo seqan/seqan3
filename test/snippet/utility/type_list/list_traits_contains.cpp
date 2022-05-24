@@ -6,5 +6,5 @@ int main()
 
     static_assert(seqan3::list_traits::contains<double, list_t> == false); // Is type double in type_list list_t?
 
-    static_assert(seqan3::list_traits::contains<float, list_t> == true);   // Is type float in type_list list_t?
+    static_assert(seqan3::list_traits::contains<float, list_t> == true); // Is type float in type_list list_t?
 }

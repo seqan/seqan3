@@ -12,6 +12,6 @@ int main()
     seqan3::pod_tuple tuple2{17, 3.7f, 19l};
     seqan3::debug_stream << std::get<0>(tuple2) << '\n'; // 17
 
-    auto [ i, f, l ] = tuple2; // creates an int i with value 17, float f...
+    auto [i, f, l] = tuple2;                                   // creates an int i with value 17, float f...
     seqan3::debug_stream << i << ',' << f << ',' << l << '\n'; // 17,3.7,19
 }

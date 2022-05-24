@@ -11,7 +11,7 @@ using namespace seqan3::literals;
 int main()
 {
     // Input range needs to be two-dimensional
-    std::vector<std::vector<seqan3::dna4> > vec{"ACGTACGTACGTA"_dna4, "TCGAGAGCTTTAGC"_dna4};
+    std::vector<std::vector<seqan3::dna4>> vec{"ACGTACGTACGTA"_dna4, "TCGAGAGCTTTAGC"_dna4};
 
     // Translation with default parameters
     auto v1 = vec | seqan3::views::translate_join;

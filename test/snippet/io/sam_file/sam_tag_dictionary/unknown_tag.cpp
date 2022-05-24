@@ -5,17 +5,17 @@
 #include <seqan3/utility/container/concept.hpp> // for the seqan3::container
 
 // a lambda helper function that prints every type in the std::variant<...allowed SAM tag types...>
-auto print_fn = [] (auto && arg)
+auto print_fn = [](auto && arg)
 {
     using T = std::remove_cvref_t<decltype(arg)>; // the type T of arg.
 
-    if constexpr (!seqan3::container<T>)     // If T is not a container,
+    if constexpr (!seqan3::container<T>) // If T is not a container,
     {
-        seqan3::debug_stream << arg << '\n';       // just print arg directly.
+        seqan3::debug_stream << arg << '\n'; // just print arg directly.
     }
-    else                                     // If T is a container,
+    else // If T is a container,
     {
-        for (auto const & arg_v : arg)       // print every value in arg.
+        for (auto const & arg_v : arg) // print every value in arg.
             seqan3::debug_stream << arg_v << ",";
         seqan3::debug_stream << '\n';
     }
@@ -25,7 +25,7 @@ int main()
 {
     using namespace seqan3::literals;
 
-    seqan3::sam_tag_dictionary dict{};          // initialise empty dictionary
+    seqan3::sam_tag_dictionary dict{}; // initialise empty dictionary
 
     // ! there is no get function for unknown tags !
     // dict.get<"XZ"_tag>() = 3;

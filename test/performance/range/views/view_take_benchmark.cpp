@@ -5,14 +5,14 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <benchmark/benchmark.h>
+
 #include <deque>
 #include <forward_list>
 #include <list>
 #include <random>
 #include <string>
 #include <vector>
-
-#include <benchmark/benchmark.h>
 
 #include <seqan3/io/views/detail/take_exactly_view.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
@@ -51,8 +51,8 @@ void sequential_read(benchmark::State & state)
         for (auto _ : state)
         {
             single_t s{c};
-            auto v = s | adaptor | adaptor | adaptor | adaptor | adaptor
-                       | adaptor | adaptor | adaptor | adaptor | adaptor;
+            auto v =
+                s | adaptor | adaptor | adaptor | adaptor | adaptor | adaptor | adaptor | adaptor | adaptor | adaptor;
             for (auto e : v)
                 dummy += e;
         }
@@ -86,14 +86,14 @@ BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::vi
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::detail::take_exactly));
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::detail::take_exactly_or_throw));
 
-BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, void,                                            true);
-BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::views::take),                      true);
-BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::detail::take_exactly),          true);
+BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, void, true);
+BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::views::take), true);
+BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::detail::take_exactly), true);
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::detail::take_exactly_or_throw), true);
 
-BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, void,                                            true);
-BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::views::take),                      true);
-BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::detail::take_exactly),          true);
+BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, void, true);
+BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::views::take), true);
+BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::detail::take_exactly), true);
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::detail::take_exactly_or_throw), true);
 
 // ============================================================================
@@ -133,8 +133,8 @@ void random_access(benchmark::State & state)
 
         for (auto _ : state)
         {
-            auto v = c | adaptor | adaptor | adaptor | adaptor | adaptor
-                       | adaptor | adaptor | adaptor | adaptor | adaptor;
+            auto v =
+                c | adaptor | adaptor | adaptor | adaptor | adaptor | adaptor | adaptor | adaptor | adaptor | adaptor;
             for (auto i : access_positions)
                 dummy += v[i];
         }

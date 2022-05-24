@@ -25,8 +25,7 @@ TYPED_TEST_SUITE(aminoacid_conversion, aminoacid_gtest_types, );
 // conversion to any other amino acid type
 TYPED_TEST(aminoacid_conversion, explicit_conversion)
 {
-    seqan3::detail::for_each<aminoacid_types>([&] (auto aa) constexpr
-    {
+    seqan3::detail::for_each<aminoacid_types>([&](auto aa) constexpr {
         using out_type = std::decay_t<typename decltype(aa)::type>;
         EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('A')), out_type{}.assign_char('A'));
         EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('C')), out_type{}.assign_char('C'));

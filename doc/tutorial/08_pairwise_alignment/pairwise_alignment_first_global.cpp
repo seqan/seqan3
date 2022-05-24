@@ -13,8 +13,8 @@ int main()
     seqan3::dna4_vector s2 = "ACGAAGACCGAT"_dna4;
 
     // Configure the alignment kernel.
-    auto config = seqan3::align_cfg::method_global{} |
-                  seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{}};
+    auto config =
+        seqan3::align_cfg::method_global{} | seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{}};
 
     // Invoke the pairwise alignment which returns a lazy range over alignment results.
     auto results = seqan3::align_pairwise(std::tie(s1, s2), config);

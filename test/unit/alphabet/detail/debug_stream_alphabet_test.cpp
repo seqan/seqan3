@@ -14,17 +14,41 @@ struct gap_alphabet
     using rank_t = uint8_t;
     using char_t = char;
 
-    rank_t to_rank() const noexcept {return 0;}
-    char_t to_char() const noexcept {return '-';}
+    rank_t to_rank() const noexcept
+    {
+        return 0;
+    }
+    char_t to_char() const noexcept
+    {
+        return '-';
+    }
 
-    constexpr static bool alphabet_size{1};
+    static constexpr bool alphabet_size{1};
 
-    friend bool operator<(gap_alphabet, gap_alphabet) {return false;}
-    friend bool operator<=(gap_alphabet, gap_alphabet) {return true;}
-    friend bool operator>(gap_alphabet, gap_alphabet) {return false;}
-    friend bool operator>=(gap_alphabet, gap_alphabet) {return true;}
-    friend bool operator==(gap_alphabet, gap_alphabet) {return true;}
-    friend bool operator!=(gap_alphabet, gap_alphabet) {return false;}
+    friend bool operator<(gap_alphabet, gap_alphabet)
+    {
+        return false;
+    }
+    friend bool operator<=(gap_alphabet, gap_alphabet)
+    {
+        return true;
+    }
+    friend bool operator>(gap_alphabet, gap_alphabet)
+    {
+        return false;
+    }
+    friend bool operator>=(gap_alphabet, gap_alphabet)
+    {
+        return true;
+    }
+    friend bool operator==(gap_alphabet, gap_alphabet)
+    {
+        return true;
+    }
+    friend bool operator!=(gap_alphabet, gap_alphabet)
+    {
+        return false;
+    }
 };
 
 TEST(debug_stream_test, alphabet)

@@ -5,14 +5,14 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <benchmark/benchmark.h>
+
 #include <deque>
 #include <forward_list>
 #include <list>
 #include <random>
 #include <string>
 #include <vector>
-
-#include <benchmark/benchmark.h>
 
 #include <seqan3/utility/views/single_pass_input.hpp>
 

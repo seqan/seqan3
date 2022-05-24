@@ -1,7 +1,7 @@
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
-int main(int argc, const char ** argv)
+int main(int argc, char const ** argv)
 {
     seqan3::argument_parser myparser{"Test", argc, argv}; // initialize
 
@@ -9,8 +9,7 @@ int main(int argc, const char ** argv)
     int myint;
     seqan3::arithmetic_range_validator my_validator{2, 10};
 
-    myparser.add_option(myint,'i',"integer","Give me a number.",
-                        seqan3::option_spec::standard, my_validator);
+    myparser.add_option(myint, 'i', "integer", "Give me a number.", seqan3::option_spec::standard, my_validator);
     //![validator_call]
 
     // an exception will be thrown if the user specifies an integer

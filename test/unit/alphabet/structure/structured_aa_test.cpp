@@ -14,15 +14,15 @@
 
 #include "../alphabet_constexpr_test_template.hpp"
 #include "../alphabet_test_template.hpp"
+#include "../composite/alphabet_tuple_base_test_template.hpp"
 #include "../semi_alphabet_constexpr_test_template.hpp"
 #include "../semi_alphabet_test_template.hpp"
-#include "../composite/alphabet_tuple_base_test_template.hpp"
 
 using seqan3::operator""_aa27;
 using seqan3::operator""_dssp9;
 
 template <>
-class alphabet_tuple_base_test<seqan3::structured_aa<seqan3::aa27, seqan3::dssp9>>: public ::testing::Test
+class alphabet_tuple_base_test<seqan3::structured_aa<seqan3::aa27, seqan3::dssp9>> : public ::testing::Test
 {
 public:
     using T = seqan3::structured_aa<seqan3::aa27, seqan3::dssp9>;
@@ -51,9 +51,12 @@ public:
     }
     auto values_to_cmp()
     {
-        return std::make_tuple(/*low */'A'_aa27, 'H'_dssp9,
-                               /*mid */'P'_aa27, 'I'_dssp9,
-                               /*high*/'Z'_aa27, 'X'_dssp9);
+        return std::make_tuple(/*low */ 'A'_aa27,
+                               'H'_dssp9,
+                               /*mid */ 'P'_aa27,
+                               'I'_dssp9,
+                               /*high*/ 'Z'_aa27,
+                               'X'_dssp9);
     }
 };
 

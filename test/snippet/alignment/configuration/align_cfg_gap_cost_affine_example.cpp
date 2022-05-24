@@ -15,6 +15,6 @@ int main()
     // Accessing the members of the gap scheme
     int open = affine_cfg.open_score;
     int extension = affine_cfg.extension_score;
-    std::cout << open << '\n'; // -1
+    std::cout << open << '\n';      // -1
     std::cout << extension << '\n'; // -10
 }

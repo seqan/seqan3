@@ -27,8 +27,8 @@ using matrix_iterator_t = std::ranges::iterator_t<matrix_t>;
 template <>
 struct iterator_fixture<matrix_iterator_t> : public ::testing::Test
 {
-    using alignment_column_t = std::vector<std::pair<std::tuple<score_t, score_t, score_t>,
-                                                     std::tuple<trace_t, trace_t, trace_t>>>;
+    using alignment_column_t =
+        std::vector<std::pair<std::tuple<score_t, score_t, score_t>, std::tuple<trace_t, trace_t, trace_t>>>;
 
     using iterator_tag = std::input_iterator_tag;
     static constexpr bool const_iterable = false;

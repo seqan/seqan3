@@ -65,7 +65,7 @@ std::vector<std::vector<alphabet_t>> generate_reads(std::vector<alphabet_t> cons
     std::vector<std::vector<alphabet_t>> reads;
     std::mt19937_64 gen{seed};
 
-    auto error_count_distribution = [simulated_errors, stddev] (auto & generator) -> uint8_t
+    auto error_count_distribution = [simulated_errors, stddev](auto & generator) -> uint8_t
     {
         if (stddev <= 0)
             return simulated_errors;
@@ -88,25 +88,26 @@ std::vector<std::vector<alphabet_t>> generate_reads(std::vector<alphabet_t> cons
         // simulate concrete error number or use normal distribution
         simulated_errors = error_count_distribution(gen);
 
-        std::uniform_int_distribution<size_t> random_read_pos{0, std::ranges::size(ref) - read_length - simulated_errors};
+        std::uniform_int_distribution<size_t> random_read_pos{0,
+                                                              std::ranges::size(ref) - read_length - simulated_errors};
         size_t rpos = random_read_pos(gen);
         std::vector<alphabet_t> read_tmp{std::ranges::begin(ref) + rpos,
                                          std::ranges::begin(ref) + rpos + read_length + simulated_errors};
 
         // generate simulated_errors many unique random mutation positions
         std::set<size_t> mutation_positions;
-        if (read_length > simulated_errors){
+        if (read_length > simulated_errors)
+        {
             while (mutation_positions.size() < simulated_errors)
                 mutation_positions.insert(random_mutation_pos(gen));
         }
         else
         {
-            for(size_t i = 0; i < simulated_errors; ++i)
+            for (size_t i = 0; i < simulated_errors; ++i)
                 mutation_positions.insert(i);
         }
 
-        for (std::set<size_t>::iterator pos_it = mutation_positions.begin();
-             pos_it != mutation_positions.end();
+        for (std::set<size_t>::iterator pos_it = mutation_positions.begin(); pos_it != mutation_positions.end();
              ++pos_it)
         {
             size_t ppos = *pos_it;
@@ -140,12 +141,10 @@ std::vector<alphabet_t> generate_repeating_sequence(size_t const template_length
     // copy substrings of length len from seq_template mutate and concatenate them
     size_t len = std::round(template_length * template_fraction);
     uint8_t simulated_errors = 5;
-    len = (len + simulated_errors  > template_length) ? template_length - simulated_errors : len;
+    len = (len + simulated_errors > template_length) ? template_length - simulated_errors : len;
 
-    return generate_reads(seq_template, repeats, len, simulated_errors, 0.15, 0.15)
-         | seqan3::detail::persist
-         | std::views::join
-         | seqan3::views::to<std::vector>;
+    return generate_reads(seq_template, repeats, len, simulated_errors, 0.15, 0.15) | seqan3::detail::persist
+         | std::views::join | seqan3::views::to<std::vector>;
 }
 
 //============================================================================
@@ -163,10 +162,14 @@ void unidirectional_search_all_collection(benchmark::State & state, options && o
     for (size_t i = 0; i < set_size; ++i)
     {
         collection.push_back(seqan3::test::generate_sequence<seqan3::dna4>(o.sequence_length, 0, i));
-        std::vector<std::vector<seqan3::dna4>> seq_reads = generate_reads(collection.back(), o.number_of_reads,
-                                                                          o.read_length, o.simulated_errors,
-                                                                          o.prob_insertion, o.prob_deletion,
-                                                                          o.stddev, i);
+        std::vector<std::vector<seqan3::dna4>> seq_reads = generate_reads(collection.back(),
+                                                                          o.number_of_reads,
+                                                                          o.read_length,
+                                                                          o.simulated_errors,
+                                                                          o.prob_insertion,
+                                                                          o.prob_deletion,
+                                                                          o.stddev,
+                                                                          i);
         std::ranges::move(seq_reads, std::back_inserter(reads));
     }
 
@@ -188,15 +191,19 @@ void unidirectional_search_all_collection(benchmark::State & state, options && o
 
 void unidirectional_search_all(benchmark::State & state, options && o)
 {
-    std::vector<seqan3::dna4> ref = (o.has_repeats) ?
-                                    generate_repeating_sequence<seqan3::dna4>(2 * o.sequence_length / o.repeats,
-                                                                              o.repeats, 0.5, 0) :
-                                    seqan3::test::generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
+    std::vector<seqan3::dna4> ref =
+        (o.has_repeats)
+            ? generate_repeating_sequence<seqan3::dna4>(2 * o.sequence_length / o.repeats, o.repeats, 0.5, 0)
+            : seqan3::test::generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
 
     seqan3::fm_index index{ref};
-    std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref, o.number_of_reads, o.read_length,
-                                                                  o.simulated_errors, o.prob_insertion,
-                                                                  o.prob_deletion, o.stddev);
+    std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref,
+                                                                  o.number_of_reads,
+                                                                  o.read_length,
+                                                                  o.simulated_errors,
+                                                                  o.prob_insertion,
+                                                                  o.prob_deletion,
+                                                                  o.stddev);
     seqan3::configuration cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{o.searched_errors}};
 
     size_t sum{};
@@ -214,15 +221,19 @@ void unidirectional_search_all(benchmark::State & state, options && o)
 
 void bidirectional_search_all(benchmark::State & state, options && o)
 {
-    std::vector<seqan3::dna4> ref = (o.has_repeats) ?
-                                    generate_repeating_sequence<seqan3::dna4>(2 * o.sequence_length / o.repeats,
-                                                                              o.repeats, 0.5, 0) :
-                                    seqan3::test::generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
+    std::vector<seqan3::dna4> ref =
+        (o.has_repeats)
+            ? generate_repeating_sequence<seqan3::dna4>(2 * o.sequence_length / o.repeats, o.repeats, 0.5, 0)
+            : seqan3::test::generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
 
     seqan3::bi_fm_index index{ref};
-    std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref, o.number_of_reads, o.read_length,
-                                                                  o.simulated_errors, o.prob_insertion,
-                                                                  o.prob_deletion, o.stddev);
+    std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref,
+                                                                  o.number_of_reads,
+                                                                  o.read_length,
+                                                                  o.simulated_errors,
+                                                                  o.prob_insertion,
+                                                                  o.prob_deletion,
+                                                                  o.stddev);
     seqan3::configuration cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{o.searched_errors}};
 
     size_t sum{};
@@ -240,17 +251,21 @@ void bidirectional_search_all(benchmark::State & state, options && o)
 
 void unidirectional_search_stratified(benchmark::State & state, options && o)
 {
-    std::vector<seqan3::dna4> ref = (o.has_repeats) ?
-                                    generate_repeating_sequence<seqan3::dna4>(2 * o.sequence_length / o.repeats,
-                                                                              o.repeats, 0.5, 0) :
-                                    seqan3::test::generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
+    std::vector<seqan3::dna4> ref =
+        (o.has_repeats)
+            ? generate_repeating_sequence<seqan3::dna4>(2 * o.sequence_length / o.repeats, o.repeats, 0.5, 0)
+            : seqan3::test::generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
 
     seqan3::fm_index index{ref};
-    std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref, o.number_of_reads, o.read_length,
-                                                                  o.simulated_errors, o.prob_insertion,
-                                                                  o.prob_deletion, o.stddev);
-    seqan3::configuration cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{o.searched_errors}} |
-                                seqan3::search_cfg::hit_strata{o.strata};
+    std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref,
+                                                                  o.number_of_reads,
+                                                                  o.read_length,
+                                                                  o.simulated_errors,
+                                                                  o.prob_insertion,
+                                                                  o.prob_deletion,
+                                                                  o.stddev);
+    seqan3::configuration cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{o.searched_errors}}
+                              | seqan3::search_cfg::hit_strata{o.strata};
 
     size_t sum{};
     for (auto _ : state)
@@ -267,17 +282,21 @@ void unidirectional_search_stratified(benchmark::State & state, options && o)
 
 void bidirectional_search_stratified(benchmark::State & state, options && o)
 {
-    std::vector<seqan3::dna4> ref = (o.has_repeats) ?
-                                    generate_repeating_sequence<seqan3::dna4>(2 * o.sequence_length / o.repeats,
-                                                                              o.repeats, 0.5, 0) :
-                                    seqan3::test::generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
+    std::vector<seqan3::dna4> ref =
+        (o.has_repeats)
+            ? generate_repeating_sequence<seqan3::dna4>(2 * o.sequence_length / o.repeats, o.repeats, 0.5, 0)
+            : seqan3::test::generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
 
     seqan3::bi_fm_index index{ref};
-    std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref, o.number_of_reads, o.read_length,
-                                                                  o.simulated_errors, o.prob_insertion,
-                                                                  o.prob_deletion, o.stddev);
-    seqan3::configuration cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{o.searched_errors}} |
-                                seqan3::search_cfg::hit_strata{o.strata};
+    std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref,
+                                                                  o.number_of_reads,
+                                                                  o.read_length,
+                                                                  o.simulated_errors,
+                                                                  o.prob_insertion,
+                                                                  o.prob_deletion,
+                                                                  o.stddev);
+    seqan3::configuration cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{o.searched_errors}}
+                              | seqan3::search_cfg::hit_strata{o.strata};
 
     size_t sum{};
     for (auto _ : state)
@@ -298,85 +317,123 @@ inline constexpr size_t medium_size = 50'000;
 inline constexpr size_t big_size = 100'000;
 #endif // NDEBUG
 
-BENCHMARK_CAPTURE(unidirectional_search_all_collection, highErrorReadsSearch0,
+BENCHMARK_CAPTURE(unidirectional_search_all_collection,
+                  highErrorReadsSearch0,
                   options{small_size, false, 10, 50, 0.18, 0.18, 0, 0, 0, 1.75});
-BENCHMARK_CAPTURE(unidirectional_search_all_collection, highErrorReadsSearch1,
+BENCHMARK_CAPTURE(unidirectional_search_all_collection,
+                  highErrorReadsSearch1,
                   options{small_size, false, 10, 50, 0.18, 0.18, 0, 1, 0, 1.75});
-BENCHMARK_CAPTURE(unidirectional_search_all_collection, highErrorReadsSearch2,
+BENCHMARK_CAPTURE(unidirectional_search_all_collection,
+                  highErrorReadsSearch2,
                   options{small_size, false, 10, 50, 0.18, 0.18, 0, 2, 0, 1.75});
-BENCHMARK_CAPTURE(unidirectional_search_all_collection, highErrorReadsSearch3,
+BENCHMARK_CAPTURE(unidirectional_search_all_collection,
+                  highErrorReadsSearch3,
                   options{small_size, false, 10, 50, 0.18, 0.18, 0, 3, 0, 1.75});
 
-BENCHMARK_CAPTURE(unidirectional_search_all, lowErrorReadsSearch3,
+BENCHMARK_CAPTURE(unidirectional_search_all,
+                  lowErrorReadsSearch3,
                   options{big_size, false, 50, 50, 0.18, 0.18, 0, 3, 0, 1});
-BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch0,
+BENCHMARK_CAPTURE(unidirectional_search_all,
+                  highErrorReadsSearch0,
                   options{big_size, false, 50, 50, 0.18, 0.18, 0, 0, 0, 1.75});
-BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch1,
+BENCHMARK_CAPTURE(unidirectional_search_all,
+                  highErrorReadsSearch1,
                   options{big_size, false, 50, 50, 0.18, 0.18, 0, 1, 1, 1.75});
-BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch2,
+BENCHMARK_CAPTURE(unidirectional_search_all,
+                  highErrorReadsSearch2,
                   options{big_size, false, 50, 50, 0.18, 0.18, 0, 2, 2, 1.75});
-BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch3,
+BENCHMARK_CAPTURE(unidirectional_search_all,
+                  highErrorReadsSearch3,
                   options{big_size, false, 50, 50, 0.18, 0.18, 0, 3, 3, 1.75});
-BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch0Rep,
+BENCHMARK_CAPTURE(unidirectional_search_all,
+                  highErrorReadsSearch0Rep,
                   options{big_size, true, 50, 50, 0.18, 0.18, 0, 0, 0, 1.75});
-BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch1Rep,
+BENCHMARK_CAPTURE(unidirectional_search_all,
+                  highErrorReadsSearch1Rep,
                   options{big_size, true, 50, 50, 0.18, 0.18, 0, 1, 1, 1.75});
-BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch2Rep,
+BENCHMARK_CAPTURE(unidirectional_search_all,
+                  highErrorReadsSearch2Rep,
                   options{big_size, true, 50, 50, 0.18, 0.18, 0, 2, 2, 1.75});
-BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch3Rep,
+BENCHMARK_CAPTURE(unidirectional_search_all,
+                  highErrorReadsSearch3Rep,
                   options{big_size, true, 50, 50, 0.18, 0.18, 0, 3, 3, 1.75});
-BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch3Rep,
+BENCHMARK_CAPTURE(unidirectional_search_all,
+                  highErrorReadsSearch3Rep,
                   options{big_size, true, 50, 50, 0.30, 0.30, 0, 3, 3, 1.75});
 
-BENCHMARK_CAPTURE(bidirectional_search_all, lowErrorReadsSearch3,
+BENCHMARK_CAPTURE(bidirectional_search_all,
+                  lowErrorReadsSearch3,
                   options{big_size, false, 50, 50, 0.18, 0.18, 0, 3, 0, 1});
-BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch0,
+BENCHMARK_CAPTURE(bidirectional_search_all,
+                  highErrorReadsSearch0,
                   options{big_size, false, 50, 50, 0.18, 0.18, 0, 0, 0, 1.75});
-BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch1,
+BENCHMARK_CAPTURE(bidirectional_search_all,
+                  highErrorReadsSearch1,
                   options{big_size, false, 50, 50, 0.18, 0.18, 0, 1, 1, 1.75});
-BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch2,
+BENCHMARK_CAPTURE(bidirectional_search_all,
+                  highErrorReadsSearch2,
                   options{big_size, false, 50, 50, 0.18, 0.18, 0, 2, 2, 1.75});
-BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch3,
+BENCHMARK_CAPTURE(bidirectional_search_all,
+                  highErrorReadsSearch3,
                   options{big_size, false, 50, 50, 0.18, 0.18, 0, 3, 3, 1.75});
-BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch0Rep,
+BENCHMARK_CAPTURE(bidirectional_search_all,
+                  highErrorReadsSearch0Rep,
                   options{big_size, true, 50, 50, 0.18, 0.18, 0, 0, 0, 1.75});
-BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch1Rep,
+BENCHMARK_CAPTURE(bidirectional_search_all,
+                  highErrorReadsSearch1Rep,
                   options{big_size, true, 50, 50, 0.18, 0.18, 0, 1, 1, 1.75});
-BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch2Rep,
+BENCHMARK_CAPTURE(bidirectional_search_all,
+                  highErrorReadsSearch2Rep,
                   options{big_size, true, 50, 50, 0.18, 0.18, 0, 2, 2, 1.75});
-BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch3Rep,
+BENCHMARK_CAPTURE(bidirectional_search_all,
+                  highErrorReadsSearch3Rep,
                   options{big_size, true, 50, 50, 0.18, 0.18, 0, 3, 3, 1.75});
-BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch3Rep,
+BENCHMARK_CAPTURE(bidirectional_search_all,
+                  highErrorReadsSearch3Rep,
                   options{big_size, true, 50, 50, 0.30, 0.30, 0, 3, 3, 1.75});
 
-BENCHMARK_CAPTURE(unidirectional_search_stratified, lowErrorReadsSearch3Strata0Rep,
+BENCHMARK_CAPTURE(unidirectional_search_stratified,
+                  lowErrorReadsSearch3Strata0Rep,
                   options{medium_size, true, 50, 50, 0.18, 0.18, 0, 3, 0, 1});
-BENCHMARK_CAPTURE(unidirectional_search_stratified, lowErrorReadsSearch3Strata1Rep,
+BENCHMARK_CAPTURE(unidirectional_search_stratified,
+                  lowErrorReadsSearch3Strata1Rep,
                   options{medium_size, true, 50, 50, 0.18, 0.18, 0, 3, 1, 1});
-BENCHMARK_CAPTURE(unidirectional_search_stratified, lowErrorReadsSearch3Strata2Rep,
+BENCHMARK_CAPTURE(unidirectional_search_stratified,
+                  lowErrorReadsSearch3Strata2Rep,
                   options{medium_size, true, 50, 50, 0.18, 0.18, 0, 3, 2, 1});
-BENCHMARK_CAPTURE(unidirectional_search_stratified, highErrorReadsSearch3Strata0Rep,
+BENCHMARK_CAPTURE(unidirectional_search_stratified,
+                  highErrorReadsSearch3Strata0Rep,
                   options{medium_size, true, 50, 50, 0.30, 0.30, 0, 3, 0, 1.75});
-BENCHMARK_CAPTURE(unidirectional_search_stratified, highErrorReadsSearch3Strata1Rep,
+BENCHMARK_CAPTURE(unidirectional_search_stratified,
+                  highErrorReadsSearch3Strata1Rep,
                   options{medium_size, true, 50, 50, 0.30, 0.30, 0, 3, 1, 1.75});
-BENCHMARK_CAPTURE(unidirectional_search_stratified, highErrorReadsSearch3Strata2Rep,
+BENCHMARK_CAPTURE(unidirectional_search_stratified,
+                  highErrorReadsSearch3Strata2Rep,
                   options{medium_size, true, 50, 50, 0.30, 0.30, 0, 3, 2, 1.75});
-BENCHMARK_CAPTURE(unidirectional_search_stratified, highErrorReadsSearch3Strata2RepLong,
+BENCHMARK_CAPTURE(unidirectional_search_stratified,
+                  highErrorReadsSearch3Strata2RepLong,
                   options{big_size, true, 50, 50, 0.30, 0.30, 0, 3, 2, 1.75});
 
-BENCHMARK_CAPTURE(bidirectional_search_stratified, lowErrorReadsSearch3Strata0Rep,
+BENCHMARK_CAPTURE(bidirectional_search_stratified,
+                  lowErrorReadsSearch3Strata0Rep,
                   options{medium_size, true, 50, 50, 0.18, 0.18, 0, 3, 0, 1});
-BENCHMARK_CAPTURE(bidirectional_search_stratified, lowErrorReadsSearch3Strata1Rep,
+BENCHMARK_CAPTURE(bidirectional_search_stratified,
+                  lowErrorReadsSearch3Strata1Rep,
                   options{medium_size, true, 50, 50, 0.18, 0.18, 0, 3, 1, 1});
-BENCHMARK_CAPTURE(bidirectional_search_stratified, lowErrorReadsSearch3Strata2Rep,
+BENCHMARK_CAPTURE(bidirectional_search_stratified,
+                  lowErrorReadsSearch3Strata2Rep,
                   options{medium_size, true, 50, 50, 0.18, 0.18, 0, 3, 2, 1});
-BENCHMARK_CAPTURE(bidirectional_search_stratified, highErrorReadsSearch3Strata0Rep,
+BENCHMARK_CAPTURE(bidirectional_search_stratified,
+                  highErrorReadsSearch3Strata0Rep,
                   options{medium_size, true, 50, 50, 0.30, 0.30, 0, 3, 0, 1.75});
-BENCHMARK_CAPTURE(bidirectional_search_stratified, highErrorReadsSearch3Strata1Rep,
+BENCHMARK_CAPTURE(bidirectional_search_stratified,
+                  highErrorReadsSearch3Strata1Rep,
                   options{medium_size, true, 50, 50, 0.30, 0.30, 0, 3, 1, 1.75});
-BENCHMARK_CAPTURE(bidirectional_search_stratified, highErrorReadsSearch3Strata2Rep,
+BENCHMARK_CAPTURE(bidirectional_search_stratified,
+                  highErrorReadsSearch3Strata2Rep,
                   options{medium_size, true, 50, 50, 0.30, 0.30, 0, 3, 2, 1.75});
-BENCHMARK_CAPTURE(bidirectional_search_stratified, highErrorReadsSearch3Strata2RepLong,
+BENCHMARK_CAPTURE(bidirectional_search_stratified,
+                  highErrorReadsSearch3Strata2RepLong,
                   options{big_size, true, 50, 50, 0.30, 0.30, 0, 3, 2, 1.75});
 
 // ============================================================================

@@ -8,6 +8,6 @@ int main()
 
     seqan3::qualified<seqan3::dna4, seqan3::phred42> letter1{'T'_dna4, '"'_phred42};
 
-    letter1 = 'C'_dna4;     // yields {'C'_dna4, '"'_phred42}
-    letter1 = '#'_phred42;  // yields {'C'_dna4, '#'_phred42}
+    letter1 = 'C'_dna4;    // yields {'C'_dna4, '"'_phred42}
+    letter1 = '#'_phred42; // yields {'C'_dna4, '#'_phred42}
 }

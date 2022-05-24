@@ -9,11 +9,5 @@ enum struct my_id : int
 namespace seqan3::detail
 {
 template <>
-inline constexpr std::array<std::array<int, 2>, 2> compatibility_table<my_id>
-{
-    {
-        {0, 1},
-        {1, 0}
-    }
-};
+inline constexpr std::array<std::array<int, 2>, 2> compatibility_table<my_id>{{{0, 1}, {1, 0}}};
 } // namespace seqan3::detail

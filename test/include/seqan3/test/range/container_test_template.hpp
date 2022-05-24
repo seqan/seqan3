@@ -105,15 +105,15 @@ TYPED_TEST_P(container_over_dna4_test, iterators)
     TypeParam const t2{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
 
     // begin
-    EXPECT_EQ(*t1.begin(),  'A'_dna4);
+    EXPECT_EQ(*t1.begin(), 'A'_dna4);
     EXPECT_EQ(*t1.cbegin(), 'A'_dna4);
-    EXPECT_EQ(*t2.begin(),  'A'_dna4);
+    EXPECT_EQ(*t2.begin(), 'A'_dna4);
     EXPECT_EQ(*t2.cbegin(), 'A'_dna4);
 
     // end and arithmetic
-    EXPECT_EQ(*(t1.end()  - 1), 'T'_dna4);
+    EXPECT_EQ(*(t1.end() - 1), 'T'_dna4);
     EXPECT_EQ(*(t1.cend() - 1), 'T'_dna4);
-    EXPECT_EQ(*(t2.end()  - 1), 'T'_dna4);
+    EXPECT_EQ(*(t2.end() - 1), 'T'_dna4);
     EXPECT_EQ(*(t2.cend() - 1), 'T'_dna4);
 
     // convertibility between const and non-const
@@ -193,9 +193,9 @@ TYPED_TEST_P(container_over_dna4_test, capacity)
 
         // shrink_to_fit
         t1.reserve(1000);
-        EXPECT_GT(t1.capacity(), t1.size()*2);
+        EXPECT_GT(t1.capacity(), t1.size() * 2);
         t1.shrink_to_fit();
-        EXPECT_LE(t1.capacity(), std::max<size_t>(t1.size()*2, 32ul));
+        EXPECT_LE(t1.capacity(), std::max<size_t>(t1.size() * 2, 32ul));
     }
     else
     {
@@ -246,7 +246,7 @@ TYPED_TEST_P(container_over_dna4_test, insert)
     t0.clear();
     t0.insert(t0.cend(), t1.begin() + 1, t1.begin() + 3);
 
-    t0.insert(t0.cend(),   t1.cend() - 2, t1.cend());
+    t0.insert(t0.cend(), t1.cend() - 2, t1.cend());
     t0.insert(t0.cbegin(), t1.cbegin(), t1.cbegin() + 1);
     EXPECT_EQ(t0, t1);
 
@@ -280,7 +280,7 @@ TYPED_TEST_P(container_over_dna4_test, push_pop)
 
     // push_back
     t0.push_back('A'_dna4);
-    EXPECT_EQ(t0,  (TypeParam{'A'_dna4}));
+    EXPECT_EQ(t0, (TypeParam{'A'_dna4}));
     t0.push_back('C'_dna4);
     EXPECT_EQ(t0, (TypeParam{'A'_dna4, 'C'_dna4}));
 

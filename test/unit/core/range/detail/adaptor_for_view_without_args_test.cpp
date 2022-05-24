@@ -5,10 +5,10 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
 #include <iostream>
 #include <memory>
-
-#include <gtest/gtest.h>
 
 #include <seqan3/core/range/detail/adaptor_for_view_without_args.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>

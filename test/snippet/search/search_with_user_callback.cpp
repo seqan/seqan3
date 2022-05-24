@@ -2,8 +2,8 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/search/search.hpp>
 #include <seqan3/search/fm_index/all.hpp>
+#include <seqan3/search/search.hpp>
 
 int main()
 {
@@ -16,10 +16,10 @@ int main()
     // build an FM index
     seqan3::fm_index index{genomes};
 
-    seqan3::configuration const config = seqan3::search_cfg::on_result{[] (auto && result)
-    {
-        seqan3::debug_stream << result << '\n';
-    }};
+    seqan3::configuration const config = seqan3::search_cfg::on_result{[](auto && result)
+                                                                       {
+                                                                           seqan3::debug_stream << result << '\n';
+                                                                       }};
 
     seqan3::search(queries, index, config); // Does not return anything but calls the lambda from above instead.
 

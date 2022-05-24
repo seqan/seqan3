@@ -21,17 +21,22 @@ int main()
 
     // Convert dna4q to dna4.
     // Since `sequence1` is an lvalue, we capture `in` via const &. When unsure, use the general case below.
-    auto view1 = sequence1 | std::views::transform([] (auto const & in) { return static_cast<seqan3::dna4>(in); });
+    auto view1 = sequence1
+               | std::views::transform(
+                     [](auto const & in)
+                     {
+                         return static_cast<seqan3::dna4>(in);
+                     });
     seqan3::debug_stream << view1 << '\n'; // ACGT
 
     // Convert dna5 to dna4.
     // General case: Perfect forward.
-    auto view2 = sequence2
-               | std::views::take(8)
-               | std::views::transform([] (auto && in)
-                 {
-                     return static_cast<seqan3::dna4>(std::forward<decltype(in)>(in));
-                 });
+    auto view2 = sequence2 | std::views::take(8)
+               | std::views::transform(
+                     [](auto && in)
+                     {
+                         return static_cast<seqan3::dna4>(std::forward<decltype(in)>(in));
+                     });
     seqan3::debug_stream << view2 << '\n'; // AGACGTAA
 
     return 0;

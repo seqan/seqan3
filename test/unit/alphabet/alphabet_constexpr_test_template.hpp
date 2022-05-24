@@ -16,17 +16,17 @@ TYPED_TEST_SUITE_P(alphabet_constexpr);
 
 TYPED_TEST_P(alphabet_constexpr, concept_check)
 {
-    EXPECT_TRUE(seqan3::detail::constexpr_alphabet<TypeParam   >);
-    EXPECT_TRUE(seqan3::detail::constexpr_alphabet<TypeParam & >);
+    EXPECT_TRUE(seqan3::detail::constexpr_alphabet<TypeParam>);
+    EXPECT_TRUE(seqan3::detail::constexpr_alphabet<TypeParam &>);
 
-    EXPECT_TRUE(seqan3::detail::constexpr_alphabet<TypeParam const   >);
-    EXPECT_TRUE(seqan3::detail::constexpr_alphabet<TypeParam const & >);
+    EXPECT_TRUE(seqan3::detail::constexpr_alphabet<TypeParam const>);
+    EXPECT_TRUE(seqan3::detail::constexpr_alphabet<TypeParam const &>);
 
-    EXPECT_TRUE(seqan3::detail::writable_constexpr_alphabet<TypeParam   >);
-    EXPECT_TRUE(seqan3::detail::writable_constexpr_alphabet<TypeParam & >);
+    EXPECT_TRUE(seqan3::detail::writable_constexpr_alphabet<TypeParam>);
+    EXPECT_TRUE(seqan3::detail::writable_constexpr_alphabet<TypeParam &>);
 
-    EXPECT_FALSE(seqan3::detail::writable_constexpr_alphabet<TypeParam const   >);
-    EXPECT_FALSE(seqan3::detail::writable_constexpr_alphabet<TypeParam const & >);
+    EXPECT_FALSE(seqan3::detail::writable_constexpr_alphabet<TypeParam const>);
+    EXPECT_FALSE(seqan3::detail::writable_constexpr_alphabet<TypeParam const &>);
 }
 
 TYPED_TEST_P(alphabet_constexpr, assign_char)
@@ -40,7 +40,4 @@ TYPED_TEST_P(alphabet_constexpr, to_char)
     [[maybe_unused]] constexpr seqan3::alphabet_char_t<TypeParam> c = seqan3::to_char(t0);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(alphabet_constexpr,
-                            concept_check,
-                            assign_char,
-                            to_char);
+REGISTER_TYPED_TEST_SUITE_P(alphabet_constexpr, concept_check, assign_char, to_char);

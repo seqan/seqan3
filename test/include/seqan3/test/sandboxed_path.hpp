@@ -52,9 +52,9 @@ public:
      *
      * After construction, the sandboxed_path will point to `path`.
      */
-    explicit sandboxed_path(std::filesystem::path directory)
-        : std::filesystem::path{directory}
-        , sandbox_directory{std::move(directory)}
+    explicit sandboxed_path(std::filesystem::path directory) :
+        std::filesystem::path{directory},
+        sandbox_directory{std::move(directory)}
     {
         normalise();
         check_invariant();
@@ -64,18 +64,18 @@ public:
      * \param sandbox_directory The absolute path to the sandbox directory.
      * \param path The relative or absolute path that must be inside the sandbox directory.
      */
-    explicit sandboxed_path(std::filesystem::path sandbox_directory, std::filesystem::path path)
-        : std::filesystem::path {std::move(path)}
-        , sandbox_directory     {std::move(sandbox_directory)}
+    explicit sandboxed_path(std::filesystem::path sandbox_directory, std::filesystem::path path) :
+        std::filesystem::path{std::move(path)},
+        sandbox_directory{std::move(sandbox_directory)}
     {
         normalise();
         check_invariant();
     }
 
-    sandboxed_path() = delete;                           //!< Deleted.
-    sandboxed_path(sandboxed_path const&) = default;     //!< Defaulted.
-    sandboxed_path(sandboxed_path&&) noexcept = default; //!< Defaulted.
-    ~sandboxed_path() = default;                         //!< Defaulted.
+    sandboxed_path() = delete;                            //!< Deleted.
+    sandboxed_path(sandboxed_path const &) = default;     //!< Defaulted.
+    sandboxed_path(sandboxed_path &&) noexcept = default; //!< Defaulted.
+    ~sandboxed_path() = default;                          //!< Defaulted.
 
     /*!\brief Replaces the path with a new path.
      * \param  new_path The new path.
@@ -464,10 +464,10 @@ public:
  * and additionally checks the invariant.
  */
 template <typename Rhs>
-sandboxed_path operator/(sandboxed_path lhs, Rhs const& rhs)
+sandboxed_path operator/(sandboxed_path lhs, Rhs const & rhs)
 {
     lhs /= rhs;
     return lhs;
 }
 
-}
+} // namespace seqan3::test

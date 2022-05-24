@@ -13,7 +13,7 @@ int main()
 
     auto it = fout.begin();
 
-    for(int i = 0; i < 5; ++i) // some criteria
+    for (int i = 0; i < 5; ++i) // some criteria
     {
         std::string id{"test_id"};
         seqan3::dna5_vector seq{"ACGT"_dna5};

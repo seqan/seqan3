@@ -268,9 +268,9 @@ TEST(alphabet_variant_test, alphabet_size)
     using alphabet2_t = seqan3::alphabet_variant<seqan3::gap, seqan3::dna5, seqan3::dna4>;
     using alphabet3_t = seqan3::alphabet_variant<char, seqan3::gap>;
 
-    EXPECT_TRUE((std::is_same_v<decltype(alphabet1_t::alphabet_size), const uint8_t>));
-    EXPECT_TRUE((std::is_same_v<decltype(alphabet2_t::alphabet_size), const uint8_t>));
-    EXPECT_TRUE((std::is_same_v<decltype(alphabet3_t::alphabet_size), const uint16_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(alphabet1_t::alphabet_size), uint8_t const>));
+    EXPECT_TRUE((std::is_same_v<decltype(alphabet2_t::alphabet_size), uint8_t const>));
+    EXPECT_TRUE((std::is_same_v<decltype(alphabet3_t::alphabet_size), uint16_t const>));
 
     EXPECT_EQ(alphabet1_t::alphabet_size, 10);
     EXPECT_EQ(alphabet2_t::alphabet_size, 10);
@@ -350,11 +350,12 @@ TYPED_TEST(alphabet_variant_test, char_is_valid_for)
     for (; i_no_overflow <= static_cast<uint64_t>(end); ++i, ++i_no_overflow)
     {
         bool is_valid{};
-        seqan3::detail::for_each<gapped_alphabet_bases_t>([&is_valid, i](auto id)
-        {
-             using type = typename decltype(id)::type;
-             is_valid = is_valid || seqan3::char_is_valid_for<type>(i);
-        });
+        seqan3::detail::for_each<gapped_alphabet_bases_t>(
+            [&is_valid, i](auto id)
+            {
+                using type = typename decltype(id)::type;
+                is_valid = is_valid || seqan3::char_is_valid_for<type>(i);
+            });
         EXPECT_EQ(seqan3::char_is_valid_for<gapped_alphabet_t>(i), is_valid);
     }
 }

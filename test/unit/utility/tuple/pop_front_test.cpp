@@ -5,11 +5,11 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
 #include <concepts>
 #include <tuple>
 #include <type_traits>
-
-#include <gtest/gtest.h>
 
 #include <seqan3/core/detail/strong_type.hpp>
 #include <seqan3/utility/tuple/pod_tuple.hpp>
@@ -26,12 +26,11 @@ template <typename T>
 class tuple_pop_front : public ::testing::Test
 {
 public:
-
     T value;
 };
 
-using tuple_utility_types = ::testing::Types<std::tuple<int, long, bar, float>,
-                                             seqan3::pod_tuple<int, long, bar, float>>;
+using tuple_utility_types =
+    ::testing::Types<std::tuple<int, long, bar, float>, seqan3::pod_tuple<int, long, bar, float>>;
 
 TYPED_TEST_SUITE(tuple_pop_front, tuple_utility_types, );
 

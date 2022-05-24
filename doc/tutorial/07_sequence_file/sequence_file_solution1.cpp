@@ -1,8 +1,6 @@
 #include <seqan3/test/snippet/create_temporary_snippet_file.hpp>
-seqan3::test::create_temporary_snippet_file my_fastq
-{
-    "my.fastq",
-R"//![fastq_file](
+seqan3::test::create_temporary_snippet_file my_fastq{"my.fastq",
+                                                     R"//![fastq_file](
 @seq1
 AGCTAGCAGCGATCG
 +
@@ -15,8 +13,7 @@ IIIIIIIII
 AGCGATCGAGGAATATAT
 +
 IIIIHHGIIIIHHGIIIH
-)//![fastq_file]"
-}; // std::filesystem::current_path() / "my.fastq" will be deleted after the execution
+)//![fastq_file]"}; // std::filesystem::current_path() / "my.fastq" will be deleted after the execution
 
 //![solution]
 #include <filesystem>
@@ -34,8 +31,8 @@ int main()
 
     for (auto & rec : fin)
     {
-        seqan3::debug_stream << "ID:  "  << rec.id() << '\n';
-        seqan3::debug_stream << "SEQ: "  << rec.sequence() << '\n';
+        seqan3::debug_stream << "ID:  " << rec.id() << '\n';
+        seqan3::debug_stream << "SEQ: " << rec.sequence() << '\n';
         seqan3::debug_stream << "QUAL: " << rec.base_qualities() << '\n';
     }
 }

@@ -25,7 +25,6 @@ enum struct incompatible_id : uint8_t
 class incompatible_config : private seqan3::pipeable_config_element
 {
 public:
-
     incompatible_config() = default;
     incompatible_config(incompatible_config const &) = default;
     incompatible_config(incompatible_config &&) = default;

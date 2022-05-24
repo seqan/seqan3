@@ -1,13 +1,13 @@
 #include <seqan3/core/platform.hpp>
 #if SEQAN3_WITH_CEREAL
 //![complete]
-#include <fstream>
+#    include <fstream>
 
-#include <cereal/archives/binary.hpp>
+#    include <seqan3/argument_parser/all.hpp>
+#    include <seqan3/io/sequence_file/input.hpp>
+#    include <seqan3/search/fm_index/bi_fm_index.hpp>
 
-#include <seqan3/argument_parser/all.hpp>
-#include <seqan3/io/sequence_file/input.hpp>
-#include <seqan3/search/fm_index/bi_fm_index.hpp>
+#    include <cereal/archives/binary.hpp>
 
 struct reference_storage_t
 {
@@ -16,8 +16,7 @@ struct reference_storage_t
 };
 
 //! [solution]
-void read_reference(std::filesystem::path const & reference_path,
-                    reference_storage_t & storage)
+void read_reference(std::filesystem::path const & reference_path, reference_storage_t & storage)
 {
     seqan3::sequence_file_input reference_in{reference_path};
     for (auto && record : reference_in)
@@ -27,10 +26,8 @@ void read_reference(std::filesystem::path const & reference_path,
     }
 }
 
-
 //! [create_index]
-void create_index(std::filesystem::path const & index_path,
-                  reference_storage_t & storage)
+void create_index(std::filesystem::path const & index_path, reference_storage_t & storage)
 //! [create_index]
 {
     seqan3::bi_fm_index index{storage.seqs};
@@ -41,8 +38,7 @@ void create_index(std::filesystem::path const & index_path,
     }
 }
 
-void run_program(std::filesystem::path const & reference_path,
-                 std::filesystem::path const & index_path)
+void run_program(std::filesystem::path const & reference_path, std::filesystem::path const & index_path)
 {
     reference_storage_t storage{};
     read_reference(reference_path, storage);
@@ -61,10 +57,16 @@ void initialise_argument_parser(seqan3::argument_parser & parser, cmd_arguments 
     parser.info.author = "E. coli";
     parser.info.short_description = "Creates an index over a reference.";
     parser.info.version = "1.0.0";
-    parser.add_option(args.reference_path, 'r', "reference", "The path to the reference.",
+    parser.add_option(args.reference_path,
+                      'r',
+                      "reference",
+                      "The path to the reference.",
                       seqan3::option_spec::required,
-                      seqan3::input_file_validator{{"fa","fasta"}});
-    parser.add_option(args.index_path, 'o', "output", "The output index file path.",
+                      seqan3::input_file_validator{{"fa", "fasta"}});
+    parser.add_option(args.index_path,
+                      'o',
+                      "output",
+                      "The output index file path.",
                       seqan3::option_spec::standard,
                       seqan3::output_file_validator{seqan3::output_file_open_options::create_new, {"index"}});
 }

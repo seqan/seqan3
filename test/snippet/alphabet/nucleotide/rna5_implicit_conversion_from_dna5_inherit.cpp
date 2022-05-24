@@ -1,8 +1,8 @@
 // generated from test/snippet/alphabet/nucleotide/@target_alphabet@_implicit_conversion_from_@source_alphabet@_inherit.cpp.in
 
 //![main]
-#include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/nucleotide/rna5.hpp>
 
 struct my_rna5 : public seqan3::rna5
 {

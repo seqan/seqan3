@@ -25,51 +25,32 @@ INSTANTIATE_TYPED_TEST_SUITE_P(aa20, aminoacid, seqan3::aa20, );
 
 TEST(aa20, assign_char)
 {
-    std::vector<char> chars
-    {
-        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-        'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-        'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-        '*', '!'
-    };
+    std::vector<char> chars{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'a', 'b', 'c', 'd', 'e',
+                            'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
+                            'X', 'Y', 'Z', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '*', '!'};
 
-    std::vector<seqan3::aa20> alphabets
-    {
-        'A'_aa20, 'D'_aa20, 'C'_aa20, 'D'_aa20, 'E'_aa20, 'F'_aa20, 'G'_aa20,
-        'H'_aa20, 'I'_aa20, 'L'_aa20, 'K'_aa20, 'L'_aa20, 'M'_aa20,
-        'A'_aa20, 'D'_aa20, 'C'_aa20, 'D'_aa20, 'E'_aa20, 'F'_aa20, 'G'_aa20,
-        'H'_aa20, 'I'_aa20, 'L'_aa20, 'K'_aa20, 'L'_aa20, 'M'_aa20,
-        'N'_aa20, 'L'_aa20, 'P'_aa20, 'Q'_aa20, 'R'_aa20, 'S'_aa20, 'T'_aa20,
-        'C'_aa20, 'V'_aa20, 'W'_aa20, 'S'_aa20, 'Y'_aa20, 'E'_aa20,
-        'N'_aa20, 'L'_aa20, 'P'_aa20, 'Q'_aa20, 'R'_aa20, 'S'_aa20, 'T'_aa20,
-        'C'_aa20, 'V'_aa20, 'W'_aa20, 'S'_aa20, 'Y'_aa20, 'E'_aa20,
-        'W'_aa20, 'S'_aa20
-    };
+    std::vector<seqan3::aa20> alphabets{
+        'A'_aa20, 'D'_aa20, 'C'_aa20, 'D'_aa20, 'E'_aa20, 'F'_aa20, 'G'_aa20, 'H'_aa20, 'I'_aa20, 'L'_aa20, 'K'_aa20,
+        'L'_aa20, 'M'_aa20, 'A'_aa20, 'D'_aa20, 'C'_aa20, 'D'_aa20, 'E'_aa20, 'F'_aa20, 'G'_aa20, 'H'_aa20, 'I'_aa20,
+        'L'_aa20, 'K'_aa20, 'L'_aa20, 'M'_aa20, 'N'_aa20, 'L'_aa20, 'P'_aa20, 'Q'_aa20, 'R'_aa20, 'S'_aa20, 'T'_aa20,
+        'C'_aa20, 'V'_aa20, 'W'_aa20, 'S'_aa20, 'Y'_aa20, 'E'_aa20, 'N'_aa20, 'L'_aa20, 'P'_aa20, 'Q'_aa20, 'R'_aa20,
+        'S'_aa20, 'T'_aa20, 'C'_aa20, 'V'_aa20, 'W'_aa20, 'S'_aa20, 'Y'_aa20, 'E'_aa20, 'W'_aa20, 'S'_aa20};
 
-    for (auto [ chr, alp ] : seqan3::views::zip(chars, alphabets))
+    for (auto [chr, alp] : seqan3::views::zip(chars, alphabets))
         EXPECT_EQ((seqan3::assign_char_to(chr, seqan3::aa20{})), alp);
 }
 
 TEST(aa20, to_char)
 {
-    std::vector<char> chars
-    {
-        'A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P',
-        'Q', 'R', 'S', 'T', 'V', 'W', 'Y', 'D', 'L', 'L', 'C', 'S', 'E',
-        'W', 'S'
-    };
+    std::vector<char> chars{'A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q',
+                            'R', 'S', 'T', 'V', 'W', 'Y', 'D', 'L', 'L', 'C', 'S', 'E', 'W', 'S'};
 
-    std::vector<seqan3::aa20> alphabets
-    {
-        'A'_aa20, 'C'_aa20, 'D'_aa20, 'E'_aa20, 'F'_aa20, 'G'_aa20, 'H'_aa20,
-        'I'_aa20, 'K'_aa20, 'L'_aa20, 'M'_aa20, 'N'_aa20, 'P'_aa20,
-        'Q'_aa20, 'R'_aa20, 'S'_aa20, 'T'_aa20, 'V'_aa20, 'W'_aa20, 'Y'_aa20,
-        'B'_aa20, 'J'_aa20, 'O'_aa20, 'U'_aa20, 'X'_aa20, 'Z'_aa20,
-        'W'_aa20, 'S'_aa20
-    };
+    std::vector<seqan3::aa20> alphabets{'A'_aa20, 'C'_aa20, 'D'_aa20, 'E'_aa20, 'F'_aa20, 'G'_aa20, 'H'_aa20,
+                                        'I'_aa20, 'K'_aa20, 'L'_aa20, 'M'_aa20, 'N'_aa20, 'P'_aa20, 'Q'_aa20,
+                                        'R'_aa20, 'S'_aa20, 'T'_aa20, 'V'_aa20, 'W'_aa20, 'Y'_aa20, 'B'_aa20,
+                                        'J'_aa20, 'O'_aa20, 'U'_aa20, 'X'_aa20, 'Z'_aa20, 'W'_aa20, 'S'_aa20};
 
-    for (auto [ chr, alp ] : seqan3::views::zip(chars, alphabets))
+    for (auto [chr, alp] : seqan3::views::zip(chars, alphabets))
         EXPECT_EQ(seqan3::to_char(alp), chr);
 }
 
@@ -110,8 +91,8 @@ TEST(literals, vector)
     v20.resize(5, 'B'_aa20);
     EXPECT_EQ(v20, "DDDDD"_aa20);
 
-    std::vector<seqan3::aa20> w20{'A'_aa20, 'B'_aa20, 'J'_aa20, 'O'_aa20, 'U'_aa20, 'X'_aa20, 'Z'_aa20, '!'_aa20,
-                                  '*'_aa20, '*'_aa20};
+    std::vector<seqan3::aa20>
+        w20{'A'_aa20, 'B'_aa20, 'J'_aa20, 'O'_aa20, 'U'_aa20, 'X'_aa20, 'Z'_aa20, '!'_aa20, '*'_aa20, '*'_aa20};
     EXPECT_EQ(w20, "ADLLCSESW*"_aa20);
 }
 
@@ -124,13 +105,23 @@ TEST(aa20, char_is_valid)
         bool expect = false;
         switch (c)
         {
-            case 'B': case 'J': case 'O': case 'U': case 'X': case 'Z':
-            case 'b': case 'j': case 'o': case 'u': case 'x': case 'z':
-            case '*':
-                break;
-            default:
-                expect = aa27_validator(c);
-                break;
+        case 'B':
+        case 'J':
+        case 'O':
+        case 'U':
+        case 'X':
+        case 'Z':
+        case 'b':
+        case 'j':
+        case 'o':
+        case 'u':
+        case 'x':
+        case 'z':
+        case '*':
+            break;
+        default:
+            expect = aa27_validator(c);
+            break;
         }
 
         EXPECT_EQ(seqan3::aa20::char_is_valid(c), expect);

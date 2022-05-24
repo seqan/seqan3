@@ -5,6 +5,8 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <benchmark/benchmark.h>
+
 #include <algorithm>
 #include <deque>
 #include <iterator>
@@ -12,15 +14,13 @@
 #include <seqan3/std/ranges>
 #include <vector>
 
-#include <benchmark/benchmark.h>
-
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/utility/container/aligned_allocator.hpp>
 #include <seqan3/utility/simd/concept.hpp>
-#include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/simd/simd.hpp>
+#include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/simd/views/to_simd.hpp>
 #include <seqan3/utility/views/to.hpp>
 #include <seqan3/utility/views/zip.hpp>
@@ -30,7 +30,7 @@
 // ============================================================================
 
 template <typename container_t, typename simd_t>
-void to_simd_naive_wo_condition(benchmark::State& state)
+void to_simd_naive_wo_condition(benchmark::State & state)
 {
     constexpr size_t simd_length = seqan3::simd::simd_traits<simd_t>::length;
     // Preparing the sequences
@@ -38,18 +38,18 @@ void to_simd_naive_wo_condition(benchmark::State& state)
     sequences.resize(simd_length);
 
     for (size_t i = 0; i < simd_length; ++i)
-        std::ranges::copy(seqan3::test::generate_sequence<seqan3::dna4>(500, 10),
-                          std::back_inserter(sequences[i]));
+        std::ranges::copy(seqan3::test::generate_sequence<seqan3::dna4>(500, 10), std::back_inserter(sequences[i]));
 
     size_t value = 0;
     for (auto _ : state)
     {
         // First sort the sequences by their lengths, but only use a proxy.
         auto sorted_sequences =
-            std::views::transform(seqan3::views::zip(sequences, std::views::iota(0u, simd_length)), [] (auto && tpl)
-            {
-                return std::pair{std::ranges::size(std::get<0>(tpl)), std::get<1>(tpl)};
-            })
+            std::views::transform(seqan3::views::zip(sequences, std::views::iota(0u, simd_length)),
+                                  [](auto && tpl)
+                                  {
+                                      return std::pair{std::ranges::size(std::get<0>(tpl)), std::get<1>(tpl)};
+                                  })
             | seqan3::views::to<std::vector<std::pair<size_t, size_t>>>;
 
         std::ranges::sort(sorted_sequences);
@@ -91,7 +91,7 @@ BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::deque<seqan3::dna4>, seqan3:
 // ============================================================================
 
 template <typename container_t, typename simd_t>
-void to_simd_naive_w_condition(benchmark::State& state)
+void to_simd_naive_w_condition(benchmark::State & state)
 {
     constexpr size_t simd_length = seqan3::simd::simd_traits<simd_t>::length;
     // Preparing the sequences
@@ -99,17 +99,17 @@ void to_simd_naive_w_condition(benchmark::State& state)
     sequences.resize(simd_length);
 
     for (size_t i = 0; i < simd_length; ++i)
-        std::ranges::copy(seqan3::test::generate_sequence<seqan3::dna4>(500, 10),
-                          std::back_inserter(sequences[i]));
+        std::ranges::copy(seqan3::test::generate_sequence<seqan3::dna4>(500, 10), std::back_inserter(sequences[i]));
 
     size_t value = 0;
     for (auto _ : state)
     {
-        size_t max_size = std::ranges::size(*(std::ranges::max_element(sequences, [] (auto const & lhs,
-                                                                                      auto const & rhs)
-        {
-            return std::ranges::size(lhs) < std::ranges::size(rhs);
-        })));
+        size_t max_size =
+            std::ranges::size(*(std::ranges::max_element(sequences,
+                                                         [](auto const & lhs, auto const & rhs)
+                                                         {
+                                                             return std::ranges::size(lhs) < std::ranges::size(rhs);
+                                                         })));
 
         std::vector<simd_t, seqan3::aligned_allocator<simd_t, sizeof(simd_t)>> v;
         v.resize(max_size, seqan3::fill<simd_t>(seqan3::alphabet_size<seqan3::dna4>));
@@ -141,15 +141,14 @@ BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::deque<seqan3::dna4>, seqan3::
 // ============================================================================
 
 template <typename container_t, typename simd_t>
-void to_simd(benchmark::State& state)
+void to_simd(benchmark::State & state)
 {
     // Preparing the sequences
     std::vector<container_t> sequences;
     sequences.resize(seqan3::simd::simd_traits<simd_t>::length);
 
     for (size_t i = 0; i < seqan3::simd::simd_traits<simd_t>::length; ++i)
-        std::ranges::copy(seqan3::test::generate_sequence<seqan3::dna4>(500, 10),
-                          std::back_inserter(sequences[i]));
+        std::ranges::copy(seqan3::test::generate_sequence<seqan3::dna4>(500, 10), std::back_inserter(sequences[i]));
 
     size_t value = 0;
     for (auto _ : state)

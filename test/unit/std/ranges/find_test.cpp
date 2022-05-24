@@ -7,9 +7,8 @@
 
 #include <gtest/gtest.h>
 
-#include <vector>
-
 #include <algorithm>
+#include <vector>
 
 TEST(general, find)
 {
@@ -24,7 +23,11 @@ TEST(general, find_if)
 {
     std::vector v{0, 1, 2, 3, 4, 5, 6};
 
-    auto res = std::ranges::find_if(v, [] (auto const c) { return c == 3; });
+    auto res = std::ranges::find_if(v,
+                                    [](auto const c)
+                                    {
+                                        return c == 3;
+                                    });
 
     EXPECT_EQ(*res, 3);
 }
@@ -33,7 +36,11 @@ TEST(general, find_if_not)
 {
     std::vector v{0, 1, 2, 3, 4, 5, 6};
 
-    auto res = std::ranges::find_if_not(v, [] (auto const c) { return c != 3; });
+    auto res = std::ranges::find_if_not(v,
+                                        [](auto const c)
+                                        {
+                                            return c != 3;
+                                        });
 
     EXPECT_EQ(*res, 3);
 }

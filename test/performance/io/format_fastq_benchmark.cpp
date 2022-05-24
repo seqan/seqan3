@@ -21,7 +21,7 @@
 #include <seqan3/test/tmp_filename.hpp>
 
 #if SEQAN3_HAS_SEQAN2
-#include <seqan/seq_io.h>
+#    include <seqan/seq_io.h>
 #endif // SEQAN3_HAS_SEQAN2
 
 constexpr unsigned default_seed = 1234u;
@@ -81,9 +81,9 @@ void fastq_write_to_stream_seqan3(benchmark::State & state)
 {
     size_t const iterations_per_run = state.range(0);
     std::ostringstream ostream;
-    seqan3::sequence_file_output fout{ostream, seqan3::format_fastq{}, seqan3::fields<seqan3::field::id,
-                                                                                      seqan3::field::seq,
-                                                                                      seqan3::field::qual>{}};
+    seqan3::sequence_file_output fout{ostream,
+                                      seqan3::format_fastq{},
+                                      seqan3::fields<seqan3::field::id, seqan3::field::seq, seqan3::field::qual>{}};
 
     auto seq = seqan3::test::generate_sequence<seqan3::dna5>(default_sequence_length, 0, default_seed);
     auto qual = seqan3::test::generate_sequence<seqan3::phred42>(default_sequence_length, 0, default_seed);
@@ -94,9 +94,9 @@ void fastq_write_to_stream_seqan3(benchmark::State & state)
             fout.emplace_back(fastq_id, seq, qual);
     }
 
-    ostream.str(""); // Reset stream.
+    ostream.str("");                        // Reset stream.
     fout.emplace_back(fastq_id, seq, qual); // Write one entry.
-    ostream.flush(); // Make sure the buffer is flushed.
+    ostream.flush();                        // Make sure the buffer is flushed.
 
     size_t bytes_per_run = ostream.str().size() * iterations_per_run;
     state.counters["iterations_per_run"] = iterations_per_run;
@@ -185,7 +185,7 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
     {
         istream.clear();
         istream.seekg(0, std::ios::beg);
-        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input> >(istream);
+        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input>>(istream);
 
         for (size_t i = 0; i < iterations_per_run; ++i)
         {

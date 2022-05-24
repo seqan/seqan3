@@ -5,10 +5,10 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
 #include <sstream>
 #include <vector>
-
-#include <gtest/gtest.h>
 
 #include <seqan3/core/range/detail/random_access_iterator.hpp>
 
@@ -31,10 +31,22 @@ struct iterator_fixture<seqan3::detail::random_access_iterator<std::vector<int>>
 
         std::vector<int> rng{1, 2, 3, 4, 5, 6, 7, 8};
 
-        iterator_type begin() { return iterator_type{rng}; }
-        iterator_type end() { return iterator_type{rng, rng.size()}; }
-        const_iterator_type begin() const { return const_iterator_type{rng}; }
-        const_iterator_type end() const { return const_iterator_type{rng, rng.size()}; }
+        iterator_type begin()
+        {
+            return iterator_type{rng};
+        }
+        iterator_type end()
+        {
+            return iterator_type{rng, rng.size()};
+        }
+        const_iterator_type begin() const
+        {
+            return const_iterator_type{rng};
+        }
+        const_iterator_type end() const
+        {
+            return const_iterator_type{rng, rng.size()};
+        }
     };
 
     std::vector<int> expected_range{1, 2, 3, 4, 5, 6, 7, 8};
@@ -145,7 +157,6 @@ TEST_F(random_access_iterator_test_fixture, cp_constructor2)
     seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_derivate2(it_base2);
     EXPECT_EQ('a', it_base2[0]);
     EXPECT_EQ('a', it_derivate2[0]);
-
 }
 
 // construct const_iterator from iterator
@@ -224,5 +235,4 @@ TEST_F(random_access_iterator_test_fixture, cp_destructor)
     iterator_type2 it2(v_const_empty);
     iterator_type2 * it_ptr2 = &it2;
     it_ptr2->iterator_type2::~iterator_type2();
-
 }

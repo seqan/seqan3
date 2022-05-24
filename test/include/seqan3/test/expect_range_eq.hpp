@@ -23,8 +23,7 @@
 
 namespace seqan3::test
 {
-#define EXPECT_RANGE_EQ(val1, val2) \
-    EXPECT_PRED_FORMAT2(::seqan3::test::expect_range_eq{}, val1, val2);
+#define EXPECT_RANGE_EQ(val1, val2) EXPECT_PRED_FORMAT2(::seqan3::test::expect_range_eq{}, val1, val2);
 
 struct expect_range_eq
 {
@@ -38,8 +37,8 @@ struct expect_range_eq
     }
 
     template <std::ranges::range lhs_t, std::ranges::range rhs_t>
-    ::testing::AssertionResult operator()(char const * lhs_expression, char const * rhs_expression,
-                                          lhs_t && lhs, rhs_t && rhs)
+    ::testing::AssertionResult
+    operator()(char const * lhs_expression, char const * rhs_expression, lhs_t && lhs, rhs_t && rhs)
     {
         std::vector lhs_copy = copy_range(std::forward<lhs_t>(lhs));
         std::vector rhs_copy = copy_range(std::forward<rhs_t>(rhs));

@@ -14,12 +14,13 @@
 
 using pairwise_global_affine_banded_testing_types = ::testing::Types<
     pairwise_alignment_fixture<&seqan3::test::alignment::fixture::global::affine::banded::dna4_01>,
-    pairwise_alignment_fixture<&seqan3::test::alignment::fixture::global::affine::banded::dna4_same_sequence_upper_diagonal_0>,
-    pairwise_alignment_fixture<&seqan3::test::alignment::fixture::global::affine::banded::dna4_same_sequence_lower_diagonal_0>,
+    pairwise_alignment_fixture<
+        &seqan3::test::alignment::fixture::global::affine::banded::dna4_same_sequence_upper_diagonal_0>,
+    pairwise_alignment_fixture<
+        &seqan3::test::alignment::fixture::global::affine::banded::dna4_same_sequence_lower_diagonal_0>,
     pairwise_alignment_fixture<&seqan3::test::alignment::fixture::global::affine::banded::dna4_small_band>,
     pairwise_alignment_fixture<&seqan3::test::alignment::fixture::global::affine::banded::dna4_single_diagonal>,
-    pairwise_alignment_fixture<&seqan3::test::alignment::fixture::global::affine::banded::dna4_large_band>
->;
+    pairwise_alignment_fixture<&seqan3::test::alignment::fixture::global::affine::banded::dna4_large_band>>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_global_affine_banded,
                                pairwise_alignment_test,
@@ -67,6 +68,6 @@ TEST_F(pairwise_global_affine_banded, invalid_band_last_cell_not_covered)
 {
     band().upper_diagonal = 5;
     auto result_range = align_pairwise(std::tie(fixture.sequence1, fixture.sequence2),
-                                                fixture.config | seqan3::align_cfg::output_score{});
+                                       fixture.config | seqan3::align_cfg::output_score{});
     EXPECT_THROW(result_range.begin(), seqan3::invalid_alignment_configuration);
 }

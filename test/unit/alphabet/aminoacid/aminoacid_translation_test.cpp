@@ -7,10 +7,10 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/nucleotide/dna15.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/aminoacid/translation.hpp>
+#include <seqan3/alphabet/nucleotide/dna15.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
 
 using seqan3::operator""_aa27;
 using seqan3::operator""_dna4;

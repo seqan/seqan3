@@ -5,16 +5,16 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
 #include <iostream>
 #include <memory>
 #include <seqan3/std/ranges>
 
-#include <gtest/gtest.h>
-
 #include <seqan3/core/range/detail/adaptor_base.hpp>
-#include <seqan3/utility/type_traits/basic.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
+#include <seqan3/utility/type_traits/basic.hpp>
 
 // The general capabilities of adaptor_base and derivates are tested thoroughly by the different views
 // this file checks the correct memory behaviour in regard to storing the elements
@@ -38,26 +38,26 @@ struct copy_counter
         move_count = rhs.move_count + 1;
     }
 
-    copy_counter & operator=(copy_counter const &) =  delete;
-    copy_counter & operator=(copy_counter &&) =  delete;
+    copy_counter & operator=(copy_counter const &) = delete;
+    copy_counter & operator=(copy_counter &&) = delete;
 };
 
 struct adaptor_base_type_checker :
-    seqan3::detail::adaptor_base<adaptor_base_type_checker,
-                                 copy_counter, copy_counter const, copy_counter &, copy_counter const &>
+    seqan3::detail::
+        adaptor_base<adaptor_base_type_checker, copy_counter, copy_counter const, copy_counter &, copy_counter const &>
 {
-    using base_t = seqan3::detail::adaptor_base<adaptor_base_type_checker,
-                                                copy_counter, copy_counter const, copy_counter &, copy_counter const &>;
+    using base_t = seqan3::detail::
+        adaptor_base<adaptor_base_type_checker, copy_counter, copy_counter const, copy_counter &, copy_counter const &>;
     using base_t::base_t;
 
     template <typename urng_t, typename one_t, typename two_t, typename three_t, typename four_t>
     static std::tuple<one_t, two_t, three_t, four_t>
     impl(urng_t &&, one_t && one, two_t && two, three_t && three, four_t && four)
     {
-        return { std::forward<one_t>(one),
-                 std::forward<two_t>(two),
-                 std::forward<three_t>(three),
-                 std::forward<four_t>(four) };
+        return {std::forward<one_t>(one),
+                std::forward<two_t>(two),
+                std::forward<three_t>(three),
+                std::forward<four_t>(four)};
     }
 };
 
@@ -71,15 +71,15 @@ TEST(arg_ownership, lval_adaptor)
 
     auto f = vec | a;
 
-    EXPECT_TRUE((std::same_as<decltype(f),
-                              std::tuple<copy_counter, copy_counter const, copy_counter &, copy_counter const &>>));
+    EXPECT_TRUE((
+        std::same_as<decltype(f), std::tuple<copy_counter, copy_counter const, copy_counter &, copy_counter const &>>));
 
     // In general three operations happen:
     // 1. out of constructor, into storage tuple
     // 2. out of storage tuple, into impl()
     // 3. from impl(), into return tuple
-    EXPECT_EQ(std::get<0>(f).copy_count, 1ul);  // 2. because needs to stay
-    EXPECT_EQ(std::get<0>(f).move_count, 2ul);  // 1. and 3.
+    EXPECT_EQ(std::get<0>(f).copy_count, 1ul); // 2. because needs to stay
+    EXPECT_EQ(std::get<0>(f).move_count, 2ul); // 1. and 3.
 
     EXPECT_EQ(std::get<1>(f).copy_count, 3ul);
     EXPECT_EQ(std::get<1>(f).move_count, 0ul);
@@ -105,8 +105,8 @@ TEST(arg_ownership, const_lval_adaptor)
 
     auto f = vec | a;
 
-    EXPECT_TRUE((std::same_as<decltype(f),
-                              std::tuple<copy_counter, copy_counter const, copy_counter &, copy_counter const &>>));
+    EXPECT_TRUE((
+        std::same_as<decltype(f), std::tuple<copy_counter, copy_counter const, copy_counter &, copy_counter const &>>));
 
     EXPECT_EQ(std::get<0>(f).copy_count, 1ul);
     EXPECT_EQ(std::get<0>(f).move_count, 2ul);
@@ -135,8 +135,8 @@ TEST(arg_ownership, rval_adaptor)
 
     auto f = vec | std::move(a);
 
-    EXPECT_TRUE((std::same_as<decltype(f),
-                              std::tuple<copy_counter, copy_counter const, copy_counter &, copy_counter const &>>));
+    EXPECT_TRUE((
+        std::same_as<decltype(f), std::tuple<copy_counter, copy_counter const, copy_counter &, copy_counter const &>>));
 
     EXPECT_EQ(std::get<0>(f).copy_count, 0ul); // moved out of storage, too, because temporary
     EXPECT_EQ(std::get<0>(f).move_count, 3ul);
@@ -165,8 +165,8 @@ TEST(arg_ownership, const_rval_adaptor)
 
     auto f = vec | std::move(a);
 
-    EXPECT_TRUE((std::same_as<decltype(f),
-                              std::tuple<copy_counter, copy_counter const, copy_counter &, copy_counter const &>>));
+    EXPECT_TRUE((
+        std::same_as<decltype(f), std::tuple<copy_counter, copy_counter const, copy_counter &, copy_counter const &>>));
 
     EXPECT_EQ(std::get<0>(f).copy_count, 1ul);
     EXPECT_EQ(std::get<0>(f).move_count, 2ul);

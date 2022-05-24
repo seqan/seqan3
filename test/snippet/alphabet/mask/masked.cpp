@@ -14,7 +14,7 @@ int main()
 
     if (dna4_masked.to_char() != dna4_another_masked.to_char())
     {
-        seqan3::debug_stream << dna4_masked.to_char() << " is not the same as " <<
-                                dna4_another_masked.to_char() << "\n";
+        seqan3::debug_stream << dna4_masked.to_char() << " is not the same as " << dna4_another_masked.to_char()
+                             << "\n";
     }
 }

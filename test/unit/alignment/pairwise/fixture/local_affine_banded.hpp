@@ -26,6 +26,7 @@ using seqan3::operator""_rna5;
 
 namespace seqan3::test::alignment::fixture::local::affine::banded
 {
+// clang-format off
 
 inline constexpr auto align_config = seqan3::align_cfg::method_local{} |
                                      seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
@@ -488,5 +489,6 @@ static auto aa27_01 = []()
         }
     };
 }();
+// clang-format on
 
 } // namespace seqan3::test::alignment::fixture::local::affine::banded

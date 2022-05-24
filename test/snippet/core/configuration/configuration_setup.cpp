@@ -10,7 +10,6 @@ enum struct my_id : int
 class bar : private seqan3::pipeable_config_element
 {
 public:
-
     bar() = default;
     bar(bar const &) = default;
     bar(bar &&) = default;
@@ -25,7 +24,6 @@ template <typename t>
 struct foo : private seqan3::pipeable_config_element
 {
 public:
-
     foo() = default;
     foo(foo const &) = default;
     foo(foo &&) = default;

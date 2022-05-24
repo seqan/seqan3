@@ -16,9 +16,8 @@
 template <typename T>
 using alphabet_range_hashing = ::testing::Test;
 
-using test_types = ::testing::Types<seqan3::dna4,
-                                    seqan3::qualified<seqan3::dna4, seqan3::phred42>,
-                                    seqan3::gapped<seqan3::dna4>>;
+using test_types =
+    ::testing::Types<seqan3::dna4, seqan3::qualified<seqan3::dna4, seqan3::phred42>, seqan3::gapped<seqan3::dna4>>;
 
 TYPED_TEST_SUITE(alphabet_range_hashing, test_types, );
 

@@ -14,8 +14,9 @@
 #include <seqan3/utility/views/zip.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
-#include <seqan/index.h>
-#include <seqan3/test/performance/seqan2_minimiser.h>
+#    include <seqan3/test/performance/seqan2_minimiser.h>
+
+#    include <seqan/index.h>
 #endif // SEQAN3_HAS_SEQAN2
 
 inline benchmark::Counter bp_per_second(size_t const basepairs)
@@ -37,7 +38,7 @@ inline seqan3::shape make_gapped_shape(size_t const k)
     return shape;
 }
 
-static void arguments(benchmark::internal::Benchmark* b)
+static void arguments(benchmark::internal::Benchmark * b)
 {
     for (int32_t sequence_length : {50'000, /*1'000'000*/})
     {
@@ -96,26 +97,35 @@ void compute_minimisers(benchmark::State & state)
 
             // Use random seed to randomise order on forward strand.
             auto forward = seq | seqan3::views::kmer_hash(shape)
-                               | std::views::transform([seed] (uint64_t const i)
-                                                       { return i ^ seed; });
+                         | std::views::transform(
+                               [seed](uint64_t const i)
+                               {
+                                   return i ^ seed;
+                               });
             // Create reverse complement strand and use random seed to randomise order on reverse complement strand.
             auto reverse = seq | seqan3::views::complement // Create complement.
-                               | std::views::reverse       // Reverse order.
-                               | seqan3::views::kmer_hash(shape) // Get hash values.
-                               | std::views::transform([seed] (uint64_t const i)
-                                                       { return i ^ seed; }) // Randomise.
-                               | std::views::reverse; // Reverse again, so that the first hash value
-                                                      // is the reverse complement of the first
-                                                      // hash value in the forward strand.
+                         | std::views::reverse             // Reverse order.
+                         | seqan3::views::kmer_hash(shape) // Get hash values.
+                         | std::views::transform(
+                               [seed](uint64_t const i)
+                               {
+                                   return i ^ seed;
+                               })               // Randomise.
+                         | std::views::reverse; // Reverse again, so that the first hash value
+                                                // is the reverse complement of the first
+                                                // hash value in the forward strand.
             // Get minimum between forward and reverse strand for each value.
             auto both = seqan3::views::zip(forward, reverse)
-                      | std::views::transform([] (auto && fwd_rev_hash_pair) {return std::min(std::get<0>(fwd_rev_hash_pair),
-                                                                                              std::get<1>(fwd_rev_hash_pair)); });
+                      | std::views::transform(
+                            [](auto && fwd_rev_hash_pair)
+                            {
+                                return std::min(std::get<0>(fwd_rev_hash_pair), std::get<1>(fwd_rev_hash_pair));
+                            });
 
             // Setup to slide over a range with `w - shape.size()+1` window size.
             // Initialize a sub range of size ` w - shape.size()`
             auto subrange_begin = begin(both);
-            auto subrange_end   = std::ranges::next(subrange_begin, w - shape.size(), end(both));
+            auto subrange_end = std::ranges::next(subrange_begin, w - shape.size(), end(both));
 
             // Slide over the range
             while (subrange_end != end(both))
@@ -129,7 +139,8 @@ void compute_minimisers(benchmark::State & state)
         }
         else if constexpr (tag == method_tag::seqan3_ungapped)
         {
-            for (auto h : seq | seqan3::views::minimiser_hash(seqan3::ungapped{static_cast<uint8_t>(k)}, seqan3::window_size{w}))
+            for (auto h :
+                 seq | seqan3::views::minimiser_hash(seqan3::ungapped{static_cast<uint8_t>(k)}, seqan3::window_size{w}))
                 benchmark::DoNotOptimize(sum += h);
         }
         else if constexpr (tag == method_tag::seqan3_gapped)
@@ -137,7 +148,7 @@ void compute_minimisers(benchmark::State & state)
             for (auto h : seq | seqan3::views::minimiser_hash(make_gapped_shape(k), seqan3::window_size{w}))
                 benchmark::DoNotOptimize(sum += h);
         }
-        #ifdef SEQAN3_HAS_SEQAN2
+#ifdef SEQAN3_HAS_SEQAN2
         else
         {
             auto seqan2_seq = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
@@ -147,7 +158,7 @@ void compute_minimisers(benchmark::State & state)
 
             shape_t shape;
             if constexpr (tag == method_tag::seqan2_ungapped)
-               seqan::resize(shape, k);
+                seqan::resize(shape, k);
             else
                 shape = make_gapped_shape_seqan2(k);
 
@@ -157,7 +168,7 @@ void compute_minimisers(benchmark::State & state)
             for (auto h : seqan_minimiser.minimiser_hash)
                 benchmark::DoNotOptimize(sum += h);
         }
-        #endif // SEQAN3_HAS_SEQAN2
+#endif // SEQAN3_HAS_SEQAN2
     }
 
     state.counters["Throughput[bp/s]"] = bp_per_second(sequence_length - k + 1);
@@ -180,7 +191,8 @@ void compute_minimisers_on_poly_A_sequence(benchmark::State & state)
     {
         if constexpr (tag == method_tag::seqan3_ungapped)
         {
-            for (auto h : seq | seqan3::views::minimiser_hash(seqan3::ungapped{static_cast<uint8_t>(k)}, seqan3::window_size{w}))
+            for (auto h :
+                 seq | seqan3::views::minimiser_hash(seqan3::ungapped{static_cast<uint8_t>(k)}, seqan3::window_size{w}))
                 benchmark::DoNotOptimize(sum += h);
         }
         else if constexpr (tag == method_tag::seqan3_gapped)
@@ -192,7 +204,6 @@ void compute_minimisers_on_poly_A_sequence(benchmark::State & state)
 
     state.counters["Throughput[bp/s]"] = bp_per_second(sequence_length - k + 1);
 }
-
 
 #ifdef SEQAN3_HAS_SEQAN2
 BENCHMARK_TEMPLATE(compute_minimisers, method_tag::seqan2_ungapped)->Apply(arguments);

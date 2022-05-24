@@ -1,5 +1,5 @@
-#include <seqan3/utility/math.hpp>
 #include <seqan3/core/debug_stream.hpp>
+#include <seqan3/utility/math.hpp>
 
 int main()
 {

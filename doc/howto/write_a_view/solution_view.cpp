@@ -10,23 +10,21 @@
 using seqan3::operator""_dna5;
 
 /* The iterator template */
-template <std::ranges::forward_range urng_t>            // CRTP derivation ↓
-class my_iterator : public seqan3::detail::inherited_iterator_base<my_iterator<urng_t>,
-                                                                   std::ranges::iterator_t<urng_t>>
+template <std::ranges::forward_range urng_t> // CRTP derivation ↓
+class my_iterator : public seqan3::detail::inherited_iterator_base<my_iterator<urng_t>, std::ranges::iterator_t<urng_t>>
 {
 private:
     static_assert(seqan3::nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>,
                   "You can only iterate over ranges of nucleotides!");
 
     // the immediate base type is the CRTP-layer
-    using base_t = seqan3::detail::inherited_iterator_base<my_iterator<urng_t>,
-                                                           std::ranges::iterator_t<urng_t>>;
+    using base_t = seqan3::detail::inherited_iterator_base<my_iterator<urng_t>, std::ranges::iterator_t<urng_t>>;
 
 public:
     // the member types are never imported automatically, but can be explicitly inherited:
-    using typename base_t::value_type;
     using typename base_t::difference_type;
     using typename base_t::iterator_category;
+    using typename base_t::value_type;
     // this member type is overwritten as we do above:
     using reference = value_type;
     // Explicitly set the pointer to void as we return a temporary.
@@ -40,7 +38,8 @@ public:
     my_iterator & operator=(my_iterator &&) = default;
     ~my_iterator() = default;
     // and a constructor that takes the base_type:
-    my_iterator(base_t it) : base_t{std::move(it)} {}
+    my_iterator(base_t it) : base_t{std::move(it)}
+    {}
 
     // we don't need to implement the ++ operators anymore!
 
@@ -68,17 +67,19 @@ static_assert(std::random_access_iterator<my_iterator<std::vector<seqan3::dna5>>
 
 //![view_header]
 /* The view class template */
-template <std::ranges::view urng_t>  // CRTP derivation ↓
+template <std::ranges::view urng_t> // CRTP derivation ↓
 class my_view : public std::ranges::view_interface<my_view<urng_t>>
 {
-//![view_header]
-//![view_private]
+    //![view_header]
+    //![view_private]
+
 private:
     // this is the underlying range
     urng_t urange;
-//![view_private]
+    //![view_private]
 
-//![view_member_types]
+    //![view_member_types]
+
 public:
     // Types of the iterators
     using iterator = my_iterator<urng_t>;
@@ -173,28 +174,28 @@ int main()
     /* try the iterator */
     using my_it_concrete = my_iterator<std::vector<seqan3::dna5>>;
 
-     my_it_concrete it{vec.begin()};
+    my_it_concrete it{vec.begin()};
 
     // now you can use operator[] on the iterator
     for (size_t i = 0; i < 7; ++i)
         std::cout << seqan3::to_char(it[i]) << ' ';
     std::cout << '\n';
-//![main_it]
+    //![main_it]
 
-//![main_range]
+    //![main_range]
     /* try the range */
     my_view v{vec};
     static_assert(std::ranges::random_access_range<decltype(v)>);
     seqan3::debug_stream << '\n' << v << '\n';
-//![main_range]
+    //![main_range]
 
-//![main_adaptor]
+    //![main_adaptor]
     /* try the adaptor */
     auto v2 = vec | std::views::reverse | ::views::my;
     static_assert(std::ranges::random_access_range<decltype(v2)>);
     seqan3::debug_stream << v2 << '\n';
-//![main_adaptor]
+    //![main_adaptor]
 
-//![end]
+    //![end]
 }
 //![end]

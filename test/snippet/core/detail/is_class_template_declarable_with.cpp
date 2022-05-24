@@ -30,15 +30,14 @@ static_assert(!seqan3::detail::is_class_template_declarable_with_v<bar, double>)
 
 // is_class_template_declarable_with_v works well with lazy_conditional_t
 template <typename t>
-using maybe_foo_t = seqan3::detail::lazy_conditional_t<seqan3::detail::is_class_template_declarable_with_v<foo, t>,
-                                                       seqan3::detail::lazy<foo, t>,
-                                                       t>;
+using maybe_foo_t = seqan3::detail::
+    lazy_conditional_t<seqan3::detail::is_class_template_declarable_with_v<foo, t>, seqan3::detail::lazy<foo, t>, t>;
 
 int main()
 {
-    foo<int> a = maybe_foo_t<int>{10}; // foo is instantiable with int, thus use foo<int>
+    foo<int> a = maybe_foo_t<int>{10};                // foo is instantiable with int, thus use foo<int>
     seqan3::debug_stream << "a: " << a.value << '\n'; // prints 10
-    float b = maybe_foo_t<float>{0.4f}; // foo is not instantiable with float, thus use float directly
-    seqan3::debug_stream << "b: " << b << '\n'; // prints 0.4
+    float b = maybe_foo_t<float>{0.4f};               // foo is not instantiable with float, thus use float directly
+    seqan3::debug_stream << "b: " << b << '\n';       // prints 0.4
     return 0;
 }

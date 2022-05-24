@@ -5,7 +5,7 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include <seqan3/alignment/matrix/detail/affine_cell_proxy.hpp>
 #include <seqan3/test/expect_same_type.hpp>
@@ -217,7 +217,7 @@ TEST_F(trace_cell_proxy_test, vertical_trace)
 struct affine_cell_proxy_assignment_test : ::testing::Test
 {
     using score_value_t = std::tuple<int, int, int>;
-    using score_ref_t = seqan3::common_tuple<int&, int&, int&>;
+    using score_ref_t = seqan3::common_tuple<int &, int &, int &>;
 
     // The source score type defined inside of the affine gap policy.
     using source_score_cell_t = seqan3::detail::affine_cell_proxy<score_value_t>;
@@ -226,13 +226,13 @@ struct affine_cell_proxy_assignment_test : ::testing::Test
 
     using trace_t = seqan3::detail::trace_directions;
     using trace_value_t = std::tuple<trace_t, trace_t, trace_t>;
-    using trace_ref_t = seqan3::common_tuple<trace_t&, trace_t&, trace_t&>;
+    using trace_ref_t = seqan3::common_tuple<trace_t &, trace_t &, trace_t &>;
 
     // The source score and trace type defined inside of the affine gap policy.
     using source_score_trace_cell_t = seqan3::detail::affine_cell_proxy<std::pair<score_value_t, trace_value_t>>;
     // The source score and trace type returned by the alignment matrix iterator.
-    using target_score_trace_cell_t = seqan3::detail::affine_cell_proxy<seqan3::common_pair<target_score_cell_t,
-                                                                                            trace_ref_t>>;
+    using target_score_trace_cell_t =
+        seqan3::detail::affine_cell_proxy<seqan3::common_pair<target_score_cell_t, trace_ref_t>>;
 
     int v1{};
     int v2{};
@@ -293,7 +293,7 @@ TEST_F(affine_cell_proxy_assignment_test, alignment_assignment_emulation_score_a
     EXPECT_EQ(t3, trace_t::up);
 
     source_score_trace_cell_t const source_const_lvalue{score_value_t{3, 2, 1},
-                                            trace_value_t{trace_t::left, trace_t::up, trace_t::up_open}};
+                                                        trace_value_t{trace_t::left, trace_t::up, trace_t::up_open}};
     target_score_trace_cell_t{score_ref_t{v1, v2, v3}, trace_ref_t{t1, t2, t3}} = source_const_lvalue;
 
     EXPECT_EQ(v1, 3);
@@ -305,8 +305,7 @@ TEST_F(affine_cell_proxy_assignment_test, alignment_assignment_emulation_score_a
     EXPECT_EQ(t3, trace_t::up_open);
 
     target_score_trace_cell_t{score_ref_t{v1, v2, v3}, trace_ref_t{t1, t2, t3}} =
-            source_score_trace_cell_t{score_value_t{4, 5, 6},
-                                      trace_value_t{trace_t::none, trace_t::none, trace_t::none}};
+        source_score_trace_cell_t{score_value_t{4, 5, 6}, trace_value_t{trace_t::none, trace_t::none, trace_t::none}};
 
     EXPECT_EQ(v1, 4);
     EXPECT_EQ(v2, 5);

@@ -5,10 +5,10 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
 #include <bit>
 #include <concepts>
-
-#include <gtest/gtest.h>
 
 #include <sdsl/bits.hpp>
 
@@ -94,10 +94,10 @@ TYPED_TEST(unsigned_operations, bit_width)
         unsigned_t end = start << 1u;
         for (unsigned_t n = start, k = 0u; n < end && k < max_iterations; ++n, ++k)
         {
-            EXPECT_EQ(sdsl::bits::hi(n), position) << "[SDSL] The position of the msb of " << n << " should be "
-                                                   << position;
-            EXPECT_EQ(std::bit_width(n), position + 1u) << "The position of the msb of " << n << " should be "
-                                                        << position;
+            EXPECT_EQ(sdsl::bits::hi(n), position)
+                << "[SDSL] The position of the msb of " << n << " should be " << position;
+            EXPECT_EQ(std::bit_width(n), position + 1u)
+                << "The position of the msb of " << n << " should be " << position;
         }
     }
 }
@@ -126,11 +126,9 @@ TYPED_TEST(unsigned_operations, countl_zero)
         unsigned_t end = start >> 1u;
         for (unsigned_t n = start, k = 0u; n < end && k < max_iterations; ++n, ++k)
         {
-            EXPECT_EQ(seqan3::detail::bits_of<unsigned_t> - sdsl::bits::hi(n) - 1, n) << "[SDSL] n " << n
-                                                                                      << " should have " << cnt
-                                                                                      << " leading zeros.";
-            EXPECT_EQ(std::countl_zero(n), cnt) << "n " << n << " should have " << cnt
-                                                             << " leading zeros.";
+            EXPECT_EQ(seqan3::detail::bits_of<unsigned_t> - sdsl::bits::hi(n) - 1, n)
+                << "[SDSL] n " << n << " should have " << cnt << " leading zeros.";
+            EXPECT_EQ(std::countl_zero(n), cnt) << "n " << n << " should have " << cnt << " leading zeros.";
             EXPECT_EQ(std::countl_zero(n), cnt);
         }
     }
@@ -199,19 +197,15 @@ TYPED_TEST(unsigned_operations, popcount)
         unsigned_t start = std::numeric_limits<unsigned_t>::max() >> position;
         auto sizeof_bits_of_unsigned_t = seqan3::detail::bits_of<unsigned_t>;
 
-        EXPECT_EQ(std::popcount(start),
-                  sizeof_bits_of_unsigned_t - position) << "The pocount of " << start << " should be "
-                                                        << sizeof_bits_of_unsigned_t - position;
-        for (unsigned_t n = permute_bits(start), k = 0u;
-             n > start && k < max_iterations;
+        EXPECT_EQ(std::popcount(start), sizeof_bits_of_unsigned_t - position)
+            << "The pocount of " << start << " should be " << sizeof_bits_of_unsigned_t - position;
+        for (unsigned_t n = permute_bits(start), k = 0u; n > start && k < max_iterations;
              start = n, n = permute_bits(start), ++k)
         {
-            EXPECT_EQ(static_cast<uint8_t>(sdsl::bits::cnt(n)),
-                      sizeof_bits_of_unsigned_t - position) << "[SDSL] The pocount of " << n << " should be "
-                                                            << sizeof_bits_of_unsigned_t - position;
-            EXPECT_EQ(std::popcount(n),
-                      sizeof_bits_of_unsigned_t - position) << "The pocount of " << n << " should be "
-                                                            << sizeof_bits_of_unsigned_t - position;
+            EXPECT_EQ(static_cast<uint8_t>(sdsl::bits::cnt(n)), sizeof_bits_of_unsigned_t - position)
+                << "[SDSL] The pocount of " << n << " should be " << sizeof_bits_of_unsigned_t - position;
+            EXPECT_EQ(std::popcount(n), sizeof_bits_of_unsigned_t - position)
+                << "The pocount of " << n << " should be " << sizeof_bits_of_unsigned_t - position;
             EXPECT_EQ(std::popcount(n), sizeof_bits_of_unsigned_t - position);
         }
     }

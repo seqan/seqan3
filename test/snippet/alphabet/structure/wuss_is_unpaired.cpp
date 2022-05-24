@@ -10,5 +10,5 @@ int main()
     bool is_unpaired_char_free = seqan3::is_unpaired('{'_wuss51);
 
     std::cout << std::boolalpha << is_unpaired_char_member << '\n'; // true
-    std::cout << std::boolalpha << is_unpaired_char_free << '\n'; // false
+    std::cout << std::boolalpha << is_unpaired_char_free << '\n';   // false
 }

@@ -26,7 +26,11 @@ int main(int argc, char const * argv[])
 
     // Because of the enumeration_names function
     // you can now add an option that takes a value of type bar:
-    parser.add_option(value, 'f', "foo", "Give me a foo value.", seqan3::option_spec::standard,
+    parser.add_option(value,
+                      'f',
+                      "foo",
+                      "Give me a foo value.",
+                      seqan3::option_spec::standard,
                       seqan3::value_list_validator{(seqan3::enumeration_names<foo::bar> | std::views::values)});
 
     try
