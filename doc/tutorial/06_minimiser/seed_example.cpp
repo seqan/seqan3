@@ -9,8 +9,7 @@ int main()
     std::vector<seqan3::dna4> text{"CCACGTCGACGGTT"_dna4};
 
     // Here a consecutive shape with size 4 (so the k-mer size is 4) and a window size of 8 is used.
-    auto minimisers = text | seqan3::views::minimiser_hash(seqan3::shape{seqan3::ungapped{4}},
-                                                           seqan3::window_size{8});
+    auto minimisers = text | seqan3::views::minimiser_hash(seqan3::shape{seqan3::ungapped{4}}, seqan3::window_size{8});
     // results in: [10322096095657499240, 10322096095657499142, 10322096095657499224]
     // representing the k-mers [GTAC, TCGA, GACG]
     seqan3::debug_stream << minimisers << '\n';
@@ -18,6 +17,11 @@ int main()
     // Get hash values
     uint64_t seed = 0x8F3F73B5CF1C9ADE; // The default seed from minimiser_hash
     // Use XOR on all minimiser values
-    auto hash_values = minimisers | std::views::transform([seed] (uint64_t i) {return i ^ seed; });
+    auto hash_values = minimisers
+                     | std::views::transform(
+                           [seed](uint64_t i)
+                           {
+                               return i ^ seed;
+                           });
     seqan3::debug_stream << hash_values << '\n'; // results in: [182, 216, 134]
 }

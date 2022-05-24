@@ -74,11 +74,7 @@ int run_git_push(seqan3::argument_parser & parser)
 int main(int argc, char const ** argv)
 {
     //![construction]
-    seqan3::argument_parser top_level_parser{"mygit",
-                                             argc,
-                                             argv,
-                                             seqan3::update_notifications::on,
-                                             {"push", "pull"}};
+    seqan3::argument_parser top_level_parser{"mygit", argc, argv, seqan3::update_notifications::on, {"push", "pull"}};
     //![construction]
 
     // Add information and flags, but no (positional) options to your top-level parser.
@@ -110,7 +106,7 @@ int main(int argc, char const ** argv)
         return run_git_push(sub_parser);
     else
         std::cout << "Unhandled subparser named " << sub_parser.info.app_name << '\n';
-        // Note: Arriving in this else branch means you did not handle all sub_parsers in the if branches above.
+    // Note: Arriving in this else branch means you did not handle all sub_parsers in the if branches above.
 
     return 0;
 }

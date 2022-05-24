@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 //! [inequality]
-#include <seqan3/alphabet/concept.hpp>                   // alphabet concept checks
+#include <seqan3/alphabet/concept.hpp> // alphabet concept checks
 
 struct dna2
 {
@@ -25,5 +25,5 @@ struct dna2
     }
 };
 
-static_assert(std::equality_comparable<dna2>);            // ok
+static_assert(std::equality_comparable<dna2>); // ok
 //! [inequality]

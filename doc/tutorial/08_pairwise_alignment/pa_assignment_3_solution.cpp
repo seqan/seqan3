@@ -11,10 +11,7 @@ int main()
 {
     using namespace seqan3::literals;
 
-    std::vector vec{"MANLGYZW"_aa27,
-                    "LCKRLGNM"_aa27,
-                    "KPSKPRDYEDG"_aa27,
-                    "EQMCITQYR"_aa27};
+    std::vector vec{"MANLGYZW"_aa27, "LCKRLGNM"_aa27, "KPSKPRDYEDG"_aa27, "EQMCITQYR"_aa27};
 
     using pair_t = decltype(std::tie(vec[0], vec[0]));
     std::vector<pair_t> source;
@@ -27,13 +24,12 @@ int main()
     }
 
     // Configure the alignment kernel.
-    auto config = seqan3::align_cfg::method_global{
-                      seqan3::align_cfg::free_end_gaps_sequence1_leading{false},
-                      seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
-                      seqan3::align_cfg::free_end_gaps_sequence1_trailing{false},
-                      seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}} |
-                  seqan3::align_cfg::scoring_scheme{seqan3::aminoacid_scoring_scheme{
-                      seqan3::aminoacid_similarity_matrix::blosum62}};
+    auto config = seqan3::align_cfg::method_global{seqan3::align_cfg::free_end_gaps_sequence1_leading{false},
+                                                   seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
+                                                   seqan3::align_cfg::free_end_gaps_sequence1_trailing{false},
+                                                   seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}}
+                | seqan3::align_cfg::scoring_scheme{
+                    seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum62}};
 
     for (auto const & res : seqan3::align_pairwise(source, config))
         seqan3::debug_stream << "Score: " << res.score() << '\n';

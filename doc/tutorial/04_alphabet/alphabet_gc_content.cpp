@@ -1,5 +1,5 @@
 //! [exercise]
-#include <array> // std::array
+#include <array>  // std::array
 #include <string> // std::string
 #include <vector> // std::vector
 
@@ -9,7 +9,7 @@
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/utility/views/all.hpp> // optional: use views to convert the input string to a dna5 sequence
 
-int main (int argc, char * argv[])
+int main(int argc, char * argv[])
 {
     using namespace seqan3::literals;
 
@@ -29,7 +29,7 @@ int main (int argc, char * argv[])
     // Convert the input to a dna5 sequence
     std::vector<seqan3::dna5> sequence{};
     for (char c : input)
-        sequence.push_back( seqan3::assign_char_to(c, seqan3::dna5{}) );
+        sequence.push_back(seqan3::assign_char_to(c, seqan3::dna5{}));
 
     // Optional: use views for the conversion. Views will be introduced in the next chapter.
     //std::vector<seqan3::dna5> sequence = input | seqan3::views::char_to<seqan3::dna5> | seqan3::views::to<std::vector>;

@@ -6,10 +6,11 @@
 // -----------------------------------------------------------------------------------------------------
 
 //! [dna2]
-#include <array>                                         // std::array
-#include <seqan3/alphabet/alphabet_base.hpp>             // alphabet_base
-#include <seqan3/alphabet/concept.hpp>                   // alphabet concept checks
-#include <seqan3/utility/char_operations/transform.hpp>  // seqan3::to_lower
+#include <array> // std::array
+
+#include <seqan3/alphabet/alphabet_base.hpp>            // alphabet_base
+#include <seqan3/alphabet/concept.hpp>                  // alphabet concept checks
+#include <seqan3/utility/char_operations/transform.hpp> // seqan3::to_lower
 
 // derive from alphabet_base
 struct dna2 : public seqan3::alphabet_base<dna2, 2>
@@ -40,8 +41,9 @@ private:
     // === lookup-table implementation detail ===
 
     // map 0 => 'S' and 1 => 'W'
-    static constexpr char_type rank_to_char_table[alphabet_size] {'S', 'W'};
+    static constexpr char_type rank_to_char_table[alphabet_size]{'S', 'W'};
 
+    // clang-format off
     static constexpr std::array<rank_type, 256> char_to_rank_table
     {
         // initialise with an immediately evaluated lambda expression:
@@ -54,8 +56,9 @@ private:
         } ()
     };
 };
+// clang-format on
 
 // check the concepts
-static_assert(seqan3::alphabet<dna2>);                   // ok
-static_assert(seqan3::writable_alphabet<dna2>);           // ok
+static_assert(seqan3::alphabet<dna2>);          // ok
+static_assert(seqan3::writable_alphabet<dna2>); // ok
 //! [dna2]

@@ -1,8 +1,6 @@
 #include <seqan3/test/snippet/create_temporary_snippet_file.hpp>
-seqan3::test::create_temporary_snippet_file my_fastq
-{
-    "my.fastq",
-R"//![fastq_file](
+seqan3::test::create_temporary_snippet_file my_fastq{"my.fastq",
+                                                     R"//![fastq_file](
 @seq1
 CGATCGATC
 +
@@ -23,8 +21,7 @@ III
 AGCTAGCAGCGATCG
 +
 IIIIIHIIJJIIIII
-)//![fastq_file]"
-}; // std::filesystem::current_path() / "my.fastq" will be deleted after the execution
+)//![fastq_file]"}; // std::filesystem::current_path() / "my.fastq" will be deleted after the execution
 
 //![solution]
 #include <filesystem>
@@ -41,10 +38,11 @@ int main()
 
     seqan3::sequence_file_input fin{current_path / "my.fastq"};
 
-    auto length_filter = std::views::filter([] (auto const & rec)
-    {
-        return std::ranges::size(rec.sequence()) >= 5;
-    });
+    auto length_filter = std::views::filter(
+        [](auto const & rec)
+        {
+            return std::ranges::size(rec.sequence()) >= 5;
+        });
 
     // Store all IDs into a vector:
     std::vector<std::string> ids{};

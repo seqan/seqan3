@@ -1,12 +1,12 @@
-#include <iostream>                     // for std::cout
-#include <seqan3/alphabet/all.hpp>      // include all alphabet headers
+#include <iostream> // for std::cout
+
+#include <seqan3/alphabet/all.hpp> // include all alphabet headers
 
 template <seqan3::alphabet t>
 void print(t const v)
 {
     std::cout << "I am an alphabet and my value as char is: " << seqan3::to_char(v) << '\n';
 }
-
 
 int main()
 {

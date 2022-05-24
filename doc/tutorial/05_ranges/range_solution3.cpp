@@ -1,10 +1,10 @@
-#include <seqan3/std/ranges>                    // include all of the standard library's views
+#include <seqan3/std/ranges> // include all of the standard library's views
 
-#include <seqan3/alphabet/views/all.hpp>        // include all of SeqAn's views
+#include <seqan3/alphabet/views/all.hpp>  // include all of SeqAn's views
+#include <seqan3/argument_parser/all.hpp> // optional: include the argument_parser
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/argument_parser/all.hpp>       // optional: include the argument_parser
 
-int main(int argc, char** argv)
+int main(int argc, char ** argv)
 {
     // We use the seqan3::argument_parser which was introduced in the second chapter
     // of the tutorial: "Parsing command line arguments with SeqAn".
@@ -15,12 +15,12 @@ int main(int argc, char** argv)
 
     try
     {
-       myparser.parse();
+        myparser.parse();
     }
     catch (seqan3::argument_parser_error const & ext) // the user did something wrong
     {
-       std::cerr << "[PARSER ERROR]" << ext.what() << '\n'; // you can customize your error message
-       return 0;
+        std::cerr << "[PARSER ERROR]" << ext.what() << '\n'; // you can customize your error message
+        return 0;
     }
 
     auto s_as_dna = s | seqan3::views::char_to<seqan3::dna5>;

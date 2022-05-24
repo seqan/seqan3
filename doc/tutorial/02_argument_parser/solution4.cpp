@@ -1,10 +1,10 @@
+#include <filesystem> // use std::filesystem::path
 #include <fstream>
 #include <numeric>
+#include <seqan3/std/charconv> // includes std::from_chars
 
 #include <seqan3/argument_parser/all.hpp> // includes all necessary headers
 #include <seqan3/core/debug_stream.hpp>   // our custom output stream
-#include <seqan3/std/charconv>            // includes std::from_chars
-#include <filesystem>                     // use std::filesystem::path
 
 // This is the program!
 // Take a look at it if you are interested in an example of parsing a data file.
@@ -84,23 +84,26 @@ void initialise_argument_parser(seqan3::argument_parser & parser, cmd_arguments 
 
     parser.add_option(args.aggregate_by, 'a', "aggregate-by", "Choose your method of aggregation: mean or median.");
 
-    parser.add_flag(args.header_is_set, 'H', "header-is-set", "Let us know whether your data file contains a "
-                                                              "header to ensure correct parsing.");
+    parser.add_flag(args.header_is_set,
+                    'H',
+                    "header-is-set",
+                    "Let us know whether your data file contains a "
+                    "header to ensure correct parsing.");
 }
 //![solution]
 
 int main(int argc, char ** argv)
 {
-    seqan3::argument_parser myparser{"Game-of-Parsing", argc, argv};        // initialise myparser
+    seqan3::argument_parser myparser{"Game-of-Parsing", argc, argv}; // initialise myparser
     cmd_arguments args{};
 
     initialise_argument_parser(myparser, args);
 
     try
     {
-         myparser.parse();                                                  // trigger command line parsing
+        myparser.parse(); // trigger command line parsing
     }
-    catch (seqan3::argument_parser_error const & ext)                     // catch user errors
+    catch (seqan3::argument_parser_error const & ext) // catch user errors
     {
         seqan3::debug_stream << "[Winter has come] " << ext.what() << "\n"; // customise your error message
         return -1;

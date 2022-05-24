@@ -13,24 +13,21 @@ int main()
     auto seq2 = "GGACGACATGACGTACGACTTTACGTACGACTAGC"_dna4;
 
     // Configure the output:
-    auto output_config = seqan3::align_cfg::output_score{} |
-                         seqan3::align_cfg::output_begin_position{} |
-                         seqan3::align_cfg::output_end_position{} |
-                         seqan3::align_cfg::output_alignment{};
+    auto output_config = seqan3::align_cfg::output_score{} | seqan3::align_cfg::output_begin_position{}
+                       | seqan3::align_cfg::output_end_position{} | seqan3::align_cfg::output_alignment{};
 
     // Configure the alignment kernel.
-    auto config = seqan3::align_cfg::method_global{
-                      seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
-                      seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
-                      seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
-                      seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}} |
-                  seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{
-                      seqan3::match_score{4}, seqan3::mismatch_score{-2}}} |
-                  seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{0},
-                                                     seqan3::align_cfg::extension_score{-4}} |
-                  output_config |
-                  seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-3},
-                                                     seqan3::align_cfg::upper_diagonal{8}};
+    auto config =
+        seqan3::align_cfg::method_global{seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
+                                         seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
+                                         seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
+                                         seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}}
+        | seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                              seqan3::mismatch_score{-2}}}
+        | seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{0}, seqan3::align_cfg::extension_score{-4}}
+        | output_config
+        | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-3},
+                                             seqan3::align_cfg::upper_diagonal{8}};
 
     for (auto const & res : seqan3::align_pairwise(std::tie(seq1, seq2), config))
     {

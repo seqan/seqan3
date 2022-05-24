@@ -27,80 +27,79 @@
 #include <seqan3/alignment/configuration/align_config_edit.hpp>
 //! [include_edit]
 
-#include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/alphabet/aminoacid/all.hpp>
+#include <seqan3/alphabet/nucleotide/all.hpp>
 
 int main()
 {
-{
-//! [method_global_free_end_gaps]
-    // Example of a semi-global alignment where leading and trailing gaps in the
-    // second sequence are not penalised:
-    auto config = seqan3::align_cfg::method_global{
-                      seqan3::align_cfg::free_end_gaps_sequence1_leading{false},
-                      seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
-                      seqan3::align_cfg::free_end_gaps_sequence1_trailing{false},
-                      seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}};
-//! [method_global_free_end_gaps]
-(void) config;
-}
+    {
+        //! [method_global_free_end_gaps]
+        // Example of a semi-global alignment where leading and trailing gaps in the
+        // second sequence are not penalised:
+        auto config = seqan3::align_cfg::method_global{seqan3::align_cfg::free_end_gaps_sequence1_leading{false},
+                                                       seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
+                                                       seqan3::align_cfg::free_end_gaps_sequence1_trailing{false},
+                                                       seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}};
+        //! [method_global_free_end_gaps]
+        (void)config;
+    }
 
-{
-//! [scoring_scheme]
-using namespace seqan3::literals;
+    {
+        //! [scoring_scheme]
+        using namespace seqan3::literals;
 
-// Define a simple scoring scheme with match and mismatch cost and get the score.
-seqan3::nucleotide_scoring_scheme nc_scheme{seqan3::match_score{4}, seqan3::mismatch_score{-5}};
-auto sc_nc = nc_scheme.score('A'_dna4, 'C'_dna4); // sc_nc == -5.
+        // Define a simple scoring scheme with match and mismatch cost and get the score.
+        seqan3::nucleotide_scoring_scheme nc_scheme{seqan3::match_score{4}, seqan3::mismatch_score{-5}};
+        auto sc_nc = nc_scheme.score('A'_dna4, 'C'_dna4); // sc_nc == -5.
 
-// Define a amino acid similarity matrix and get the score.
-seqan3::aminoacid_scoring_scheme aa_scheme{};
-aa_scheme.set_similarity_matrix(seqan3::aminoacid_similarity_matrix::blosum30);
-auto sc_aa = aa_scheme.score('M'_aa27, 'K'_aa27); // sc_aa == 2.
-//! [scoring_scheme]
-(void) sc_nc;
-(void) sc_aa;
-}
+        // Define a amino acid similarity matrix and get the score.
+        seqan3::aminoacid_scoring_scheme aa_scheme{};
+        aa_scheme.set_similarity_matrix(seqan3::aminoacid_similarity_matrix::blosum30);
+        auto sc_aa = aa_scheme.score('M'_aa27, 'K'_aa27); // sc_aa == 2.
+        //! [scoring_scheme]
+        (void)sc_nc;
+        (void)sc_aa;
+    }
 
-{
-//! [gap_cost_affine]
+    {
+        //! [gap_cost_affine]
 
-// Define a gap scheme with custom gap scores.
-seqan3::align_cfg::gap_cost_affine affine_scheme{seqan3::align_cfg::open_score{-10},
-                                                 seqan3::align_cfg::extension_score{-1}};
+        // Define a gap scheme with custom gap scores.
+        seqan3::align_cfg::gap_cost_affine affine_scheme{seqan3::align_cfg::open_score{-10},
+                                                         seqan3::align_cfg::extension_score{-1}};
 
-int open_score = affine_scheme.open_score; // == -10
-int extension_score = affine_scheme.extension_score; // == -1
-//! [gap_cost_affine]
-(void) open_score;
-(void) extension_score;
-}
+        int open_score = affine_scheme.open_score;           // == -10
+        int extension_score = affine_scheme.extension_score; // == -1
+        //! [gap_cost_affine]
+        (void)open_score;
+        (void)extension_score;
+    }
 
-{
-//! [output]
+    {
+        //! [output]
 
-// Configure the alignment to only compute the score.
-auto cfg = seqan3::align_cfg::output_score{};
-//! [output]
-(void) cfg;
-}
+        // Configure the alignment to only compute the score.
+        auto cfg = seqan3::align_cfg::output_score{};
+        //! [output]
+        (void)cfg;
+    }
 
-{
-//! [band]
+    {
+        //! [band]
 
-// Configure a banded alignment.
-auto cfg = seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-4},
-                                              seqan3::align_cfg::upper_diagonal{4}};
-//! [band]
-(void) cfg;
-}
+        // Configure a banded alignment.
+        auto cfg = seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-4},
+                                                      seqan3::align_cfg::upper_diagonal{4}};
+        //! [band]
+        (void)cfg;
+    }
 
-{
-//! [edit]
+    {
+        //! [edit]
 
-// Configure an edit distance alignment.
-auto cfg = seqan3::align_cfg::method_global{} | seqan3::align_cfg::edit_scheme;
-//! [edit]
-(void) cfg;
-}
+        // Configure an edit distance alignment.
+        auto cfg = seqan3::align_cfg::method_global{} | seqan3::align_cfg::edit_scheme;
+        //! [edit]
+        (void)cfg;
+    }
 }

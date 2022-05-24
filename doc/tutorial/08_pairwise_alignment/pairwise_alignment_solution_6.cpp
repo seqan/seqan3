@@ -12,19 +12,18 @@ int main()
 {
     using namespace seqan3::literals;
 
-    std::vector vec{"ACGTGACTGACT"_dna4,
-                    "ACGAAGACCGAT"_dna4,
-                    "ACGTGACTGACT"_dna4,
-                    "AGGTACGAGCGACACT"_dna4};
+    std::vector vec{"ACGTGACTGACT"_dna4, "ACGAAGACCGAT"_dna4, "ACGTGACTGACT"_dna4, "AGGTACGAGCGACACT"_dna4};
 
     // Configure the alignment kernel.
-    auto config = seqan3::align_cfg::method_global{} |
-                  seqan3::align_cfg::edit_scheme |
-                  seqan3::align_cfg::min_score{-7} |
-                  seqan3::align_cfg::output_score{};
+    auto config = seqan3::align_cfg::method_global{} | seqan3::align_cfg::edit_scheme | seqan3::align_cfg::min_score{-7}
+                | seqan3::align_cfg::output_score{};
 
     auto alignment_results = seqan3::align_pairwise(seqan3::views::pairwise_combine(vec), config);
-    auto filter_v = std::views::filter([](auto && res) { return res.score() >= -6;});
+    auto filter_v = std::views::filter(
+        [](auto && res)
+        {
+            return res.score() >= -6;
+        });
 
     for (auto const & result : alignment_results | filter_v)
     {

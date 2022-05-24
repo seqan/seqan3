@@ -1,15 +1,17 @@
 //![start]
 #include <iostream>
-#include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/std/ranges>
+
+#include <seqan3/alphabet/nucleotide/all.hpp>
 
 using seqan3::operator""_dna5;
 
 //![start]
-auto const my_convert_to_char_view = std::views::transform([] (auto const alph)
-{
-    return seqan3::to_char(alph);
-});
+auto const my_convert_to_char_view = std::views::transform(
+    [](auto const alph)
+    {
+        return seqan3::to_char(alph);
+    });
 
 //![end]
 int main()
@@ -19,6 +21,6 @@ int main()
 
     auto v = vec | my_convert_to_char_view;
 
-    std::cout << v[0] << '\n';                      // prints "A"
+    std::cout << v[0] << '\n'; // prints "A"
 }
 //![end]
