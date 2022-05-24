@@ -4,7 +4,6 @@ on:
   pull_request_target:
 
 env:
-  CLANG_VERSION: 1:15~++20220523042142+b86440ecde5c-1~exp1~20220523042228.188
   TZ: Europe/Berlin
 
 defaults:
@@ -68,7 +67,7 @@ jobs:
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
           sudo apt-add-repository --no-update --yes "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main"
           sudo apt-get update
-          sudo apt-get install --yes clang-format-15=${CLANG_VERSION}
+          sudo apt-get install --yes clang-format-15
 
       - name: Run clang-format
         run: |
