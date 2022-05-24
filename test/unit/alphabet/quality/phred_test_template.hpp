@@ -37,11 +37,11 @@ TYPED_TEST_P(phred, conversion_char)
         TypeParam v;
         v.assign_char(i);
 
-        if (i < TypeParam::offset_char)                                     // too small, map to valid smallest
+        if (i < TypeParam::offset_char) // too small, map to valid smallest
             EXPECT_EQ(v.to_char(), TypeParam::offset_char);
-        else if (i >= TypeParam::offset_char + TypeParam::alphabet_size)    // too big, map to valid biggest
+        else if (i >= TypeParam::offset_char + TypeParam::alphabet_size) // too big, map to valid biggest
             EXPECT_EQ(v.to_char(), TypeParam::offset_char + TypeParam::alphabet_size - 1);
-        else                                                                // valid range, map to identity
+        else // valid range, map to identity
             EXPECT_EQ(v.to_char(), i);
     }
 }
@@ -55,11 +55,11 @@ TYPED_TEST_P(phred, conversion_phred)
         TypeParam v;
         v.assign_phred(i);
 
-        if (i < TypeParam::offset_phred)                                    // too small, map to valid smallest
+        if (i < TypeParam::offset_phred) // too small, map to valid smallest
             EXPECT_EQ(v.to_phred(), TypeParam::offset_phred);
-        else if (i >= TypeParam::offset_phred + TypeParam::alphabet_size)   // too big, map to valid biggest
+        else if (i >= TypeParam::offset_phred + TypeParam::alphabet_size) // too big, map to valid biggest
             EXPECT_EQ(v.to_phred(), TypeParam::offset_phred + TypeParam::alphabet_size - 1);
-        else                                                                // valid range, map to identity
+        else // valid range, map to identity
             EXPECT_EQ(v.to_phred(), i);
     }
 }
@@ -70,12 +70,12 @@ TYPED_TEST_P(phred, conversion_rank)
     TypeParam v;
     v.assign_phred(0);
     EXPECT_EQ(v.to_phred(), 0);
-    EXPECT_EQ(v.to_rank(),  -TypeParam::offset_phred);
+    EXPECT_EQ(v.to_rank(), -TypeParam::offset_phred);
 
     TypeParam v2;
     v2.assign_phred(23);
     EXPECT_EQ(v2.to_phred(), 23);
-    EXPECT_EQ(v2.to_rank(),  23 - TypeParam::offset_phred);
+    EXPECT_EQ(v2.to_rank(), 23 - TypeParam::offset_phred);
 }
 
 REGISTER_TYPED_TEST_SUITE_P(phred, concept_check, conversion_char, conversion_phred, conversion_rank);

@@ -10,11 +10,11 @@
 #include <vector>
 
 #include <seqan3/alignment/configuration/align_config_band.hpp>
-#include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
+#include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
-#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
@@ -25,6 +25,7 @@ using seqan3::operator""_dna4;
 
 namespace seqan3::test::alignment::fixture::global::affine::banded
 {
+// clang-format off
 
 inline constexpr auto align_config = seqan3::align_cfg::method_global{} |
                                      seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
@@ -362,4 +363,6 @@ static auto dna4_large_band = []()
         }
     };
 }();
+// clang-format on
+
 } // namespace seqan3::test::alignment::fixture::global::affine::banded

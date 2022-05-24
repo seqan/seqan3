@@ -5,9 +5,9 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <sstream>
-
 #include <gtest/gtest.h>
+
+#include <sstream>
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>

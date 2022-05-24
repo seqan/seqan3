@@ -15,12 +15,12 @@
  */
 
 #if defined(__APPLE__)
-#include <unistd.h>
+#    include <unistd.h>
 #elif defined(_WIN32)
-#include <cstring>
-#include <io.h>
-#else  // other unix systems
-#include <cstdlib>
+#    include <cstring>
+#    include <io.h>
+#else // other unix systems
+#    include <cstdlib>
 #endif
 
 #include <cassert>
@@ -56,7 +56,7 @@ char * mkdtemp(char * template_name)
 
     return nullptr;
 }
-}
+} // namespace
 #endif
 
 //!\cond
@@ -90,10 +90,8 @@ public:
      * \{
      */
     tmp_directory(tmp_directory const &) = delete; //!< Deleted.
-    tmp_directory(tmp_directory && other)
-        : directory_path {std::exchange(other.directory_path, std::nullopt)}
-    {
-    }
+    tmp_directory(tmp_directory && other) : directory_path{std::exchange(other.directory_path, std::nullopt)}
+    {}
 
     tmp_directory & operator=(tmp_directory const &) = delete; //!< Deleted.
     tmp_directory & operator=(tmp_directory && other)
@@ -118,9 +116,9 @@ public:
         auto tmp_base_dir = std::filesystem::temp_directory_path();
         tmp_base_dir /= std::filesystem::path{"seqan_test_XXXXXXXX"};
 
-        auto path_str = tmp_base_dir.string();  // Copy the underlying path to get access to the raw char *.
+        auto path_str = tmp_base_dir.string(); // Copy the underlying path to get access to the raw char *.
 
-        if (char * f = mkdtemp(path_str.data()); f == nullptr)  // mkdtemp replaces XXXXXXXX in a safe and unique way.
+        if (char * f = mkdtemp(path_str.data()); f == nullptr) // mkdtemp replaces XXXXXXXX in a safe and unique way.
         {
             throw std::filesystem::filesystem_error("Could not create temporary directory with mkdtemp!",
                                                     tmp_base_dir,
@@ -170,6 +168,7 @@ public:
         std::filesystem::remove_all(directory_path.value());
         directory_path = std::nullopt;
     }
+
 private:
     /*!\brief Warns and cleans if directory is not empty
      */
@@ -182,22 +181,20 @@ private:
 
         if (!exists(directory_path.value()))
         {
-            std::cerr << "temporary directory "
-                      << directory_path.value()
+            std::cerr << "temporary directory " << directory_path.value()
                       << " was deleted externally. This is discouraged program behaviour\n";
             return;
         }
         if (!empty())
         {
             std::cerr << "temporary directory " << directory_path.value() << " has some files that should be deleted\n";
-            for (auto & p: std::filesystem::recursive_directory_iterator(directory_path.value()))
+            for (auto & p : std::filesystem::recursive_directory_iterator(directory_path.value()))
             {
                 std::cerr << "- " << p << "\n";
             }
         }
         clean();
     }
-
 
 private:
     std::optional<sandboxed_path> directory_path;

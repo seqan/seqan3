@@ -22,11 +22,11 @@
 #include <seqan3/utility/type_traits/basic.hpp>
 
 #if SEQAN3_WITH_CEREAL
-#include <cereal/archives/binary.hpp>
-#include <cereal/archives/json.hpp>
-#include <cereal/archives/portable_binary.hpp>
-#include <cereal/archives/xml.hpp>
-#include <cereal/types/vector.hpp>
+#    include <cereal/archives/binary.hpp>
+#    include <cereal/archives/json.hpp>
+#    include <cereal/archives/portable_binary.hpp>
+#    include <cereal/archives/xml.hpp>
+#    include <cereal/types/vector.hpp>
 #endif // SEQAN3_WITH_CEREAL
 
 namespace seqan3
@@ -73,14 +73,14 @@ template <typename value_t>
 void do_serialisation([[maybe_unused]] value_t && value)
 {
 #if SEQAN3_WITH_CEREAL
-    do_cerealisation<cereal::BinaryInputArchive,         cereal::BinaryOutputArchive>        (value);
+    do_cerealisation<cereal::BinaryInputArchive, cereal::BinaryOutputArchive>(value);
     do_cerealisation<cereal::PortableBinaryInputArchive, cereal::PortableBinaryOutputArchive>(value);
-    do_cerealisation<cereal::JSONInputArchive,           cereal::JSONOutputArchive>          (value);
-    do_cerealisation<cereal::XMLInputArchive,            cereal::XMLOutputArchive>           (value);
+    do_cerealisation<cereal::JSONInputArchive, cereal::JSONOutputArchive>(value);
+    do_cerealisation<cereal::XMLInputArchive, cereal::XMLOutputArchive>(value);
 #endif // SEQAN3_WITH_CEREAL
 }
 //!\endcond
 
-} // namespace seqan3::test
+} // namespace test
 
 } //namespace seqan3

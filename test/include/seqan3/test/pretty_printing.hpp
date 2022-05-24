@@ -24,8 +24,8 @@ namespace seqan3
 //!\brief Overload for the googletest PrintTo function that always delegates to our debug_stream.
 template <typename t>
     requires (!std::input_or_output_iterator<t> && !std::same_as<t, std::default_sentinel_t>)
-    // tricks the compiler to consider this as more specialized than googletests generic PrintTo
-void PrintTo (t const & v, std::ostream * out)
+// tricks the compiler to consider this as more specialized than googletests generic PrintTo
+void PrintTo(t const & v, std::ostream * out)
 {
     debug_stream_type my_stream{*out};
     my_stream << v;
@@ -40,7 +40,7 @@ namespace std
 //!\brief Overload for the googletest PrintTo function that always delegates to our debug_stream.
 using ::seqan3::PrintTo;
 
-} // namespace seqan3::detail
+} // namespace std
 
 namespace seqan3::detail
 {

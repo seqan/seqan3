@@ -17,24 +17,17 @@
 #include "../helper.hpp"
 
 using sdsl_byte_index_type = sdsl::csa_wt<
-        sdsl::wt_blcd<
-            sdsl::bit_vector,
-            sdsl::rank_support_v<>,
-            sdsl::select_support_scan<>,
-            sdsl::select_support_scan<0>
-        >,
-        16,
-        10000000,
-        sdsl::sa_order_sa_sampling<>,
-        sdsl::isa_sampling<>,
-        sdsl::byte_alphabet
-    >;
+    sdsl::wt_blcd<sdsl::bit_vector, sdsl::rank_support_v<>, sdsl::select_support_scan<>, sdsl::select_support_scan<0>>,
+    16,
+    10000000,
+    sdsl::sa_order_sa_sampling<>,
+    sdsl::isa_sampling<>,
+    sdsl::byte_alphabet>;
 
 using locate_result_t = std::vector<std::pair<uint64_t, uint64_t>>;
 
 template <typename T>
 struct fm_index_cursor_test;
-
 
 TYPED_TEST_SUITE_P(fm_index_cursor_test);
 
@@ -93,7 +86,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_range)
 
     // successful extend_right(range)
     TypeParam it(fm);
-    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 4, 6)));  // "CG"
+    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 4, 6))); // "CG"
     EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 1}, {0, 4}}));
     EXPECT_EQ(it.query_length(), 2u);
     if constexpr (!TestFixture::is_bi_fm_index)
@@ -102,7 +95,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_range)
     }
     EXPECT_EQ(it.count(), 2u);
 
-    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 1)));  // "A"
+    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 1))); // "A"
     EXPECT_EQ(it.locate(), (locate_result_t{{0, 1}}));
     EXPECT_EQ(it.query_length(), 3u);
     if constexpr (!TestFixture::is_bi_fm_index)
@@ -141,7 +134,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_char)
 
     // successful extend_right(char)
     TypeParam it(fm);
-    EXPECT_TRUE(it.extend_right(this->text1[0]));  // 'A'
+    EXPECT_TRUE(it.extend_right(this->text1[0])); // 'A'
     EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 0}, {0, 3}}));
     EXPECT_EQ(it.query_length(), 1u);
     if constexpr (!TestFixture::is_bi_fm_index)
@@ -149,7 +142,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_char)
         EXPECT_TRUE(it.suffix_array_interval() == (seqan3::suffix_array_interval{1u, 3u}));
     }
 
-    EXPECT_TRUE(it.extend_right(this->text1[1]));  // 'C'
+    EXPECT_TRUE(it.extend_right(this->text1[1])); // 'C'
     EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 0}, {0, 3}}));
     EXPECT_EQ(it.query_length(), 2u);
     if constexpr (!TestFixture::is_bi_fm_index)
@@ -182,7 +175,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_range_and_cycle)
 
     // successful extend_right() and cycle_back()
     TypeParam it(fm);
-    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 4)));  // "ACGA"
+    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 4))); // "ACGA"
     EXPECT_EQ(it.locate(), (locate_result_t{{0, 0}}));
     EXPECT_EQ(it.query_length(), 4u);
     if constexpr (!TestFixture::is_bi_fm_index)
@@ -205,7 +198,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_char_and_cycle)
 
     // successful extend_right() and cycle_back()
     TypeParam it(fm);
-    EXPECT_TRUE(it.extend_right(this->text2[0]));  // 'A'
+    EXPECT_TRUE(it.extend_right(this->text2[0])); // 'A'
     EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 0}, {0, 3}, {0, 4}}));
     EXPECT_EQ(it.query_length(), 1u);
     if constexpr (!TestFixture::is_bi_fm_index)
@@ -259,7 +252,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_and_cycle)
 
     // unsuccessful extend_right(), it remains untouched
     it = TypeParam(fm);
-    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 2, 6)));  // "GACG"
+    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 2, 6))); // "GACG"
     it_cpy = it;
     EXPECT_FALSE(it.extend_right());
     EXPECT_EQ(it, it_cpy);
@@ -278,7 +271,7 @@ TYPED_TEST_P(fm_index_cursor_test, query)
 
     // query()
     TypeParam it(fm);
-    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 3)));  // "ACG"
+    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 3))); // "ACG"
     EXPECT_RANGE_EQ(it.path_label(this->text1), seqan3::views::slice(this->text1, 0, 3));
 }
 
@@ -288,8 +281,8 @@ TYPED_TEST_P(fm_index_cursor_test, last_rank)
 
     // last_rank()
     TypeParam it(fm);
-    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 3)));  // "ACG"
-    EXPECT_TRUE(it.last_rank() == seqan3::to_rank(this->text1[2]));         // 'G'
+    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 3))); // "ACG"
+    EXPECT_TRUE(it.last_rank() == seqan3::to_rank(this->text1[2]));        // 'G'
 }
 
 TYPED_TEST_P(fm_index_cursor_test, incomplete_alphabet)
@@ -321,18 +314,19 @@ TYPED_TEST_P(fm_index_cursor_test, incomplete_alphabet)
 
         TypeParam it = TypeParam(fm);
         // get rank which is neither the smallest nor the highest:
-        uint8_t middle_rank = std::round((seqan3::to_rank(this->text4[1]) +                     // 'T' and
-                                          seqan3::to_rank(this->text4[0]))/2);                  // 'A'
-        EXPECT_FALSE(it.extend_right(seqan3::assign_rank_to(middle_rank, alphabet_type{})));    // 'C'
-        EXPECT_FALSE(it.extend_right(this->text1[2]));                                          // 'G'
-        EXPECT_FALSE(it.extend_right(seqan3::views::slice(this->text1, 0, 3)));                 // "ACG"
-        EXPECT_FALSE(it.extend_right(seqan3::views::slice(this->text1, 2, 3)));                 // "G"
+        uint8_t middle_rank = std::round((seqan3::to_rank(this->text4[1]) + // 'T' and
+                                          seqan3::to_rank(this->text4[0]))
+                                         / 2);                                               // 'A'
+        EXPECT_FALSE(it.extend_right(seqan3::assign_rank_to(middle_rank, alphabet_type{}))); // 'C'
+        EXPECT_FALSE(it.extend_right(this->text1[2]));                                       // 'G'
+        EXPECT_FALSE(it.extend_right(seqan3::views::slice(this->text1, 0, 3)));              // "ACG"
+        EXPECT_FALSE(it.extend_right(seqan3::views::slice(this->text1, 2, 3)));              // "G"
         EXPECT_EQ(it, TypeParam(fm));
 
-        EXPECT_TRUE(it.extend_right(this->text4[0]));                                           // 'A'
+        EXPECT_TRUE(it.extend_right(this->text4[0])); // 'A'
         EXPECT_TRUE(it.cycle_back());
-        EXPECT_RANGE_EQ(it.path_label(this->text4),                                             // "ATATAT"
-                        seqan3::views::slice(this->text4, 1, 2));                               // "T"
+        EXPECT_RANGE_EQ(it.path_label(this->text4),               // "ATATAT"
+                        seqan3::views::slice(this->text4, 1, 2)); // "T"
     }
 }
 
@@ -341,7 +335,7 @@ TYPED_TEST_P(fm_index_cursor_test, lazy_locate)
     typename TypeParam::index_type fm{this->text1}; // "ACGACG" changed from "ACGTACGT"!
 
     TypeParam it = TypeParam(fm);
-    it.extend_right(seqan3::views::slice(this->text1, 0, 3));   // "ACG"
+    it.extend_right(seqan3::views::slice(this->text1, 0, 3)); // "ACG"
 
     EXPECT_RANGE_EQ(it.locate(), it.lazy_locate());
 }
@@ -356,6 +350,16 @@ TYPED_TEST_P(fm_index_cursor_test, serialisation)
     seqan3::test::do_serialisation(it);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(fm_index_cursor_test, ctr, begin, extend_right_range, extend_right_char,
-                            extend_right_range_and_cycle, extend_right_char_and_cycle, extend_right_and_cycle, query,
-                            last_rank, incomplete_alphabet, lazy_locate, serialisation);
+REGISTER_TYPED_TEST_SUITE_P(fm_index_cursor_test,
+                            ctr,
+                            begin,
+                            extend_right_range,
+                            extend_right_char,
+                            extend_right_range_and_cycle,
+                            extend_right_char_and_cycle,
+                            extend_right_and_cycle,
+                            query,
+                            last_rank,
+                            incomplete_alphabet,
+                            lazy_locate,
+                            serialisation);

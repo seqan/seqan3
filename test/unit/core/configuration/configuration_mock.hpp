@@ -26,15 +26,10 @@ namespace seqan3::detail
 
 template <>
 inline constexpr std::array<std::array<bool, static_cast<uint8_t>(::test_algo_id::SIZE)>,
-                            static_cast<uint8_t>(::test_algo_id::SIZE)> compatibility_table<::test_algo_id>
-{{
-    {0, 1, 1, 1},
-    {1, 0, 1, 0},
-    {1, 1, 0, 1},
-    {1, 0, 1, 0}
-}};
+                            static_cast<uint8_t>(::test_algo_id::SIZE)>
+    compatibility_table<::test_algo_id>{{{0, 1, 1, 1}, {1, 0, 1, 0}, {1, 1, 0, 1}, {1, 0, 1, 0}}};
 
-}  // namespace seqan3::detail
+} // namespace seqan3::detail
 
 class bar : private seqan3::pipeable_config_element
 {

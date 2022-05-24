@@ -18,18 +18,12 @@
 #include "../helper.hpp"
 
 using sdsl_byte_index_type = sdsl::csa_wt<
-        sdsl::wt_blcd<
-            sdsl::bit_vector,
-            sdsl::rank_support_v<>,
-            sdsl::select_support_scan<>,
-            sdsl::select_support_scan<0>
-        >,
-        16,
-        10000000,
-        sdsl::sa_order_sa_sampling<>,
-        sdsl::isa_sampling<>,
-        sdsl::byte_alphabet
-    >;
+    sdsl::wt_blcd<sdsl::bit_vector, sdsl::rank_support_v<>, sdsl::select_support_scan<>, sdsl::select_support_scan<0>>,
+    16,
+    10000000,
+    sdsl::sa_order_sa_sampling<>,
+    sdsl::isa_sampling<>,
+    sdsl::byte_alphabet>;
 
 template <typename T>
 struct fm_index_cursor_collection_test;
@@ -75,11 +69,22 @@ TYPED_TEST_P(fm_index_cursor_collection_test, begin)
 
     // begin
     TypeParam it(fm);
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,0}, {0,1}, {0,2}, {0,3},
-                                                                                         {0,4}, {0,5}, {0,6},
-                                                                                         {1,0},{1,1}, {1,2}, {1,3},
-                                                                                         {1,4}, {1,5}, {1,6}}));
-                                                                                       // one sentinel position included
+    EXPECT_EQ(seqan3::uniquify(it.locate()),
+              (std::vector<std::pair<uint64_t, uint64_t>>{{0, 0},
+                                                          {0, 1},
+                                                          {0, 2},
+                                                          {0, 3},
+                                                          {0, 4},
+                                                          {0, 5},
+                                                          {0, 6},
+                                                          {1, 0},
+                                                          {1, 1},
+                                                          {1, 2},
+                                                          {1, 3},
+                                                          {1, 4},
+                                                          {1, 5},
+                                                          {1, 6}}));
+    // one sentinel position included
     EXPECT_EQ(it.query_length(), 0u);
     if constexpr (!TestFixture::is_bi_fm_index)
     {
@@ -94,8 +99,9 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range)
 
     // successful extend_right(range)
     TypeParam it(fm);
-    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 1, 3)));   // "CG"
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,1}, {0,4}, {1,2}, {1,6}}));
+    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 1, 3))); // "CG"
+    EXPECT_EQ(seqan3::uniquify(it.locate()),
+              (std::vector<std::pair<uint64_t, uint64_t>>{{0, 1}, {0, 4}, {1, 2}, {1, 6}}));
     EXPECT_EQ(it.query_length(), 2u);
     if constexpr (!TestFixture::is_bi_fm_index)
     {
@@ -103,8 +109,8 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range)
     }
     EXPECT_EQ(it.count(), 4u);
 
-    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 1)));   // "A"
-    EXPECT_EQ(it.locate(), (std::vector<std::pair<uint64_t, uint64_t>>{{0,1}, {1,2}, {1,6}}));
+    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 1))); // "A"
+    EXPECT_EQ(it.locate(), (std::vector<std::pair<uint64_t, uint64_t>>{{0, 1}, {1, 2}, {1, 6}}));
     EXPECT_EQ(it.query_length(), 3u);
     if constexpr (!TestFixture::is_bi_fm_index)
     {
@@ -114,7 +120,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range)
 
     // unsuccessful extend_right(range), it remains untouched
     TypeParam it_cpy = it;
-    EXPECT_FALSE(it.extend_right(seqan3::views::slice(this->text1, 0, 1)));  // "A"
+    EXPECT_FALSE(it.extend_right(seqan3::views::slice(this->text1, 0, 1))); // "A"
     EXPECT_EQ(it, it_cpy);
 
     // extend_right(empty range)
@@ -129,8 +135,9 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range_empty_text)
 
     // successful extend_right(range)
     TypeParam it(fm);
-    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 1, 3)));   // "CG"
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,1}, {0,4}, {3,2}, {3,6}}));
+    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 1, 3))); // "CG"
+    EXPECT_EQ(seqan3::uniquify(it.locate()),
+              (std::vector<std::pair<uint64_t, uint64_t>>{{0, 1}, {0, 4}, {3, 2}, {3, 6}}));
     EXPECT_EQ(it.query_length(), 2u);
     if constexpr (!TestFixture::is_bi_fm_index)
     {
@@ -138,8 +145,8 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range_empty_text)
     }
     EXPECT_EQ(it.count(), 4u);
 
-    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 1)));   // "A"
-    EXPECT_EQ(it.locate(), (std::vector<std::pair<uint64_t, uint64_t>>{{0,1}, {3,2}, {3,6}}));
+    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 1))); // "A"
+    EXPECT_EQ(it.locate(), (std::vector<std::pair<uint64_t, uint64_t>>{{0, 1}, {3, 2}, {3, 6}}));
     EXPECT_EQ(it.query_length(), 3u);
     if constexpr (!TestFixture::is_bi_fm_index)
     {
@@ -149,7 +156,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range_empty_text)
 
     // unsuccessful extend_right(range), it remains untouched
     TypeParam it_cpy = it;
-    EXPECT_FALSE(it.extend_right(seqan3::views::slice(this->text1, 0, 1)));  // "A"
+    EXPECT_FALSE(it.extend_right(seqan3::views::slice(this->text1, 0, 1))); // "A"
     EXPECT_EQ(it, it_cpy);
 
     // extend_right(empty range)
@@ -177,16 +184,17 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_char)
 
     // successful extend_right(char)
     TypeParam it(fm);
-    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 1)));   // "A"
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,0}, {0,3}, {1,4}, {1,8}}));
+    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 1))); // "A"
+    EXPECT_EQ(seqan3::uniquify(it.locate()),
+              (std::vector<std::pair<uint64_t, uint64_t>>{{0, 0}, {0, 3}, {1, 4}, {1, 8}}));
     EXPECT_EQ(it.query_length(), 1u);
     if constexpr (!TestFixture::is_bi_fm_index)
     {
         EXPECT_TRUE(it.suffix_array_interval() == (seqan3::suffix_array_interval{1u, 5u}));
     }
 
-    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 1, 2)));   // "C"
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,0}, {0,3}}));
+    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 1, 2))); // "C"
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0, 0}, {0, 3}}));
     EXPECT_EQ(it.query_length(), 2u);
     if constexpr (!TestFixture::is_bi_fm_index)
     {
@@ -195,7 +203,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_char)
 
     // unsuccessful extend_right(char), it remains untouched
     TypeParam it_cpy = it;
-    EXPECT_FALSE(it.extend_right(seqan3::views::slice(this->text1, 1, 2)));  // "C"
+    EXPECT_FALSE(it.extend_right(seqan3::views::slice(this->text1, 1, 2))); // "C"
     EXPECT_EQ(it, it_cpy);
 }
 
@@ -218,8 +226,8 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range_and_cycle)
 
     // successful extend_right() and cycle_back()
     TypeParam it(fm);
-    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 4)));   // "ACGA"
-    EXPECT_EQ(it.locate(), (std::vector<std::pair<uint64_t, uint64_t>>{{0,0}, {1,1}}));
+    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 4))); // "ACGA"
+    EXPECT_EQ(it.locate(), (std::vector<std::pair<uint64_t, uint64_t>>{{0, 0}, {1, 1}}));
     EXPECT_EQ(it.query_length(), 4u);
     if constexpr (!TestFixture::is_bi_fm_index)
     {
@@ -227,7 +235,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range_and_cycle)
     }
 
     EXPECT_TRUE(it.cycle_back());
-    EXPECT_EQ(it.locate(), (std::vector<std::pair<uint64_t, uint64_t>>{{0,4}}));
+    EXPECT_EQ(it.locate(), (std::vector<std::pair<uint64_t, uint64_t>>{{0, 4}}));
     EXPECT_EQ(it.query_length(), 4u);
     if constexpr (!TestFixture::is_bi_fm_index)
     {
@@ -241,9 +249,9 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_char_and_cycle)
 
     // successful extend_right() and cycle_back()
     TypeParam it(fm);
-    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 1)));   // "A"
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,0}, {0,3}, {0,4},
-                                                                                         {1,4}, {1,8}}));
+    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 1))); // "A"
+    EXPECT_EQ(seqan3::uniquify(it.locate()),
+              (std::vector<std::pair<uint64_t, uint64_t>>{{0, 0}, {0, 3}, {0, 4}, {1, 4}, {1, 8}}));
     EXPECT_EQ(it.query_length(), 1u);
     if constexpr (!TestFixture::is_bi_fm_index)
     {
@@ -251,8 +259,8 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_char_and_cycle)
     }
 
     EXPECT_TRUE(it.cycle_back());
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,1}, {0,5}, {0,7},
-                                                                                         {1,2}, {1,6}}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()),
+              (std::vector<std::pair<uint64_t, uint64_t>>{{0, 1}, {0, 5}, {0, 7}, {1, 2}, {1, 6}}));
     EXPECT_EQ(it.query_length(), 1u);
     if constexpr (!TestFixture::is_bi_fm_index)
     {
@@ -267,7 +275,8 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_and_cycle)
     // successful extend_right() and cycle_back()
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right());
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,0}, {0,3}, {1,4}, {1,8}}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()),
+              (std::vector<std::pair<uint64_t, uint64_t>>{{0, 0}, {0, 3}, {1, 4}, {1, 8}}));
     EXPECT_EQ(it.query_length(), 1u);
     if constexpr (!TestFixture::is_bi_fm_index)
     {
@@ -275,14 +284,16 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_and_cycle)
     }
 
     EXPECT_TRUE(it.cycle_back());
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,1}, {0,4}, {1,2}, {1,6}}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()),
+              (std::vector<std::pair<uint64_t, uint64_t>>{{0, 1}, {0, 4}, {1, 2}, {1, 6}}));
     EXPECT_EQ(it.query_length(), 1u);
     if constexpr (!TestFixture::is_bi_fm_index)
     {
         EXPECT_TRUE(it.suffix_array_interval() == (seqan3::suffix_array_interval{5u, 9u}));
     }
     EXPECT_TRUE(it.extend_right());
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,1}, {0,4}, {1,2}, {1,6}}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()),
+              (std::vector<std::pair<uint64_t, uint64_t>>{{0, 1}, {0, 4}, {1, 2}, {1, 6}}));
     EXPECT_EQ(it.query_length(), 2u);
     if constexpr (!TestFixture::is_bi_fm_index)
     {
@@ -296,7 +307,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_and_cycle)
 
     // unsuccessful extend_right(), it remains untouched
     it = TypeParam(fm);
-    EXPECT_TRUE(it.extend_right(this->text1));   // "ACGACG"
+    EXPECT_TRUE(it.extend_right(this->text1)); // "ACGACG"
     it_cpy = it;
     EXPECT_FALSE(it.extend_right());
     EXPECT_EQ(it, it_cpy);
@@ -315,7 +326,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, query)
 
     // query()
     TypeParam it(fm);
-    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 3))); // "ACG"
+    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 3)));                    // "ACG"
     EXPECT_RANGE_EQ(it.path_label(this->text_col2), seqan3::views::slice(this->text1, 0, 3)); // "ACG"
 }
 
@@ -325,8 +336,8 @@ TYPED_TEST_P(fm_index_cursor_collection_test, last_rank)
 
     // last_rank()
     TypeParam it(fm);
-    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 3)));  // "ACG"
-    bool a = it.last_rank() == seqan3::to_rank(this->text1[2]);             // 'G'
+    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 3))); // "ACG"
+    bool a = it.last_rank() == seqan3::to_rank(this->text1[2]);            // 'G'
     EXPECT_TRUE(a);
 }
 
@@ -346,7 +357,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, incomplete_alphabet)
     {
         typename TypeParam::index_type fm{this->text_col6}; // {"CGTCGT", "CGTCGT"}
         TypeParam it = TypeParam(fm);
-        EXPECT_FALSE(it.extend_right(seqan3::assign_rank_to(0, alphabet_type{})));   // 'A' or letter with smallest rank
+        EXPECT_FALSE(it.extend_right(seqan3::assign_rank_to(0, alphabet_type{}))); // 'A' or letter with smallest rank
         EXPECT_EQ(it, TypeParam(fm));
     }
 
@@ -357,15 +368,16 @@ TYPED_TEST_P(fm_index_cursor_collection_test, incomplete_alphabet)
 
         TypeParam it = TypeParam(fm);
         // get rank which is neither the smallest nor the highest:
-        uint8_t middle_rank = std::round((seqan3::to_rank(this->text4[1]) +                     // 'T' and
-                                          seqan3::to_rank(this->text4[0]))/2);                  // 'A'
-        EXPECT_FALSE(it.extend_right(seqan3::assign_rank_to(middle_rank, alphabet_type{})));    // 'C'
-        EXPECT_FALSE(it.extend_right(this->text1[2]));                                          // 'G'
-        EXPECT_FALSE(it.extend_right(seqan3::views::slice(this->text7, 0, 4)));                 // "ACGT"
-        EXPECT_FALSE(it.extend_right(seqan3::views::slice(this->text1, 2, 3)));                 // "G"
+        uint8_t middle_rank = std::round((seqan3::to_rank(this->text4[1]) + // 'T' and
+                                          seqan3::to_rank(this->text4[0]))
+                                         / 2);                                               // 'A'
+        EXPECT_FALSE(it.extend_right(seqan3::assign_rank_to(middle_rank, alphabet_type{}))); // 'C'
+        EXPECT_FALSE(it.extend_right(this->text1[2]));                                       // 'G'
+        EXPECT_FALSE(it.extend_right(seqan3::views::slice(this->text7, 0, 4)));              // "ACGT"
+        EXPECT_FALSE(it.extend_right(seqan3::views::slice(this->text1, 2, 3)));              // "G"
         EXPECT_EQ(it, TypeParam(fm));
 
-        EXPECT_TRUE(it.extend_right(this->text4[0]));                                           // 'A'
+        EXPECT_TRUE(it.extend_right(this->text4[0])); // 'A'
         EXPECT_TRUE(it.cycle_back());
         EXPECT_RANGE_EQ(it.path_label(this->text_col7), seqan3::views::slice(this->text4, 1, 2)); // "T"
     }
@@ -376,7 +388,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, lazy_locate)
     typename TypeParam::index_type fm{this->text_col8}; // {"ACGTACGT", "TGCGATACGA"}
 
     TypeParam it = TypeParam(fm);
-    it.extend_right(seqan3::views::slice(this->text1, 0, 3));    // "ACG"
+    it.extend_right(seqan3::views::slice(this->text1, 0, 3)); // "ACG"
 
     EXPECT_RANGE_EQ(it.locate(), it.lazy_locate());
 }
@@ -396,9 +408,9 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_const_char_pointer)
         TypeParam it2 = TypeParam(fm);
 
         it1.extend_right(cg);
-        it2.extend_right(seqan3::views::slice(this->text1, 1, 3));      // "CG"
+        it2.extend_right(seqan3::views::slice(this->text1, 1, 3)); // "CG"
 
-        EXPECT_RANGE_EQ(it1.locate(), it2.locate());    // [(0,1),(0,4),(1,4),(1,1)]
+        EXPECT_RANGE_EQ(it1.locate(), it2.locate()); // [(0,1),(0,4),(1,4),(1,1)]
     }
 }
 
@@ -412,7 +424,18 @@ TYPED_TEST_P(fm_index_cursor_collection_test, serialisation)
     seqan3::test::do_serialisation(it);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(fm_index_cursor_collection_test, ctr, begin, extend_right_range,
-                            extend_right_range_empty_text, extend_right_char, extend_right_range_and_cycle,
-                            extend_right_char_and_cycle, extend_right_and_cycle, query, last_rank, incomplete_alphabet,
-                            lazy_locate, extend_const_char_pointer, serialisation);
+REGISTER_TYPED_TEST_SUITE_P(fm_index_cursor_collection_test,
+                            ctr,
+                            begin,
+                            extend_right_range,
+                            extend_right_range_empty_text,
+                            extend_right_char,
+                            extend_right_range_and_cycle,
+                            extend_right_char_and_cycle,
+                            extend_right_and_cycle,
+                            query,
+                            last_rank,
+                            incomplete_alphabet,
+                            lazy_locate,
+                            extend_const_char_pointer,
+                            serialisation);

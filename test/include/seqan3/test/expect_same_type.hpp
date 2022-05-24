@@ -27,14 +27,18 @@ namespace seqan3::test
 #define EXPECT_SAME_TYPE_ESC_(...) EXPECT_SAME_TYPE_VAN##__VA_ARGS__
 #define EXPECT_SAME_TYPE_VANEXPECT_SAME_TYPE_ISH
 
-#define EXPECT_SAME_TYPE(val1, val2) \
-    EXPECT_PRED_FORMAT2(::seqan3::test::expect_same_type{},(std::type_identity<EXPECT_SAME_TYPE_DEPAREN(val1)>{}),(std::type_identity<EXPECT_SAME_TYPE_DEPAREN(val2)>{}));
+#define EXPECT_SAME_TYPE(val1, val2)                                                                                   \
+    EXPECT_PRED_FORMAT2(::seqan3::test::expect_same_type{},                                                            \
+                        (std::type_identity<EXPECT_SAME_TYPE_DEPAREN(val1)>{}),                                        \
+                        (std::type_identity<EXPECT_SAME_TYPE_DEPAREN(val2)>{}));
 
 struct expect_same_type
 {
     template <typename lhs_t, typename rhs_t>
-    ::testing::AssertionResult operator()(std::string lhs_expression, std::string rhs_expression,
-                                          std::type_identity<lhs_t>, std::type_identity<rhs_t>)
+    ::testing::AssertionResult operator()(std::string lhs_expression,
+                                          std::string rhs_expression,
+                                          std::type_identity<lhs_t>,
+                                          std::type_identity<rhs_t>)
     {
         auto remove_wrap_type_identity = [](std::string str)
         {

@@ -25,36 +25,32 @@ using random_access_iterator_const = std::vector<char>::const_iterator;
 template <typename value_t>
 struct test_sentinel
 {
-    using value_type      = value_t;
+    using value_type = value_t;
     using difference_type = size_t;
 
     value_type val{};
 };
 
 template <typename iterator_t, typename value_t>
-inline bool operator==(iterator_t const & i,
-                       test_sentinel<value_t> const & s)
+inline bool operator==(iterator_t const & i, test_sentinel<value_t> const & s)
 {
     return *i == s.val;
 }
 
 template <typename iterator_t, typename value_t>
-inline bool operator!=(iterator_t const & i,
-                       test_sentinel<value_t> const & s)
+inline bool operator!=(iterator_t const & i, test_sentinel<value_t> const & s)
 {
     return !(i == s);
 }
 
 template <typename value_t, typename iterator_t>
-inline bool operator==(test_sentinel<value_t> const & s,
-                       iterator_t const & i)
+inline bool operator==(test_sentinel<value_t> const & s, iterator_t const & i)
 {
     return *i == s.val;
 }
 
 template <typename value_t, typename iterator_t>
-inline bool operator!=(test_sentinel<value_t> const & s,
-                       iterator_t const & i)
+inline bool operator!=(test_sentinel<value_t> const & s, iterator_t const & i)
 {
     return !(i == s);
 }
@@ -85,18 +81,16 @@ struct test_sized_sentinel : public test_sentinel<input_or_output_iter_value_t<i
 
 template <typename iterator_t>
     requires std::random_access_iterator<iterator_t>
-inline typename test_sized_sentinel<iterator_t>::difference_type
-operator-(test_sized_sentinel<iterator_t> const & s,
-          iterator_t const & i)
+inline typename test_sized_sentinel<iterator_t>::difference_type operator-(test_sized_sentinel<iterator_t> const & s,
+                                                                           iterator_t const & i)
 {
     return s.pos - i;
 }
 
 template <typename iterator_t>
     requires std::random_access_iterator<iterator_t>
-inline typename test_sized_sentinel<iterator_t>::difference_type
-operator-(iterator_t const & i,
-          test_sized_sentinel<iterator_t> const & s)
+inline typename test_sized_sentinel<iterator_t>::difference_type operator-(iterator_t const & i,
+                                                                           test_sized_sentinel<iterator_t> const & s)
 {
     return i - s.pos;
 }

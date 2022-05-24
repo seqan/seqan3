@@ -20,7 +20,7 @@ struct type_b : type_a
     type_b & operator=(type_b const &) = delete;
     type_b & operator=(type_b &&) noexcept = default;
 
-    template <typename ...args>
+    template <typename... args>
     bool operator()(args &&...) const;
 };
 
@@ -33,12 +33,12 @@ struct type_c
     explicit type_c(type_a const &)
     {}
 
-    template <typename ...args>
-    void operator()(args &&... ) const;
+    template <typename... args>
+    void operator()(args &&...) const;
 };
 
 //! \brief Helper struct for testing core concepts.
-struct type_d: type_b
+struct type_d : type_b
 {
     type_d() = delete;
 
@@ -57,48 +57,48 @@ struct type_d: type_b
 };
 
 // Operator overloads for testing core concepts.
-bool operator==(type_a const & , type_b const &);
-bool operator==(type_b const & , type_a const &);
-bool operator==(type_b const & , type_b const &);
-bool operator==(type_d const & , type_b const &);
-bool operator==(type_b const & , type_d const &);
-bool operator==(type_d const & , type_d const &);
-bool operator==(type_c const & , type_c const &);
+bool operator==(type_a const &, type_b const &);
+bool operator==(type_b const &, type_a const &);
+bool operator==(type_b const &, type_b const &);
+bool operator==(type_d const &, type_b const &);
+bool operator==(type_b const &, type_d const &);
+bool operator==(type_d const &, type_d const &);
+bool operator==(type_c const &, type_c const &);
 
-bool operator!=(type_a const & , type_b const &);
-bool operator!=(type_b const & , type_a const &);
-bool operator!=(type_b const & , type_b const &);
-bool operator!=(type_d const & , type_b const &);
-bool operator!=(type_b const & , type_d const &);
-bool operator!=(type_d const & , type_d const &);
-bool operator!=(type_c const & , type_c const &);
+bool operator!=(type_a const &, type_b const &);
+bool operator!=(type_b const &, type_a const &);
+bool operator!=(type_b const &, type_b const &);
+bool operator!=(type_d const &, type_b const &);
+bool operator!=(type_b const &, type_d const &);
+bool operator!=(type_d const &, type_d const &);
+bool operator!=(type_c const &, type_c const &);
 
-bool operator<(type_a const & , type_a const &);
-bool operator<(type_a const & , type_b const &);
-bool operator<(type_b const & , type_b const &);
-bool operator<(type_b const & , type_a const &);
-bool operator>(type_a const & , type_a const &);
-bool operator>(type_a const & , type_b const &);
-bool operator>(type_b const & , type_b const &);
-bool operator>(type_b const & , type_a const &);
-bool operator<=(type_a const & , type_a const &);
-bool operator<=(type_a const & , type_b const &);
-bool operator<=(type_b const & , type_b const &);
-bool operator<=(type_b const & , type_a const &);
-bool operator>=(type_a const & , type_a const &);
-bool operator>=(type_a const & , type_b const &);
-bool operator>=(type_b const & , type_b const &);
-bool operator>=(type_b const & , type_a const &);
+bool operator<(type_a const &, type_a const &);
+bool operator<(type_a const &, type_b const &);
+bool operator<(type_b const &, type_b const &);
+bool operator<(type_b const &, type_a const &);
+bool operator>(type_a const &, type_a const &);
+bool operator>(type_a const &, type_b const &);
+bool operator>(type_b const &, type_b const &);
+bool operator>(type_b const &, type_a const &);
+bool operator<=(type_a const &, type_a const &);
+bool operator<=(type_a const &, type_b const &);
+bool operator<=(type_b const &, type_b const &);
+bool operator<=(type_b const &, type_a const &);
+bool operator>=(type_a const &, type_a const &);
+bool operator>=(type_a const &, type_b const &);
+bool operator>=(type_b const &, type_b const &);
+bool operator>=(type_b const &, type_a const &);
 
-bool operator<(type_d const & , type_d const &);
-bool operator<(type_d const & , type_b const &);
-bool operator<(type_b const & , type_d const &);
-bool operator>(type_d const & , type_d const &);
-bool operator>(type_d const & , type_b const &);
-bool operator>(type_b const & , type_d const &);
-bool operator<=(type_d const & , type_d const &);
-bool operator<=(type_d const & , type_b const &);
-bool operator<=(type_b const & , type_d const &);
-bool operator>=(type_d const & , type_d const &);
-bool operator>=(type_d const & , type_b const &);
-bool operator>=(type_b const & , type_d const &);
+bool operator<(type_d const &, type_d const &);
+bool operator<(type_d const &, type_b const &);
+bool operator<(type_b const &, type_d const &);
+bool operator>(type_d const &, type_d const &);
+bool operator>(type_d const &, type_b const &);
+bool operator>(type_b const &, type_d const &);
+bool operator<=(type_d const &, type_d const &);
+bool operator<=(type_d const &, type_b const &);
+bool operator<=(type_b const &, type_d const &);
+bool operator>=(type_d const &, type_d const &);
+bool operator>=(type_d const &, type_b const &);
+bool operator>=(type_b const &, type_d const &);

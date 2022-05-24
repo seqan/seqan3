@@ -22,7 +22,7 @@
 // This list is only defined once per test case. This function allows to extract a list containing only the
 // configuration element types without their associated taboo lists. This list is then used to
 // instantiate the typed tests.
-template <typename ...taboo_pairs_t>
+template <typename... taboo_pairs_t>
 constexpr auto pure_config_type_list_fn(seqan3::type_list<taboo_pairs_t...>)
     -> seqan3::type_list<typename taboo_pairs_t::first_type...>;
 
@@ -36,10 +36,9 @@ using pure_config_type_list = decltype(pure_config_type_list_fn(config_taboo_pai
 // The first element of the taboo list is cut of before every recursive call.
 // If the taboo list is empty, a configuration object with only valid configuration elements will be returned.
 template <typename config_list_t, typename taboo_list_t>
-using make_pipeable_configuration =
-    seqan3::detail::transfer_template_args_onto_t<
-        decltype(seqan3::list_traits::detail::type_list_difference(config_list_t{}, taboo_list_t{})),
-        seqan3::configuration>;
+using make_pipeable_configuration = seqan3::detail::transfer_template_args_onto_t<
+    decltype(seqan3::list_traits::detail::type_list_difference(config_list_t{}, taboo_list_t{})),
+    seqan3::configuration>;
 
 template <typename config_fixture_t>
 struct pipeable_config_element_test : public ::testing::Test, public config_fixture_t
@@ -118,7 +117,7 @@ void helper_exists()
     EXPECT_TRUE(cfg_t::template exists<t>());
 }
 
-template <template <typename ...> typename t, typename cfg_t>
+template <template <typename...> typename t, typename cfg_t>
 void helper_exists()
 {
     EXPECT_TRUE(cfg_t::template exists<t>());
@@ -139,12 +138,14 @@ TYPED_TEST_P(pipeable_config_element_test, combineable_with)
                                                       seqan3::type_list>;
 
     // Test combinability with every config that can be combined with.
-    seqan3::detail::for_each<configs_list_t>([&](auto other_config)
-    {
-        using other_config_t = typename decltype(other_config)::type;
+    seqan3::detail::for_each<configs_list_t>(
+        [&](auto other_config)
+        {
+            using other_config_t = typename decltype(other_config)::type;
 
-        EXPECT_TRUE((seqan3::detail::config_element_pipeable_with<typename TestFixture::config_type, other_config_t>));
-    });
+            EXPECT_TRUE(
+                (seqan3::detail::config_element_pipeable_with<typename TestFixture::config_type, other_config_t>));
+        });
 }
 
 TYPED_TEST_P(pipeable_config_element_test, pipeability)
@@ -157,58 +158,56 @@ TYPED_TEST_P(pipeable_config_element_test, pipeability)
     config_t elem{};
 
     { // Test with config element on the right hand side.
-        using expected_config_types_t =
-            seqan3::list_traits::concat<seqan3::detail::transfer_template_args_onto_t<configuration_t,
-                                                                                      seqan3::type_list>,
-                                        seqan3::type_list<config_t>>;
+        using expected_config_types_t = seqan3::list_traits::concat<
+            seqan3::detail::transfer_template_args_onto_t<configuration_t, seqan3::type_list>,
+            seqan3::type_list<config_t>>;
         using expected_configuration_t =
             seqan3::detail::transfer_template_args_onto_t<expected_config_types_t, seqan3::configuration>;
 
-        {   // lvalue | lvalue
+        { // lvalue | lvalue
             auto cfg = compatible_configuration | elem;
             EXPECT_SAME_TYPE(decltype(cfg), expected_configuration_t);
         }
 
-        {   // lvalue | rvalue
+        { // lvalue | rvalue
             auto cfg = compatible_configuration | config_t{};
             EXPECT_SAME_TYPE(decltype(cfg), expected_configuration_t);
         }
 
-        {   // rvalue | lvalue
+        { // rvalue | lvalue
             auto cfg = configuration_t{} | elem;
             EXPECT_SAME_TYPE(decltype(cfg), expected_configuration_t);
         }
 
-        {   // rvalue | rvalue
+        { // rvalue | rvalue
             auto cfg = configuration_t{} | config_t{};
             EXPECT_SAME_TYPE(decltype(cfg), expected_configuration_t);
         }
     }
 
     { // Test with config element on the left hand side.
-            using expected_config_types_t =
-                    seqan3::list_traits::concat<seqan3::type_list<config_t>,
-                                                seqan3::detail::transfer_template_args_onto_t<configuration_t,
-                                                                                              seqan3::type_list>>;
-            using expected_configuration_t =
-                    seqan3::detail::transfer_template_args_onto_t<expected_config_types_t, seqan3::configuration>;
+        using expected_config_types_t = seqan3::list_traits::concat<
+            seqan3::type_list<config_t>,
+            seqan3::detail::transfer_template_args_onto_t<configuration_t, seqan3::type_list>>;
+        using expected_configuration_t =
+            seqan3::detail::transfer_template_args_onto_t<expected_config_types_t, seqan3::configuration>;
 
-        {   // lvalue | lvalue
+        { // lvalue | lvalue
             auto cfg = elem | compatible_configuration;
             EXPECT_SAME_TYPE(decltype(cfg), expected_configuration_t);
         }
 
-        {   // rvalue | lvalue
+        { // rvalue | lvalue
             auto cfg = config_t{} | compatible_configuration;
             EXPECT_SAME_TYPE(decltype(cfg), expected_configuration_t);
         }
 
-        {   // lvalue | rvalue
+        { // lvalue | rvalue
             auto cfg = elem | configuration_t{};
             EXPECT_SAME_TYPE(decltype(cfg), expected_configuration_t);
         }
 
-        {   // rvalue | rvalue
+        { // rvalue | rvalue
             auto cfg = config_t{} | configuration_t{};
             EXPECT_SAME_TYPE(decltype(cfg), expected_configuration_t);
         }
@@ -217,22 +216,22 @@ TYPED_TEST_P(pipeable_config_element_test, pipeability)
     { // Test with empty configuration.
         using expected_configuration_t = seqan3::configuration<config_t>;
 
-        {   // lvalue | empty
+        { // lvalue | empty
             auto cfg = elem | seqan3::configuration<>{};
             EXPECT_SAME_TYPE(decltype(cfg), expected_configuration_t);
         }
 
-        {   // rvalue | empty
+        { // rvalue | empty
             auto cfg = config_t{} | seqan3::configuration<>{};
             EXPECT_SAME_TYPE(decltype(cfg), expected_configuration_t);
         }
 
-        {   // empty | lvalue
+        { // empty | lvalue
             auto cfg = seqan3::configuration<>{} | elem;
             EXPECT_SAME_TYPE(decltype(cfg), expected_configuration_t);
         }
 
-        {   // empty | rvalue
+        { // empty | rvalue
             auto cfg = seqan3::configuration<>{} | config_t{};
             EXPECT_SAME_TYPE(decltype(cfg), expected_configuration_t);
         }
