@@ -39,7 +39,7 @@ jobs:
     steps:
       - name: "Cancel Misc"
         run: echo "Cancelling Misc"
-  build:
+  lint:
     name: clang-format
     concurrency:
       group: clang-format-${{ github.event.pull_request.number }}
@@ -53,15 +53,35 @@ jobs:
             PR_URL: ${{ github.event.pull_request.html_url }}
         run: gh pr edit $PR_URL --add-label "clang-format"
 
+      - name: Get fetch depth
+        id: fetch_depth
+        run: echo "::set-output name=depth::$(( ${{ github.event.pull_request.commits }} + 1 ))"
+
       - name: Checkout SeqAn3
         uses: actions/checkout@v2
         with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
           path: seqan3
+          fetch-depth: ${{ steps.fetch_depth.outputs.depth }}
           submodules: false
 
+      # Get filenames (--name-only) of added, copied, modified, renamed, changed (ACMRT) files relative to the base
+      # branch (github.event.pull_request.base.sha).
+      # Exclude contrib include folder, exclude submodules folder.
+      # Include only hpp and cpp files as well as files in the std include folder.
+      # { grep ... || test $? = 1; } ensures that grep exits with code 0 on empty output.
+      - name: Get changed files
+        id: changed_files
+        run: |
+          cd seqan3
+          LIST=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} | \
+          { grep -v -E "(include/seqan3/contrib/|submodules/)" || test $? = 1; } | \
+          { grep -E "(.cpp|.hpp|include/seqan3/std/)" || test $? = 1; } | xargs)
+          echo "::set-output name=list::$LIST"
+
       - name: Install clang-format
+        if: ${{ steps.changed_files.outputs.list }}
         run: |
           echo 'APT::Acquire::Retries "5";' | sudo tee -a /etc/apt/apt.conf.d/80-retries > /dev/null
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
@@ -70,13 +90,13 @@ jobs:
           sudo apt-get install --yes clang-format-15
 
       - name: Run clang-format
+        if: ${{ steps.changed_files.outputs.list }}
         run: |
-          find seqan3 \( -path "seqan3/include/seqan3/std/*" -or -iname "*.hpp" -or -iname "*.cpp" \) \
-          -and -not -path "seqan3/submodules/*" \
-          -and -not -path "seqan3/include/seqan3/contrib/*" | \
-          xargs clang-format-15 --style=file:seqan3/.clang-format -i
+          cd seqan3
+          echo "${{ steps.changed_files.outputs.list }}" | xargs clang-format-15 --style=file:.clang-format -i
 
       - name: Import GPG key
+        if: ${{ steps.changed_files.outputs.list }}
         uses: crazy-max/ghaction-import-gpg@v4
         with:
           workdir: seqan3
@@ -86,6 +106,7 @@ jobs:
           git_commit_gpgsign: true
 
       - name: Commit changes
+        if: ${{ steps.changed_files.outputs.list }}
         uses: EndBug/add-and-commit@v9
         with:
           author_name: seqan-actions[bot]
@@ -95,6 +116,7 @@ jobs:
 
       # Wait for 5 seconds such that workflows triggered by adding the label run on the newest commit.
       - name: Defer workflow
+        if: ${{ steps.changed_files.outputs.list }}
         run: sleep 5
 
       - name: Remove label
