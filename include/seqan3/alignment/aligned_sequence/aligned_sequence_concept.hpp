@@ -387,7 +387,14 @@ inline void assign_unaligned(aligned_seq_t & aligned_seq, unaligned_sequence_typ
     using std::swap;
     aligned_seq_t tmp;
     tmp.resize(std::ranges::distance(unaligned_seq));
+#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
     std::ranges::copy(unaligned_seq, std::ranges::begin(tmp));
+#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#    pragma GCC diagnostic pop
+#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
     swap(aligned_seq, tmp);
 }
 //!\}
