@@ -33,6 +33,7 @@ HTML_TIMESTAMP         = YES
 EXT_LINKS_IN_WINDOW    = YES
 RECURSIVE              = YES
 DISABLE_INDEX          = YES
+DISTRIBUTE_GROUP_DOC   = YES
 GENERATE_TREEVIEW      = YES
 INLINE_INHERITED_MEMB  = NO
 COLLABORATION_GRAPH    = NO
@@ -54,7 +55,8 @@ PREDEFINED             = "CEREAL_SERIALIZE_FUNCTION_NAME=serialize" \
                          "CEREAL_LOAD_MINIMAL_FUNCTION_NAME=load_minimal" \
                          "CEREAL_SAVE_MINIMAL_FUNCTION_NAME=save_minimal" \
                          "SEQAN3_DOXYGEN_ONLY(x)= x" \
-                         "${SEQAN3_DOXYGEN_PREDEFINED_NDEBUG}"
+                         "${SEQAN3_DOXYGEN_PREDEFINED_NDEBUG}" \
+                         "__cpp_lib_three_way_comparison=1"
 
 EXPAND_AS_DEFINED      = SEQAN3_CPO_OVERLOAD_BODY SEQAN3_CPO_OVERLOAD
 
