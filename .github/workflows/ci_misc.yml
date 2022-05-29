@@ -66,9 +66,9 @@ jobs:
             skip_run_tests: false
             use_include_dependencies: "OFF"
 
-          - name: "Header gcc11"
-            cxx: "g++-11"
-            cc: "gcc-11"
+          - name: "Header gcc12"
+            cxx: "g++-12"
+            cc: "gcc-12"
             build: header
             build_type: Release
             build_threads: 2
