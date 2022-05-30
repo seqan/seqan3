@@ -38,7 +38,7 @@
 
 #if defined(__GNUC__) && (__GNUC__ == 7 || __GNUC__ == 8 || __GNUC__ == 9)
 #    error "SeqAn 3.1.x is the last version that supports GCC 7, 8, and 9. Please upgrade your compiler or use 3.1.x."
-#endif // defined(__GNUC__) && (__GNUC__ == 7 || __GNUC__ == 8)
+#endif // defined(__GNUC__) && (__GNUC__ < 10)
 
 // ============================================================================
 //  C++ standard and features
@@ -209,9 +209,9 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
  * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95371
  * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95578
  */
-#if defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ <= 1)
+#if defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ <= 2)
 #    pragma GCC warning                                                                                                \
-        "Be aware that gcc 10.0 and 10.1 are known to have several bugs that might make SeqAn3 fail to compile. Please use gcc >= 10.2."
+        "Be aware that gcc 10.0, 10.1 and 10.2 are known to have several bugs that might make SeqAn3 fail to compile. Please use gcc >= 10.3."
 #endif // defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ <= 1)
 
 #ifndef SEQAN3_WORKAROUND_VIEW_PERFORMANCE
