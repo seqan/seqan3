@@ -209,6 +209,7 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
  * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95371
  * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95578
  * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=99318
+ * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93467
  */
 #if defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ <= 2)
 #    pragma GCC warning                                                                                                \
@@ -218,15 +219,6 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 #ifndef SEQAN3_WORKAROUND_VIEW_PERFORMANCE
 //!\brief Performance of views, especially filter and join is currently bad, especially in I/O.
 #    define SEQAN3_WORKAROUND_VIEW_PERFORMANCE 1
-#endif
-
-//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93467
-#ifndef SEQAN3_WORKAROUND_GCC_93467 // fixed since gcc10.2
-#    if defined(__GNUC__) && ((__GNUC__ <= 9) || (__GNUC__ == 10 && __GNUC_MINOR__ < 2))
-#        define SEQAN3_WORKAROUND_GCC_93467 1
-#    else
-#        define SEQAN3_WORKAROUND_GCC_93467 0
-#    endif
 #endif
 
 //!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=96070 and https://github.com/seqan/product_backlog/issues/151

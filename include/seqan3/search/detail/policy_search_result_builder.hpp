@@ -23,9 +23,7 @@ namespace seqan3::detail
 //!\brief Provides the function `make_results` if inherited by a search algorithm.
 //!\ingroup search
 template <typename search_configuration_t>
-#if !SEQAN3_WORKAROUND_GCC_93467
     requires is_type_specialisation_of_v<search_configuration_t, configuration>
-#endif // !SEQAN3_WORKAROUND_GCC_93467
 struct policy_search_result_builder
 {
 protected:
