@@ -53,8 +53,8 @@ private:
             std::ranges::viewable_range<urng_t>,
             "The views::type_reduce adaptor can only be passed viewable_ranges, i.e. Views or &-to-non-View.");
 
-        // views are always passed as-is
-        if constexpr (std::ranges::view<std::remove_cvref_t<urng_t>>)
+        // string_view
+        if constexpr (is_type_specialisation_of_v<std::remove_cvref_t<urng_t>, std::basic_string_view>)
         {
             return std::views::all(std::forward<urng_t>(urange));
         }
@@ -79,7 +79,7 @@ private:
                 std::ranges::begin(urange) + std::ranges::size(urange),
                 std::ranges::size(urange)};
         }
-        // pass to std::views::all (will return ref-view)
+        // pass to std::views::all (will return a view or ref-view)
         else
         {
             return std::views::all(std::forward<urng_t>(urange));
