@@ -1,0 +1,82 @@
+// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
+// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+// -----------------------------------------------------------------------------------------------------
+
+/*!\file
+ * \author Enrico Seiler <enrico.seiler AT fu-berlin.de>
+ * \brief Provides [seqan3::detail::views::non_propagating_cache](https://eel.is/c++draft/range.nonprop.cache).
+ */
+
+#pragma once
+
+#include <optional>
+
+#include <seqan3/core/platform.hpp>
+
+namespace seqan3::detail
+{
+
+/*!\brief A helper that enables an input view to temporarily cache values as it is iterated over.
+ * \ingroup utility_views
+ * \sa https://eel.is/c++draft/range.nonprop.cache
+ * \details
+ *
+ *  Behaves like std::optional, but
+ *  - Constrains its type parameter `T` with `std::is_object_v<T>`.
+ *  - Copy constructor is a no-op.
+ *  - Move constructor is a no-op for `this` and destroys value of `other`.
+ *  - Copy assignment is a no-op if `this` == `other`, otherwise destroys value of `this`.
+ *  - Move assignment destroys both objects.
+ *  - Has an additional `emplace_deref` member function.
+ */
+template <typename T>
+    requires std::is_object_v<T>
+class non_propagating_cache : public std::optional<T>
+{
+public:
+    //!\brief Use std::optional constructors.
+    using std::optional<T>::optional;
+    //!\brief Use std::optional assignment operators.
+    using std::optional<T>::operator=;
+
+    //!\brief Copy construction is a no-op.
+    constexpr non_propagating_cache(non_propagating_cache const &) noexcept
+    {}
+
+    //!\brief Move constructor is a no-op for `this` and destroys value of `other`.
+    constexpr non_propagating_cache(non_propagating_cache && other) noexcept
+    {
+        other.reset();
+    }
+
+    //!\brief Copy assignment is a no-op if `this` == `other`, otherwise destroys value of `this`.
+    constexpr non_propagating_cache & operator=(non_propagating_cache const & other) noexcept
+    {
+        if (std::addressof(other) != this)
+            this->reset();
+        return *this;
+    }
+
+    //!\brief Move assignment destroys values of both `this` and `other`.
+    constexpr non_propagating_cache & operator=(non_propagating_cache && other) noexcept
+    {
+        this->reset();
+        other.reset();
+        return *this;
+    }
+
+    //!\brief Destroys current value, initializes with new value obtained from dereferencing `i`, and returns value.
+    template <class I>
+    constexpr T & emplace_deref(I const & i)
+        requires requires (I const & i) { T(*i); }
+    {
+        this->reset();
+        this->emplace(*i);
+        return this->value();
+    }
+};
+
+} // namespace seqan3::detail
