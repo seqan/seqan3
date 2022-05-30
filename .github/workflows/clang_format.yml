@@ -94,6 +94,12 @@ jobs:
           git config user.email "$(git log -1 --format='%ce' ${{ github.event.pull_request.head.sha }})"
           git rebase upstream/${{ github.event.pull_request.base.ref }}
 
+      - name: Copy upstream .clang-format
+        run: |
+          cd seqan3
+          git show upstream/${{ github.event.pull_request.base.ref }}:.clang-format | \
+          tee ${{ github.workspace }}/.clang-format
+
       # Get filenames (--name-only) of added, copied, modified, renamed, changed (ACMRT) files relative to the base
       # branch (github.event.pull_request.base.sha).
       # Exclude contrib include folder, exclude submodules folder.
@@ -122,7 +128,8 @@ jobs:
         run: |
           cd seqan3
           git checkout ${{ github.event.pull_request.head.ref }}
-          echo "${{ steps.changed_files.outputs.list }}" | xargs clang-format-15 --style=file:.clang-format -i
+          echo "${{ steps.changed_files.outputs.list }}" | \
+          xargs clang-format-15 --style=file:${{ github.workspace }}/.clang-format -i
 
       - name: Import GPG key
         if: ${{ steps.changed_files.outputs.list }}
