@@ -270,17 +270,6 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 #    endif // SEQAN3_DISABLE_LEGACY_STD_DIAGNOSTIC
 #endif     // _GLIBCXX_USE_CXX11_ABI == 0
 
-/*!\brief https://eel.is/c++draft/range.take#view defines e.g. `constexpr auto size() requires sized_range<V>` without
- *        any template. This syntax works since gcc-10, before that a dummy `template <typename = ...>` must be used.
- */
-#ifndef SEQAN3_WORKAROUND_GCC_NON_TEMPLATE_REQUIRES
-#    if defined(__GNUC_MINOR__) && (__GNUC__ < 10) // fixed since gcc-10
-#        define SEQAN3_WORKAROUND_GCC_NON_TEMPLATE_REQUIRES 1
-#    else
-#        define SEQAN3_WORKAROUND_GCC_NON_TEMPLATE_REQUIRES 0
-#    endif
-#endif
-
 //!\brief Workaround to access the static id of the configuration elements inside of the concept definition
 //!       (fixed in gcc11).
 #ifndef SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT

@@ -208,9 +208,6 @@ public:
      * \{
      */
     //!\brief Computes the size based on the size of the underlying range.
-#if SEQAN3_WORKAROUND_GCC_NON_TEMPLATE_REQUIRES
-    template <typename = underlying_range_type>
-#endif // SEQAN3_WORKAROUND_GCC_NON_TEMPLATE_REQUIRES
     constexpr auto size() const noexcept
         requires std::ranges::sized_range<underlying_range_type>
     {
