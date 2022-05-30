@@ -65,6 +65,7 @@ jobs:
           ANSWER=$(gh api -H "Accept: application/vnd.github.v3+json" ${QUERY})
           NBEHIND=$(jq '.behind_by' <<< "${ANSWER}")
           echo "::set-output name=depth::$(( ${NBEHIND} + 1 ))"
+          echo "::set-output name=pr_depth::$(( ${{ github.event.pull_request.commits }} + 1 ))"
 
       - name: Checkout SeqAn3
         uses: actions/checkout@v2
@@ -72,7 +73,7 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
           path: seqan3
-          fetch-depth: 2
+          fetch-depth: ${{ steps.fetch_depth.outputs.pr_depth }}
           submodules: false
 
       # Comments on each git line:
