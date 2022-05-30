@@ -53,9 +53,18 @@ jobs:
             PR_URL: ${{ github.event.pull_request.html_url }}
         run: gh pr edit $PR_URL --add-label "clang-format"
 
+      # How many commits need to be fetched such that the branch point of the PR branch is visible when fetching the
+      # upstream?
       - name: Get fetch depth
         id: fetch_depth
-        run: echo "::set-output name=depth::$(( ${{ github.event.pull_request.commits }} + 1 ))"
+        env:
+          GITHUB_TOKEN: ${{ secrets.SEQAN_ACTIONS_PAT }}
+          COMMIT_RANGE: ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}
+        run: |
+          QUERY="/repos/${{ github.repository }}/compare/${COMMIT_RANGE}"
+          ANSWER=$(gh api -H "Accept: application/vnd.github.v3+json" ${QUERY})
+          NBEHIND=$(jq '.behind_by' <<< "${ANSWER}")
+          echo "::set-output name=depth::$(( ${NBEHIND} + 1 ))"
 
       - name: Checkout SeqAn3
         uses: actions/checkout@v2
@@ -63,8 +72,27 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
           path: seqan3
-          fetch-depth: ${{ steps.fetch_depth.outputs.depth }}
+          fetch-depth: 2
           submodules: false
+
+      # Comments on each git line:
+      # Checkout new branch that will be rebased. Actual PR branch remains untouched.
+      # Add the upstream repository.
+      # Disallow (accidental) pushes to upstream.
+      # Fetch the upstream. Fetch as many commits such that the branch point of the PR branch is visible.
+      # For rebasing, use last commit's user name.
+      # For rebasing, use last commit's user email.
+      # Rebase on upstream.
+      - name: Rebase on upstream
+        run: |
+          cd seqan3
+          git checkout -b seqan_clang_format_rebase_${{ github.event.pull_request.head.ref }}
+          git remote add upstream ${{ github.event.pull_request.base.repo.html_url }}
+          git remote set-url --push upstream nopush
+          git fetch --depth ${{ steps.fetch_depth.outputs.depth }} upstream ${{ github.event.pull_request.base.ref }}
+          git config user.name "$(git log -1 --format='%cn' ${{ github.event.pull_request.head.sha }})"
+          git config user.email "$(git log -1 --format='%ce' ${{ github.event.pull_request.head.sha }})"
+          git rebase upstream/${{ github.event.pull_request.base.ref }}
 
       # Get filenames (--name-only) of added, copied, modified, renamed, changed (ACMRT) files relative to the base
       # branch (github.event.pull_request.base.sha).
@@ -93,6 +121,7 @@ jobs:
         if: ${{ steps.changed_files.outputs.list }}
         run: |
           cd seqan3
+          git checkout ${{ github.event.pull_request.head.ref }}
           echo "${{ steps.changed_files.outputs.list }}" | xargs clang-format-15 --style=file:.clang-format -i
 
       - name: Import GPG key
