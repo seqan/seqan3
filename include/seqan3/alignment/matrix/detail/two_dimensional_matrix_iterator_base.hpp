@@ -81,11 +81,7 @@ private:
 
     //!\brief Befriend other base class types for const iterator compatibility.
     template <typename other_derived_t, matrix_major_order other_order>
-    //!\cond
-#if !SEQAN3_WORKAROUND_FURTHER_CONSTRAIN_FRIEND_DECLARATION
         requires (order == other_order)
-#endif // !SEQAN3_WORKAROUND_FURTHER_CONSTRAIN_FRIEND_DECLARATION
-    //!\endcond
     friend class two_dimensional_matrix_iterator_base;
 
     /*!\name Constructors, destructor and assignment
