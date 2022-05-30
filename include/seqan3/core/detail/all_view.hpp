@@ -15,6 +15,9 @@
 #include <seqan3/std/ranges>
 
 #if __cpp_lib_ranges >= 202110L
+
+#    include <seqan3/core/platform.hpp>
+
 namespace seqan3::detail
 {
 using std::ranges::owning_view;
