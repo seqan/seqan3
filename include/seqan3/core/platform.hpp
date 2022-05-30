@@ -208,6 +208,7 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
  * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93983
  * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95371
  * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95578
+ * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=99318
  */
 #if defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ <= 2)
 #    pragma GCC warning                                                                                                \
@@ -234,15 +235,6 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 #        define SEQAN3_WORKAROUND_GCC_96070 1
 #    else
 #        define SEQAN3_WORKAROUND_GCC_96070 0
-#    endif
-#endif
-
-//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=99318
-#ifndef SEQAN3_WORKAROUND_GCC_99318 // fixed since gcc10.3
-#    if defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ < 3)
-#        define SEQAN3_WORKAROUND_GCC_99318 1
-#    else
-#        define SEQAN3_WORKAROUND_GCC_99318 0
 #    endif
 #endif
 
