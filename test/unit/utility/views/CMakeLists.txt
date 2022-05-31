@@ -1,5 +1,6 @@
 add_subdirectories ()
 
+seqan3_test (chunk_test.cpp)
 seqan3_test (convert_test.cpp)
 seqan3_test (deep_test.cpp)
 seqan3_test (elements_test.cpp)
