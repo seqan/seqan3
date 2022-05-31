@@ -169,3 +169,19 @@ TYPED_TEST(chunk_view_test, underlying_input_range_test)
             EXPECT_EQ(*(*v_it).begin(), *expected_it);
     }
 }
+
+TYPED_TEST(chunk_view_test, use_on_temporaries)
+{
+    if constexpr (!std::is_const_v<TypeParam>)
+    {
+        std::vector<std::vector<int>> expected_range{{1, 4, 2, 7}, {4, 5, 8, 3}, {4, 7, 5, 4}, {3}};
+
+        size_t i{};
+        for (auto && chunk : seqan3::views::chunk(TypeParam{1, 4, 2, 7, 4, 5, 8, 3, 4, 7, 5, 4, 3}, 4))
+        {
+            EXPECT_RANGE_EQ(chunk, expected_range[i]);
+            ++i;
+        }
+        EXPECT_EQ(i, 4u);
+    }
+}

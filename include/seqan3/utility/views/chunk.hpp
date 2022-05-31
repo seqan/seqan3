@@ -160,8 +160,8 @@ public:
 };
 
 //!\brief A deduction guide for the view class template.
-template <std::ranges::input_range rng_t>
-chunk_view(rng_t &&, uint16_t const & chunk_size) -> chunk_view<seqan3::detail::all_t<rng_t>>;
+template <std::ranges::range rng_t>
+chunk_view(rng_t &&, uint16_t const &) -> chunk_view<seqan3::detail::all_t<rng_t>>;
 
 // ---------------------------------------------------------------------------------------------------------------------
 // chunk_view iterators (basic_input_iterator and basic_iterator)
@@ -449,7 +449,7 @@ public:
     ~basic_iterator() = default;                                            //!< Defaulted.
 
     //!\brief Allow iterator on a const range to be constructible from an iterator over a non-const range.
-    constexpr explicit basic_iterator(basic_iterator<!const_range> const & it) noexcept
+    constexpr basic_iterator(basic_iterator<!const_range> const & it) noexcept
         requires const_range
     :
         chunk_size{std::move(it.chunk_size)},
