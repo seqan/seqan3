@@ -72,7 +72,6 @@
  *            \link std::ranges::output_range output ranges \endlink (if they are output files), but they are neither
  *            containers, decorators nor views.
  *
- * \sa https://ericniebler.github.io/range-v3/index.html
  * \see utility
  */
 

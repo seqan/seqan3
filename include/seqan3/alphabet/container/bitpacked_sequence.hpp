@@ -168,11 +168,6 @@ public:
     using size_type = std::ranges::range_size_t<data_type>;
     //!\}
 
-    //!\cond
-    // this signals to range-v3 that something is a container :|
-    using allocator_type = void;
-    //!\endcond
-
     /*!\name Constructors, destructor and assignment
      * \{
      */

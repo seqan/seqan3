@@ -97,11 +97,6 @@ public:
 
     //!\}
 
-    //!\cond
-    // this signals to range-v3 that something is a container :|
-    using allocator_type = void;
-    //!\endcond
-
     /*!\name Constructors, destructor and assignment
      * \{
      */
