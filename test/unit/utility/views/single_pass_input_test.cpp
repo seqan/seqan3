@@ -14,7 +14,6 @@
 #include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
-#include <seqan3/utility/views/zip.hpp>
 
 template <typename rng_type>
 class single_pass_input : public ::testing::Test
@@ -165,10 +164,10 @@ TYPED_TEST(single_pass_input, view_end)
 
 TYPED_TEST(single_pass_input, view_iterate)
 {
-    TypeParam p{this->data};
-
     if constexpr (std::is_base_of_v<std::ios_base, decltype(this->data)>)
     {
+        TypeParam p{this->data};
+
         // Single pass input is only movable.
         seqan3::detail::single_pass_input_view view{std::move(p)};
 
@@ -178,16 +177,6 @@ TYPED_TEST(single_pass_input, view_iterate)
         {
             EXPECT_EQ(elem, *tmp_it);
             ++tmp_it;
-        }
-    }
-    else
-    {
-        seqan3::detail::single_pass_input_view view{p};
-        TypeParam tmp{this->cmp_data};
-        auto zipper = seqan3::views::zip(tmp, std::move(view));
-        for (auto it = zipper.begin(); it != zipper.end(); ++it)
-        {
-            EXPECT_EQ(std::get<0>(*it), std::get<1>(*it));
         }
     }
 }
