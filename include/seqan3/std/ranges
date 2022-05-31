@@ -11,106 +11,11 @@
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
-// File might be included from multiple libraries.
-#ifndef SEQAN_STD_RANGES_SHIM
-#define SEQAN_STD_RANGES_SHIM
+#pragma once
 
-#include <iterator>
 #include <ranges>
 
-/*!\defgroup std_ranges ranges
- * \ingroup std
- * \brief The [\<ranges\> header](https://en.cppreference.com/w/cpp/header/ranges) from C++20's standard library.
- */
+#include <seqan3/core/platform.hpp>
 
-//!\cond
-#ifndef RANGES_DEEP_STL_INTEGRATION
-// including a header of the ranges-v3 library is fine as long as -DRANGES_DEEP_STL_INTEGRATION=1 is fulfilled
-// in range-v3 0.11.0 #include <range/v3/iterator/access.hpp> and #include <range/v3/iterator/traits.hpp> (that one
-// included range/v3/iterator/access.hpp) were the only header that used -DRANGES_DEEP_STL_INTEGRATION
-// We check range/v3/iterator/access.hpp and not e.g. range/v3/range_fwd.hpp, because we sometimes use utility that
-// include range-v3 header that doesn't needs the -DRANGES_DEEP_STL_INTEGRATION flag.
-#    ifdef RANGES_V3_ITERATOR_ACCESS_HPP
-#        pragma GCC warning                                                                                            \
-            "You included a range-v3 header before including `#include <seqan3/std/ranges>`, please be aware that seqan3 might fail to compile if `#define RANGES_DEEP_STL_INTEGRATION 1` isn't fulfilled."
-#    endif // RANGES_V3_ITERATOR_ACCESS_HPP
-
-#    define RANGES_DEEP_STL_INTEGRATION 1
-#elif !RANGES_DEEP_STL_INTEGRATION
-#    pragma GCC warning                                                                                                \
-        "Please be aware that seqan3 might fail to compile if `#define RANGES_DEEP_STL_INTEGRATION 1` isn't fulfilled."
-#endif // RANGES_DEEP_STL_INTEGRATION
-//!\endcond
-
-#include <range/v3/range/concepts.hpp>
-
-namespace ranges
-{
-//!\brief std::ranges::views are valid range-v3 views.
-template <typename T>
-    requires ::std::derived_from<T, ::std::ranges::view_base>
-              || ::std::derived_from<T, ::std::ranges::view_interface<T>>
-inline constexpr bool enable_view<T> = true;
-
-//!\cond
-template <class T>
-inline constexpr bool enable_view<::std::ranges::empty_view<T>> = true;
-//!\endcond
-
-// std::ranges::borrowed_range's are valid range-v3 borrowed_range's
-//!\cond
-template <::std::input_or_output_iterator I, ::std::sentinel_for<I> S, ::std::ranges::subrange_kind K>
-inline constexpr bool enable_borrowed_range<::std::ranges::subrange<I, S, K>> = true;
-
-template <class T>
-inline constexpr bool enable_borrowed_range<::std::ranges::empty_view<T>> = true;
-
-template <::std::weakly_incrementable W, ::std::semiregular Bound>
-inline constexpr bool enable_borrowed_range<::std::ranges::iota_view<W, Bound>> = true;
-
-template <class T>
-inline constexpr bool enable_borrowed_range<::std::ranges::ref_view<T>> = true;
-
-#if __cpp_lib_ranges >= 202110L
-template <class T>
-inline constexpr bool enable_borrowed_range<::std::ranges::owning_view<T>> = enable_borrowed_range<T>;
-#endif
-
-// Note: in gcc-10 enable_borrowed_range wasn't defined for the take_view and the other following views. (gcc-10.3 fixed this)
-// Explictly defining this here will have the side-effect that we override the definition of
-// std::ranges::enable_borrowed_range for all those views.
-template <class T>
-inline constexpr bool enable_borrowed_range<::std::ranges::take_view<T>> = enable_borrowed_range<T>;
-
-template <class T>
-inline constexpr bool enable_borrowed_range<::std::ranges::drop_view<T>> = enable_borrowed_range<T>;
-
-template <class T, class Pred>
-inline constexpr bool enable_borrowed_range<::std::ranges::drop_while_view<T, Pred>> = enable_borrowed_range<T>;
-
-template <class T>
-inline constexpr bool enable_borrowed_range<::std::ranges::common_view<T>> = enable_borrowed_range<T>;
-
-template <class T>
-inline constexpr bool enable_borrowed_range<::std::ranges::reverse_view<T>> = enable_borrowed_range<T>;
-
-template <class T, size_t N>
-inline constexpr bool enable_borrowed_range<::std::ranges::elements_view<T, N>> = enable_borrowed_range<T>;
-//!\endcond
-
-} // namespace ranges
-
-namespace std::ranges
-{
-//!\brief range-v3 views are valid std::ranges::views
-template <class T>
-    requires ::std::derived_from<T, ::ranges::view_base>
-inline constexpr bool enable_view<T> = true;
-
-//!\brief std::ranges::borrowed_range's are valid range-v3 borrowed_range's
-template <class T>
-    requires ::ranges::enable_borrowed_range<T>
-inline constexpr bool enable_borrowed_range<T> = true;
-} // namespace std::ranges
-
-#endif // SEQAN_STD_RANGES_SHIM
+SEQAN3_DEPRECATED_HEADER(
+    "This header is deprecated and will be removed in SeqAn-3.3.0; Please #include <ranges> instead.")
