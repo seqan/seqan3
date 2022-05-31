@@ -7,7 +7,7 @@
 
 #include <benchmark/benchmark.h>
 
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <vector>
 
 #include <seqan3/utility/simd/algorithm.hpp>

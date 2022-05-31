@@ -13,7 +13,7 @@
 #pragma once
 
 #include <concepts>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <stdexcept>
 #include <vector>
 

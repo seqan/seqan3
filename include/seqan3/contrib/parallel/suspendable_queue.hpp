@@ -18,7 +18,7 @@
 #include <condition_variable>
 #include <iterator>
 #include <mutex>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <span>
 #include <thread>
 #include <vector>

@@ -14,7 +14,7 @@
 #pragma once
 
 #include <climits>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <string>
 #include <vector>
 

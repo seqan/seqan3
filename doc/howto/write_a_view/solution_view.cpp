@@ -1,6 +1,6 @@
 //![iterator]
 #include <iostream>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <vector>
 
 #include <seqan3/alphabet/nucleotide/all.hpp>

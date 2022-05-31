@@ -20,7 +20,7 @@
 #include <concepts>
 #include <mutex>
 #include <seqan3/std/new>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <shared_mutex>
 #include <span>
 #include <type_traits>

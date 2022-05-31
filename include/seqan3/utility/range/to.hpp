@@ -13,7 +13,7 @@
 #pragma once
 
 #include <algorithm>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/core/range/detail/adaptor_from_functor.hpp>
 #include <seqan3/utility/concept.hpp>

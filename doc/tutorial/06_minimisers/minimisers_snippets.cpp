@@ -1,5 +1,5 @@
 #include <iostream>
-#include <seqan3/std/ranges> // include all of the standard library's views
+#include <ranges> // include all of the standard library's views
 #include <vector>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>

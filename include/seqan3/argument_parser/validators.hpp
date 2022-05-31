@@ -16,8 +16,8 @@
 #include <concepts>
 #include <filesystem>
 #include <fstream>
+#include <ranges>
 #include <regex>
-#include <seqan3/std/ranges>
 #include <sstream>
 
 #include <seqan3/argument_parser/exceptions.hpp>

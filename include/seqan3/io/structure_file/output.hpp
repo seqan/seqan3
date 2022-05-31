@@ -16,7 +16,7 @@
 #include <filesystem>
 #include <fstream>
 #include <optional>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <string>
 #include <type_traits>
 #include <variant>

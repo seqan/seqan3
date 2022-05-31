@@ -14,7 +14,7 @@
 
 #include <functional>
 #include <optional>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <type_traits>
 
 #include <seqan3/core/algorithm/detail/execution_handler_parallel.hpp>

@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <concepts>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <sstream>
 #include <stdexcept>
 #include <string>

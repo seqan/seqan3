@@ -13,7 +13,7 @@
 #pragma once
 
 #include <iterator>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <type_traits>
 
 #include <seqan3/core/range/detail/adaptor_base.hpp>

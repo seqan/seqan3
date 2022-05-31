@@ -9,7 +9,7 @@
 
 #include <filesystem>
 #include <fstream>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/argument_parser/argument_parser.hpp>
 #include <seqan3/test/file_access.hpp>

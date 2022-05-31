@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <fstream>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/argument_parser/argument_parser.hpp>
 #include <seqan3/argument_parser/detail/format_help.hpp>

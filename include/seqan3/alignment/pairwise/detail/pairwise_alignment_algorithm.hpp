@@ -13,7 +13,7 @@
 #pragma once
 
 #include <concepts>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/core/detail/empty_type.hpp>

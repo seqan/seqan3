@@ -13,7 +13,7 @@
 #pragma once
 
 #include <concepts>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/debug_stream/debug_stream_type.hpp>

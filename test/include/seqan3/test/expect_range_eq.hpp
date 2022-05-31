@@ -15,7 +15,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/core/debug_stream/range.hpp>

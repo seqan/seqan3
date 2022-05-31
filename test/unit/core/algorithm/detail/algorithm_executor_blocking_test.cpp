@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <string>
 
 #include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>

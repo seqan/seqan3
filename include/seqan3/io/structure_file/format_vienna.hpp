@@ -15,7 +15,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <iterator>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <stack>
 #include <string>
 #include <string_view>

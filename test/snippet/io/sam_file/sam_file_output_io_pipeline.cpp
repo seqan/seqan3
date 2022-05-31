@@ -1,7 +1,7 @@
 #include <seqan3/core/platform.hpp>
 
 //![snippet]
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <sstream>
 
 #include <seqan3/io/sam_file/all.hpp>

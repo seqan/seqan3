@@ -13,7 +13,7 @@
 #pragma once
 
 #include <iterator>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_matrix_column_major_range_base.hpp>

@@ -9,7 +9,7 @@ CGATCGA
 
 //![solution]
 #include <filesystem>
-#include <seqan3/std/ranges> // std::ranges::copy
+#include <ranges> // std::ranges::copy
 
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/sequence_file/all.hpp>

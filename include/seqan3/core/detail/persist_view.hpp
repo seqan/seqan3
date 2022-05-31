@@ -15,7 +15,7 @@
 #include <algorithm>
 #include <concepts>
 #include <memory>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/core/detail/iterator_traits.hpp>
 #include <seqan3/core/range/detail/adaptor_base.hpp>

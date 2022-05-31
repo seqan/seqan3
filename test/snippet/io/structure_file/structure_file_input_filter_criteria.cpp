@@ -1,4 +1,4 @@
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <sstream>
 
 #include <seqan3/alphabet/views/to_char.hpp>

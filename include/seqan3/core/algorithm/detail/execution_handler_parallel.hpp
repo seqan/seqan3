@@ -14,7 +14,7 @@
 
 #include <concepts>
 #include <functional>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <thread>
 #include <type_traits>
 #include <vector>

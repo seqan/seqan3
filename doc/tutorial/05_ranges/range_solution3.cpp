@@ -1,4 +1,4 @@
-#include <seqan3/std/ranges> // include all of the standard library's views
+#include <ranges> // include all of the standard library's views
 
 #include <seqan3/alphabet/views/all.hpp>  // include all of SeqAn's views
 #include <seqan3/argument_parser/all.hpp> // optional: include the argument_parser

@@ -1,4 +1,4 @@
-#include <seqan3/std/ranges> // provides std::views::reverse
+#include <ranges> // provides std::views::reverse
 #include <string>
 
 #include <seqan3/core/debug_stream.hpp>

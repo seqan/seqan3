@@ -13,7 +13,7 @@
 #pragma once
 
 #include <concepts>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix_iterator_base.hpp>

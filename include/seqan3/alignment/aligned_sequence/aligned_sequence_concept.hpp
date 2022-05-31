@@ -14,7 +14,7 @@
 #pragma once
 
 #include <algorithm>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/alignment/exception.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>

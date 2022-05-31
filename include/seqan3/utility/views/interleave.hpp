@@ -14,7 +14,7 @@
 
 #include <cmath>
 #include <concepts>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <type_traits>
 
 #include <seqan3/core/detail/persist_view.hpp>

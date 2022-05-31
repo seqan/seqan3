@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <vector>
 
 #include <seqan3/alignment/matrix/detail/affine_cell_proxy.hpp>

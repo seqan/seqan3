@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <concepts>
 #include <deque>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <string>
 #include <vector>
 

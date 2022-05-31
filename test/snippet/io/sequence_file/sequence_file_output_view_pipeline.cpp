@@ -3,7 +3,7 @@
 #if !SEQAN3_WORKAROUND_GCC_96070
 //![snippet]
 #    include <iterator>
-#    include <seqan3/std/ranges>
+#    include <ranges>
 #    include <sstream>
 
 #    include <seqan3/io/sequence_file/input.hpp>

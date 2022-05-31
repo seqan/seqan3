@@ -7,7 +7,7 @@
 
 #include <benchmark/benchmark.h>
 
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <tuple>
 #include <utility>
 #include <vector>

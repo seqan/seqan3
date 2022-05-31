@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <type_traits>
 
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column.hpp>

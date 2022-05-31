@@ -26,7 +26,7 @@ IIIIIHIIJJIIIII
 //![solution]
 #include <filesystem>
 //![include_ranges]
-#include <seqan3/std/ranges>
+#include <ranges>
 //![include_ranges]
 
 #include <seqan3/core/debug_stream.hpp>

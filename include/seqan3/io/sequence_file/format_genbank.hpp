@@ -14,8 +14,8 @@
 
 #include <algorithm>
 #include <iterator>
+#include <ranges>
 #include <seqan3/std/charconv>
-#include <seqan3/std/ranges>
 #include <string>
 #include <string_view>
 #include <vector>

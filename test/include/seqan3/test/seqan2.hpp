@@ -32,23 +32,9 @@
 
 #ifdef SEQAN3_HAS_SEQAN2
 
-#    include <seqan3/std/ranges>
+#    include <ranges>
 
 #    include <seqan/basic.h>
-
-namespace ranges
-{
-
-/*!\brief This makes seqan2 iterators ranges-aware, i.e. makes them fulfil ranges::indirectly_readable which is in turn
- *        needed for ranges::input_iterator and ranges::input_range.
- */
-template <typename... args_t>
-struct indirectly_readable_traits<seqan::Iter<args_t...>>
-{
-    using value_type = typename seqan::Value<seqan::Iter<args_t...>>::Type;
-};
-
-} // namespace ranges
 
 #    if __cpp_lib_ranges // C++20 ranges available
 namespace std

@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/io/views/detail/take_line_view.hpp>
 #include <seqan3/test/expect_range_eq.hpp>

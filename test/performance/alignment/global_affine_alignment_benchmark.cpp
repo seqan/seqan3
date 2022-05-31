@@ -10,7 +10,7 @@
 #include <iostream>
 #include <memory>
 #include <random>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <utility>
 #include <vector>
 

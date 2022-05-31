@@ -14,7 +14,7 @@
 
 #include <algorithm>
 #include <iterator>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
