@@ -40,6 +40,18 @@
 #    error "SeqAn 3.1.x is the last version that supports GCC 7, 8, and 9. Please upgrade your compiler or use 3.1.x."
 #endif // defined(__GNUC__) && (__GNUC__ < 10)
 
+#if SEQAN3_DOXYGEN_ONLY(1) 0
+//!\brief This disables the warning you would get if your compiler is newer than the latest supported version.
+#    define SEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC
+#endif // SEQAN3_DOXYGEN_ONLY(1)0
+
+#ifndef SEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC
+#    if defined(__GNUC__) && (__GNUC__ > 12)
+#        pragma message                                                                                                \
+            "Your compiler is newer than the latest supported compiler of this SeqAn version (gcc-12). It might be that SeqAn does not compile due to this. You can disable this warning by setting -DSEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC."
+#    endif // defined(__GNUC__) && (__GNUC__ > 12)
+#endif     // SEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC
+
 // ============================================================================
 //  C++ standard and features
 // ============================================================================
