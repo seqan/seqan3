@@ -12,7 +12,7 @@ assignees: ''
 - [ ] Create at least one pre-release s.t. our package maintainers can try out a new release of our library. ([Instructions](#prerelease))
 - [ ] Check that the [directory structure](https://github.com/seqan/seqan3/blob/master/doc/setup/quickstart_cmake/index.md) is valid.
 - [ ] Check for critical performance regressions (via [this tool](https://github.com/wvandertoorn/cmp_benchmarks)).
-- [ ] Check [Nightlies](http://cdash.seqan.de/index.php?project=SeqAn3) for critical build failures. Change nightlies to build on release branch.
+- [ ] Check [Nightlies](https://cdash.seqan.de/index.php?project=SeqAn3) for critical build failures. Change nightlies to build on release branch.
 - [ ] Check workarounds in `platform.hpp`. Are they still valid, or can they be limited to specific compiler versions?
 - [ ] Check the [Changelog.md](https://github.com/seqan/seqan3/blob/master/CHANGELOG.md) for completeness (including changed headers). ([Instructions](#changelog))
 - [ ] Update the index from cppreference.com so that up-to-date documentation links are generated. ([Instructions](#cppreference))
@@ -34,7 +34,7 @@ assignees: ''
 - [ ] Bump version. ([Instructions](#version-bump))
 - [ ] Update the version used for [update notifications](https://github.com/OpenMS/usage_plots/blob/master/seqan_versions.txt).
 - [ ] Delete release branch (remove branch protection in repository settings first).
-- [ ] Change [Nightlies](http://cdash.seqan.de/index.php?project=SeqAn3) back to master branch.
+- [ ] Change [Nightlies](https://cdash.seqan.de/index.php?project=SeqAn3) back to master branch.
 - [ ] Announce release on [Twitter](https://twitter.com/seqanlib).
 - [ ] Announce release on [website](https://www.seqan.de).
 - [ ] Announce release on mailing list `seqan-dev@lists.fu-berlin.de`.
@@ -131,7 +131,7 @@ Note: Do not use `git clone --recurse-submodules https://github.com/seqan/seqan3
 <a name="changelog"></a>
 <details><summary>Checking the changelog</summary><br>
 
-- List all supported compiler, also add to http://docs.seqan.de/seqan/3-master-user/about_api.html#autotoc_md35.
+- List all supported compiler, also add to https://docs.seqan.de/seqan/3-master-user/about_api.html#autotoc_md35.
 - Check that all links are consistent, e.g., `[\#2540](https://github.com/seqan/seqan3/pull/2538)`:
   - Search `(\[\\#)(\d+)(\]\(.+?)(\d+)(\))` and replace `$1$2$3$2$5` (i.e., replace link issue-id by the displayed id).
 
@@ -161,7 +161,7 @@ Among others, this release will fully comply with the final C++-20 standard.
 :warning: In this release we harmonised the algorithm configurations for a better user experience.
 This, much like 2020, will break a lot of code. But rest assured that the changes are easy to apply and are worth every bit. :smile:
 
-You can find a comprehensive list of the changes in our [changelog](http://docs.seqan.de/seqan/3.0.2/about_changelog.html).
+You can find a comprehensive list of the changes in our [changelog](https://docs.seqan.de/seqan/3.0.2/about_changelog.html).
 ```
 
 </details>
