@@ -14,8 +14,10 @@
 
 #include <seqan3/core/detail/copyable_wrapper.hpp>
 
-SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.3.0; Please #include "
-                         "<seqan3/core/detail/copyable_wrapper.hpp> instead.")
+// clang-format off
+SEQAN3_DEPRECATED_HEADER(
+    "This header is deprecated and will be removed in SeqAn-3.3.0; Please #include <seqan3/core/detail/copyable_wrapper.hpp> instead.")
+// clang-format on
 
 namespace seqan3
 {
