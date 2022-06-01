@@ -48,7 +48,7 @@ can solve this problem.
 In case there are multiple minimal values within one window, the minimum and therefore the minimiser is ambiguous.
 We choose the rightmost value as the minimiser of the window, and when shifting the window, the minimiser is only
 changed if there appears a value that is strictly smaller than the current minimum. This approach is termed
-*robust winnowing* by [Chirag et al.](https://www.biorxiv.org/content/10.1101/2020.02.11.943241v1.full.pdf) and is
+*robust winnowing* by [Chirag et al.](https://doi.org/10.1093/bioinformatics/btaa435) and is
 proven to work especially well on repeat regions.
 
 # Usage in SeqAn3

@@ -16,7 +16,7 @@ SeqAn3 has not yet been published academically, for now cite SeqAn2:
 | Year          | 2017                                                                                              |
 | Authors       | Reinert, K., Dadi, T. H., Ehrhardt, M., Hauswedell, H., Mehringer, S., Rahn, R., ... & Urgese, G. |
 | Journal       | Journal of biotechnology, 261, 157-168                                                            |
-| Links         | [original](https://www.sciencedirect.com/science/article/pii/S0168165617315420)                   |
+| Links         | [original](https://doi.org/10.1016/j.jbiotec.2017.07.017)                                         |
 
 Certain compontents of SeqAn are published separately. If you make strong use of
 one of those compononts and/or specifically compare to that component, please
@@ -30,7 +30,7 @@ cite the respective publication **additionally**.
 | Year          | 2018                                                                                              |
 | Authors       | Rahn, R., Budach, S., Costanza, P., Ehrhardt, M., Hancox, J., & Reinert, K                        |
 | Journal       | Bioinformatics, 34(20), 3437-3445                                                                 |
-| Links         | [original](https://academic.oup.com/bioinformatics/article-abstract/34/20/3437/4992147)           |
+| Links         | [original](https://doi.org/10.1093/bioinformatics/bty380)                                         |
 
 Cite the above publication when you make strong use of the alignment module, in
 particular if you rely on the high-performance computing capabilities.
@@ -43,7 +43,7 @@ particular if you rely on the high-performance computing capabilities.
 | Year          | 2014                                                                                              |
 | Authors       | Gog, S., Beller, T., Moffat, A., & Petri, M.                                                      |
 | Journal       | International Symposium on Experimental Algorithms (pp. 326-337). Springer, Cham.                 |
-| Links         | [original](https://link.springer.com/chapter/10.1007/978-3-319-07959-2_28)                        |
+| Links         | [original](https://doi.org/10.1007/978-3-319-07959-2_28)                                          |
 
 
 Full text indexing in SeqAn3 makes use of the Succint data structure library (SDSL).

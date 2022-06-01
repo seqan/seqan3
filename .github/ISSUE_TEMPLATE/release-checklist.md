@@ -58,7 +58,7 @@ assignees: ''
 <details><summary>Creating a pre-release</summary><br>
 
 GitHub is not able to create annotated releases (https://github.com/seqan/product_backlog/issues/159), so we have to manually sign the release.
-Make sure you have set up [signed commits](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/signing-commits).
+Make sure you have set up [signed commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits).
 ```bash
 git checkout release-[VERSION]
 git tag -s [VERSION]-rc.[RC] # e.g. 3.1.0-rc.1
@@ -140,7 +140,7 @@ Note: Do not use `git clone --recurse-submodules https://github.com/seqan/seqan3
 <details><summary>Creating a release</summary><br>
 
 GitHub is not able to create annotated releases (https://github.com/seqan/product_backlog/issues/159), so we have to manually sign the release.
-Make sure you have set up [signed commits](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/signing-commits).
+Make sure you have set up [signed commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits).
 ```bash
 git checkout release-[VERSION]
 git tag -s [VERSION]
