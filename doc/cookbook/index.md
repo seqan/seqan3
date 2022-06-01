@@ -87,7 +87,7 @@ The easiest way to write to a sequence file is to use the seqan3::sequence_file_
 or seqan3::sequence_file_output::emplace_back() member functions.
 These work similarly to how they work on a std::vector.
 
-\include doc/tutorial/07_sequence_file//sequence_file_output_record.cpp
+\include doc/tutorial/07_sequence_file/sequence_file_output_record.cpp
 
 \cond DEV
 The class seqan3::sequence_file_output takes an extra parameter allowing to custom select the
