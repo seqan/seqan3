@@ -36,7 +36,7 @@
 //  Compiler support
 // ============================================================================
 
-#if defined(__GNUC__) && (__GNUC__ == 7 || __GNUC__ == 8 || __GNUC__ == 9)
+#if defined(__GNUC__) && (__GNUC__ < 10)
 #    error "SeqAn 3.1.x is the last version that supports GCC 7, 8, and 9. Please upgrade your compiler or use 3.1.x."
 #endif // defined(__GNUC__) && (__GNUC__ < 10)
 
@@ -45,6 +45,7 @@
 // ============================================================================
 
 // C++ standard [required]
+// Note: gcc10 -std=c++20 still defines __cplusplus=201709
 #ifdef __cplusplus
 #    if (__cplusplus < 201709)
 #        error "SeqAn3 requires C++20, make sure that you have set -std=c++20."
@@ -114,28 +115,21 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 #    endif
 #endif
 
+//!\cond DEV
 #if !SEQAN3_WITH_CEREAL
-/*!\cond DEV
-     * \name Cereal function macros
-     * \ingroup core
-     * \brief These can be changed by apps so we used the macros instead of the values internally.
-     * \{
-     */
-
-//! \brief Macro for Cereal's serialize function.
-#    define CEREAL_SERIALIZE_FUNCTION_NAME serialize
-//! \brief Macro for Cereal's load function.
-#    define CEREAL_LOAD_FUNCTION_NAME load
-//! \brief Macro for Cereal's save function.
-#    define CEREAL_SAVE_FUNCTION_NAME save
-//! \brief Macro for Cereal's load_minimal function.
-#    define CEREAL_LOAD_MINIMAL_FUNCTION_NAME load_minimal
-//! \brief Macro for Cereal's save_minimal function.
-#    define CEREAL_SAVE_MINIMAL_FUNCTION_NAME save_minimal
-/*!\}
-     * \endcond
-     */
+/*!\name Cereal function macros
+ * \ingroup core
+ * \brief These can be changed by apps so we used the macros instead of the values internally.
+ * \{
+ */
+#    define CEREAL_SERIALIZE_FUNCTION_NAME serialize       //!< Macro for Cereal's serialize function.
+#    define CEREAL_LOAD_FUNCTION_NAME load                 //!< Macro for Cereal's load function.
+#    define CEREAL_SAVE_FUNCTION_NAME save                 //!< Macro for Cereal's save function.
+#    define CEREAL_LOAD_MINIMAL_FUNCTION_NAME load_minimal //!< Macro for Cereal's load_minimal function.
+#    define CEREAL_SAVE_MINIMAL_FUNCTION_NAME save_minimal //!< Macro for Cereal's save_minimal function.
+//!\}
 #endif
+//!\endcond
 
 // Lemon [optional]
 /*!\def SEQAN3_WITH_LEMON
@@ -230,6 +224,25 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 #    endif
 #endif
 
+//!\brief Workaround to access the static id of the configuration elements inside of the concept definition
+//!       (fixed in gcc11).
+#ifndef SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
+#    if defined(__GNUC__) && (__GNUC__ < 11)
+#        define SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT 1
+#    else
+#        define SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT 0
+#    endif
+#endif
+
+//!\brief A view does not need to be default constructible. This change is first implemented in gcc12.
+#ifndef SEQAN3_WORKAROUND_DEFAULT_CONSTRUCTIBLE_VIEW
+#    if defined(__GNUC__) && (__GNUC__ < 12)
+#        define SEQAN3_WORKAROUND_DEFAULT_CONSTRUCTIBLE_VIEW 1
+#    else
+#        define SEQAN3_WORKAROUND_DEFAULT_CONSTRUCTIBLE_VIEW 0
+#    endif
+#endif
+
 //!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100139
 //!       std::views::{take, drop} do not type-erase. This is a defect within the standard lib (fixed in gcc12).
 #ifndef SEQAN3_WORKAROUND_GCC_100139
@@ -237,6 +250,17 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 #        define SEQAN3_WORKAROUND_GCC_100139 1
 #    else
 #        define SEQAN3_WORKAROUND_GCC_100139 0
+#    endif
+#endif
+
+/*!\brief Workaround bogus memcpy errors in GCC 12.1. (Wrestrict and Wstringop-overflow)
+ * \see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105545
+ */
+#ifndef SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#    if defined(__GNUC__) && (__GNUC__ == 12 && __GNUC_MINOR__ < 2)
+#        define SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY 1
+#    else
+#        define SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY 0
 #    endif
 #endif
 
@@ -265,40 +289,10 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 
 #if defined(_GLIBCXX_USE_CXX11_ABI) && _GLIBCXX_USE_CXX11_ABI == 0
 #    ifndef SEQAN3_DISABLE_LEGACY_STD_DIAGNOSTIC
-#        pragma GCC warning                                                                                            \
+#        pragma message                                                                                                \
             "We do not actively support compiler that have -D_GLIBCXX_USE_CXX11_ABI=0 set, and it might be that SeqAn does not compile due to this. It is known that all compiler of CentOS 7 / RHEL 7 set this flag by default (and that it cannot be overridden!). Note that these versions of the OSes are community-supported (see https://docs.seqan.de/seqan/3-master-user/about_api.html#platform_stability for more details). You can disable this warning by setting -DSEQAN3_DISABLE_LEGACY_STD_DIAGNOSTIC."
 #    endif // SEQAN3_DISABLE_LEGACY_STD_DIAGNOSTIC
 #endif     // _GLIBCXX_USE_CXX11_ABI == 0
-
-//!\brief Workaround to access the static id of the configuration elements inside of the concept definition
-//!       (fixed in gcc11).
-#ifndef SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
-#    if defined(__GNUC__) && (__GNUC__ < 11)
-#        define SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT 1
-#    else
-#        define SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT 0
-#    endif
-#endif
-
-//!\brief A view does not need to be default constructible. This change is first implemented in gcc12.
-#ifndef SEQAN3_WORKAROUND_DEFAULT_CONSTRUCTIBLE_VIEW
-#    if defined(__GNUC__) && (__GNUC__ < 12)
-#        define SEQAN3_WORKAROUND_DEFAULT_CONSTRUCTIBLE_VIEW 1
-#    else
-#        define SEQAN3_WORKAROUND_DEFAULT_CONSTRUCTIBLE_VIEW 0
-#    endif
-#endif
-
-/*!\brief Workaround bogus memcpy errors in GCC 12.1. (Wrestrict and Wstringop-overflow)
- * \see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105545
- */
-#ifndef SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#    if defined(__GNUC__) && (__GNUC__ == 12 && __GNUC_MINOR__ < 2)
-#        define SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY 1
-#    else
-#        define SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY 0
-#    endif
-#endif
 
 // ============================================================================
 //  Backmatter
