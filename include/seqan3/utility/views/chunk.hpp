@@ -689,13 +689,61 @@ private:
     //!\brief Move to the end of the next chunk.
     constexpr it_t get_next_end_of_chunk(it_t start_of_chunk) const
     {
-        return std::ranges::next(start_of_chunk, chunk_size, urng_end);
+        // Very similar to `return std::ranges::next(start_of_chunk, chunk_size, urng_end);`.
+        // However, the STL checks that the direction of chunk_size and urng_end are the same for sized_sentinels when
+        // -D_GLIBCXX_ASSERTIONS is enabled.
+        // If start_of_chunk was moved past urng_end, we should constrain it.
+        // =========X===========Y============
+        //          ^           ^
+        //        urng_end   new_start_it
+        //          <-----------              // direction from iterator to bound
+        //                      --------->    // direction from chunk_size
+        // See https://eel.is/c++draft/range.iter.op.advance (next just takes and returns a copy of the iterator)
+        // Note: n is chunk_size and always positive.
+        if constexpr (std::sized_sentinel_for<sentinel_t, it_t>) // We can check whether we can jump.
+        {
+            if (chunk_size >= std::abs(urng_end - start_of_chunk))  // Remaining range smaller than chunk_size
+                return std::ranges::next(start_of_chunk, urng_end); // Returns it_t which is equal to urng_end
+            else                                                    // We can jump chunk_size many times
+                return std::ranges::next(start_of_chunk, chunk_size);
+        }
+        else // We need to increment one by one to not cross urng_end.
+        {
+            for (uint16_t increments{}; increments != chunk_size && start_of_chunk != urng_end; ++increments)
+                ++start_of_chunk;
+
+            return start_of_chunk;
+        }
     }
 
     //!\brief Move to the start of the former chunk.
     constexpr it_t get_former_start_of_chunk(it_t end_of_chunk) const
     {
-        return std::ranges::prev(end_of_chunk, chunk_size, urng_begin);
+        // Very similar to `return std::ranges::prev(end_of_chunk, chunk_size, urng_begin);`.
+        // However, the STL checks that the direction of chunk_size and urng_end are the same for sized_sentinels when
+        // -D_GLIBCXX_ASSERTIONS is enabled.
+        // If end_of_chunk was moved before urng_begin, we should constrain it.
+        // =========X===========Y============
+        //          ^           ^
+        //      end_of_chunk  urng_begin
+        // <---------                         // direction from chunk_size
+        //           --------->               // direction from iterator to bound
+        // See https://eel.is/c++draft/range.iter.op.advance (prev(i, n, bound) is equal to advance(i, -n, bound))
+        // Note: n is chunk_size and always positive.
+        if constexpr (std::sized_sentinel_for<sentinel_t, it_t>) // We can check whether we can jump.
+        {
+            if (chunk_size >= std::abs(urng_begin - end_of_chunk)) // Remaining range smaller than chunk_size
+                return urng_begin;
+            else // We can jump chunk_size many times
+                return std::ranges::prev(end_of_chunk, chunk_size);
+        }
+        else // We need to decrement one by one to not cross urng_begin.
+        {
+            for (uint16_t decrements{}; decrements != chunk_size && end_of_chunk != urng_begin; ++decrements)
+                --end_of_chunk;
+
+            return end_of_chunk;
+        }
     }
 };
 
