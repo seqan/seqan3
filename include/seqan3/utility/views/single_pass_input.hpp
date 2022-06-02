@@ -12,8 +12,10 @@
 
 #pragma once
 
+#include <cassert>
 #include <concepts>
 #include <iterator>
+#include <memory>
 #include <seqan3/std/ranges>
 #include <type_traits>
 
