@@ -48,7 +48,7 @@ can solve this problem.
 In case there are multiple minimal values within one window, the minimum and therefore the minimiser is ambiguous.
 We choose the rightmost value as the minimiser of the window, and when shifting the window, the minimiser is only
 changed if there appears a value that is strictly smaller than the current minimum. This approach is termed
-*robust winnowing* by [Chirag et al.](https://www.biorxiv.org/content/10.1101/2020.02.11.943241v1.full.pdf) and is
+*robust winnowing* by [Chirag et al.](https://doi.org/10.1093/bioinformatics/btaa435) and is
 proven to work especially well on repeat regions.
 
 # Usage in SeqAn3
@@ -62,7 +62,7 @@ assignment!
 Task: Obtain the minimisers for "CCACGTCGACGGTT" with an ungapped shape of size 4 and a window size of 8.
 \endassignment
 \solution
-\include doc/tutorial/06_minimisers//minimisers_solution1.cpp
+\include doc/tutorial/06_minimisers/minimisers_solution1.cpp
 \endsolution
 
 If you have completed the assignment, you're probably wondering what those large numbers mean. As explained above,
@@ -71,7 +71,7 @@ simply XORs the hash values with a random seed (Default: 0x8F3F73B5CF1C9ADE). Ho
 values then?
 Well, you just use XOR again!
 
-\include doc/tutorial/06_minimisers//seed_example.cpp
+\include doc/tutorial/06_minimisers/seed_example.cpp
 
 From these hash values, you can obtain the sequence they represent by transforming the numbers to base 4. (For
 example, 134 is "2012" in base four and therefore represents "GACG".)
@@ -103,7 +103,7 @@ same hash value.
 
 \endassignment
 \solution
-\include doc/tutorial/06_minimisers//minimisers_solution2.cpp
+\include doc/tutorial/06_minimisers/minimisers_solution2.cpp
 \endsolution
 
 ### Ignoring the backward strand
@@ -113,7 +113,7 @@ the backward strand should not be considered. If this is the desired behaviour t
 to be used. Unlike the `seqan3::views::minimiser_hash`, `seqan3::views::minimiser` does not hash the values for you, so
 you have to do this yourself. But fear not, `seqan3::views::kmer_hash` makes this really easy for you!
 
-\snippet doc/tutorial/06_minimisers//minimisers_snippets.cpp minimiser
+\snippet doc/tutorial/06_minimisers/minimisers_snippets.cpp minimiser
 
 
 This syntax will result in minimisers with k-mer size 4 and a window-length of 8 (5 + 4 - 1). (So, to determine the
@@ -145,11 +145,11 @@ In order to ensure that this is the desired behaviour, using `seqan3::views::min
 Last but not least, `seqan3::views::kmer_hash` and `seqan3::views::minimiser` do not have a seed parameter. So, in order
 to obtain a random ordering, you have to XOR the view yourself. This can be done with the following command:
 
-\snippet doc/tutorial/06_minimisers//minimisers_snippets.cpp minimiser_seed
+\snippet doc/tutorial/06_minimisers/minimisers_snippets.cpp minimiser_seed
 
 \assignment{Assignment 3: Fun with minimisers III}
 Task: Repeat assignment 2 but this time do not consider the backward strand.
 \endassignment
 \solution
-\include doc/tutorial/06_minimisers//minimisers_solution3.cpp
+\include doc/tutorial/06_minimisers/minimisers_solution3.cpp
 \endsolution

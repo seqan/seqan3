@@ -472,7 +472,7 @@ TEST_F(version_check, smaller_app_version_custom_url)
 
     seqan3::argument_parser parser{app_name, 3, argv};
     parser.info.version = "2.3.4";
-    parser.info.url = "https//foo.de";
+    parser.info.url = "https://example.com";
 
     testing::internal::CaptureStdout();
     testing::internal::CaptureStderr();
