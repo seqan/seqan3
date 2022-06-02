@@ -28,9 +28,9 @@ TEST(convertability_concepts, implicitly_convertible_to)
     EXPECT_TRUE((seqan3::implicitly_convertible_to<type_c, type_c>));
     EXPECT_FALSE((seqan3::implicitly_convertible_to<type_c, type_d>));
 
-    EXPECT_TRUE((seqan3::implicitly_convertible_to<type_d, type_a>)); // type_a is base of type_b is base of type_d
-    EXPECT_TRUE((seqan3::implicitly_convertible_to<type_d, type_b>)); // type_b is base of type_d
-    EXPECT_TRUE((seqan3::implicitly_convertible_to<type_d, type_c>)); // type_d -> type_a, then custom constructor
+    EXPECT_TRUE((seqan3::implicitly_convertible_to<type_d, type_a>));  // type_a is base of type_b is base of type_d
+    EXPECT_TRUE((seqan3::implicitly_convertible_to<type_d, type_b>));  // type_b is base of type_d
+    EXPECT_TRUE((seqan3::implicitly_convertible_to<type_d, type_c>));  // type_d -> type_a, then custom constructor
     EXPECT_FALSE((seqan3::implicitly_convertible_to<type_d, type_d>)); // unconstructible
 }
 
@@ -52,9 +52,9 @@ TEST(convertability_concepts, explicitly_convertible_to)
     EXPECT_TRUE((seqan3::explicitly_convertible_to<type_c, type_c>));
     EXPECT_FALSE((seqan3::explicitly_convertible_to<type_c, type_d>));
 
-    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_d, type_a>)); // type_a is base of type_b is base of type_d
-    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_d, type_b>)); // type_b is base of type_d
-    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_d, type_c>)); // type_d -> type_a, then custom constructor
+    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_d, type_a>));  // type_a is base of type_b is base of type_d
+    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_d, type_b>));  // type_b is base of type_d
+    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_d, type_c>));  // type_d -> type_a, then custom constructor
     EXPECT_FALSE((seqan3::explicitly_convertible_to<type_d, type_d>)); // unconstructible
 }
 

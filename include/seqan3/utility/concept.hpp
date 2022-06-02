@@ -52,9 +52,7 @@ concept implicitly_convertible_to = std::is_convertible_v<from, to>;
  */
 //!\cond
 template <typename from, typename to>
-concept explicitly_convertible_to = requires {
-    static_cast<to>(std::declval<from>());
-  };
+concept explicitly_convertible_to = requires { static_cast<to>(std::declval<from>()); };
 //!\endcond
 
 /*!\interface seqan3::arithmetic <>

@@ -30,12 +30,12 @@ public:
     /*!\name Default constructors and assignments.
      * \{
      */
-    type_a() = default; //!< Defaulted.
-    type_a(type_a const &) = default; //!< Defaulted.
+    type_a() = default;                           //!< Defaulted.
+    type_a(type_a const &) = default;             //!< Defaulted.
     type_a & operator=(type_a const &) = default; //!< Defaulted.
-    type_a(type_a &&) = default; //!< Defaulted.
-    type_a & operator=(type_a &&) = default; //!< Defaulted.
-    ~type_a() = default; //!< Defaulted.
+    type_a(type_a &&) = default;                  //!< Defaulted.
+    type_a & operator=(type_a &&) = default;      //!< Defaulted.
+    ~type_a() = default;                          //!< Defaulted.
     //!\}
 
     /*!\name Comparison operators.
@@ -67,12 +67,12 @@ public:
     /*!\name Default constructors and assignments.
      * \{
      */
-    type_b() = default; //!< Defaulted.
-    type_b(type_b const &) = delete; //!< Deleted.
+    type_b() = default;                          //!< Defaulted.
+    type_b(type_b const &) = delete;             //!< Deleted.
     type_b & operator=(type_b const &) = delete; //!< Deleted.
-    type_b(type_b &&) = default; //!< Defaulted.
-    type_b & operator=(type_b &&) = default; //!< Defaulted.
-    ~type_b() = default; //!< Defaulted.
+    type_b(type_b &&) = default;                 //!< Defaulted.
+    type_b & operator=(type_b &&) = default;     //!< Defaulted.
+    ~type_b() = default;                         //!< Defaulted.
     //!\}
 
     /*!\name Comparison operators.
@@ -106,12 +106,12 @@ public:
     /*!\name Default constructors and assignments.
      * \{
      */
-    type_c() = default;//!< Defaulted.
-    type_c(type_c const &) = default;//!< Defaulted.
-    type_c & operator=(type_c const &) = default;//!< Defaulted.
-    type_c(type_c &&) = default;//!< Defaulted.
-    type_c & operator=(type_c &&) = default;//!< Defaulted.
-    ~type_c() = default;//!< Defaulted.
+    type_c() = default;                           //!< Defaulted.
+    type_c(type_c const &) = default;             //!< Defaulted.
+    type_c & operator=(type_c const &) = default; //!< Defaulted.
+    type_c(type_c &&) = default;                  //!< Defaulted.
+    type_c & operator=(type_c &&) = default;      //!< Defaulted.
+    ~type_c() = default;                          //!< Defaulted.
     //!\}
 
     //!\brief Construct from type_b.
@@ -142,12 +142,12 @@ public:
     /*!\name Default constructors and assignments.
      * \{
      */
-    type_d() = delete; //!< Deleted.
-    type_d(type_d const &) = delete; //!< Deleted.
+    type_d() = delete;                           //!< Deleted.
+    type_d(type_d const &) = delete;             //!< Deleted.
     type_d & operator=(type_d const &) = delete; //!< Deleted.
-    type_d(type_d &&) = delete; //!< Deleted.
-    type_d & operator=(type_d &&) = delete; //!< Deleted.
-    ~type_d() = delete; //!< Deleted.
+    type_d(type_d &&) = delete;                  //!< Deleted.
+    type_d & operator=(type_d &&) = delete;      //!< Deleted.
+    ~type_d() = delete;                          //!< Deleted.
     //!\}
 
     /*!\name Comparison operators.
