@@ -114,7 +114,7 @@ public:
     */
     template <typename other_urng1_t>
         requires (std::ranges::viewable_range<other_urng1_t>
-                  && std::constructible_from<urng1_t, ranges::ref_view<std::remove_reference_t<other_urng1_t>>>)
+                  && std::constructible_from<urng1_t, std::ranges::ref_view<std::remove_reference_t<other_urng1_t>>>)
     minimiser_view(other_urng1_t && urange1, size_t const window_size) :
         urange1{std::views::all(std::forward<other_urng1_t>(urange1))},
         urange2{default_urng2_t{}},

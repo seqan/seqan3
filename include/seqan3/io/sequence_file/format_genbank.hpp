@@ -201,14 +201,14 @@ protected:
         size_t sequence_size{0};
         [[maybe_unused]] char buffer[50];
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
-            sequence_size = ranges::size(sequence);
+            sequence_size = std::ranges::size(sequence);
 
         // ID
         if constexpr (detail::decays_to_ignore_v<id_type>)
         {
             throw std::logic_error{"The ID field may not be set to ignore when writing genbank files."};
         }
-        else if (ranges::empty(id)) //[[unlikely]]
+        else if (std::ranges::empty(id)) //[[unlikely]]
         {
             throw std::runtime_error{"The ID field may not be empty when writing genbank files."};
         }

@@ -958,7 +958,7 @@ inline void format_sam::read_sam_dict_vector(seqan3::detail::sam_tag_variant & v
                                              value_type value)
 {
     std::vector<value_type> tmp_vector;
-    while (std::ranges::begin(stream_view) != ranges::end(stream_view)) // not fully consumed yet
+    while (std::ranges::begin(stream_view) != std::ranges::end(stream_view)) // not fully consumed yet
     {
         read_arithmetic_field(stream_view | detail::take_until(is_char<','>), value);
         tmp_vector.push_back(value);
@@ -988,7 +988,7 @@ inline void format_sam::read_sam_byte_vector(seqan3::detail::sam_tag_variant & v
     std::vector<std::byte> tmp_vector;
     std::byte value;
 
-    while (std::ranges::begin(stream_view) != ranges::end(stream_view)) // not fully consumed yet
+    while (std::ranges::begin(stream_view) != std::ranges::end(stream_view)) // not fully consumed yet
     {
         try
         {

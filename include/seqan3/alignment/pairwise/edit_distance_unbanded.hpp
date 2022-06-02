@@ -874,8 +874,8 @@ public:
         query{std::forward<query_t>(_query)},
         config{std::forward<align_config_t>(_config)},
         _score{static_cast<score_type>(std::ranges::size(query))},
-        database_it{ranges::begin(database)},
-        database_it_end{ranges::end(database)}
+        database_it{std::ranges::begin(database)},
+        database_it_end{std::ranges::end(database)}
     {
         static constexpr size_t alphabet_size_ = alphabet_size<query_alphabet_type>;
 
