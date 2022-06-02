@@ -557,10 +557,16 @@ inline void difference_test(iterator_t && it_begin, iterator_t && it_end, rng_t 
     difference_t size = std::ranges::distance(rng);
 
     for (difference_t n = 0; n <= size; ++n)
+    {
         EXPECT_EQ(n, (it_begin + n) - it_begin);
+        EXPECT_EQ(-n, it_begin - (it_begin + n));
+    }
 
     for (difference_t n = 0; n <= size; ++n)
+    {
         EXPECT_EQ(n, it_end - (it_end - n));
+        EXPECT_EQ(-n, (it_end - n) - it_end);
+    }
 }
 
 TYPED_TEST_P(iterator_fixture, difference_common)
