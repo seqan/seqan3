@@ -143,14 +143,7 @@ struct simple_three_verbose_reads_fixture
                         /*.cigar_sequence =*/"1S1M1P1M1I1M1I1D1M1S"_cigar,
                         /*.tags =*/seqan3::sam_tag_dictionary{}};
 
-#if SEQAN3_WORKAROUND_GCC_100252
-    std::vector<record_type> records = [this]()
-    {
-        return std::vector<record_type>{record1, record2, record3};
-    }();
-#else
     std::vector<record_type> records{record1, record2, record3};
-#endif
 };
 
 } // namespace seqan3::test::fixture::io::sam_file

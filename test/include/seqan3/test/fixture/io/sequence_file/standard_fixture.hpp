@@ -42,14 +42,7 @@ struct standard_fixture
                         /*.sequence =*/"ACGTTTA"_dna5,
                         /*.base_qualities =*/"!!!!!!!"_phred42};
 
-#if SEQAN3_WORKAROUND_GCC_100252
-    std::vector<record_type> records = [this]()
-    {
-        return std::vector<record_type>{record1, record2, record3};
-    }();
-#else
     std::vector<record_type> records{record1, record2, record3};
-#endif
 };
 
 } // namespace seqan3::test::fixture::io::sequence_file

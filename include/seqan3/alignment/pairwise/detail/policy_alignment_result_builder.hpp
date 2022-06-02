@@ -32,9 +32,7 @@ namespace seqan3::detail
  * Implements the interfaces to build the alignment result based on the previously selected output configurations.
  */
 template <typename alignment_configuration_t>
-#if !SEQAN3_WORKAROUND_GCC_93467
     requires is_type_specialisation_of_v<alignment_configuration_t, configuration>
-#endif // !SEQAN3_WORKAROUND_GCC_93467
 class policy_alignment_result_builder
 {
 protected:

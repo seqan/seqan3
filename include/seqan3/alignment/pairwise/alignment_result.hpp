@@ -24,9 +24,7 @@ namespace seqan3::detail
 
 // forward declaration for friend declaration in alignment_result.
 template <typename configuration_t>
-#if !SEQAN3_WORKAROUND_GCC_93467
     requires is_type_specialisation_of_v<configuration_t, configuration>
-#endif // !SEQAN3_WORKAROUND_GCC_93467
 class policy_alignment_result_builder;
 
 /*!\brief A struct that contains the actual alignment result data.
@@ -172,9 +170,7 @@ private:
 
     //!\brief Befriend alignment result builder.
     template <typename configuration_t>
-#if !SEQAN3_WORKAROUND_GCC_93467
         requires detail::is_type_specialisation_of_v<configuration_t, configuration>
-#endif // !SEQAN3_WORKAROUND_GCC_93467
     friend class detail::policy_alignment_result_builder;
 
 public:

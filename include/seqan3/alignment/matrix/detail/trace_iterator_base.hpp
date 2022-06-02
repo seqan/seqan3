@@ -68,12 +68,8 @@ private:
 
     //!\brief Befriend with corresponding const_iterator.
     template <typename other_derived_t, two_dimensional_matrix_iterator other_matrix_iter_t>
-    //!\cond
-#if !SEQAN3_WORKAROUND_FURTHER_CONSTRAIN_FRIEND_DECLARATION
         requires std::constructible_from<derived_t, other_derived_t>
               && std::constructible_from<matrix_iter_t, other_matrix_iter_t>
-#endif // !SEQAN3_WORKAROUND_FURTHER_CONSTRAIN_FRIEND_DECLARATION
-    //!\endcond
     friend class trace_iterator_base;
 
     //!\brief Befriend the derived iterator class to allow calling the private constructors.
