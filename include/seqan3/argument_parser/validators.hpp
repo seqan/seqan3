@@ -12,9 +12,9 @@
 
 #pragma once
 
-#include <sharg/validators.hpp>
-
 #include <seqan3/io/detail/misc.hpp>
+
+#include <sharg/validators.hpp>
 
 namespace seqan3
 {
@@ -59,14 +59,14 @@ public:
     input_file_validator() : sharg::input_file_validator{default_extensions()}
     {}
 
-//!\cond
-// the documentation is included by the sharg parser.
+    //!\cond
+    // the documentation is included by the sharg parser.
     input_file_validator(input_file_validator const &) = default;
     input_file_validator(input_file_validator &&) = default;
     input_file_validator & operator=(input_file_validator const &) = default;
     input_file_validator & operator=(input_file_validator &&) = default;
     virtual ~input_file_validator() = default;
-//!\endcond
+    //!\endcond
 
     /*!\brief Constructs from a given collection of valid extensions.
      * \param[in] extensions The valid extensions to validate for.
@@ -79,7 +79,7 @@ public:
     explicit input_file_validator(std::vector<std::string> extensions)
         requires std::same_as<file_t, void>
     //!\endcond
-        : sharg::input_file_validator{std::move(extensions)}
+    : sharg::input_file_validator{std::move(extensions)}
     {
         // sharg::input_file_validator::extensions = std::move(extensions);
     }
@@ -141,8 +141,8 @@ public:
      */
 
     //!\copydoc seqan3::input_file_validator::input_file_validator()
-    output_file_validator()
-        : sharg::output_file_validator{output_file_open_options::create_new, this->default_extensions()}
+    output_file_validator() :
+        sharg::output_file_validator{output_file_open_options::create_new, this->default_extensions()}
     {}
 
     //!\cond
@@ -158,8 +158,8 @@ public:
      * \param[in] mode A seqan3::output_file_open_options indicating whether the validator throws if a file already
      *                 exists.
      */
-    explicit output_file_validator(output_file_open_options const mode)
-        : sharg::output_file_validator{mode, this->default_extensions()}
+    explicit output_file_validator(output_file_open_options const mode) :
+        sharg::output_file_validator{mode, this->default_extensions()}
     {}
 
     // Import base constructor.

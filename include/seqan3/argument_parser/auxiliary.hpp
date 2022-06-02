@@ -12,10 +12,10 @@
 
 #pragma once
 
+#include <seqan3/core/platform.hpp>
+
 #include <sharg/auxiliary.hpp>
 #include <sharg/enumeration_names.hpp>
-
-#include <seqan3/core/platform.hpp>
 
 namespace seqan3
 {

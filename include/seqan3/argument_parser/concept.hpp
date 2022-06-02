@@ -12,9 +12,9 @@
 
 #pragma once
 
-#include <sharg/concept.hpp>
-
 #include <seqan3/core/platform.hpp>
+
+#include <sharg/concept.hpp>
 
 namespace seqan3
 {

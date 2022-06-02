@@ -12,9 +12,9 @@
 
 #pragma once
 
-#include <sharg/exceptions.hpp>
-
 #include <seqan3/core/platform.hpp>
+
+#include <sharg/exceptions.hpp>
 
 namespace seqan3
 {

@@ -12,11 +12,11 @@
 
 #pragma once
 
-#include <sharg/argument_parser.hpp>
-
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/validators.hpp>
 #include <seqan3/core/detail/test_accessor.hpp>
+
+#include <sharg/argument_parser.hpp>
 
 namespace seqan3
 {
@@ -26,11 +26,11 @@ using namespace sharg;
 /*!\brief The SeqAn command line parser.
  * \ingroup argument_parser
  */
-class argument_parser /* \cond */: public sharg::argument_parser /* \endcond */
+class argument_parser /* \cond */ : public sharg::argument_parser /* \endcond */
 {
-//!\cond
-// the documentation is included by the sharg parser.
-// Only API that is not present in sharg needs to be documented.
+    //!\cond
+    // the documentation is included by the sharg parser.
+    // Only API that is not present in sharg needs to be documented.
     using base_t = sharg::argument_parser;
 
     friend struct ::seqan3::detail::test_accessor;
@@ -55,7 +55,7 @@ public:
     {
         return static_cast<argument_parser &>(base_t::get_sub_parser());
     }
-//!\endcond
+    //!\endcond
 };
 
 } // namespace seqan3
