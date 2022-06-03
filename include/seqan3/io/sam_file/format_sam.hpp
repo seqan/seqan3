@@ -32,9 +32,9 @@
 #include <seqan3/io/views/detail/istreambuf_view.hpp>
 #include <seqan3/io/views/detail/take_until_view.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
+#include <seqan3/utility/range/to.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/views/slice.hpp>
-#include <seqan3/utility/views/to.hpp>
 
 namespace seqan3
 {
@@ -323,7 +323,7 @@ inline void format_sam::read_sequence_record(stream_type & stream,
             throw parse_error{"The id information must not be empty."};
 
     if (options.truncate_ids)
-        id = id | detail::take_until_and_consume(is_space) | views::to<id_type>;
+        id = id | detail::take_until_and_consume(is_space) | ranges::to<id_type>();
 }
 
 //!\copydoc sequence_file_output_format::write_sequence_record
@@ -1063,7 +1063,7 @@ inline void format_sam::read_sam_dict_field(stream_view_type && stream_view, sam
     }
     case 'Z': // string
     {
-        target[tag] = stream_view | views::to<std::string>;
+        target[tag] = stream_view | ranges::to<std::string>();
         break;
     }
     case 'H':

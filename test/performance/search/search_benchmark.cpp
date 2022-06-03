@@ -13,8 +13,8 @@
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/search/search.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
+#include <seqan3/utility/range/to.hpp>
 #include <seqan3/utility/views/join_with.hpp>
-#include <seqan3/utility/views/to.hpp>
 
 struct options
 {
@@ -144,7 +144,7 @@ std::vector<alphabet_t> generate_repeating_sequence(size_t const template_length
     len = (len + simulated_errors > template_length) ? template_length - simulated_errors : len;
 
     return generate_reads(seq_template, repeats, len, simulated_errors, 0.15, 0.15) | seqan3::detail::persist
-         | std::views::join | seqan3::views::to<std::vector>;
+         | std::views::join | seqan3::ranges::to<std::vector>();
 }
 
 //============================================================================

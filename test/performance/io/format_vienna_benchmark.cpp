@@ -19,7 +19,7 @@
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/performance/units.hpp>
 #include <seqan3/test/seqan2.hpp>
-#include <seqan3/utility/views/to.hpp>
+#include <seqan3/utility/range/to.hpp>
 
 #if SEQAN3_HAS_SEQAN2
 #    include <seqan/rna_io.h>
@@ -29,7 +29,7 @@ inline constexpr size_t iterations_per_run = 1024;
 
 inline std::string const header{"seq foobar blobber"};
 inline auto const rna_sequence = seqan3::test::generate_sequence<seqan3::rna4>(474, 0, 0);
-auto const sequence = rna_sequence | seqan3::views::to_char | seqan3::views::to<std::string>;
+auto const sequence = rna_sequence | seqan3::views::to_char | seqan3::ranges::to<std::string>();
 
 inline std::string const structure{"(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))......."
                                    "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))......."

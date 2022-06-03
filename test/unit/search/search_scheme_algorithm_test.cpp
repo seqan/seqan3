@@ -21,8 +21,8 @@
 #include <seqan3/search/detail/unidirectional_search_algorithm.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
+#include <seqan3/utility/range/to.hpp>
 #include <seqan3/utility/views/slice.hpp>
-#include <seqan3/utility/views/to.hpp>
 
 #include "helper.hpp"
 #include "helper_search_scheme.hpp"
@@ -71,7 +71,7 @@ inline void test_search_hamming(auto index,
     using char_t = typename text_t::value_type;
 
     uint64_t const pos = std::rand() % (text.size() - query_length + 1);
-    text_t const orig_query = text | seqan3::views::slice(pos, pos + query_length) | seqan3::views::to<text_t>;
+    text_t const orig_query = text | seqan3::views::slice(pos, pos + query_length) | seqan3::ranges::to<text_t>();
 
     // Modify query s.t. it has errors matching error_distribution.
     auto query = orig_query;
@@ -132,7 +132,7 @@ inline void test_search_hamming(auto index,
     auto remove_predicate_ss = [&text, &orig_query, query_length](uint64_t const hit)
     {
         seqan3::dna4_vector matched_seq =
-            text | seqan3::views::slice(hit, hit + query_length) | seqan3::views::to<seqan3::dna4_vector>;
+            text | seqan3::views::slice(hit, hit + query_length) | seqan3::ranges::to<seqan3::dna4_vector>();
         return (matched_seq != orig_query);
     };
 
@@ -140,7 +140,8 @@ inline void test_search_hamming(auto index,
     {
         // filter only correct error distributions
         seqan3::dna4_vector matched_seq =
-            text | seqan3::views::slice(hit, hit + query_length) | seqan3::views::to<seqan3::dna4_vector>;
+            text | seqan3::views::slice(hit, hit + query_length) | seqan3::ranges::to<seqan3::dna4_vector>();
+
         if (orig_query != matched_seq)
             return true;
 

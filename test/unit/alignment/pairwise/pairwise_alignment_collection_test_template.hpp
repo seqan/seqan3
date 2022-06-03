@@ -15,7 +15,7 @@
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
-#include <seqan3/utility/views/to.hpp>
+#include <seqan3/utility/range/to.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
 #include "fixture/alignment_fixture.hpp"
@@ -65,7 +65,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, end_positions)
     {
         auto [database, query] = fixture.get_sequences();
         auto res_vec =
-            seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg) | seqan3::views::to<std::vector>;
+            seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg) | seqan3::ranges::to<std::vector>();
 
         EXPECT_RANGE_EQ(res_vec
                             | std::views::transform(
@@ -97,7 +97,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, begin_positions)
     {
         auto [database, query] = fixture.get_sequences();
         auto res_vec =
-            seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg) | seqan3::views::to<std::vector>;
+            seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg) | seqan3::ranges::to<std::vector>();
 
         EXPECT_RANGE_EQ(res_vec
                             | std::views::transform(
@@ -138,7 +138,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
     {
         auto [database, query] = fixture.get_sequences();
         auto res_vec =
-            seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg) | seqan3::views::to<std::vector>;
+            seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg) | seqan3::ranges::to<std::vector>();
 
         EXPECT_RANGE_EQ(res_vec
                             | std::views::transform(
@@ -168,7 +168,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
                                 [](auto res)
                                 {
                                     return std::get<0>(res.alignment()) | seqan3::views::to_char
-                                         | seqan3::views::to<std::string>;
+                                         | seqan3::ranges::to<std::string>();
                                 }),
                         fixture.get_aligned_sequences1());
         EXPECT_RANGE_EQ(res_vec
@@ -176,7 +176,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
                                 [](auto res)
                                 {
                                     return std::get<1>(res.alignment()) | seqan3::views::to_char
-                                         | seqan3::views::to<std::string>;
+                                         | seqan3::ranges::to<std::string>();
                                 }),
                         fixture.get_aligned_sequences2());
     }

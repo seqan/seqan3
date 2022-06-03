@@ -79,3 +79,4 @@
 #pragma once
 
 #include <seqan3/utility/range/concept.hpp>
+#include <seqan3/utility/range/to.hpp>

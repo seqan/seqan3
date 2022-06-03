@@ -40,7 +40,7 @@
 #include <seqan3/io/views/detail/take_until_view.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
-#include <seqan3/utility/views/to.hpp>
+#include <seqan3/utility/range/to.hpp>
 
 namespace seqan3
 {
@@ -241,7 +241,7 @@ protected:
         {
             std::string e_str = stream_view | detail::take_line
                               | std::views::filter(!(is_space || is_char<'('> || is_char<')'>))
-                              | views::to<std::string>;
+                              | ranges::to<std::string>();
             if (!e_str.empty())
             {
                 size_t num_processed;

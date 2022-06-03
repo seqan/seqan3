@@ -15,8 +15,8 @@
 #include <seqan3/alphabet/views/translate_join.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/seqan2.hpp>
+#include <seqan3/utility/range/to.hpp>
 #include <seqan3/utility/views/join_with.hpp>
-#include <seqan3/utility/views/to.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
 #    include <seqan/seq_io.h>
@@ -55,9 +55,9 @@ void sequential_read(benchmark::State & state)
 
     if constexpr (std::is_same_v<tag_t, baseline_tag>)
     {
-        std::vector<seqan3::aa27_vector> translated_aa_sequences = dna_sequence_collection
-                                                                 | seqan3::views::translate_join
-                                                                 | seqan3::views::to<std::vector<seqan3::aa27_vector>>;
+        std::vector<seqan3::aa27_vector> translated_aa_sequences =
+            dna_sequence_collection | seqan3::views::translate_join
+            | seqan3::ranges::to<std::vector<seqan3::aa27_vector>>();
         sequential_read_impl(state, translated_aa_sequences);
     }
     else if constexpr (std::is_same_v<tag_t, translate_tag>)
@@ -107,9 +107,9 @@ void random_access(benchmark::State & state)
 
     if constexpr (std::is_same_v<tag_t, baseline_tag>)
     {
-        std::vector<seqan3::aa27_vector> translated_aa_sequences = dna_sequence_collection
-                                                                 | seqan3::views::translate_join
-                                                                 | seqan3::views::to<std::vector<seqan3::aa27_vector>>;
+        std::vector<seqan3::aa27_vector> translated_aa_sequences =
+            dna_sequence_collection | seqan3::views::translate_join
+            | seqan3::ranges::to<std::vector<seqan3::aa27_vector>>();
         random_access_impl(state, translated_aa_sequences, access_positions);
     }
     else
