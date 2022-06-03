@@ -13,16 +13,17 @@
 
 #pragma once
 
+#include <algorithm>
+#include <cassert>
 #include <condition_variable>
+#include <iterator>
 #include <mutex>
+#include <seqan3/std/ranges>
+#include <span>
 #include <thread>
 #include <vector>
 
 #include <seqan3/core/platform.hpp>
-#include <algorithm>
-#include <iterator>
-#include <seqan3/std/ranges>
-#include <span>
 
 namespace seqan3::contrib
 {

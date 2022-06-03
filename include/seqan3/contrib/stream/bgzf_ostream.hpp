@@ -20,6 +20,9 @@
 
 #pragma once
 
+#include <cassert>
+#include <functional>
+
 #include <seqan3/contrib/parallel/serialised_resource_pool.hpp>
 #include <seqan3/contrib/parallel/suspendable_queue.hpp>
 #include <seqan3/contrib/stream/bgzf_stream_util.hpp>

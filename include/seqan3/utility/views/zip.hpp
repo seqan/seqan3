@@ -13,6 +13,7 @@
 #pragma once
 
 #include <algorithm>
+#include <functional>
 #include <seqan3/std/ranges>
 
 #include <seqan3/core/detail/all_view.hpp>

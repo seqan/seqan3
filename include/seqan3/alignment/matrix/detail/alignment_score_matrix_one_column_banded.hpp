@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <cassert>
 #include <iterator>
 #include <seqan3/std/ranges>
 #include <span>
