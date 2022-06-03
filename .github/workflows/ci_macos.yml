@@ -37,6 +37,13 @@ jobs:
       fail-fast: true
       matrix:
         include:
+          - name: "Unit gcc12"
+            os: macos-10.15
+            cxx: "g++-12"
+            cc: "gcc-12"
+            build: unit
+            build_type: Release
+
           - name: "Unit gcc11"
             os: macos-10.15
             cxx: "g++-11"
