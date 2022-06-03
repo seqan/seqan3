@@ -64,11 +64,6 @@ TEST(validator_test, fullfill_concept)
 {
     EXPECT_FALSE(seqan3::validator<int>);
 
-    EXPECT_TRUE(seqan3::validator<sharg::detail::default_validator<int>>);
-    EXPECT_TRUE(seqan3::validator<sharg::detail::default_validator<int> const>);
-    EXPECT_TRUE(seqan3::validator<sharg::detail::default_validator<int> &>);
-
-    EXPECT_TRUE(seqan3::validator<sharg::detail::default_validator<std::vector<int>>>);
     EXPECT_TRUE(seqan3::validator<seqan3::arithmetic_range_validator<int>>);
     EXPECT_TRUE(seqan3::validator<seqan3::value_list_validator<double>>);
     EXPECT_TRUE(seqan3::validator<seqan3::value_list_validator<std::string>>);
