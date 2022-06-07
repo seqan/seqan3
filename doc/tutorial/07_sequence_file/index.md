@@ -249,7 +249,7 @@ If no 10 records are available any more, it will just print the remaining record
 
 On some occasions, you are only interested in sequence records that fulfill a certain criteria,
 e.g. having a minimum sequence length or a minimum average quality.
-Just like in the example with *ranges::view::chunk* you can use *std::ranges::filter* for this purpose:
+Just like in the example with *seqan3::views::chunk* you can use *std::ranges::filter* for this purpose:
 
 \snippet doc/tutorial/07_sequence_file/sequence_file_quality_filter.cpp main
 

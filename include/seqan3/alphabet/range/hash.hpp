@@ -26,7 +26,7 @@ namespace std
  * \details
  * \experimentalapi{Experimental since version 3.1.}
  */
-template <ranges::input_range urng_t>
+template <std::ranges::input_range urng_t>
     requires seqan3::semialphabet<std::ranges::range_reference_t<urng_t>>
 struct hash<urng_t>
 {
@@ -38,7 +38,7 @@ struct hash<urng_t>
      * \details
      * \experimentalapi{Experimental since version 3.1.}
      */
-    template <ranges::input_range urng2_t>
+    template <std::ranges::input_range urng2_t>
         requires seqan3::semialphabet<std::ranges::range_reference_t<urng2_t>>
     size_t operator()(urng2_t && range) const noexcept
     {

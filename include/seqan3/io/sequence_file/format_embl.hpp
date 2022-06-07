@@ -228,7 +228,7 @@ protected:
         }
         else
         {
-            if (ranges::empty(id)) //[[unlikely]]
+            if (std::ranges::empty(id)) //[[unlikely]]
                 throw std::runtime_error{"The ID field may not be empty when writing embl files."};
 
             if (options.embl_genbank_complete_header)
