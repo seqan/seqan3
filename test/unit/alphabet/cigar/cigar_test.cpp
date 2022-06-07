@@ -51,10 +51,29 @@ TEST(cigar, to_string)
 
 TEST(cigar, assign_string)
 {
+    // assign from char array
     seqan3::cigar c1{};
     c1.assign_string("223M");
     EXPECT_EQ(uint32_t{223}, seqan3::to_rank(get<0>(c1)));
     EXPECT_EQ('M', get<1>(c1).to_char());
+
+    // assign from string
+    std::string s{"4S"};
+    c1.assign_string(s);
+    EXPECT_EQ(uint32_t{4}, seqan3::to_rank(get<0>(c1)));
+    EXPECT_EQ('S', get<1>(c1).to_char());
+
+    // assign from std::string_view
+    std::string v{s};
+    c1.assign_string(v);
+    EXPECT_EQ(uint32_t{4}, seqan3::to_rank(get<0>(c1)));
+    EXPECT_EQ('S', get<1>(c1).to_char());
+
+    // assign from small_string
+    seqan3::small_string<11> ss{"1234D"};
+    c1.assign_string(ss);
+    EXPECT_EQ(uint32_t{1234}, seqan3::to_rank(get<0>(c1)));
+    EXPECT_EQ('D', get<1>(c1).to_char());
 }
 
 TEST(cigar, constexpr_char_literal)

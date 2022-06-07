@@ -279,7 +279,7 @@ template <seqan3::detail::pairwise_alignment alignment_type>
     std::ranges::for_each(cigar_vector,
                           [&result](auto & cig)
                           {
-                              result.append(cig.to_string());
+                              result.append(static_cast<std::string_view>(cig.to_string()));
                           });
     return result;
 }
