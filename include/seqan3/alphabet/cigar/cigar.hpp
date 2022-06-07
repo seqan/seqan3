@@ -159,16 +159,22 @@ public:
     /*!\name Write functions
      * \{
      */
-    /*!\brief Assign from the string representation.
+    /*!\brief Assign from a std::string_view.
      * \details
-     * \experimentalapi{Experimental since version 3.1.}
+     *
+     * In order to avoid unnecessary copies, you can initialise a seqan3::cigar from a std::string_view that contains
+     * the cigar string.
+     *
+     * \include test/snippet/alphabet/cigar/cigar_assign_string.cpp
+     *
+     * \experimentalapi{Experimental since version 3.2.}
      */
-    cigar & assign_string(small_string<11> const s) noexcept
+    cigar & assign_string(std::string_view const input) noexcept
     {
         uint32_t num{};
-        auto [ptr, errc] = std::from_chars(s.data(), s.data() + 10, num);
+        auto [ptr, errc] = std::from_chars(input.data(), input.data() + input.size(), num);
 
-        if ((errc != std::errc{}) || (!char_is_valid_for<operation>(*ptr)) || (*(ptr + 1) != 0))
+        if ((errc != std::errc{}) || (!char_is_valid_for<operation>(*ptr)))
         {
             get<0>(*this) = 0;
             assign_char_to('P', get<1>(*this));

@@ -362,6 +362,26 @@ public:
     {
         return str();
     }
+
+    /*!\brief Implicit conversion to std::string_view.
+     *
+     * It is the programmer's responsibility to ensure that the resulting string view does not outlive the string.
+     *
+     * ### Exceptions
+     *
+     * Strong exception guarantee. No data is modified.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
+     * \sa https://en.cppreference.com/w/cpp/string/basic_string/operator_basic_string_view
+     */
+    constexpr operator std::string_view() const noexcept
+    {
+        return std::string_view{data_.data(), this->size()};
+    }
     //!\}
 
     /*!\name Input/output
