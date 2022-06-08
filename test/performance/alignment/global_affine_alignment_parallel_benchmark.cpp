@@ -22,7 +22,7 @@
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/performance/units.hpp>
 #include <seqan3/test/seqan2.hpp>
-#include <seqan3/utility/views/to.hpp>
+#include <seqan3/utility/range/to.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
@@ -86,7 +86,7 @@ void seqan3_affine_dna4_parallel(benchmark::State & state)
 {
     auto [vec1, vec2] = generate_data_seqan3<seqan3::dna4>();
 
-    auto data = seqan3::views::zip(vec1, vec2) | seqan3::views::to<std::vector>;
+    auto data = seqan3::views::zip(vec1, vec2) | seqan3::ranges::to<std::vector>();
 
     int64_t total = 0;
     for (auto _ : state)

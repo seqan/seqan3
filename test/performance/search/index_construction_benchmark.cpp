@@ -14,8 +14,8 @@
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/seqan2.hpp>
+#include <seqan3/utility/range/to.hpp>
 #include <seqan3/utility/type_traits/lazy_conditional.hpp>
-#include <seqan3/utility/views/to.hpp>
 
 #if SEQAN3_HAS_SEQAN2
 #    include <seqan/index.h>
@@ -55,7 +55,7 @@ struct sequence_store_seqan3
                                {
                                    std::vector<uint8_t> const ranks{
                                        seqan3::test::generate_numeric_sequence<uint8_t>(max_length, 0, 253, seed)};
-                                   return ranks | seqan3::views::rank_to<char> | seqan3::views::to<std::string>;
+                                   return ranks | seqan3::views::rank_to<char> | seqan3::ranges::to<std::string>();
                                }()};
 };
 
@@ -71,11 +71,11 @@ void index_benchmark_seqan3(benchmark::State & state)
     rng_t sequence;
     inner_rng_t inner_sequence;
     if constexpr (std::same_as<alphabet_t, seqan3::dna4>)
-        inner_sequence = store.dna4_rng | std::views::take(state.range(0)) | seqan3::views::to<inner_rng_t>;
+        inner_sequence = store.dna4_rng | std::views::take(state.range(0)) | seqan3::ranges::to<inner_rng_t>();
     else if constexpr (std::same_as<alphabet_t, seqan3::aa27>)
-        inner_sequence = store.aa27_rng | std::views::take(state.range(0)) | seqan3::views::to<inner_rng_t>;
+        inner_sequence = store.aa27_rng | std::views::take(state.range(0)) | seqan3::ranges::to<inner_rng_t>();
     else
-        inner_sequence = store.char_rng | std::views::take(state.range(0)) | seqan3::views::to<inner_rng_t>;
+        inner_sequence = store.char_rng | std::views::take(state.range(0)) | seqan3::ranges::to<inner_rng_t>();
 
     if constexpr (seqan3::range_dimension_v<rng_t> == 1)
     {
@@ -107,7 +107,7 @@ struct sequence_store_seqan2
         {
             std::vector<uint8_t> const ranks{
                 seqan3::test::generate_numeric_sequence<uint8_t>(max_length, 0, 253, seed)};
-            return ranks | seqan3::views::rank_to<char> | seqan3::views::to<std::string>;
+            return ranks | seqan3::views::rank_to<char> | seqan3::ranges::to<std::string>();
         }()};
 };
 

@@ -11,7 +11,7 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/utility/views/to.hpp>
+#include <seqan3/utility/range/to.hpp>
 
 using seqan3::operator""_dna4;
 using seqan3::operator""_rna5;
@@ -44,13 +44,13 @@ TEST(debug_stream_test, multiple_alignment_without_gaps)
                std::vector<seqan3::gapped<seqan3::dna4>>> const alignment{
         "GCGGGTCACTGAGGGCTGGGATGAGGACGGCCACCACTTCGAGGAGTCCCTTCACTACGAGGGCAGGGCCGTGGACATCACCACGTCAGACAGGGACAAGAGCAAGTA"
         "CGGCACCCTGTCCAGACTGGCGGTGGAAGCTG"_dna4
-            | seqan3::views::to<std::vector<seqan3::gapped<seqan3::dna4>>>,
+            | seqan3::ranges::to<std::vector<seqan3::gapped<seqan3::dna4>>>(),
         "CTACGGCAGAAGAAGACATCCGAAAAAGCTGACACCTCTCGCCTACAAGCAGTTCATACCTAATGTCGCGGAGAAGACCTTAGGGGCCAGCGGCAGATACGAGGGCAA"
         "GATAACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4
-            | seqan3::views::to<std::vector<seqan3::gapped<seqan3::dna4>>>,
+            | seqan3::ranges::to<std::vector<seqan3::gapped<seqan3::dna4>>>(),
         "CTACGGCAGAAGAAGACATCCCAAGAAGCTGACACCTCTCGCCTACAAGCAGTTTATACCTAATGTCGCGGAGAAGACCTTAGGGGCCAGCGGCAGATACGAGGGCAA"
         "GATCACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4
-            | seqan3::views::to<std::vector<seqan3::gapped<seqan3::dna4>>>};
+            | seqan3::ranges::to<std::vector<seqan3::gapped<seqan3::dna4>>>()};
 
     std::ostringstream oss;
     seqan3::debug_stream_type stream{oss};

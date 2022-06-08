@@ -167,6 +167,7 @@
 
 #pragma once
 
+#include <seqan3/utility/range/to.hpp>
 #include <seqan3/utility/views/chunk.hpp>
 #include <seqan3/utility/views/convert.hpp>
 #include <seqan3/utility/views/deep.hpp>
@@ -179,6 +180,5 @@
 #include <seqan3/utility/views/repeat_n.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
 #include <seqan3/utility/views/slice.hpp>
-#include <seqan3/utility/views/to.hpp>
 #include <seqan3/utility/views/type_reduce.hpp>
 #include <seqan3/utility/views/zip.hpp>

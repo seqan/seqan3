@@ -30,7 +30,7 @@ struct fm_index_cursor_test : public ::testing::Test
 
     static constexpr bool is_bi_fm_index =
         seqan3::detail::template_specialisation_of<typename index_type::cursor_type, seqan3::bi_fm_index_cursor>;
-    static constexpr auto convert = seqan3::views::char_to<alphabet_type> | seqan3::views::to<text_type>;
+    static constexpr auto convert = seqan3::views::char_to<alphabet_type> | seqan3::ranges::to<text_type>();
 
     text_type text1{convert(std::string_view{"ACGACG"})};
     text_type text2{convert(std::string_view{"ACGAACGC"})};

@@ -9,7 +9,7 @@
 #include <seqan3/alphabet/aminoacid/all.hpp>
 #include <seqan3/alphabet/composite/semialphabet_any.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/utility/views/to.hpp>
+#include <seqan3/utility/range/to.hpp>
 
 using namespace seqan3::literals;
 
@@ -56,7 +56,7 @@ void algo_pre(seqan3::aa10li_vector const & v)
                                                         {
                                                             return static_cast<seqan3::semialphabet_any<10>>(in);
                                                         })
-                                                  | seqan3::views::to<std::vector>;
+                                                  | seqan3::ranges::to<std::vector>();
     algorithm(tmp, false);
 }
 
@@ -68,7 +68,7 @@ void algo_pre(seqan3::aa10murphy_vector const & v)
                                                         {
                                                             return static_cast<seqan3::semialphabet_any<10>>(in);
                                                         })
-                                                  | seqan3::views::to<std::vector>;
+                                                  | seqan3::ranges::to<std::vector>();
     algorithm(tmp, true);
 }
 

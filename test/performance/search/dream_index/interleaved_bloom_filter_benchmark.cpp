@@ -9,7 +9,7 @@
 
 #include <seqan3/search/dream_index/interleaved_bloom_filter.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
-#include <seqan3/utility/views/to.hpp>
+#include <seqan3/utility/range/to.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
 inline benchmark::Counter hashes_per_second(size_t const count)
@@ -80,7 +80,7 @@ void clear_benchmark(::benchmark::State & state)
                                                    {
                                                        return seqan3::bin_index{i};
                                                    })
-                                             | seqan3::views::to<std::vector>;
+                                             | seqan3::ranges::to<std::vector>();
 
     for (auto _ : state)
     {
@@ -105,7 +105,7 @@ void clear_range_benchmark(::benchmark::State & state)
                                                    {
                                                        return seqan3::bin_index{i};
                                                    })
-                                             | seqan3::views::to<std::vector>;
+                                             | seqan3::ranges::to<std::vector>();
 
     for (auto _ : state)
     {
@@ -125,8 +125,8 @@ void bulk_contains_benchmark(::benchmark::State & state)
     auto agent = ibf.membership_agent();
     for (auto _ : state)
     {
-        for (auto hash : hash_values)
-            [[maybe_unused]] auto & res = agent.bulk_contains(hash);
+        for (auto hash : hash_values) [[maybe_unused]]
+            auto & res = agent.bulk_contains(hash);
     }
 
     state.counters["hashes/sec"] = hashes_per_second(std::ranges::size(hash_values));

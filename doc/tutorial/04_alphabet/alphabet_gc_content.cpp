@@ -32,7 +32,9 @@ int main(int argc, char * argv[])
         sequence.push_back(seqan3::assign_char_to(c, seqan3::dna5{}));
 
     // Optional: use views for the conversion. Views will be introduced in the next chapter.
-    //std::vector<seqan3::dna5> sequence = input | seqan3::views::char_to<seqan3::dna5> | seqan3::views::to<std::vector>;
+    // std::vector<seqan3::dna5> sequence = input
+    //                                    | seqan3::views::char_to<seqan3::dna5>
+    //                                    | seqan3::ranges::to<std::vector>();
 
     // Initialise an array with count values for dna5 symbols.
     std::array<size_t, seqan3::dna5::alphabet_size> count{}; // default initialised with zeroes
@@ -56,5 +58,6 @@ void alternatively()
 {
     std::string input{};
     // if something changes in here, please update above:
-    std::vector<seqan3::dna5> sequence = input | seqan3::views::char_to<seqan3::dna5> | seqan3::views::to<std::vector>;
+    std::vector<seqan3::dna5> sequence =
+        input | seqan3::views::char_to<seqan3::dna5> | seqan3::ranges::to<std::vector>();
 }

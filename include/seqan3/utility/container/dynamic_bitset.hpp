@@ -17,9 +17,9 @@
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/debug_stream/debug_stream_type.hpp>
 #include <seqan3/utility/detail/integer_traits.hpp>
+#include <seqan3/utility/range/to.hpp>
 #include <seqan3/utility/views/interleave.hpp>
 #include <seqan3/utility/views/repeat_n.hpp>
-#include <seqan3/utility/views/to.hpp>
 
 namespace seqan3
 {
@@ -1947,7 +1947,8 @@ public:
     template <typename char_t>
     friend debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, dynamic_bitset arg)
     {
-        s << (std::string_view{arg.to_string()} | views::interleave(4, std::string_view{"'"}) | views::to<std::string>);
+        s << (std::string_view{arg.to_string()} | views::interleave(4, std::string_view{"'"})
+              | ranges::to<std::string>());
         return s;
     }
     //!\}

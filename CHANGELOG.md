@@ -62,6 +62,11 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
    entire program. Formerly, this variable was specific to each translation unit
    ([\#2752](https://github.com/seqan/seqan3/pull/2752)).
 
+#### Range
+  * Replaced `seqan3::views::to` (implemented via range-v3) with `seqan3::ranges::to` (implemented in SeqAn3).
+    `seqan3::ranges::to` provides a subset of C++23's `std::ranges::to` and will be replaced with the STL-equivalent
+    in a future version ([\#2969](https://github.com/seqan/seqan3/pull/2969)).
+
 # 3.1.0
 
 ## New features

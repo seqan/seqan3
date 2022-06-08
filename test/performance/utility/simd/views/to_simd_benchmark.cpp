@@ -18,11 +18,11 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/utility/container/aligned_allocator.hpp>
+#include <seqan3/utility/range/to.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/simd/views/to_simd.hpp>
-#include <seqan3/utility/views/to.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
 // ============================================================================
@@ -50,7 +50,7 @@ void to_simd_naive_wo_condition(benchmark::State & state)
                                   {
                                       return std::pair{std::ranges::size(std::get<0>(tpl)), std::get<1>(tpl)};
                                   })
-            | seqan3::views::to<std::vector<std::pair<size_t, size_t>>>;
+            | seqan3::ranges::to<std::vector<std::pair<size_t, size_t>>>();
 
         std::ranges::sort(sorted_sequences);
 
