@@ -13,7 +13,7 @@
 #pragma once
 
 #include <cmath>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/core/detail/iterator_traits.hpp>
 #include <seqan3/core/range/detail/adaptor_for_view_without_args.hpp>

@@ -13,7 +13,7 @@
 #pragma once
 
 #include <concepts>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>

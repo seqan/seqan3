@@ -11,7 +11,7 @@
 #include <forward_list>
 #include <iterator>
 #include <list>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <vector>
 
 #include <seqan3/core/detail/iterator_traits.hpp>

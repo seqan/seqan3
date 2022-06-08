@@ -15,7 +15,7 @@
 #include <concepts>
 #include <iterator>
 #include <memory>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <thread>
 
 #include <seqan3/contrib/parallel/buffer_queue.hpp>

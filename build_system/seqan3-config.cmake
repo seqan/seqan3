@@ -23,7 +23,6 @@
 # SeqAn requires the following libraries:
 #
 #   SDSL      -- the succinct data structure library
-#   Range-V3  -- Ranges Library by Eric Niebler
 #
 # SeqAn has the following optional dependencies:
 #
@@ -309,17 +308,8 @@ else ()
 endif ()
 
 # ----------------------------------------------------------------------------
-# Require Ranges and SDSL
+# Require SDSL
 # ----------------------------------------------------------------------------
-
-check_include_file_cxx (range/v3/version.hpp _SEQAN3_HAVE_RANGEV3)
-
-if (_SEQAN3_HAVE_RANGEV3)
-    seqan3_config_print ("Required dependency:        Range-V3 found.")
-else ()
-    seqan3_config_error (
-        "The range-v3 library is required, but wasn't found. Get it from https://github.com/ericniebler/range-v3/")
-endif ()
 
 check_include_file_cxx (sdsl/version.hpp _SEQAN3_HAVE_SDSL)
 

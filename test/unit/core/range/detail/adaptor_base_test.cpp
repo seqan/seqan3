@@ -9,7 +9,7 @@
 
 #include <iostream>
 #include <memory>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/core/range/detail/adaptor_base.hpp>
 #include <seqan3/test/expect_range_eq.hpp>

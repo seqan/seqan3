@@ -14,7 +14,7 @@
 
 #include <algorithm>
 #include <bitset>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <utility>
 
 #include <seqan3/alignment/matrix/detail/advanceable_alignment_coordinate.hpp>

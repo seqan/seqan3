@@ -14,7 +14,7 @@
 
 #include <algorithm>
 #include <memory>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <vector>
 
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>

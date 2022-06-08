@@ -12,7 +12,7 @@ r001	147	ref	37	30	9M	=	7	-39	CAGCGGCAT	*	NM:i:1
 
 //![solution]
 #include <filesystem>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/sam_file/all.hpp>

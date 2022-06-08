@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <vector>
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
@@ -124,8 +124,6 @@ TYPED_TEST(gap_decorator_f, concept_checks)
 
     EXPECT_FALSE((std::ranges::enable_view<TypeParam>));
     EXPECT_FALSE((std::ranges::enable_view<TypeParam &>));
-    EXPECT_FALSE((ranges::enable_view<TypeParam>));
-    EXPECT_FALSE((ranges::enable_view<TypeParam &>));
 
     EXPECT_FALSE((std::ranges::view<TypeParam>));
 

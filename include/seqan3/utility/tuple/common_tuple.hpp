@@ -17,8 +17,6 @@
 #include <seqan3/utility/tuple/common_pair.hpp>
 #include <seqan3/utility/type_pack/traits.hpp>
 
-#include <range/v3/utility/common_tuple.hpp>
-
 namespace seqan3
 {
 
@@ -1010,60 +1008,4 @@ constexpr type const && get(seqan3::common_tuple<types...> const && t) noexcept
 }
 
 } // namespace std
-//!\endcond
-
-//!\cond
-// Definitions for range-v3 -- same as in std
-namespace concepts
-{
-
-template <class... T>
-struct common_type;
-
-template <class... Ts, class... Us>
-    requires requires { typename seqan3::common_tuple<std::common_type_t<Ts, Us>...>; }
-struct common_type<seqan3::common_tuple<Ts...>, seqan3::common_tuple<Us...>>
-{
-    using type = seqan3::common_tuple<std::common_type_t<Ts, Us>...>;
-};
-
-template <class... Ts, class... Us>
-    requires requires { typename seqan3::common_tuple<std::common_type_t<Ts, Us>...>; }
-struct common_type<std::tuple<Ts...>, seqan3::common_tuple<Us...>>
-{
-    using type = seqan3::common_tuple<std::common_type_t<Ts, Us>...>;
-};
-
-template <class... Ts, class... Us>
-    requires requires { typename seqan3::common_tuple<std::common_type_t<Ts, Us>...>; }
-struct common_type<seqan3::common_tuple<Ts...>, std::tuple<Us...>>
-{
-    using type = seqan3::common_tuple<std::common_type_t<Ts, Us>...>;
-};
-
-template <class T, class U, template <class> class TQual, template <class> class UQual>
-struct basic_common_reference;
-
-template <class... Ts, class... Us, template <class> class TQual, template <class> class UQual>
-    requires requires { typename seqan3::common_tuple<std::common_reference_t<TQual<Ts>, UQual<Us>>...>; }
-struct basic_common_reference<seqan3::common_tuple<Ts...>, seqan3::common_tuple<Us...>, TQual, UQual>
-{
-    using type = seqan3::common_tuple<std::common_reference_t<TQual<Ts>, UQual<Us>>...>;
-};
-
-template <class... Ts, class... Us, template <class> class TQual, template <class> class UQual>
-    requires requires { typename seqan3::common_tuple<std::common_reference_t<TQual<Ts>, UQual<Us>>...>; }
-struct basic_common_reference<seqan3::common_tuple<Ts...>, std::tuple<Us...>, TQual, UQual>
-{
-    using type = seqan3::common_tuple<std::common_reference_t<TQual<Ts>, UQual<Us>>...>;
-};
-
-template <class... Ts, class... Us, template <class> class TQual, template <class> class UQual>
-    requires requires { typename seqan3::common_tuple<std::common_reference_t<TQual<Ts>, UQual<Us>>...>; }
-struct basic_common_reference<std::tuple<Ts...>, seqan3::common_tuple<Us...>, TQual, UQual>
-{
-    using type = seqan3::common_tuple<std::common_reference_t<TQual<Ts>, UQual<Us>>...>;
-};
-
-} // namespace concepts
 //!\endcond

@@ -13,7 +13,7 @@
 #pragma once
 
 #include <optional>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_debug.hpp>

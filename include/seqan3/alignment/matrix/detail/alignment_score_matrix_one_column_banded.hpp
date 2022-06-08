@@ -14,7 +14,7 @@
 
 #include <cassert>
 #include <iterator>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <span>
 
 #include <seqan3/alignment/configuration/align_config_band.hpp>

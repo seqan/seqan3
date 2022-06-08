@@ -14,8 +14,8 @@
 
 #include <algorithm>
 #include <concepts>
+#include <ranges>
 #include <seqan3/std/charconv>
-#include <seqan3/std/ranges>
 #include <sstream>
 
 #include <seqan3/alignment/detail/pairwise_alignment_concept.hpp>

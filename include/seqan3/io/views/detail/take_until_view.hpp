@@ -15,7 +15,7 @@
 #include <algorithm>
 #include <concepts>
 #include <iterator>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <type_traits>
 
 #include <seqan3/core/detail/copyable_wrapper.hpp>

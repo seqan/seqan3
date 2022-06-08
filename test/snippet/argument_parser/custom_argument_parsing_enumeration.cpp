@@ -1,4 +1,4 @@
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <system_error>
 
 #include <seqan3/argument_parser/all.hpp>

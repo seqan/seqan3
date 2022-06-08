@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>

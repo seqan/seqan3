@@ -30,7 +30,6 @@ function (generate_include_dependencies_impl)
     # utility/views/CMakeFiles/zip_test.dir/zip_test.cpp.o: \
     #  /seqan3/include/seqan3/core/platform.hpp \
     #  /seqan3/include/seqan3/std/algorithm \
-    #  /seqan3/submodules/range-v3/include/concepts/compare.hpp
     # ```
 
     # read in file and filter out linebreaks

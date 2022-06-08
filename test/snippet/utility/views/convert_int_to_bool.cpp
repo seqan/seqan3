@@ -1,4 +1,4 @@
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <vector>
 
 #include <seqan3/core/debug_stream.hpp>

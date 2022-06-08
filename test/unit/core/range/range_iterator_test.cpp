@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <list>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <vector>
 
 #include <seqan3/core/range/detail/random_access_iterator.hpp>

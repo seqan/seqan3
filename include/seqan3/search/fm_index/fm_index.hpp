@@ -14,7 +14,7 @@
 
 #include <algorithm>
 #include <filesystem>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <sdsl/suffix_trees.hpp>
 

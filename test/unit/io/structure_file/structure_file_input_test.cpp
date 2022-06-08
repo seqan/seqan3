@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iterator>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <sstream>
 
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>

@@ -13,7 +13,7 @@
 #pragma once
 
 #include <algorithm>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/core/algorithm/algorithm_result_generator_range.hpp>
 #include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>

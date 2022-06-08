@@ -9,7 +9,7 @@
 
 #include <concepts>
 #include <iostream>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <string>
 
 #include <seqan3/core/detail/persist_view.hpp>

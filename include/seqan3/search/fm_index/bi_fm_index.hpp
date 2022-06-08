@@ -13,7 +13,7 @@
 #pragma once
 
 #include <filesystem>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <utility>
 
 #include <seqan3/core/range/type_traits.hpp>

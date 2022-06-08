@@ -11,7 +11,7 @@
 #include <cmath>
 #include <cstring>
 #include <random>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <utility>
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>

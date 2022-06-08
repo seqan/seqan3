@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <variant>
 
 #include <seqan3/core/detail/all_view.hpp>

@@ -16,7 +16,7 @@
 #include <concepts>
 #include <filesystem>
 #include <iostream>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <span>
 #include <string>
 #include <tuple>

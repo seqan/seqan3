@@ -9,7 +9,7 @@
 
 #include <forward_list>
 #include <list>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <vector>
 
 #include <seqan3/core/debug_stream.hpp>
@@ -19,7 +19,6 @@
 #include <seqan3/utility/views/single_pass_input.hpp>
 
 #include "../../range/iterator_test_template.hpp"
-#include <range/v3/view/chunk.hpp>
 
 using iterator_type = std::ranges::iterator_t<decltype(std::declval<std::vector<int> &>() | seqan3::views::chunk(4))>;
 

@@ -14,7 +14,7 @@
 
 #include <cassert>
 #include <iterator>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <span>
 
 #include <seqan3/core/range/type_traits.hpp>

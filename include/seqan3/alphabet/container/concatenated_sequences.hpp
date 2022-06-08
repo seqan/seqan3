@@ -13,7 +13,7 @@
 #pragma once
 
 #include <iterator>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <type_traits>
 #include <vector>
 
@@ -150,11 +150,6 @@ public:
      */
     using size_type = std::ranges::range_size_t<data_delimiters_type>;
     //!\}
-
-    //!\cond
-    // this signals to range-v3 that something is a container :|
-    using allocator_type = void;
-    //!\endcond
 
 protected:
     /*!\name Compatibility

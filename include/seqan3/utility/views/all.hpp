@@ -151,7 +151,6 @@
  * elements in the original range (if all views in the pipe preserve std::ranges::output_range), but through others
  * you can't.
  *
- * \sa https://ericniebler.github.io/range-v3/index.html#range-views
  * \sa https://en.cppreference.com/w/cpp/ranges
  */
 

@@ -69,7 +69,6 @@ Please see the [online documentation](https://docs.seqan.de/seqan/3-master-user/
 |**compiler**       | [GCC](https://gcc.gnu.org)                           | ≥ 10     | no other compiler is currently supported!   |
 |**build system**   | [CMake](https://cmake.org)                           | ≥ 3.4    | optional, but recommended                   |
 |**required libs**  | [SDSL](https://github.com/xxsds/sdsl-lite)           | ≥ 3      |                                             |
-|                   | [Range-V3](https://github.com/ericniebler/range-v3)  | ≥ 0.11.0 |                                             |
 |**optional libs**  | [cereal](https://github.com/USCiLab/cereal)          | ≥ 1.2.3  | required for serialisation and CTD support  |
 |                   | [zlib](https://github.com/madler/zlib)               | ≥ 1.2    | required for `*.gz` and `.bam` file support |
 |                   | [bzip2](https://www.sourceware.org/bzip2)            | ≥ 1.0    | required for `*.bz2` file support           |
@@ -93,7 +92,6 @@ Quick-Setup without CMake:
 g++-11 -O3 -DNDEBUG -Wall -Wextra                               \
     -std=c++20                                                  \
     -I       /path/to/seqan3/include                            \
-    -isystem /path/to/seqan3/submodules/range-v3/include        \
     -isystem /path/to/seqan3/submodules/sdsl-lite/include       \
     -isystem /path/to/seqan3/submodules/cereal/include          \
     -DSEQAN3_HAS_ZLIB=1 -DSEQAN3_HAS_BZIP2=1                    \

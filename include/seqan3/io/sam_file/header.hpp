@@ -13,7 +13,7 @@
 #pragma once
 
 #include <deque>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <unordered_map>
 #include <vector>
 

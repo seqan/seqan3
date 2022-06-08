@@ -9,7 +9,7 @@
 
 #include <deque>
 #include <list>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <string>
 #include <vector>
 

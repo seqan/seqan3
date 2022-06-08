@@ -3,9 +3,9 @@
 #pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 
 //![complete]
-#include <forward_list>      // std::forward_list
-#include <seqan3/std/ranges> // std::ranges::input_range
-#include <vector>            // std::vector
+#include <forward_list> // std::forward_list
+#include <ranges>       // std::ranges::input_range
+#include <vector>       // std::vector
 
 #include <seqan3/core/range/type_traits.hpp>               // seqan3::size_type_t
 #include <seqan3/utility/type_traits/lazy_conditional.hpp> // seqan3::lazy_conditional_t

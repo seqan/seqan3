@@ -13,7 +13,7 @@
 #pragma once
 
 #include <map>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <stack>
 
 #include <seqan3/alphabet/structure/concept.hpp>

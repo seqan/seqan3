@@ -14,7 +14,7 @@
 
 #include <algorithm>
 #include <functional>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/core/detail/all_view.hpp>
 #include <seqan3/core/range/detail/adaptor_from_functor.hpp>

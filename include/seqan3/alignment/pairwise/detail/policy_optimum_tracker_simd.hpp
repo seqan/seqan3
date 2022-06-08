@@ -13,7 +13,7 @@
 #pragma once
 
 #include <limits>
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/alignment/pairwise/detail/policy_optimum_tracker.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>

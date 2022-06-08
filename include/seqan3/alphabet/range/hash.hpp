@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/alphabet/hash.hpp>
 #include <seqan3/core/range/type_traits.hpp>

@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/search/detail/search_common.hpp>
 #include <seqan3/search/detail/search_traits.hpp>

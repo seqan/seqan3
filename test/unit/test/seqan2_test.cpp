@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/test/seqan2.hpp>

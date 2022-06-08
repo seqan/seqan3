@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/ranges>
+#include <ranges>
 
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/io/views/detail/take_until_view.hpp>

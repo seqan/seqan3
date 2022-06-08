@@ -15,7 +15,7 @@
 #include <cassert>
 #include <filesystem>
 #include <fstream>
-#include <seqan3/std/ranges>
+#include <ranges>
 #include <string>
 #include <string_view>
 #include <variant>
