@@ -14,9 +14,10 @@ on:
   # Enables a manual trigger, may run on any branch
   workflow_dispatch:
 
+# Do not cancel on push events
 concurrency:
-  group: linux-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: coverage-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
 
 env:
   CMAKE_VERSION: 3.10.3
@@ -37,30 +38,23 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - name: "Unit gcc12"
+          - name: "Coverage gcc12"
             cxx: "g++-12"
             cc: "gcc-12"
-            build: unit
-            build_type: Release
-
-          - name: "Unit gcc11"
-            cxx: "g++-11"
-            cc: "gcc-11"
-            build: unit
-            build_type: Release
-
-          - name: "Unit gcc10"
-            cxx: "g++-10"
-            cc: "gcc-10"
-            build: unit
-            build_type: Release
+            build: coverage
+            build_type: Debug
 
     steps:
+      # How many commits do we need to fetch to also fetch the branch point?
+      - name: Get fetch depth
+        id: fetch_depth
+        run: echo "::set-output name=depth::$(( ${{ github.event.pull_request.commits }} + 1 ))"
+
       - name: Checkout SeqAn3
         uses: actions/checkout@v2
         with:
           path: seqan3
-          fetch-depth: 1
+          fetch-depth: ${{ steps.fetch_depth.outputs.depth }}
           submodules: true
 
       - name: Checkout SeqAn2
@@ -86,6 +80,13 @@ jobs:
       - name: Install compiler ${{ matrix.cxx }}
         run: sudo apt-get install --yes ${{ matrix.cxx }}
 
+      - name: Install gcovr
+        env:
+            CC: ${{ matrix.cc }}
+        run: |
+          sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/${CC/gcc/gcov} 100
+          pip install gcovr==5.0
+
       - name: Load ccache
         uses: actions/cache@v2
         with:
@@ -104,8 +105,8 @@ jobs:
 
       - name: Configure tests
         env:
-          CXX: ${{ matrix.cxx }}
-          CC: ${{ matrix.cc }}
+            CXX: ${{ matrix.cxx }}
+            CC: ${{ matrix.cc }}
         run: |
           mkdir seqan3-build
           cd seqan3-build
@@ -122,7 +123,7 @@ jobs:
           CCACHE_DIR: ${{ github.workspace }}/.ccache
           CCACHE_COMPRESS: true
           CCACHE_COMPRESSLEVEL: 12
-          CCACHE_MAXSIZE: ${{ matrix.build == 'coverage' && '525M' || '75M' }}
+          CCACHE_MAXSIZE: 525M
           CCACHE_IGNOREOPTIONS: "-fprofile-abs-path"
           GCOV: ${{ github.workspace }}/seqan3/.github/workflows/scripts/gcov.sh
         run: |
@@ -131,8 +132,8 @@ jobs:
           make -k -j2
           ccache -sv
 
-      - name: Run tests
-        run: |
-          cd seqan3-build
-          ctest . -j2 --output-on-failure
-
+      - name: Submit coverage build
+        uses: codecov/codecov-action@v2
+        with:
+          files: ${{ github.workspace }}/seqan3-build/seqan3_coverage.xml
+          root_dir: ${{ github.workspace }}/seqan3
