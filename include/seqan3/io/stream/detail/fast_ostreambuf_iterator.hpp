@@ -14,6 +14,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cassert>
 #include <iterator>
 #include <ranges>
 #include <seqan3/std/charconv>

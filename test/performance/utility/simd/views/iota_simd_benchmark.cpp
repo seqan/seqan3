@@ -7,6 +7,7 @@
 
 #include <benchmark/benchmark.h>
 
+#include <functional>
 #include <ranges>
 #include <vector>
 
