@@ -12,30 +12,32 @@ works.
 
 # Software
 Requirements:
-  - gcc >= 7
+  - gcc >= 10
   - cmake >= 3.4
   - git
 
 ## Installing GCC
 
-SeqAn requires a compiler with full C++20 support *or* GCC >= 7. Current versions of LLVM/Clang and VisualStudio/MSVC
-are **not yet supported**.
-We will briefly explain how to install GCC-10 (or the latest GCC if such an option is available) on some popular
+SeqAn requires GCC >= 10. Current versions of LLVM/Clang and VisualStudio/MSVC are **not yet supported**.
+We will briefly explain how to install GCC-11 (or the latest GCC if such an option is available) on some popular
 operating systems. We recommend using the latest version of GCC available. For more information, refer to your
 operating system's documentation.
 
 \startcollapsible{Linux-based}
 
-#### Ubuntu >= 18.04
+#### Ubuntu >= 22.04
 ```bash
+# Installs default compiler version (gcc-11 for Ubuntu 22.04).
 sudo apt install g++
+# To install gcc-12, follow below instructions.
 ```
 
-#### Ubuntu < 18.04
+#### Ubuntu < 22.04
 ```bash
-sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-sudo apt update
-sudo apt install g++-10
+sudo add-apt-repository --no-update --yes ppa:ubuntu-toolchain-r/ppa
+sudo add-apt-repository --no-update --yes ppa:ubuntu-toolchain-r/test
+sudo apt-get update
+sudo apt install g++-11
 ```
 
 #### Using [conda](https://conda.io)
@@ -53,12 +55,12 @@ and deactivated via `conda deactivate`.
 
 #### Using [Homebrew](https://brew.sh/)
 ```bash
-brew install gcc
+brew install gcc@11
 ```
 
 #### Using [MacPorts](https://www.macports.org/)
 ```bash
-sudo port install gcc10
+sudo port install gcc11
 ```
 
 \endcollapsible
@@ -79,16 +81,18 @@ the steps listed for Linux-based systems.
 hours of use per month, which is plenty for our tutorials. A GitHub account is required.
 [Click here](https://gitpod.io/#https://github.com/seqan/seqan3/) to open SeqAn3 in gitpod.
 
+<!-- Codespaces are currently not free. Revisit in the future.
 #### Using [GitHub codespaces](https://github.com/codespaces)
 GitHub offers a service similar to gitpod. Codespaces are currently in **public beta** and may not be available to
 everyone. [Click here](https://github.com/codespaces) to check for availability.
 
 Please note that you may have to manually clone the submodules by running `git submodule update --init`.
+-->
 
 \endcollapsible
 
 \attention After installing, `g++ --version` should print the desired version.
-           If not, you may have to use, for example, `g++-10 --version` or even specify the full path to your compiler.
+           If not, you may have to use, for example, `g++-11 --version` or even specify the full path to your compiler.
 
 Similarly, you may need to install CMake and git, e.g. `apt install cmake git`.
 
@@ -120,8 +124,8 @@ The output of the command `tree -L 2` should now look like this:
 .
 ├── build
 ├── seqan3
-│   ├── build_system
 │   ├── CHANGELOG.md
+│   ├── CMakeLists.txt
 │   ├── ...
 │   └── test
 └── source
@@ -151,8 +155,8 @@ The directories should now look like this:
 .
 ├── build
 ├── seqan3
-│   ├── build_system
 │   ├── CHANGELOG.md
+│   ├── CMakeLists.txt
 │   ├── ...
 │   └── test
 └── source
@@ -177,7 +181,7 @@ of errors easier. `Debug` is suitable for contributors, and we recommend using i
 \remark Depending on the standard C++ compiler on your system, you may need to specify the compiler via
 `-DCMAKE_CXX_COMPILER=`, for example:
 ```bash
-cmake -DCMAKE_CXX_COMPILER=/path/to/executable/g++-10 ../source
+cmake -DCMAKE_CXX_COMPILER=/path/to/executable/g++-11 ../source
 ```
 
 # Adding a new source file to your project
