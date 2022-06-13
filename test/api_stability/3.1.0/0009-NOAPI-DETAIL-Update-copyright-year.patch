@@ -1,0 +1,143 @@
+From 8c4d8576d6d5678dc0ba22422078ceb813321f6c Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Mon, 13 Jun 2022 17:25:43 +0200
+Subject: [PATCH 09/11] [NOAPI] [DETAIL] Update copyright year
+
+---
+ .../argument_parser/detail/format_help_test.cpp    | 14 +++++++-------
+ .../argument_parser/detail/format_html_test.cpp    |  6 +++---
+ .../argument_parser/detail/format_man_test.cpp     | 10 +++++-----
+ 3 files changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/test/unit/argument_parser/detail/format_help_test.cpp b/test/unit/argument_parser/detail/format_help_test.cpp
+index 997d93cc5..4ca678830 100644
+--- a/test/unit/argument_parser/detail/format_help_test.cpp
++++ b/test/unit/argument_parser/detail/format_help_test.cpp
+@@ -1,6 +1,6 @@
+ // -----------------------------------------------------------------------------------------------------
+-// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+-// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
++// Copyright (c) 2006-2022, Knut Reinert & Freie Universität Berlin
++// Copyright (c) 2016-2022, Knut Reinert & MPI für molekulare Genetik
+ // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+ // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+ // -----------------------------------------------------------------------------------------------------
+@@ -128,7 +128,7 @@ TEST(help_page_printing, with_short_copyright)
+                "\n" +
+                "LEGAL\n"
+                "    test_parser Copyright: short\n"
+-               "    SeqAn Copyright: 2006-2021 Knut Reinert, FU-Berlin; released under the\n"
++               "    SeqAn Copyright: 2006-2022 Knut Reinert, FU-Berlin; released under the\n"
+                "    3-clause BSDL.\n";
+     EXPECT_EQ(std_cout, expected);
+ }
+@@ -149,7 +149,7 @@ TEST(help_page_printing, with_long_copyright)
+                basic_version_str +
+                "\n" +
+                "LEGAL\n"
+-               "    SeqAn Copyright: 2006-2021 Knut Reinert, FU-Berlin; released under the\n"
++               "    SeqAn Copyright: 2006-2022 Knut Reinert, FU-Berlin; released under the\n"
+                "    3-clause BSDL.\n"
+                "    For full copyright and/or warranty information see --copyright.\n";
+     EXPECT_EQ(std_cout, expected);
+@@ -171,7 +171,7 @@ TEST(help_page_printing, with_citation)
+                basic_version_str +
+                "\n" +
+                "LEGAL\n"
+-               "    SeqAn Copyright: 2006-2021 Knut Reinert, FU-Berlin; released under the\n"
++               "    SeqAn Copyright: 2006-2022 Knut Reinert, FU-Berlin; released under the\n"
+                "    3-clause BSDL.\n"
+                "    In your academic works please cite: citation\n";
+     EXPECT_EQ(std_cout, expected);
+@@ -194,7 +194,7 @@ TEST(help_page_printing, with_author)
+                "\n" +
+                "LEGAL\n"
+                "    Author: author\n"
+-               "    SeqAn Copyright: 2006-2021 Knut Reinert, FU-Berlin; released under the\n"
++               "    SeqAn Copyright: 2006-2022 Knut Reinert, FU-Berlin; released under the\n"
+                "    3-clause BSDL.\n";
+     EXPECT_EQ(std_cout, expected);
+ }
+@@ -216,7 +216,7 @@ TEST(help_page_printing, with_email)
+                "\n" +
+                "LEGAL\n"
+                "    Contact: email\n"
+-               "    SeqAn Copyright: 2006-2021 Knut Reinert, FU-Berlin; released under the\n"
++               "    SeqAn Copyright: 2006-2022 Knut Reinert, FU-Berlin; released under the\n"
+                "    3-clause BSDL.\n";
+     EXPECT_EQ(std_cout, expected);
+ }
+diff --git a/test/unit/argument_parser/detail/format_html_test.cpp b/test/unit/argument_parser/detail/format_html_test.cpp
+index fba6ef544..220072222 100644
+--- a/test/unit/argument_parser/detail/format_html_test.cpp
++++ b/test/unit/argument_parser/detail/format_html_test.cpp
+@@ -1,6 +1,6 @@
+ // -----------------------------------------------------------------------------------------------------
+-// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+-// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
++// Copyright (c) 2006-2022, Knut Reinert & Freie Universität Berlin
++// Copyright (c) 2016-2022, Knut Reinert & MPI für molekulare Genetik
+ // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+ // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+ // -----------------------------------------------------------------------------------------------------
+@@ -185,7 +185,7 @@ TEST(html_format, full_information_information)
+                           "<br>\n"
+                           "<strong>Contact: </strong>email\n"
+                           "<br>\n"
+-                          "<strong>SeqAn Copyright: </strong>2006-2021 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n"
++                          "<strong>SeqAn Copyright: </strong>2006-2022 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n"
+                           "<br>\n"
+                           "<strong>In your academic works please cite: </strong>citation\n"
+                           "<br>\n"
+diff --git a/test/unit/argument_parser/detail/format_man_test.cpp b/test/unit/argument_parser/detail/format_man_test.cpp
+index ff4101f8c..285f0957b 100644
+--- a/test/unit/argument_parser/detail/format_man_test.cpp
++++ b/test/unit/argument_parser/detail/format_man_test.cpp
+@@ -189,7 +189,7 @@ TEST_F(format_man_test, full_info_short_copyright)
+     expected += R"(.SH LEGAL
+ \fBdefault Copyright: \fRshort copyright
+ .br
+-\fBSeqAn Copyright: \fR2006-2021 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
++\fBSeqAn Copyright: \fR2006-2022 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
+ )";
+     testing::internal::CaptureStdout();
+     EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+@@ -211,7 +211,7 @@ TEST_F(format_man_test, full_info_short_and_citation)
+     expected += R"(.SH LEGAL
+ \fBdefault Copyright: \fRshort copyright
+ .br
+-\fBSeqAn Copyright: \fR2006-2021 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
++\fBSeqAn Copyright: \fR2006-2022 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
+ .br
+ \fBIn your academic works please cite: \fRcitation
+ )";
+@@ -236,7 +236,7 @@ TEST_F(format_man_test, full_info_short_long_and_citation)
+     expected += R"(.SH LEGAL
+ \fBdefault Copyright: \fRshort copyright
+ .br
+-\fBSeqAn Copyright: \fR2006-2021 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
++\fBSeqAn Copyright: \fR2006-2022 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
+ .br
+ \fBIn your academic works please cite: \fRcitation
+ .br
+@@ -261,7 +261,7 @@ TEST_F(format_man_test, full_info_author)
+     expected += R"(.SH LEGAL
+ \fBAuthor: \fRauthor
+ .br
+-\fBSeqAn Copyright: \fR2006-2021 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
++\fBSeqAn Copyright: \fR2006-2022 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
+ )";
+     testing::internal::CaptureStdout();
+     EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+@@ -282,7 +282,7 @@ TEST_F(format_man_test, full_info_email)
+     expected += R"(.SH LEGAL
+ \fBContact: \fRemail
+ .br
+-\fBSeqAn Copyright: \fR2006-2021 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
++\fBSeqAn Copyright: \fR2006-2022 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
+ )";
+     testing::internal::CaptureStdout();
+     EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+-- 
+2.34.1
+
