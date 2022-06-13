@@ -191,7 +191,7 @@ TEST(html_format, full_information_information)
           "<br>\n"
           "<strong>Contact: </strong>email\n"
           "<br>\n"
-          "<strong>SeqAn Copyright: </strong>2006-2021 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n"
+          "<strong>SeqAn Copyright: </strong>2006-2022 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n"
           "<br>\n"
           "<strong>In your academic works please cite: </strong>citation\n"
           "<br>\n"

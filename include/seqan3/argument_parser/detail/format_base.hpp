@@ -498,7 +498,7 @@ protected:
             }
 
             derived_t().print_line(derived_t().in_bold("SeqAn Copyright: ")
-                                       + "2006-2021 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.",
+                                       + "2006-2022 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.",
                                    false);
 
             if (!empty(meta.citation))
