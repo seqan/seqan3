@@ -111,7 +111,7 @@ jobs:
         run: |
           cd seqan3
           LIST=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} | \
-          { grep -v -E "(include/seqan3/contrib/|submodules/)" || test $? = 1; } | \
+          { grep -v -E "(include/seqan3/contrib/|submodules/|*.sh|*.pl|*.py)" || test $? = 1; } | \
           { grep -E "(.cpp|.hpp|include/seqan3/std/)" || test $? = 1; } | xargs)
           echo "::set-output name=list::$LIST"
 
