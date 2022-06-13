@@ -14,8 +14,8 @@ The contents of this repository/directory, in particular the library
 source code of SeqAn3, are licensed under the following terms:
 
 ```
-Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
-Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
+Copyright (c) 2006-2022, Knut Reinert & Freie Universität Berlin
+Copyright (c) 2016-2022, Knut Reinert & MPI für molekulare Genetik
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
