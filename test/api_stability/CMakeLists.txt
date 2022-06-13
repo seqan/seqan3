@@ -13,7 +13,7 @@ set (SEQAN3_LAST_STABLE_SOURCE_URL
 )
 set (SEQAN3_LAST_STABLE_SOURCE_SHA256 "0b37b1c3450e19c0ebe42c052c3f87babb8074bd772f10a553949c312c285726")
 
-set (SEQAN3_API_STABILITY_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSEQAN3_REMOVE_DEPRECATED_310=1")
+set (SEQAN3_API_STABILITY_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSEQAN3_DISABLE_DEPRECATED_WARNINGS=1")
 
 macro (seqan3_api_stability_test test_suite)
     ExternalProject_Add (
@@ -26,6 +26,7 @@ macro (seqan3_api_stability_test test_suite)
                    -DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER}
                    -DCMAKE_PREFIX_PATH=${CMAKE_CURRENT_LIST_DIR}/../../build_system # use current build_system
                    -DSEQAN3_GENERATE_SNIPPETS=OFF
+                   -DSEQAN3_VERBOSE_TESTS=OFF
         PATCH_COMMAND ${CMAKE_COMMAND} -E echo "<SOURCE_DIR>"
         COMMAND ${CMAKE_COMMAND} -E remove_directory "<SOURCE_DIR>/include"
         COMMAND ${CMAKE_COMMAND} -E remove_directory "<SOURCE_DIR>/submodules"
@@ -33,6 +34,7 @@ macro (seqan3_api_stability_test test_suite)
         COMMAND sh -c
                 "${GIT_EXECUTABLE} apply --verbose ${CMAKE_CURRENT_LIST_DIR}/${SEQAN3_LAST_STABLE_VERSION}/*.patch"
         TEST_BEFORE_INSTALL TRUE
+        TEST_COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -j2
         INSTALL_COMMAND "")
 endmacro ()
 
@@ -40,6 +42,5 @@ if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/${SEQAN3_LAST_STABLE_VERSION}")
     seqan3_api_stability_test ("snippet")
     seqan3_api_stability_test ("unit")
 else ()
-    message (STATUS "No patches found in ${CMAKE_CURRENT_LIST_DIR}/${SEQAN3_LAST_STABLE_VERSION}:")
-    message (STATUS "  Skipping API Stability test.")
+    message (FATAL_ERROR "No patches found in ${CMAKE_CURRENT_LIST_DIR}/${SEQAN3_LAST_STABLE_VERSION}:")
 endif ()
