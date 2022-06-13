@@ -68,8 +68,8 @@ Please see the [online documentation](https://docs.seqan.de/seqan/3-master-user/
 |-------------------|------------------------------------------------------|----------|---------------------------------------------|
 |**compiler**       | [GCC](https://gcc.gnu.org)                           | ≥ 10     | no other compiler is currently supported!   |
 |**build system**   | [CMake](https://cmake.org)                           | ≥ 3.4    | optional, but recommended                   |
-|**required libs**  | [SDSL](https://github.com/xxsds/sdsl-lite)           | ≥ 3      |                                             |
-|**optional libs**  | [cereal](https://github.com/USCiLab/cereal)          | ≥ 1.2.3  | required for serialisation and CTD support  |
+|**required libs**  | [SDSL](https://github.com/xxsds/sdsl-lite)           | ≥ 3.0.1  |                                             |
+|**optional libs**  | [cereal](https://github.com/USCiLab/cereal)          | ≥ 1.3.1  | required for serialisation and CTD support  |
 |                   | [zlib](https://github.com/madler/zlib)               | ≥ 1.2    | required for `*.gz` and `.bam` file support |
 |                   | [bzip2](https://www.sourceware.org/bzip2)            | ≥ 1.0    | required for `*.bz2` file support           |
 
