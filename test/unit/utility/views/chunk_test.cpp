@@ -184,3 +184,11 @@ TYPED_TEST(chunk_view_test, use_on_temporaries)
         EXPECT_EQ(i, 4u);
     }
 }
+
+TYPED_TEST(chunk_view_test, big_chunk)
+{
+    // Check that a very big number (1ULL<<42) can be stored as chunk_size inside the chunk_view.
+    // error: conversion from ‘long long unsigned int’ to ‘uint16_t’ {aka ‘short unsigned int’} changes value
+    // from ‘4398046511104’ to ‘0’ [-Werror=overflow]
+    [[maybe_unused]] auto v = this->text | seqan3::views::chunk(1ULL << 42);
+}
