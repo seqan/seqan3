@@ -45,7 +45,7 @@ private:
     urng_t urange;
 
     //!\brief The chunk size to use.
-    uint16_t chunk_size;
+    std::ranges::range_difference_t<urng_t> chunk_size;
 
     // The iterator type if `urng_t` is a pure input range. See class definition for details.
     template <bool const_range>
@@ -69,11 +69,11 @@ public:
     ~chunk_view() = default;                                  //!< Defaulted.
 
     /*!\brief Construct from a view and the chunk size.
-     * \param[in] underlying_range The underlying range to divide into chunks.
+     * \param[in] urng The underlying range to divide into chunks.
      * \param[in] size_of_chunk The size of the chunks, e.g., the length of the subrange returned at each position.
      */
-    constexpr explicit chunk_view(urng_t underlying_range, uint16_t const size_of_chunk) :
-        urange{std::move(underlying_range)},
+    constexpr explicit chunk_view(urng_t urng, std::ranges::range_difference_t<urng_t> const size_of_chunk) :
+        urange{std::move(urng)},
         chunk_size{size_of_chunk}
     {}
     //!\}
@@ -161,7 +161,7 @@ public:
 
 //!\brief A deduction guide for the view class template.
 template <std::ranges::range rng_t>
-chunk_view(rng_t &&, uint16_t const &) -> chunk_view<seqan3::detail::all_t<rng_t>>;
+chunk_view(rng_t &&, std::ranges::range_difference_t<rng_t> const &) -> chunk_view<seqan3::detail::all_t<rng_t>>;
 
 // ---------------------------------------------------------------------------------------------------------------------
 // chunk_view iterators (basic_input_iterator and basic_iterator)
@@ -319,7 +319,9 @@ public:
     *
     * Constant.
     */
-    constexpr explicit basic_input_iterator(urng_it_t it_begin, sentinel_t it_end, uint16_t const size_of_chunk) :
+    constexpr explicit basic_input_iterator(urng_it_t it_begin,
+                                            sentinel_t it_end,
+                                            std::ranges::range_difference_t<urng_t> const size_of_chunk) :
         chunk_size{size_of_chunk},
         remaining{size_of_chunk},
         urng_begin{std::move(it_begin)},
@@ -374,10 +376,10 @@ public:
 
 private:
     //!\brief The chunk size, e.g., the length of the subrange returned by this iterator.
-    uint16_t chunk_size;
+    std::ranges::range_difference_t<urng_t> chunk_size;
 
     //!\brief The remaining elements in the chunk.
-    uint16_t remaining;
+    std::ranges::range_difference_t<urng_t> remaining;
 
     //!\brief Points to the start of the underlying range.
     urng_it_t urng_begin;
@@ -469,7 +471,9 @@ public:
     *
     * Linear in chunk_size for non-random_access ranges. Constant else.
     */
-    constexpr explicit basic_iterator(it_t it_start, sentinel_t it_end, uint16_t const size_of_chunk) :
+    constexpr explicit basic_iterator(it_t it_start,
+                                      sentinel_t it_end,
+                                      std::ranges::range_difference_t<urng_t> const size_of_chunk) :
         chunk_size{size_of_chunk},
         urng_begin{std::move(it_start)},
         urng_end{std::move(it_end)}
@@ -675,7 +679,7 @@ public:
 
 private:
     //!\brief The chunk size, e.g. the length of the subrange returned by this iterator.
-    uint16_t chunk_size;
+    std::ranges::range_difference_t<urng_t> chunk_size;
 
     //!\brief Points to the start of the underlying range.
     it_t urng_begin;
@@ -709,8 +713,12 @@ private:
         }
         else // We need to increment one by one to not cross urng_end.
         {
-            for (uint16_t increments{}; increments != chunk_size && start_of_chunk != urng_end; ++increments)
+            for (std::ranges::range_difference_t<urng_t> increments{};
+                 increments != chunk_size && start_of_chunk != urng_end;
+                 ++increments)
+            {
                 ++start_of_chunk;
+            }
 
             return start_of_chunk;
         }
@@ -739,8 +747,12 @@ private:
         }
         else // We need to decrement one by one to not cross urng_begin.
         {
-            for (uint16_t decrements{}; decrements != chunk_size && end_of_chunk != urng_begin; ++decrements)
+            for (std::ranges::range_difference_t<urng_t> decrements{};
+                 decrements != chunk_size && end_of_chunk != urng_begin;
+                 ++decrements)
+            {
                 --end_of_chunk;
+            }
 
             return end_of_chunk;
         }
@@ -756,7 +768,7 @@ private:
 struct chunk_fn
 {
     //!\brief Store the `chunk_size` and return a range adaptor closure object.
-    constexpr auto operator()(uint16_t const chunk_size) const
+    constexpr auto operator()(std::ptrdiff_t const chunk_size) const
     {
         return adaptor_from_functor{*this, chunk_size};
     }
@@ -766,13 +778,13 @@ struct chunk_fn
      * \param[in] chunk_size The chunk size, e.g. the length of the subrange returned by this iterator.
      * \returns A range of subranges.
      */
-    template <std::ranges::range underlying_range_t>
-    constexpr auto operator()(underlying_range_t && urange, uint16_t const chunk_size) const
+    template <std::ranges::range urng_t>
+    constexpr auto operator()(urng_t && urange, std::ranges::range_difference_t<urng_t> const chunk_size) const
     {
-        static_assert(std::ranges::input_range<underlying_range_t>,
+        static_assert(std::ranges::input_range<urng_t>,
                       "The range parameter to views::chunk must model std::ranges::input_range.");
 
-        return chunk_view{std::forward<underlying_range_t>(urange), chunk_size};
+        return chunk_view{std::forward<urng_t>(urange), chunk_size};
     }
 };
 
