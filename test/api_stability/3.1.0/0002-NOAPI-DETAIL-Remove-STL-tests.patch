@@ -1,0 +1,1868 @@
+From 4668cc467c1c78afb7426f2f122956a94c07f6b4 Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Mon, 13 Jun 2022 16:44:30 +0200
+Subject: [PATCH 02/11] [NOAPI] [DETAIL] Remove STL tests
+
+---
+ .../seqan3/test/concept_helper_classes.hpp    | 165 ++++++++++++
+ test/unit/std/CMakeLists.txt                  |   9 +-
+ test/unit/std/algorithm_test.cpp              |  25 --
+ test/unit/std/bit_test.cpp                    | 218 ----------------
+ test/unit/std/concept/CMakeLists.txt          |   5 -
+ test/unit/std/concept/auxiliary.hpp           | 104 --------
+ test/unit/std/concept/auxiliary_iterator.hpp  | 102 --------
+ test/unit/std/concept/callable_test.cpp       |  41 ---
+ test/unit/std/concept/comparison_test.cpp     |  33 ---
+ test/unit/std/concept/iterator_test.cpp       | 221 -----------------
+ test/unit/std/concept/object_test.cpp         |  74 ------
+ test/unit/std/concept/range_test.cpp          | 234 ------------------
+ test/unit/std/ranges/CMakeLists.txt           |   2 -
+ test/unit/std/ranges/find_test.cpp            |  39 ---
+ .../ranges/move_and_move_backward_test.cpp    |  34 ---
+ test/unit/std/ranges_test.cpp                 | 213 ----------------
+ test/unit/utility/detail/CMakeLists.txt       |  10 +-
+ .../detail/convertability_concepts_test.cpp   |  83 +++++++
+ .../detail/exposition_only_concept_test.cpp   |  97 --------
+ 19 files changed, 255 insertions(+), 1454 deletions(-)
+ create mode 100644 test/include/seqan3/test/concept_helper_classes.hpp
+ delete mode 100644 test/unit/std/algorithm_test.cpp
+ delete mode 100644 test/unit/std/bit_test.cpp
+ delete mode 100644 test/unit/std/concept/CMakeLists.txt
+ delete mode 100644 test/unit/std/concept/auxiliary.hpp
+ delete mode 100644 test/unit/std/concept/auxiliary_iterator.hpp
+ delete mode 100644 test/unit/std/concept/callable_test.cpp
+ delete mode 100644 test/unit/std/concept/comparison_test.cpp
+ delete mode 100644 test/unit/std/concept/iterator_test.cpp
+ delete mode 100644 test/unit/std/concept/object_test.cpp
+ delete mode 100644 test/unit/std/concept/range_test.cpp
+ delete mode 100644 test/unit/std/ranges/CMakeLists.txt
+ delete mode 100644 test/unit/std/ranges/find_test.cpp
+ delete mode 100644 test/unit/std/ranges/move_and_move_backward_test.cpp
+ delete mode 100644 test/unit/std/ranges_test.cpp
+ create mode 100644 test/unit/utility/detail/convertability_concepts_test.cpp
+ delete mode 100644 test/unit/utility/detail/exposition_only_concept_test.cpp
+
+diff --git a/test/include/seqan3/test/concept_helper_classes.hpp b/test/include/seqan3/test/concept_helper_classes.hpp
+new file mode 100644
+index 000000000..7390f0c1e
+--- /dev/null
++++ b/test/include/seqan3/test/concept_helper_classes.hpp
+@@ -0,0 +1,165 @@
++// -----------------------------------------------------------------------------------------------------
++// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
++// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
++// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
++// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
++// -----------------------------------------------------------------------------------------------------
++
++/*!\file
++ * \brief Provides helper classes for testing concepts.
++ * \author Enrico Seiler <enrico.seiler AT fu-berlin.de>
++ */
++
++#pragma once
++
++#include <seqan3/core/platform.hpp>
++
++// Helper classes for testing concepts.
++class type_b;
++class type_c;
++class type_d;
++
++/*!\brief Helper class for testing concepts.
++ * \details
++ * * weakly_ordered with itself
++ * * totally_ordered with type_b
++ */
++class type_a
++{
++public:
++    /*!\name Default constructors and assignments.
++     * \{
++     */
++    type_a() = default; //!< Defaulted.
++    type_a(type_a const &) = default; //!< Defaulted.
++    type_a & operator=(type_a const &) = default; //!< Defaulted.
++    type_a(type_a &&) = default; //!< Defaulted.
++    type_a & operator=(type_a &&) = default; //!< Defaulted.
++    ~type_a() = default; //!< Defaulted.
++    //!\}
++
++    /*!\name Comparison operators.
++     * \{
++     */
++    //!@{ Compares to another type.
++    friend constexpr bool operator<(type_a const & lhs, type_a const & rhs);
++    friend constexpr bool operator>(type_a const & lhs, type_a const & rhs);
++    friend constexpr bool operator<=(type_a const & lhs, type_a const & rhs);
++    friend constexpr bool operator>=(type_a const & lhs, type_a const & rhs);
++
++    friend constexpr bool operator==(type_a const & lhs, type_b const & rhs);
++    friend constexpr bool operator!=(type_a const & lhs, type_b const & rhs);
++    friend constexpr bool operator<(type_a const & lhs, type_b const & rhs);
++    friend constexpr bool operator>(type_a const & lhs, type_b const & rhs);
++    friend constexpr bool operator<=(type_a const & lhs, type_b const & rhs);
++    friend constexpr bool operator>=(type_a const & lhs, type_b const & rhs);
++    //!@}
++    //!\}
++};
++
++/*!\brief Move-only helper class for testing concepts.
++ * \details
++ * * totally_ordered with itself, type_a, type_d
++ */
++class type_b : public type_a
++{
++public:
++    /*!\name Default constructors and assignments.
++     * \{
++     */
++    type_b() = default; //!< Defaulted.
++    type_b(type_b const &) = delete; //!< Deleted.
++    type_b & operator=(type_b const &) = delete; //!< Deleted.
++    type_b(type_b &&) = default; //!< Defaulted.
++    type_b & operator=(type_b &&) = default; //!< Defaulted.
++    ~type_b() = default; //!< Defaulted.
++    //!\}
++
++    /*!\name Comparison operators.
++     * \{
++     */
++    //!@{ Compares to another type.
++    friend constexpr bool operator==(type_b const & lhs, type_b const & rhs);
++    friend constexpr bool operator!=(type_b const & lhs, type_b const & rhs);
++    friend constexpr bool operator<(type_b const & lhs, type_b const & rhs);
++    friend constexpr bool operator>(type_b const & lhs, type_b const & rhs);
++    friend constexpr bool operator<=(type_b const & lhs, type_b const & rhs);
++    friend constexpr bool operator>=(type_b const & lhs, type_b const & rhs);
++
++    friend constexpr bool operator==(type_b const & lhs, type_d const & rhs);
++    friend constexpr bool operator!=(type_b const & lhs, type_d const & rhs);
++    friend constexpr bool operator<(type_b const & lhs, type_d const & rhs);
++    friend constexpr bool operator>(type_b const & lhs, type_d const & rhs);
++    friend constexpr bool operator<=(type_b const & lhs, type_d const & rhs);
++    friend constexpr bool operator>=(type_b const & lhs, type_d const & rhs);
++    //!@}
++    //!\}
++};
++
++/*!\brief Helper class with custom constructors for testing concepts.
++ * \details
++ * * equality_comparable with itself
++ */
++class type_c
++{
++public:
++    /*!\name Default constructors and assignments.
++     * \{
++     */
++    type_c() = default;//!< Defaulted.
++    type_c(type_c const &) = default;//!< Defaulted.
++    type_c & operator=(type_c const &) = default;//!< Defaulted.
++    type_c(type_c &&) = default;//!< Defaulted.
++    type_c & operator=(type_c &&) = default;//!< Defaulted.
++    ~type_c() = default;//!< Defaulted.
++    //!\}
++
++    //!\brief Construct from type_b.
++    type_c(type_b const &)
++    {}
++
++    //!\brief Construct from type_a.
++    explicit type_c(type_a const &)
++    {}
++
++    /*!\name Comparison operators.
++     * \{
++     */
++    //!@{ Compares to another type.
++    friend constexpr bool operator==(type_c const & lhs, type_c const & rhs);
++    friend constexpr bool operator!=(type_c const & lhs, type_c const & rhs);
++    //!@}
++    //!\}
++};
++
++/*!\brief Unconstructible helper class for testing concepts.
++ * \details
++ * * totally_ordered with itself, type_b
++ */
++class type_d : public type_b
++{
++public:
++    /*!\name Default constructors and assignments.
++     * \{
++     */
++    type_d() = delete; //!< Deleted.
++    type_d(type_d const &) = delete; //!< Deleted.
++    type_d & operator=(type_d const &) = delete; //!< Deleted.
++    type_d(type_d &&) = delete; //!< Deleted.
++    type_d & operator=(type_d &&) = delete; //!< Deleted.
++    ~type_d() = delete; //!< Deleted.
++    //!\}
++
++    /*!\name Comparison operators.
++     * \{
++     */
++    //!@{ Compares to another type.
++    friend constexpr bool operator==(type_d const & lhs, type_d const & rhs);
++    friend constexpr bool operator!=(type_d const & lhs, type_d const & rhs);
++    friend constexpr bool operator<(type_d const & lhs, type_d const & rhs);
++    friend constexpr bool operator>(type_d const & lhs, type_d const & rhs);
++    friend constexpr bool operator<=(type_d const & lhs, type_d const & rhs);
++    friend constexpr bool operator>=(type_d const & lhs, type_d const & rhs);
++    //!@}
++    //!\}
++};
+diff --git a/test/unit/std/CMakeLists.txt b/test/unit/std/CMakeLists.txt
+index 0844cc360..e19ddf6d4 100644
+--- a/test/unit/std/CMakeLists.txt
++++ b/test/unit/std/CMakeLists.txt
+@@ -1,7 +1,2 @@
+-add_subdirectories()
+-
+-seqan3_test(algorithm_test.cpp)
+-seqan3_test(bit_test.cpp)
+-seqan3_test(charconv_int_test.cpp)
+-seqan3_test(charconv_float_test.cpp)
+-seqan3_test(ranges_test.cpp)
++seqan3_test (charconv_int_test.cpp)
++seqan3_test (charconv_float_test.cpp)
+diff --git a/test/unit/std/algorithm_test.cpp b/test/unit/std/algorithm_test.cpp
+deleted file mode 100644
+index 53c7432fd..000000000
+--- a/test/unit/std/algorithm_test.cpp
++++ /dev/null
+@@ -1,25 +0,0 @@
+-// -----------------------------------------------------------------------------------------------------
+-// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+-// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
+-// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+-// -----------------------------------------------------------------------------------------------------
+-
+-#include <gtest/gtest.h>
+-
+-#include <seqan3/std/algorithm>
+-#include <seqan3/std/iterator>
+-#include <seqan3/std/ranges>
+-#include <vector>
+-
+-#include <seqan3/core/platform.hpp>
+-
+-// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95578
+-TEST(algorithm_test, gcc95578)
+-{
+-    std::vector<int> v{};
+-    auto && rng = v | std::views::take_while([](auto &&){return true;});
+-
+-    std::vector<int> rng_copy{};
+-    std::ranges::copy(rng, std::cpp20::back_inserter(rng_copy));
+-}
+diff --git a/test/unit/std/bit_test.cpp b/test/unit/std/bit_test.cpp
+deleted file mode 100644
+index af458fee8..000000000
+--- a/test/unit/std/bit_test.cpp
++++ /dev/null
+@@ -1,218 +0,0 @@
+-// -----------------------------------------------------------------------------------------------------
+-// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+-// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
+-// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+-// -----------------------------------------------------------------------------------------------------
+-
+-#include <seqan3/std/bit>
+-#include <seqan3/std/concepts>
+-
+-#include <gtest/gtest.h>
+-
+-#include <sdsl/bits.hpp>
+-
+-#include <seqan3/utility/detail/bits_of.hpp>
+-
+-static constexpr size_t max_iterations = 1 << 15;
+-
+-TEST(bit, has_single_bit)
+-{
+-    constexpr bool is_power_of_two0 = std::has_single_bit(0u);
+-    constexpr bool is_power_of_two1 = std::has_single_bit(1u);
+-    constexpr bool is_power_of_two2 = std::has_single_bit(2u);
+-    constexpr bool is_power_of_two3 = std::has_single_bit(3u);
+-    EXPECT_FALSE(is_power_of_two0);
+-    EXPECT_TRUE(is_power_of_two1);
+-    EXPECT_TRUE(is_power_of_two2);
+-    EXPECT_FALSE(is_power_of_two3);
+-
+-    for (size_t power_of_two = 1; power_of_two <= (size_t{1u} << 31); power_of_two <<= 1)
+-    {
+-        EXPECT_TRUE(std::has_single_bit(power_of_two));
+-
+-        size_t next_power = (power_of_two << 1);
+-        for (size_t i = power_of_two + 1, k = 0; i < next_power && k < max_iterations; ++i, ++k)
+-        {
+-            EXPECT_FALSE(std::has_single_bit(i)) << i << " should not be a power of two.";
+-        }
+-    }
+-}
+-
+-TEST(bit, bit_ceil)
+-{
+-    constexpr size_t next_power_of_two0 = std::bit_ceil(0u);
+-    constexpr size_t next_power_of_two1 = std::bit_ceil(1u);
+-    constexpr size_t next_power_of_two2 = std::bit_ceil(2u);
+-    constexpr size_t next_power_of_two3 = std::bit_ceil(3u);
+-    EXPECT_EQ(next_power_of_two0, 1u);
+-    EXPECT_EQ(next_power_of_two1, 1u);
+-    EXPECT_EQ(next_power_of_two2, 2u);
+-    EXPECT_EQ(next_power_of_two3, 4u);
+-
+-    for (size_t power_of_two = 1; power_of_two <= (size_t{1u} << 31); power_of_two <<= 1)
+-    {
+-        EXPECT_EQ(std::bit_ceil(power_of_two), power_of_two);
+-
+-        size_t next_power = (power_of_two << 1);
+-        for (size_t i = power_of_two + 1, k = 0; i < next_power && k < max_iterations; ++i, ++k)
+-        {
+-            EXPECT_EQ(std::bit_ceil(i), next_power) << "The next power of two of " << i << " should be " << next_power;
+-        }
+-    }
+-}
+-
+-using unsigned_types = ::testing::Types<uint8_t, uint16_t, uint32_t, uint64_t>;
+-
+-template <typename type>
+-class unsigned_operations : public ::testing::Test
+-{};
+-
+-TYPED_TEST_SUITE(unsigned_operations, unsigned_types, );
+-
+-TYPED_TEST(unsigned_operations, bit_width)
+-{
+-    using unsigned_t = TypeParam;
+-    constexpr size_t zero = std::bit_width<unsigned_t>(0b0000);
+-    constexpr size_t one = std::bit_width<unsigned_t>(0b0001);
+-    constexpr size_t two1 = std::bit_width<unsigned_t>(0b0010);
+-    constexpr size_t two2 = std::bit_width<unsigned_t>(0b0011);
+-    constexpr size_t three1 = std::bit_width<unsigned_t>(0b0101);
+-    constexpr size_t three2 = std::bit_width<unsigned_t>(0b0111);
+-    constexpr size_t eight = std::bit_width<unsigned_t>(0b10010010);
+-    EXPECT_EQ(zero, 0u);
+-    EXPECT_EQ(one, 1u);
+-    EXPECT_EQ(two1, 2u);
+-    EXPECT_EQ(two2, 2u);
+-    EXPECT_EQ(three1, 3u);
+-    EXPECT_EQ(three2, 3u);
+-    EXPECT_EQ(eight, 8u);
+-
+-    for (uint8_t position = 0; position < seqan3::detail::bits_of<unsigned_t>; ++position)
+-    {
+-        unsigned_t start = unsigned_t{1u} << position;
+-        unsigned_t end = start << 1u;
+-        for (unsigned_t n = start, k = 0u; n < end && k < max_iterations; ++n, ++k)
+-        {
+-            EXPECT_EQ(sdsl::bits::hi(n), position) << "[SDSL] The position of the msb of " << n << " should be "
+-                                                   << position;
+-            EXPECT_EQ(std::bit_width(n), position + 1u) << "The position of the msb of " << n << " should be "
+-                                                        << position;
+-        }
+-    }
+-}
+-
+-TYPED_TEST(unsigned_operations, countl_zero)
+-{
+-    using unsigned_t = TypeParam;
+-    constexpr size_t t0 = std::countl_zero<unsigned_t>(0b0000u);
+-    constexpr size_t t1 = std::countl_zero<unsigned_t>(0b0001u);
+-    constexpr size_t t2 = std::countl_zero<unsigned_t>(0b0101u);
+-    constexpr size_t t3 = std::countl_zero<unsigned_t>(0b0010u);
+-    constexpr size_t t4 = std::countl_zero<unsigned_t>(0b0110u);
+-    constexpr size_t t5 = std::countl_zero<unsigned_t>(0b0100u);
+-    constexpr size_t t6 = std::countl_zero<unsigned_t>(0b10100000u);
+-    EXPECT_EQ(t0, seqan3::detail::bits_of<unsigned_t>);
+-    EXPECT_EQ(t1, seqan3::detail::bits_of<unsigned_t> - 1u);
+-    EXPECT_EQ(t2, seqan3::detail::bits_of<unsigned_t> - 3u);
+-    EXPECT_EQ(t3, seqan3::detail::bits_of<unsigned_t> - 2u);
+-    EXPECT_EQ(t4, seqan3::detail::bits_of<unsigned_t> - 3u);
+-    EXPECT_EQ(t5, seqan3::detail::bits_of<unsigned_t> - 3u);
+-    EXPECT_EQ(t6, seqan3::detail::bits_of<unsigned_t> - 8u);
+-
+-    for (uint8_t cnt = 0; cnt < seqan3::detail::bits_of<unsigned_t>; ++cnt)
+-    {
+-        unsigned_t start = std::numeric_limits<unsigned_t>::max() >> cnt;
+-        unsigned_t end = start >> 1u;
+-        for (unsigned_t n = start, k = 0u; n < end && k < max_iterations; ++n, ++k)
+-        {
+-            EXPECT_EQ(seqan3::detail::bits_of<unsigned_t> - sdsl::bits::hi(n) - 1, n) << "[SDSL] n " << n
+-                                                                                      << " should have " << cnt
+-                                                                                      << " leading zeros.";
+-            EXPECT_EQ(std::countl_zero(n), cnt) << "n " << n << " should have " << cnt
+-                                                             << " leading zeros.";
+-            EXPECT_EQ(std::countl_zero(n), cnt);
+-        }
+-    }
+-}
+-
+-TYPED_TEST(unsigned_operations, countr_zero)
+-{
+-    using unsigned_t = TypeParam;
+-    constexpr size_t bits_of = std::countr_zero<unsigned_t>(0b0000);
+-    constexpr size_t zero = std::countr_zero<unsigned_t>(0b0001);
+-    constexpr size_t zero2 = std::countr_zero<unsigned_t>(0b0101);
+-    constexpr size_t one1 = std::countr_zero<unsigned_t>(0b0010);
+-    constexpr size_t one2 = std::countr_zero<unsigned_t>(0b0110);
+-    constexpr size_t two = std::countr_zero<unsigned_t>(0b0100);
+-    constexpr size_t five = std::countr_zero<unsigned_t>(0b10100000);
+-    EXPECT_EQ(bits_of, seqan3::detail::bits_of<unsigned_t>);
+-    EXPECT_EQ(zero, 0u);
+-    EXPECT_EQ(zero2, 0u);
+-    EXPECT_EQ(one1, 1u);
+-    EXPECT_EQ(one2, 1u);
+-    EXPECT_EQ(two, 2u);
+-    EXPECT_EQ(five, 5u);
+-
+-    for (uint8_t cnt = 0; cnt < seqan3::detail::bits_of<unsigned_t>; ++cnt)
+-    {
+-        unsigned_t start = std::numeric_limits<unsigned_t>::max() << cnt;
+-        unsigned_t end = start << 1u;
+-        for (unsigned_t n = start, k = 0u; n < end && k < max_iterations; ++n, ++k)
+-        {
+-            EXPECT_EQ(sdsl::bits::lo(n), cnt) << "[SDSL] n " << n << " should have " << cnt << " trailing zeros.";
+-            EXPECT_EQ(std::countr_zero(n), cnt) << "n " << n << " should have " << cnt << " trailing zeros.";
+-        }
+-    }
+-}
+-
+-// https://graphics.stanford.edu/~seander/bithacks.html#NextBitPermutation
+-template <std::unsigned_integral unsigned_t>
+-unsigned_t permute_bits(unsigned_t v)
+-{
+-    if (v & (unsigned_t{1u} << (seqan3::detail::bits_of<unsigned_t> - 1)))
+-        return v;
+-
+-    unsigned_t t = v | (v - 1);
+-    unsigned_t w = (t + 1) | (((~t & -~t) - 1) >> (std::countr_zero(v) + 1));
+-    return w;
+-}
+-
+-TYPED_TEST(unsigned_operations, popcount)
+-{
+-    using unsigned_t = TypeParam;
+-    constexpr size_t zero = std::popcount<unsigned_t>(0b0000);
+-    constexpr size_t one = std::popcount<unsigned_t>(0b0100);
+-    constexpr size_t two = std::popcount<unsigned_t>(0b1100);
+-    constexpr size_t three = std::popcount<unsigned_t>(0b1110);
+-    constexpr size_t four = std::popcount<unsigned_t>(0b1111);
+-    constexpr size_t five = std::popcount<unsigned_t>(0b10011011);
+-    EXPECT_EQ(zero, 0u);
+-    EXPECT_EQ(one, 1u);
+-    EXPECT_EQ(two, 2u);
+-    EXPECT_EQ(three, 3u);
+-    EXPECT_EQ(four, 4u);
+-    EXPECT_EQ(five, 5u);
+-
+-    for (uint8_t position = 0; position < seqan3::detail::bits_of<unsigned_t>; ++position)
+-    {
+-        unsigned_t start = std::numeric_limits<unsigned_t>::max() >> position;
+-        auto sizeof_bits_of_unsigned_t = seqan3::detail::bits_of<unsigned_t>;
+-
+-        EXPECT_EQ(std::popcount(start),
+-                  sizeof_bits_of_unsigned_t - position) << "The pocount of " << start << " should be "
+-                                                        << sizeof_bits_of_unsigned_t - position;
+-        for (unsigned_t n = permute_bits(start), k = 0u;
+-             n > start && k < max_iterations;
+-             start = n, n = permute_bits(start), ++k)
+-        {
+-            EXPECT_EQ(static_cast<uint8_t>(sdsl::bits::cnt(n)),
+-                      sizeof_bits_of_unsigned_t - position) << "[SDSL] The pocount of " << n << " should be "
+-                                                            << sizeof_bits_of_unsigned_t - position;
+-            EXPECT_EQ(std::popcount(n),
+-                      sizeof_bits_of_unsigned_t - position) << "The pocount of " << n << " should be "
+-                                                            << sizeof_bits_of_unsigned_t - position;
+-            EXPECT_EQ(std::popcount(n), sizeof_bits_of_unsigned_t - position);
+-        }
+-    }
+-}
+diff --git a/test/unit/std/concept/CMakeLists.txt b/test/unit/std/concept/CMakeLists.txt
+deleted file mode 100644
+index b9c02eeef..000000000
+--- a/test/unit/std/concept/CMakeLists.txt
++++ /dev/null
+@@ -1,5 +0,0 @@
+-seqan3_test(comparison_test.cpp)
+-seqan3_test(object_test.cpp)
+-seqan3_test(callable_test.cpp)
+-seqan3_test(iterator_test.cpp)
+-seqan3_test(range_test.cpp)
+diff --git a/test/unit/std/concept/auxiliary.hpp b/test/unit/std/concept/auxiliary.hpp
+deleted file mode 100644
+index 180c1525a..000000000
+--- a/test/unit/std/concept/auxiliary.hpp
++++ /dev/null
+@@ -1,104 +0,0 @@
+-// -----------------------------------------------------------------------------------------------------
+-// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+-// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
+-// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+-// -----------------------------------------------------------------------------------------------------
+-
+-#pragma once
+-
+-//! \brief Helper struct for testing core concepts.
+-struct type_a
+-{};
+-
+-//! \brief Helper struct for testing core concepts.
+-struct type_b : type_a
+-{
+-    type_b(type_b const &) = delete;
+-    type_b(type_b &&) noexcept = default;
+-
+-    type_b & operator=(type_b const &) = delete;
+-    type_b & operator=(type_b &&) noexcept = default;
+-
+-    template <typename ...args>
+-    bool operator()(args &&...) const;
+-};
+-
+-//! \brief Helper struct for testing core concepts.
+-struct type_c
+-{
+-    type_c() = default;
+-    type_c(type_b const &)
+-    {}
+-    explicit type_c(type_a const &)
+-    {}
+-
+-    template <typename ...args>
+-    void operator()(args &&... ) const;
+-};
+-
+-//! \brief Helper struct for testing core concepts.
+-struct type_d: type_b
+-{
+-    type_d() = delete;
+-
+-    type_d(type_d const &) = delete;
+-    type_d(type_d &&) = delete;
+-
+-    type_d & operator=(type_d const &) = delete;
+-    type_d & operator=(type_d &&) = delete;
+-    ~type_d() = delete;
+-
+-    template <typename t1, typename t2>
+-    void operator()(t1 &&, t2 &&) const;
+-
+-    template <typename t>
+-    bool operator()(t &&, t &&) const;
+-};
+-
+-// Operator overloads for testing core concepts.
+-bool operator==(type_a const & , type_b const &);
+-bool operator==(type_b const & , type_a const &);
+-bool operator==(type_b const & , type_b const &);
+-bool operator==(type_d const & , type_b const &);
+-bool operator==(type_b const & , type_d const &);
+-bool operator==(type_d const & , type_d const &);
+-bool operator==(type_c const & , type_c const &);
+-
+-bool operator!=(type_a const & , type_b const &);
+-bool operator!=(type_b const & , type_a const &);
+-bool operator!=(type_b const & , type_b const &);
+-bool operator!=(type_d const & , type_b const &);
+-bool operator!=(type_b const & , type_d const &);
+-bool operator!=(type_d const & , type_d const &);
+-bool operator!=(type_c const & , type_c const &);
+-
+-bool operator<(type_a const & , type_a const &);
+-bool operator<(type_a const & , type_b const &);
+-bool operator<(type_b const & , type_b const &);
+-bool operator<(type_b const & , type_a const &);
+-bool operator>(type_a const & , type_a const &);
+-bool operator>(type_a const & , type_b const &);
+-bool operator>(type_b const & , type_b const &);
+-bool operator>(type_b const & , type_a const &);
+-bool operator<=(type_a const & , type_a const &);
+-bool operator<=(type_a const & , type_b const &);
+-bool operator<=(type_b const & , type_b const &);
+-bool operator<=(type_b const & , type_a const &);
+-bool operator>=(type_a const & , type_a const &);
+-bool operator>=(type_a const & , type_b const &);
+-bool operator>=(type_b const & , type_b const &);
+-bool operator>=(type_b const & , type_a const &);
+-
+-bool operator<(type_d const & , type_d const &);
+-bool operator<(type_d const & , type_b const &);
+-bool operator<(type_b const & , type_d const &);
+-bool operator>(type_d const & , type_d const &);
+-bool operator>(type_d const & , type_b const &);
+-bool operator>(type_b const & , type_d const &);
+-bool operator<=(type_d const & , type_d const &);
+-bool operator<=(type_d const & , type_b const &);
+-bool operator<=(type_b const & , type_d const &);
+-bool operator>=(type_d const & , type_d const &);
+-bool operator>=(type_d const & , type_b const &);
+-bool operator>=(type_b const & , type_d const &);
+diff --git a/test/unit/std/concept/auxiliary_iterator.hpp b/test/unit/std/concept/auxiliary_iterator.hpp
+deleted file mode 100644
+index df1a6bf8c..000000000
+--- a/test/unit/std/concept/auxiliary_iterator.hpp
++++ /dev/null
+@@ -1,102 +0,0 @@
+-// -----------------------------------------------------------------------------------------------------
+-// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+-// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
+-// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+-// -----------------------------------------------------------------------------------------------------
+-
+-#pragma once
+-
+-#include <forward_list>
+-#include <seqan3/std/iterator>
+-#include <list>
+-#include <vector>
+-
+-using input_iterator = std::istream_iterator<char>;
+-using output_iterator = std::cpp20::ostream_iterator<char>;
+-using forward_iterator = std::forward_list<char>::iterator;
+-using bidirectional_iterator = std::list<char>::iterator;
+-using random_access_iterator = std::vector<char>::iterator;
+-using forward_iterator_const = std::forward_list<char>::const_iterator;
+-using bidirectional_iterator_const = std::list<char>::const_iterator;
+-using random_access_iterator_const = std::vector<char>::const_iterator;
+-
+-// Weakly weakly_incrementable, semi-regular, weakly_equality_comparable
+-template <typename value_t>
+-struct test_sentinel
+-{
+-    using value_type      = value_t;
+-    using difference_type = size_t;
+-
+-    value_type val{};
+-};
+-
+-template <typename iterator_t, typename value_t>
+-inline bool operator==(iterator_t const & i,
+-                       test_sentinel<value_t> const & s)
+-{
+-    return *i == s.val;
+-}
+-
+-template <typename iterator_t, typename value_t>
+-inline bool operator!=(iterator_t const & i,
+-                       test_sentinel<value_t> const & s)
+-{
+-    return !(i == s);
+-}
+-
+-template <typename value_t, typename iterator_t>
+-inline bool operator==(test_sentinel<value_t> const & s,
+-                       iterator_t const & i)
+-{
+-    return *i == s.val;
+-}
+-
+-template <typename value_t, typename iterator_t>
+-inline bool operator!=(test_sentinel<value_t> const & s,
+-                       iterator_t const & i)
+-{
+-    return !(i == s);
+-}
+-
+-template <typename iterator_type>
+-struct input_or_output_iter_value
+-{
+-    using type = std::iter_value_t<iterator_type>;
+-};
+-
+-// ostream has std::iter_value_t void, but we want the output value type here.
+-template <typename value_t, typename ...ts>
+-struct input_or_output_iter_value<std::cpp20::ostream_iterator<value_t, ts...>>
+-{
+-    using type = value_t;
+-};
+-
+-template <typename iterator_type>
+-using input_or_output_iter_value_t = typename input_or_output_iter_value<iterator_type>::type;
+-
+-template <typename iterator_type>
+-struct test_sized_sentinel : public test_sentinel<input_or_output_iter_value_t<iterator_type>>
+-{
+-    using difference_type = typename iterator_type::difference_type;
+-
+-    iterator_type pos;
+-};
+-
+-template <typename iterator_t>
+-    requires std::random_access_iterator<iterator_t>
+-inline typename test_sized_sentinel<iterator_t>::difference_type
+-operator-(test_sized_sentinel<iterator_t> const & s,
+-          iterator_t const & i)
+-{
+-    return s.pos - i;
+-}
+-
+-template <typename iterator_t>
+-    requires std::random_access_iterator<iterator_t>
+-inline typename test_sized_sentinel<iterator_t>::difference_type
+-operator-(iterator_t const & i,
+-          test_sized_sentinel<iterator_t> const & s)
+-{
+-    return i - s.pos;
+-}
+diff --git a/test/unit/std/concept/callable_test.cpp b/test/unit/std/concept/callable_test.cpp
+deleted file mode 100644
+index fb466960c..000000000
+--- a/test/unit/std/concept/callable_test.cpp
++++ /dev/null
+@@ -1,41 +0,0 @@
+-// -----------------------------------------------------------------------------------------------------
+-// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+-// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
+-// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+-// -----------------------------------------------------------------------------------------------------
+-
+-#include <gtest/gtest.h>
+-
+-#include <random>
+-
+-#include <seqan3/std/concepts>
+-
+-#include "auxiliary.hpp"
+-
+-TEST(callable_concepts, invocable)
+-{
+-    EXPECT_TRUE((!std::invocable<type_a, int, double, type_b>));
+-    EXPECT_TRUE((std::invocable<std::random_device>));
+-    EXPECT_TRUE((std::invocable<type_c, int, double, type_b>));
+-}
+-
+-TEST(callable_concepts, regular_invocable)
+-{
+-    EXPECT_TRUE((!std::regular_invocable<type_a, int, double, type_b>));
+-//TODO(rrahn): Should not meet the std::regular_invocable
+-//    EXPECT_TRUE((!std::regular_invocable<std::random_device>));
+-    EXPECT_TRUE((std::regular_invocable<type_c, int, double, type_b>));
+-}
+-
+-TEST(callable_concepts, predicate)
+-{
+-    EXPECT_TRUE((!std::predicate<type_c, int, double, type_b>));
+-    EXPECT_TRUE((std::predicate<type_b, int, double, type_b>));
+-}
+-
+-TEST(callable_concepts, relation)
+-{
+-    EXPECT_TRUE((!std::relation<type_d, int, double>));
+-    EXPECT_TRUE((std::relation<type_d, int, int>));
+-}
+diff --git a/test/unit/std/concept/comparison_test.cpp b/test/unit/std/concept/comparison_test.cpp
+deleted file mode 100644
+index b86ba0e6d..000000000
+--- a/test/unit/std/concept/comparison_test.cpp
++++ /dev/null
+@@ -1,33 +0,0 @@
+-// -----------------------------------------------------------------------------------------------------
+-// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+-// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
+-// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+-// -----------------------------------------------------------------------------------------------------
+-
+-#include <gtest/gtest.h>
+-
+-#include <seqan3/std/concepts>
+-#include <random>
+-
+-#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+-
+-#include "auxiliary.hpp"
+-
+-TEST(comparison_concepts, weakly_equality_comparable_with)
+-{
+-    EXPECT_TRUE((seqan3::detail::weakly_equality_comparable_with<type_a, type_b>));
+-    EXPECT_TRUE((!seqan3::detail::weakly_equality_comparable_with<type_a, type_c>));
+-}
+-
+-TEST(comparison_concepts, equality_comparable)
+-{
+-    EXPECT_TRUE((!std::equality_comparable_with<type_a, type_b>));
+-    EXPECT_TRUE((std::equality_comparable_with<type_b, type_d>));
+-}
+-
+-TEST(comparison_concepts, totally_ordered)
+-{
+-    EXPECT_TRUE((!std::totally_ordered_with<type_a, type_b>));
+-    EXPECT_TRUE((std::totally_ordered_with<type_b, type_d>));
+-}
+diff --git a/test/unit/std/concept/iterator_test.cpp b/test/unit/std/concept/iterator_test.cpp
+deleted file mode 100644
+index 6f1cbf1a2..000000000
+--- a/test/unit/std/concept/iterator_test.cpp
++++ /dev/null
+@@ -1,221 +0,0 @@
+-// -----------------------------------------------------------------------------------------------------
+-// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+-// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
+-// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+-// -----------------------------------------------------------------------------------------------------
+-
+-#include <gtest/gtest.h>
+-
+-#include "auxiliary_iterator.hpp"
+-
+-TEST(iterator_concepts, readable)
+-{
+-    EXPECT_TRUE((std::indirectly_readable<input_iterator>));
+-    EXPECT_TRUE((!std::indirectly_readable<output_iterator>));
+-    EXPECT_TRUE((std::indirectly_readable<forward_iterator>));
+-    EXPECT_TRUE((std::indirectly_readable<bidirectional_iterator>));
+-    EXPECT_TRUE((std::indirectly_readable<random_access_iterator>));
+-    EXPECT_TRUE((std::indirectly_readable<forward_iterator_const>));
+-    EXPECT_TRUE((std::indirectly_readable<bidirectional_iterator_const>));
+-    EXPECT_TRUE((std::indirectly_readable<random_access_iterator_const>));
+-}
+-
+-TEST(iterator_concepts, writable)
+-{
+-    EXPECT_TRUE((!std::indirectly_writable<input_iterator, char>));
+-    EXPECT_TRUE((std::indirectly_writable<output_iterator, char>));
+-    EXPECT_TRUE((std::indirectly_writable<forward_iterator, char>));
+-    EXPECT_TRUE((!std::indirectly_writable<forward_iterator_const, char>));
+-    EXPECT_TRUE((std::indirectly_writable<bidirectional_iterator, char>));
+-    EXPECT_TRUE((!std::indirectly_writable<bidirectional_iterator_const, char>));
+-    EXPECT_TRUE((std::indirectly_writable<random_access_iterator, char>));
+-    EXPECT_TRUE((!std::indirectly_writable<random_access_iterator_const, char>));
+-}
+-
+-TEST(iterator_concepts, weakly_incrementable)
+-{
+-    EXPECT_TRUE((std::weakly_incrementable<input_iterator>));
+-    EXPECT_TRUE((std::weakly_incrementable<output_iterator>));
+-    EXPECT_TRUE((std::weakly_incrementable<forward_iterator>));
+-    EXPECT_TRUE((std::weakly_incrementable<forward_iterator_const>));
+-    EXPECT_TRUE((std::weakly_incrementable<bidirectional_iterator>));
+-    EXPECT_TRUE((std::weakly_incrementable<bidirectional_iterator_const>));
+-    EXPECT_TRUE((std::weakly_incrementable<random_access_iterator>));
+-    EXPECT_TRUE((std::weakly_incrementable<random_access_iterator_const>));
+-}
+-
+-TEST(iterator_concepts, incrementable)
+-{
+-    EXPECT_TRUE((std::incrementable<input_iterator>));
+-    EXPECT_TRUE((!std::incrementable<output_iterator>));
+-    EXPECT_TRUE((std::incrementable<forward_iterator>));
+-    EXPECT_TRUE((std::incrementable<forward_iterator_const>));
+-    EXPECT_TRUE((std::incrementable<bidirectional_iterator>));
+-    EXPECT_TRUE((std::incrementable<bidirectional_iterator_const>));
+-    EXPECT_TRUE((std::incrementable<random_access_iterator>));
+-    EXPECT_TRUE((std::incrementable<random_access_iterator_const>));
+-}
+-
+-TEST(iterator_concepts, Iterator)
+-{
+-    EXPECT_TRUE((std::input_or_output_iterator<input_iterator>));
+-    EXPECT_TRUE((std::input_or_output_iterator<output_iterator>));
+-    EXPECT_TRUE((std::input_or_output_iterator<forward_iterator>));
+-    EXPECT_TRUE((std::input_or_output_iterator<forward_iterator_const>));
+-    EXPECT_TRUE((std::input_or_output_iterator<bidirectional_iterator>));
+-    EXPECT_TRUE((std::input_or_output_iterator<bidirectional_iterator_const>));
+-    EXPECT_TRUE((std::input_or_output_iterator<random_access_iterator>));
+-    EXPECT_TRUE((std::input_or_output_iterator<random_access_iterator_const>));
+-}
+-
+-TEST(iterator_concepts, sentinel_for)
+-{
+-    EXPECT_TRUE((std::sentinel_for<test_sentinel<char>,
+-                                          input_iterator>));
+-    EXPECT_TRUE((std::sentinel_for<test_sentinel<char>,
+-                                          output_iterator>));
+-    EXPECT_TRUE((std::sentinel_for<test_sentinel<char>,
+-                                          forward_iterator>));
+-    EXPECT_TRUE((std::sentinel_for<test_sentinel<char>,
+-                                          forward_iterator_const>));
+-    EXPECT_TRUE((std::sentinel_for<test_sentinel<char>,
+-                                          bidirectional_iterator>));
+-    EXPECT_TRUE((std::sentinel_for<test_sentinel<char>,
+-                                          bidirectional_iterator_const>));
+-    EXPECT_TRUE((std::sentinel_for<test_sentinel<char>,
+-                                          random_access_iterator>));
+-    EXPECT_TRUE((std::sentinel_for<test_sentinel<char>,
+-                                          random_access_iterator_const>));
+-
+-    EXPECT_TRUE((std::sentinel_for<test_sized_sentinel<
+-                                          input_iterator>,
+-                                          input_iterator>));
+-    EXPECT_TRUE((std::is_same_v<char, input_or_output_iter_value_t<std::cpp20::ostream_iterator<char>>>));
+-    EXPECT_TRUE((std::sentinel_for<test_sized_sentinel<
+-                                          output_iterator>,
+-                                          output_iterator>));
+-    EXPECT_TRUE((std::sentinel_for<test_sized_sentinel<
+-                                          forward_iterator>,
+-                                          forward_iterator>));
+-    EXPECT_TRUE((std::sentinel_for<test_sized_sentinel<
+-                                          forward_iterator_const>,
+-                                          forward_iterator_const>));
+-    EXPECT_TRUE((std::sentinel_for<test_sized_sentinel<
+-                                          bidirectional_iterator>,
+-                                          bidirectional_iterator>));
+-    EXPECT_TRUE((std::sentinel_for<test_sized_sentinel<
+-                                          bidirectional_iterator_const>,
+-                                          bidirectional_iterator_const>));
+-    EXPECT_TRUE((std::sentinel_for<test_sized_sentinel<
+-                                          random_access_iterator>,
+-                                          random_access_iterator>));
+-    EXPECT_TRUE((std::sentinel_for<test_sized_sentinel<
+-                                          random_access_iterator_const>,
+-                                          random_access_iterator_const>));
+-}
+-
+-TEST(iterator_concepts, sized_sentinel_for)
+-{
+-    EXPECT_TRUE((!std::sized_sentinel_for<test_sentinel<char>,
+-                                                 input_iterator>));
+-    EXPECT_TRUE((!std::sized_sentinel_for<test_sentinel<char>,
+-                                                 output_iterator>));
+-    EXPECT_TRUE((!std::sized_sentinel_for<test_sentinel<char>,
+-                                                 forward_iterator>));
+-    EXPECT_TRUE((!std::sized_sentinel_for<test_sentinel<char>,
+-                                                 forward_iterator_const>));
+-    EXPECT_TRUE((!std::sized_sentinel_for<test_sentinel<char>,
+-                                                 bidirectional_iterator>));
+-    EXPECT_TRUE((!std::sized_sentinel_for<test_sentinel<char>,
+-                                                 bidirectional_iterator_const>));
+-    EXPECT_TRUE((!std::sized_sentinel_for<test_sentinel<char>,
+-                                                 random_access_iterator>));
+-    EXPECT_TRUE((!std::sized_sentinel_for<test_sentinel<char>,
+-                                                 random_access_iterator_const>));
+-
+-    EXPECT_TRUE((!std::sized_sentinel_for<test_sized_sentinel<
+-                                                 input_iterator>,
+-                                                 input_iterator>));
+-    EXPECT_TRUE((!std::sized_sentinel_for<test_sized_sentinel<
+-                                                 output_iterator>,
+-                                                 output_iterator>));
+-    EXPECT_TRUE((!std::sized_sentinel_for<test_sized_sentinel<
+-                                                 forward_iterator>,
+-                                                 forward_iterator>));
+-    EXPECT_TRUE((!std::sized_sentinel_for<test_sized_sentinel<
+-                                                 forward_iterator_const>,
+-                                                 forward_iterator_const>));
+-    EXPECT_TRUE((!std::sized_sentinel_for<test_sized_sentinel<
+-                                                 bidirectional_iterator>,
+-                                                 bidirectional_iterator>));
+-    EXPECT_TRUE((!std::sized_sentinel_for<test_sized_sentinel<
+-                                                 bidirectional_iterator_const>,
+-                                                 bidirectional_iterator_const>));
+-    EXPECT_TRUE((std::sized_sentinel_for<test_sized_sentinel<
+-                                                random_access_iterator>,
+-                                                random_access_iterator>));
+-    EXPECT_TRUE((std::sized_sentinel_for<test_sized_sentinel<
+-                                                random_access_iterator_const>,
+-                                                random_access_iterator_const>));
+-}
+-
+-TEST(iterator_concepts, output_iterator)
+-{
+-    EXPECT_TRUE((!std::output_iterator<input_iterator, char>));
+-    EXPECT_TRUE((std::output_iterator<output_iterator, char>));
+-    EXPECT_TRUE((std::output_iterator<forward_iterator, char>));
+-    EXPECT_TRUE((!std::output_iterator<forward_iterator_const, char>));
+-    EXPECT_TRUE((std::output_iterator<bidirectional_iterator, char>));
+-    EXPECT_TRUE((!std::output_iterator<bidirectional_iterator_const, char>));
+-    EXPECT_TRUE((std::output_iterator<random_access_iterator, char>));
+-    EXPECT_TRUE((!std::output_iterator<random_access_iterator_const, char>));
+-}
+-
+-TEST(iterator_concepts, input_iterator)
+-{
+-    EXPECT_TRUE((std::input_iterator<input_iterator>));
+-    EXPECT_TRUE((!std::input_iterator<output_iterator>));
+-    EXPECT_TRUE((std::input_iterator<forward_iterator>));
+-    EXPECT_TRUE((std::input_iterator<forward_iterator_const>));
+-    EXPECT_TRUE((std::input_iterator<bidirectional_iterator>));
+-    EXPECT_TRUE((std::input_iterator<bidirectional_iterator_const>));
+-    EXPECT_TRUE((std::input_iterator<random_access_iterator>));
+-    EXPECT_TRUE((std::input_iterator<random_access_iterator_const>));
+-}
+-
+-TEST(iterator_concepts, forward_iterator)
+-{
+-    EXPECT_TRUE((!std::forward_iterator<input_iterator>));
+-    EXPECT_TRUE((!std::forward_iterator<output_iterator>));
+-    EXPECT_TRUE((std::forward_iterator<forward_iterator>));
+-    EXPECT_TRUE((std::forward_iterator<forward_iterator_const>));
+-    EXPECT_TRUE((std::forward_iterator<bidirectional_iterator>));
+-    EXPECT_TRUE((std::forward_iterator<bidirectional_iterator_const>));
+-    EXPECT_TRUE((std::forward_iterator<random_access_iterator>));
+-    EXPECT_TRUE((std::forward_iterator<random_access_iterator_const>));
+-}
+-
+-TEST(iterator_concepts, bidirectional_iterator)
+-{
+-    EXPECT_TRUE((!std::bidirectional_iterator<input_iterator>));
+-    EXPECT_TRUE((!std::bidirectional_iterator<output_iterator>));
+-    EXPECT_TRUE((!std::bidirectional_iterator<forward_iterator>));
+-    EXPECT_TRUE((!std::bidirectional_iterator<forward_iterator_const>));
+-    EXPECT_TRUE((std::bidirectional_iterator<bidirectional_iterator>));
+-    EXPECT_TRUE((std::bidirectional_iterator<bidirectional_iterator_const>));
+-    EXPECT_TRUE((std::bidirectional_iterator<random_access_iterator>));
+-    EXPECT_TRUE((std::bidirectional_iterator<random_access_iterator_const>));
+-}
+-
+-TEST(iterator_concepts, random_access_iterator)
+-{
+-    EXPECT_TRUE((!std::random_access_iterator<input_iterator>));
+-    EXPECT_TRUE((!std::random_access_iterator<output_iterator>));
+-    EXPECT_TRUE((!std::random_access_iterator<forward_iterator>));
+-    EXPECT_TRUE((!std::random_access_iterator<forward_iterator_const>));
+-    EXPECT_TRUE((!std::random_access_iterator<bidirectional_iterator>));
+-    EXPECT_TRUE((!std::random_access_iterator<bidirectional_iterator_const>));
+-    EXPECT_TRUE((std::random_access_iterator<random_access_iterator>));
+-    EXPECT_TRUE((std::random_access_iterator<random_access_iterator_const>));
+-}
+diff --git a/test/unit/std/concept/object_test.cpp b/test/unit/std/concept/object_test.cpp
+deleted file mode 100644
+index 645264aab..000000000
+--- a/test/unit/std/concept/object_test.cpp
++++ /dev/null
+@@ -1,74 +0,0 @@
+-// -----------------------------------------------------------------------------------------------------
+-// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+-// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
+-// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+-// -----------------------------------------------------------------------------------------------------
+-
+-#include <gtest/gtest.h>
+-
+-#include <seqan3/std/concepts>
+-#include <random>
+-
+-#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+-
+-#include "auxiliary.hpp"
+-
+-TEST(object_concepts, destructible)
+-{
+-    EXPECT_TRUE((std::destructible<type_a>));
+-    EXPECT_TRUE((!std::destructible<type_d>));
+-}
+-
+-TEST(object_concepts, constructible_from)
+-{
+-    EXPECT_TRUE((std::constructible_from<type_a>));
+-    EXPECT_TRUE((std::constructible_from<type_c, type_a>));
+-    EXPECT_TRUE((!std::constructible_from<type_c, int>));
+-}
+-
+-TEST(object_concepts, default_initializable)
+-{
+-    EXPECT_TRUE((std::default_initializable<type_a>));
+-    EXPECT_TRUE((!std::default_initializable<type_d>));
+-}
+-
+-TEST(object_concepts, move_constructible)
+-{
+-    EXPECT_TRUE((std::move_constructible<type_b>));
+-    EXPECT_TRUE((!std::move_constructible<type_d>));
+-}
+-
+-TEST(object_concepts, copy_constructible)
+-{
+-    EXPECT_TRUE((std::copy_constructible<type_a>));
+-    EXPECT_TRUE((!std::copy_constructible<type_b>));
+-}
+-
+-TEST(object_concepts, movable)
+-{
+-    EXPECT_TRUE((std::movable<type_b>));
+-    EXPECT_TRUE((!std::movable<type_d>));
+-}
+-
+-TEST(object_concepts, copyable)
+-{
+-    EXPECT_TRUE((std::copyable<type_a>));
+-    EXPECT_TRUE((!std::copyable<type_b>));
+-}
+-
+-TEST(object_concepts, semiregular)
+-{
+-    EXPECT_TRUE((std::semiregular<type_a>));
+-    EXPECT_TRUE((std::semiregular<type_c>));
+-    EXPECT_TRUE((!std::semiregular<type_b>));
+-    EXPECT_TRUE((!std::semiregular<type_d>));
+-}
+-
+-TEST(object_concepts, regular)
+-{
+-    EXPECT_TRUE((!std::regular<type_a>));
+-    EXPECT_TRUE((!std::regular<type_b>));
+-    EXPECT_TRUE((std::regular<type_c>));
+-    EXPECT_TRUE((!std::regular<type_d>));
+-}
+diff --git a/test/unit/std/concept/range_test.cpp b/test/unit/std/concept/range_test.cpp
+deleted file mode 100644
+index 7c80a5761..000000000
+--- a/test/unit/std/concept/range_test.cpp
++++ /dev/null
+@@ -1,234 +0,0 @@
+-// -----------------------------------------------------------------------------------------------------
+-// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+-// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
+-// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+-// -----------------------------------------------------------------------------------------------------
+-
+-#include <gtest/gtest.h>
+-
+-#include <array>
+-#include <deque>
+-#include <forward_list>
+-#include <list>
+-#include <seqan3/std/ranges>
+-#include <string>
+-#include <vector>
+-
+-#include <range/v3/view/any_view.hpp>
+-
+-#include <sdsl/int_vector.hpp>
+-
+-TEST(range_concepts, Range)
+-{
+-    EXPECT_TRUE ((std::ranges::range<std::forward_list<char>>));
+-    EXPECT_TRUE ((std::ranges::range<std::list<char>>));
+-    EXPECT_TRUE ((std::ranges::range<std::array<char, 2>>));
+-    EXPECT_TRUE ((std::ranges::range<std::vector<char>>));
+-    EXPECT_TRUE ((std::ranges::range<std::deque<char>>));
+-    EXPECT_TRUE ((std::ranges::range<std::string>));
+-
+-    EXPECT_TRUE ((std::ranges::range<sdsl::int_vector<8>>));
+-    EXPECT_TRUE ((std::ranges::range<sdsl::int_vector<9>>));
+-
+-    EXPECT_TRUE ((std::ranges::range<ranges::any_view<char, ranges::category::input>>));
+-    EXPECT_TRUE ((std::ranges::range<ranges::any_view<char, ranges::category::forward>>));
+-    EXPECT_TRUE ((std::ranges::range<ranges::any_view<char, ranges::category::bidirectional>>));
+-    EXPECT_TRUE ((std::ranges::range<ranges::any_view<char, ranges::category::random_access>>));
+-
+-    EXPECT_TRUE ((std::ranges::range<std::vector<char> const>));
+-    EXPECT_TRUE ((std::ranges::range<std::vector<char> const &>));
+-}
+-
+-TEST(range_concepts, input_range)
+-{
+-    EXPECT_TRUE ((std::ranges::input_range<std::forward_list<char>>));
+-    EXPECT_TRUE ((std::ranges::input_range<std::list<char>>));
+-    EXPECT_TRUE ((std::ranges::input_range<std::array<char, 2>>));
+-    EXPECT_TRUE ((std::ranges::input_range<std::vector<char>>));
+-    EXPECT_TRUE ((std::ranges::input_range<std::deque<char>>));
+-    EXPECT_TRUE ((std::ranges::input_range<std::string>));
+-
+-    EXPECT_TRUE ((std::ranges::input_range<sdsl::int_vector<8>>));
+-    EXPECT_TRUE ((std::ranges::input_range<sdsl::int_vector<9>>));
+-
+-    EXPECT_TRUE ((std::ranges::input_range<ranges::any_view<char, ranges::category::input>>));
+-    EXPECT_TRUE ((std::ranges::input_range<ranges::any_view<char, ranges::category::forward>>));
+-    EXPECT_TRUE ((std::ranges::input_range<ranges::any_view<char, ranges::category::bidirectional>>));
+-    EXPECT_TRUE ((std::ranges::input_range<ranges::any_view<char, ranges::category::random_access>>));
+-
+-    EXPECT_TRUE ((std::ranges::input_range<std::vector<char> const>));
+-    EXPECT_TRUE ((std::ranges::input_range<std::vector<char> const &>));
+-}
+-
+-TEST(range_concepts, forward_range)
+-{
+-    EXPECT_TRUE ((std::ranges::forward_range<std::forward_list<char>>));
+-    EXPECT_TRUE ((std::ranges::forward_range<std::list<char>>));
+-    EXPECT_TRUE ((std::ranges::forward_range<std::array<char, 2>>));
+-    EXPECT_TRUE ((std::ranges::forward_range<std::vector<char>>));
+-    EXPECT_TRUE ((std::ranges::forward_range<std::deque<char>>));
+-    EXPECT_TRUE ((std::ranges::forward_range<std::string>));
+-
+-    EXPECT_TRUE ((std::ranges::forward_range<sdsl::int_vector<8>>));
+-    EXPECT_TRUE ((std::ranges::forward_range<sdsl::int_vector<9>>));
+-
+-    EXPECT_FALSE((std::ranges::forward_range<ranges::any_view<char, ranges::category::input>>));
+-    EXPECT_TRUE ((std::ranges::forward_range<ranges::any_view<char, ranges::category::forward>>));
+-    EXPECT_TRUE ((std::ranges::forward_range<ranges::any_view<char, ranges::category::bidirectional>>));
+-    EXPECT_TRUE ((std::ranges::forward_range<ranges::any_view<char, ranges::category::random_access>>));
+-
+-    EXPECT_TRUE ((std::ranges::forward_range<std::vector<char> const>));
+-    EXPECT_TRUE ((std::ranges::forward_range<std::vector<char> const &>));
+-}
+-
+-TEST(range_concepts, bidirectional_range)
+-{
+-    EXPECT_FALSE((std::ranges::bidirectional_range<std::forward_list<char>>));
+-    EXPECT_TRUE ((std::ranges::bidirectional_range<std::list<char>>));
+-    EXPECT_TRUE ((std::ranges::bidirectional_range<std::array<char, 2>>));
+-    EXPECT_TRUE ((std::ranges::bidirectional_range<std::vector<char>>));
+-    EXPECT_TRUE ((std::ranges::bidirectional_range<std::deque<char>>));
+-    EXPECT_TRUE ((std::ranges::bidirectional_range<std::string>));
+-
+-    EXPECT_TRUE ((std::ranges::bidirectional_range<sdsl::int_vector<8>>));
+-    EXPECT_TRUE ((std::ranges::bidirectional_range<sdsl::int_vector<9>>));
+-
+-    EXPECT_FALSE((std::ranges::bidirectional_range<ranges::any_view<char, ranges::category::input>>));
+-    EXPECT_FALSE((std::ranges::bidirectional_range<ranges::any_view<char, ranges::category::forward>>));
+-    EXPECT_TRUE ((std::ranges::bidirectional_range<ranges::any_view<char, ranges::category::bidirectional>>));
+-    EXPECT_TRUE ((std::ranges::bidirectional_range<ranges::any_view<char, ranges::category::random_access>>));
+-
+-    EXPECT_TRUE ((std::ranges::bidirectional_range<std::vector<char> const>));
+-    EXPECT_TRUE ((std::ranges::bidirectional_range<std::vector<char> const &>));
+-}
+-
+-TEST(range_concepts, random_access_range)
+-{
+-    EXPECT_FALSE((std::ranges::random_access_range<std::forward_list<char>>));
+-    EXPECT_FALSE((std::ranges::random_access_range<std::list<char>>));
+-    EXPECT_TRUE ((std::ranges::random_access_range<std::array<char, 2>>));
+-    EXPECT_TRUE ((std::ranges::random_access_range<std::vector<char>>));
+-    EXPECT_TRUE ((std::ranges::random_access_range<std::deque<char>>));
+-    EXPECT_TRUE ((std::ranges::random_access_range<std::string>));
+-
+-    EXPECT_TRUE ((std::ranges::random_access_range<sdsl::int_vector<8>>));
+-    EXPECT_TRUE ((std::ranges::random_access_range<sdsl::int_vector<9>>));
+-
+-    EXPECT_FALSE((std::ranges::random_access_range<ranges::any_view<char, ranges::category::input>>));
+-    EXPECT_FALSE((std::ranges::random_access_range<ranges::any_view<char, ranges::category::forward>>));
+-    EXPECT_FALSE((std::ranges::random_access_range<ranges::any_view<char, ranges::category::bidirectional>>));
+-    EXPECT_TRUE ((std::ranges::random_access_range<ranges::any_view<char, ranges::category::random_access>>));
+-
+-    EXPECT_TRUE ((std::ranges::random_access_range<std::vector<char> const>));
+-    EXPECT_TRUE ((std::ranges::random_access_range<std::vector<char> const &>));
+-}
+-
+-TEST(range_concepts, contiguous_range)
+-{
+-    EXPECT_FALSE((std::ranges::contiguous_range<std::forward_list<char>>));
+-    EXPECT_FALSE((std::ranges::contiguous_range<std::list<char>>));
+-    EXPECT_TRUE ((std::ranges::contiguous_range<std::array<char, 2>>));
+-    EXPECT_TRUE ((std::ranges::contiguous_range<std::vector<char>>));
+-    EXPECT_FALSE((std::ranges::contiguous_range<std::deque<char>>));
+-    EXPECT_TRUE ((std::ranges::contiguous_range<std::string>));
+-
+-//     EXPECT_TRUE ((std::ranges::contiguous_range<sdsl::int_vector<8>>));
+-    EXPECT_FALSE((std::ranges::contiguous_range<sdsl::int_vector<9>>));
+-
+-    EXPECT_FALSE((std::ranges::contiguous_range<ranges::any_view<char, ranges::category::input>>));
+-    EXPECT_FALSE((std::ranges::contiguous_range<ranges::any_view<char, ranges::category::forward>>));
+-    EXPECT_FALSE((std::ranges::contiguous_range<ranges::any_view<char, ranges::category::bidirectional>>));
+-    EXPECT_FALSE((std::ranges::contiguous_range<ranges::any_view<char, ranges::category::random_access>>));
+-
+-    EXPECT_TRUE ((std::ranges::contiguous_range<std::vector<char> const>));
+-    EXPECT_TRUE ((std::ranges::contiguous_range<std::vector<char> const &>));
+-}
+-
+-TEST(range_concepts, output_range)
+-{
+-    EXPECT_TRUE ((std::ranges::output_range<std::forward_list<char>, char>));
+-    EXPECT_TRUE ((std::ranges::output_range<std::list<char>, char>));
+-    EXPECT_TRUE ((std::ranges::output_range<std::array<char, 2>, char>));
+-    EXPECT_TRUE ((std::ranges::output_range<std::vector<char>, char>));
+-    EXPECT_TRUE ((std::ranges::output_range<std::deque<char>, char>));
+-    EXPECT_TRUE ((std::ranges::output_range<std::string, char>));
+-
+-    EXPECT_TRUE ((std::ranges::output_range<sdsl::int_vector<8>, uint8_t>));
+-//     EXPECT_TRUE ((std::ranges::output_range<sdsl::int_vector<9>, uint8_t>));
+-
+-    EXPECT_FALSE((std::ranges::output_range<ranges::any_view<char, ranges::category::input>, char>));
+-    EXPECT_FALSE((std::ranges::output_range<ranges::any_view<char, ranges::category::forward>, char>));
+-    EXPECT_FALSE((std::ranges::output_range<ranges::any_view<char, ranges::category::bidirectional>, char>));
+-    EXPECT_FALSE((std::ranges::output_range<ranges::any_view<char, ranges::category::random_access>, char>));
+-
+-    EXPECT_TRUE ((std::ranges::output_range<std::vector<char> &, char>));
+-    EXPECT_FALSE((std::ranges::output_range<std::vector<char> const, char>));
+-    EXPECT_FALSE((std::ranges::output_range<std::vector<char> const &, char>));
+-}
+-
+-TEST(range_concepts, sized_range)
+-{
+-    EXPECT_FALSE((std::ranges::sized_range<std::forward_list<char>>));
+-    EXPECT_TRUE ((std::ranges::sized_range<std::list<char>>));
+-    EXPECT_TRUE ((std::ranges::sized_range<std::array<char, 2>>));
+-    EXPECT_TRUE ((std::ranges::sized_range<std::vector<char>>));
+-    EXPECT_TRUE ((std::ranges::sized_range<std::deque<char>>));
+-    EXPECT_TRUE ((std::ranges::sized_range<std::string>));
+-
+-    EXPECT_TRUE ((std::ranges::sized_range<sdsl::int_vector<8>>));
+-    EXPECT_TRUE ((std::ranges::sized_range<sdsl::int_vector<9>>));
+-
+-    EXPECT_FALSE((std::ranges::sized_range<ranges::any_view<char, ranges::category::input>>));
+-    EXPECT_FALSE((std::ranges::sized_range<ranges::any_view<char, ranges::category::forward>>));
+-    EXPECT_FALSE((std::ranges::sized_range<ranges::any_view<char, ranges::category::bidirectional>>));
+-    EXPECT_FALSE((std::ranges::sized_range<ranges::any_view<char, ranges::category::random_access>>));
+-
+-    EXPECT_TRUE ((std::ranges::sized_range<std::vector<char> &>));
+-    EXPECT_TRUE ((std::ranges::sized_range<std::vector<char> const>));
+-    EXPECT_TRUE ((std::ranges::sized_range<std::vector<char> const &>));
+-}
+-
+-TEST(range_concepts, View)
+-{
+-    EXPECT_FALSE((std::ranges::view<std::forward_list<char>>));
+-    EXPECT_FALSE((std::ranges::view<std::list<char>>));
+-    EXPECT_FALSE((std::ranges::view<std::array<char, 2>>));
+-    EXPECT_FALSE((std::ranges::view<std::vector<char>>));
+-    EXPECT_FALSE((std::ranges::view<std::deque<char>>));
+-    EXPECT_FALSE((std::ranges::view<std::string>));
+-
+-    EXPECT_FALSE((std::ranges::view<sdsl::int_vector<8>>));
+-    EXPECT_FALSE((std::ranges::view<sdsl::int_vector<9>>));
+-
+-    EXPECT_TRUE ((std::ranges::view<ranges::any_view<char, ranges::category::input>>));
+-    EXPECT_TRUE ((std::ranges::view<ranges::any_view<char, ranges::category::forward>>));
+-    EXPECT_TRUE ((std::ranges::view<ranges::any_view<char, ranges::category::bidirectional>>));
+-    EXPECT_TRUE ((std::ranges::view<ranges::any_view<char, ranges::category::random_access>>));
+-
+-    EXPECT_FALSE((std::ranges::view<std::vector<char> &>));
+-    EXPECT_FALSE((std::ranges::view<std::vector<char> const>));
+-    EXPECT_FALSE((std::ranges::view<std::vector<char> const &>));
+-}
+-
+-TEST(range_concepts, viewable_range)
+-{
+-    EXPECT_FALSE((std::ranges::viewable_range<std::forward_list<char>>));
+-    EXPECT_FALSE((std::ranges::viewable_range<std::list<char>>));
+-    EXPECT_FALSE((std::ranges::viewable_range<std::array<char, 2>>));
+-    EXPECT_FALSE((std::ranges::viewable_range<std::vector<char>>));
+-    EXPECT_FALSE((std::ranges::viewable_range<std::deque<char>>));
+-    EXPECT_FALSE((std::ranges::viewable_range<std::string>));
+-
+-    EXPECT_FALSE((std::ranges::viewable_range<sdsl::int_vector<8>>));
+-    EXPECT_FALSE((std::ranges::viewable_range<sdsl::int_vector<9>>));
+-
+-    EXPECT_TRUE ((std::ranges::viewable_range<ranges::any_view<char, ranges::category::input>>));
+-    EXPECT_TRUE ((std::ranges::viewable_range<ranges::any_view<char, ranges::category::forward>>));
+-    EXPECT_TRUE ((std::ranges::viewable_range<ranges::any_view<char, ranges::category::bidirectional>>));
+-    EXPECT_TRUE ((std::ranges::viewable_range<ranges::any_view<char, ranges::category::random_access>>));
+-
+-    EXPECT_TRUE ((std::ranges::viewable_range<std::vector<char> &>));
+-    EXPECT_FALSE((std::ranges::viewable_range<std::vector<char> const>));
+-    EXPECT_TRUE ((std::ranges::viewable_range<std::vector<char> const &>));
+-}
+diff --git a/test/unit/std/ranges/CMakeLists.txt b/test/unit/std/ranges/CMakeLists.txt
+deleted file mode 100644
+index 15ae9f8b5..000000000
+--- a/test/unit/std/ranges/CMakeLists.txt
++++ /dev/null
+@@ -1,2 +0,0 @@
+-seqan3_test (find_test.cpp)
+-seqan3_test (move_and_move_backward_test.cpp)
+diff --git a/test/unit/std/ranges/find_test.cpp b/test/unit/std/ranges/find_test.cpp
+deleted file mode 100644
+index e6cab702c..000000000
+--- a/test/unit/std/ranges/find_test.cpp
++++ /dev/null
+@@ -1,39 +0,0 @@
+-// -----------------------------------------------------------------------------------------------------
+-// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+-// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
+-// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+-// -----------------------------------------------------------------------------------------------------
+-
+-#include <gtest/gtest.h>
+-
+-#include <vector>
+-
+-#include <seqan3/std/algorithm>
+-
+-TEST(general, find)
+-{
+-    std::vector v{0, 1, 2, 3, 4, 5, 6};
+-
+-    auto res = std::ranges::find(v, 3);
+-
+-    EXPECT_EQ(*res, 3);
+-}
+-
+-TEST(general, find_if)
+-{
+-    std::vector v{0, 1, 2, 3, 4, 5, 6};
+-
+-    auto res = std::ranges::find_if(v, [] (auto const c) { return c == 3; });
+-
+-    EXPECT_EQ(*res, 3);
+-}
+-
+-TEST(general, find_if_not)
+-{
+-    std::vector v{0, 1, 2, 3, 4, 5, 6};
+-
+-    auto res = std::ranges::find_if_not(v, [] (auto const c) { return c != 3; });
+-
+-    EXPECT_EQ(*res, 3);
+-}
+diff --git a/test/unit/std/ranges/move_and_move_backward_test.cpp b/test/unit/std/ranges/move_and_move_backward_test.cpp
+deleted file mode 100644
+index 222a911fe..000000000
+--- a/test/unit/std/ranges/move_and_move_backward_test.cpp
++++ /dev/null
+@@ -1,34 +0,0 @@
+-// -----------------------------------------------------------------------------------------------------
+-// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+-// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
+-// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+-// -----------------------------------------------------------------------------------------------------
+-
+-#include <gtest/gtest.h>
+-
+-#include <vector>
+-
+-#include <seqan3/std/algorithm>
+-
+-TEST(general, move)
+-{
+-    std::vector v{0, 1, 2, 3, 4, 5, 6};
+-    std::vector<int> t;
+-    t.resize(v.size());
+-
+-    std::ranges::move(v, t.begin());
+-
+-    EXPECT_EQ(t, (std::vector{0, 1, 2, 3, 4, 5, 6}));
+-}
+-
+-TEST(general, move_backward)
+-{
+-    std::vector v{0, 1, 2, 3, 4, 5, 6};
+-    std::vector<int> t;
+-    t.resize(v.size());
+-
+-    std::ranges::move_backward(v, t.end());
+-
+-    EXPECT_EQ(t, (std::vector{0, 1, 2, 3, 4, 5, 6}));
+-}
+diff --git a/test/unit/std/ranges_test.cpp b/test/unit/std/ranges_test.cpp
+deleted file mode 100644
+index 6c533e4e2..000000000
+--- a/test/unit/std/ranges_test.cpp
++++ /dev/null
+@@ -1,213 +0,0 @@
+-// -----------------------------------------------------------------------------------------------------
+-// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+-// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
+-// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+-// -----------------------------------------------------------------------------------------------------
+-
+-#include <gtest/gtest.h>
+-
+-#include <seqan3/std/ranges>
+-#include <seqan3/std/span>
+-#include <string>
+-#include <string_view>
+-
+-#include <seqan3/test/expect_same_type.hpp>
+-
+-#include <range/v3/view/take.hpp>
+-
+-TEST(ranges_test, string_view)
+-{
+-    std::string_view s{};
+-    EXPECT_TRUE(std::ranges::borrowed_range<decltype(s)>);
+-    EXPECT_TRUE(std::ranges::viewable_range<decltype(s)>);
+-    EXPECT_TRUE(std::ranges::view<decltype(s)>);
+-
+-    EXPECT_TRUE(ranges::cpp20::borrowed_range<decltype(s)>);
+-    EXPECT_TRUE(ranges::cpp20::viewable_range<decltype(s)>);
+-    EXPECT_TRUE(ranges::cpp20::view<decltype(s)>);
+-}
+-
+-TEST(ranges_test, span)
+-{
+-    std::span<int> s{};
+-    EXPECT_TRUE(std::ranges::borrowed_range<decltype(s)>);
+-    EXPECT_TRUE(std::ranges::viewable_range<decltype(s)>);
+-    EXPECT_TRUE(std::ranges::view<decltype(s)>);
+-
+-    EXPECT_TRUE(ranges::cpp20::borrowed_range<decltype(s)>);
+-    EXPECT_TRUE(ranges::cpp20::viewable_range<decltype(s)>);
+-    EXPECT_TRUE(ranges::cpp20::view<decltype(s)>);
+-}
+-
+-TEST(ranges_test, subrange)
+-{
+-    std::string s{};
+-    std::ranges::subrange<std::string::iterator, std::string::iterator> v{s.begin(), s.end(), 0};
+-    EXPECT_TRUE(std::ranges::borrowed_range<decltype(v)>);
+-    EXPECT_TRUE(std::ranges::viewable_range<decltype(v)>);
+-    EXPECT_TRUE(std::ranges::view<decltype(v)>);
+-
+-    EXPECT_TRUE(ranges::cpp20::borrowed_range<decltype(v)>);
+-    EXPECT_TRUE(ranges::cpp20::viewable_range<decltype(v)>);
+-    EXPECT_TRUE(ranges::cpp20::view<decltype(v)>);
+-}
+-
+-TEST(ranges_test, empty_view)
+-{
+-    EXPECT_TRUE(std::ranges::borrowed_range<std::ranges::empty_view<int>>);
+-    EXPECT_TRUE(std::ranges::viewable_range<std::ranges::empty_view<int>>);
+-    EXPECT_TRUE(std::ranges::view<std::ranges::empty_view<int>>);
+-
+-    EXPECT_TRUE(ranges::cpp20::borrowed_range<std::ranges::empty_view<int>>);
+-    EXPECT_TRUE(ranges::cpp20::viewable_range<std::ranges::empty_view<int>>);
+-    EXPECT_TRUE(ranges::cpp20::view<std::ranges::empty_view<int>>);
+-}
+-
+-TEST(ranges_test, iota_view)
+-{
+-    EXPECT_TRUE(std::ranges::borrowed_range<decltype(std::views::iota(0))>);
+-    EXPECT_TRUE(std::ranges::viewable_range<decltype(std::views::iota(0))>);
+-    EXPECT_TRUE(std::ranges::view<decltype(std::views::iota(0))>);
+-
+-    EXPECT_TRUE(ranges::cpp20::borrowed_range<decltype(std::views::iota(0))>);
+-    EXPECT_TRUE(ranges::cpp20::viewable_range<decltype(std::views::iota(0))>);
+-    EXPECT_TRUE(ranges::cpp20::view<decltype(std::views::iota(0))>);
+-}
+-
+-TEST(ranges_test, ref_view)
+-{
+-    std::string s{};
+-    EXPECT_TRUE(std::ranges::borrowed_range<decltype(std::views::all(s))>);
+-    EXPECT_TRUE(std::ranges::viewable_range<decltype(std::views::all(s))>);
+-    EXPECT_TRUE(std::ranges::view<decltype(std::views::all(s))>);
+-
+-    EXPECT_TRUE(ranges::cpp20::borrowed_range<decltype(std::views::all(s))>);
+-    EXPECT_TRUE(ranges::cpp20::viewable_range<decltype(std::views::all(s))>);
+-    EXPECT_TRUE(ranges::cpp20::view<decltype(std::views::all(s))>);
+-}
+-
+-TEST(ranges_test, take_view)
+-{
+-    std::string s{};
+-
+-#if !SEQAN3_WORKAROUND_GCC_100139
+-    EXPECT_SAME_TYPE(decltype(std::views::take(std::span<int>{}, 0)), std::span<int>);
+-    EXPECT_SAME_TYPE(decltype(std::views::take(std::string_view{}, 0)), std::string_view);
+-    EXPECT_SAME_TYPE(decltype(std::views::take(std::views::empty<int>, 0)), std::ranges::empty_view<int>);
+-    EXPECT_SAME_TYPE(decltype(std::views::take(std::views::iota(0, 1), 0)), decltype(std::views::iota(0, 1)));
+-
+-    EXPECT_SAME_TYPE(decltype(std::views::take(s, 0)),
+-                     (std::ranges::subrange<std::string::iterator, std::string::iterator>));
+-#endif // !SEQAN3_WORKAROUND_GCC_100139
+-
+-    EXPECT_TRUE(std::ranges::borrowed_range<decltype(std::views::take(s, 0))>);
+-    EXPECT_TRUE(std::ranges::viewable_range<decltype(std::views::take(s, 0))>);
+-    EXPECT_TRUE(std::ranges::view<decltype(std::views::take(s, 0))>);
+-
+-    EXPECT_TRUE(ranges::cpp20::borrowed_range<decltype(std::views::take(s, 0))>);
+-    EXPECT_TRUE(ranges::cpp20::viewable_range<decltype(std::views::take(s, 0))>);
+-    EXPECT_TRUE(ranges::cpp20::view<decltype(std::views::take(s, 0))>);
+-}
+-
+-TEST(ranges_test, drop_view)
+-{
+-    std::string s{};
+-
+-#if !SEQAN3_WORKAROUND_GCC_100139
+-    EXPECT_SAME_TYPE(decltype(std::views::drop(std::span<int>{}, 0)), std::span<int>);
+-    EXPECT_SAME_TYPE(decltype(std::views::drop(std::string_view{}, 0)), std::string_view);
+-    EXPECT_SAME_TYPE(decltype(std::views::drop(std::views::empty<int>, 0)), std::ranges::empty_view<int>);
+-    EXPECT_SAME_TYPE(decltype(std::views::drop(std::views::iota(0, 1), 0)), decltype(std::views::iota(0, 1)));
+-
+-    EXPECT_SAME_TYPE(decltype(std::views::drop(s, 0)),
+-                     (std::ranges::subrange<std::string::iterator, std::string::iterator>));
+-#endif // !SEQAN3_WORKAROUND_GCC_100139
+-
+-    EXPECT_TRUE(std::ranges::borrowed_range<decltype(std::views::drop(s, 0))>);
+-    EXPECT_TRUE(std::ranges::viewable_range<decltype(std::views::drop(s, 0))>);
+-    EXPECT_TRUE(std::ranges::view<decltype(std::views::drop(s, 0))>);
+-
+-    EXPECT_TRUE(ranges::cpp20::borrowed_range<decltype(std::views::drop(s, 0))>);
+-    EXPECT_TRUE(ranges::cpp20::viewable_range<decltype(std::views::drop(s, 0))>);
+-    EXPECT_TRUE(ranges::cpp20::view<decltype(std::views::drop(s, 0))>);
+-}
+-
+-TEST(ranges_test, filter_view)
+-{
+-    std::string s{};
+-    auto lambda = [](auto &&) { return true; };
+-    EXPECT_FALSE(std::ranges::borrowed_range<decltype(std::views::filter(s, lambda))>);
+-    EXPECT_TRUE(std::ranges::viewable_range<decltype(std::views::filter(s, lambda))>);
+-    EXPECT_TRUE(std::ranges::view<decltype(std::views::filter(s, lambda))>);
+-
+-    EXPECT_FALSE(ranges::cpp20::borrowed_range<decltype(std::views::filter(s, lambda))>);
+-    EXPECT_TRUE(ranges::cpp20::viewable_range<decltype(std::views::filter(s, lambda))>);
+-    EXPECT_TRUE(ranges::cpp20::view<decltype(std::views::filter(s, lambda))>);
+-}
+-
+-TEST(ranges_test, common_view)
+-{
+-    std::string s{};
+-    EXPECT_TRUE(std::ranges::borrowed_range<decltype(std::views::common(s))>);
+-    EXPECT_TRUE(std::ranges::viewable_range<decltype(std::views::common(s))>);
+-    EXPECT_TRUE(std::ranges::view<decltype(std::views::common(s))>);
+-
+-    EXPECT_TRUE(ranges::cpp20::borrowed_range<decltype(std::views::common(s))>);
+-    EXPECT_TRUE(ranges::cpp20::viewable_range<decltype(std::views::common(s))>);
+-    EXPECT_TRUE(ranges::cpp20::view<decltype(std::views::common(s))>);
+-}
+-
+-TEST(ranges_test, reverse_view)
+-{
+-    std::string s{};
+-    EXPECT_TRUE(std::ranges::borrowed_range<decltype(std::views::reverse(s))>);
+-    EXPECT_TRUE(std::ranges::viewable_range<decltype(std::views::reverse(s))>);
+-    EXPECT_TRUE(std::ranges::view<decltype(std::views::reverse(s))>);
+-
+-    EXPECT_TRUE(ranges::cpp20::borrowed_range<decltype(std::views::reverse(s))>);
+-    EXPECT_TRUE(ranges::cpp20::viewable_range<decltype(std::views::reverse(s))>);
+-    EXPECT_TRUE(ranges::cpp20::view<decltype(std::views::reverse(s))>);
+-}
+-
+-TEST(ranges_test, combine_std_with_range_v3)
+-{
+-    std::string str{"foo"};
+-    auto take_first = str | std::views::take(5) | ranges::view::take(1);
+-
+-    EXPECT_EQ(*std::ranges::begin(take_first), 'f');
+-}
+-
+-// https://github.com/ericniebler/range-v3/issues/1514
+-TEST(ranges_test, gcc10bug_rangev3_1514)
+-{
+-    {
+-        auto iota = std::views::iota(0, 5);
+-        EXPECT_EQ(*ranges::begin(iota), 0);
+-        EXPECT_EQ(*std::ranges::begin(iota), 0);
+-    }
+-    {
+-        // https://github.com/ericniebler/range-v3/issues/1514
+-        auto iota = std::views::iota(size_t{0u}, size_t{5u});
+-        EXPECT_EQ(*ranges::begin(iota), 0u);
+-        EXPECT_EQ(*std::ranges::begin(iota), 0u);
+-    }
+-}
+-
+-// https://github.com/seqan/product_backlog/issues/372
+-TEST(ranges_test, issue372)
+-{
+-#ifdef __cpp_lib_ranges // >= gcc-10, range-v3 bug
+-    std::string vec{};
+-    std::istringstream istringstream{vec};
+-
+-    auto v1 = std::ranges::subrange{std::istream_iterator<char>{istringstream}, std::default_sentinel};
+-    auto v2 = std::views::take(v1, 1);
+-
+-    using iterator2_t = std::ranges::iterator_t<decltype(v2)>;
+-    EXPECT_TRUE(std::indirectly_readable<iterator2_t>);
+-    EXPECT_TRUE(ranges::indirectly_readable<iterator2_t>); // this failed
+-    EXPECT_TRUE(std::input_iterator<iterator2_t>);
+-    EXPECT_TRUE(ranges::input_iterator<iterator2_t>); // this failed
+-#endif // __cpp_lib_ranges
+-}
+diff --git a/test/unit/utility/detail/CMakeLists.txt b/test/unit/utility/detail/CMakeLists.txt
+index da4846fd5..f3c2ea114 100644
+--- a/test/unit/utility/detail/CMakeLists.txt
++++ b/test/unit/utility/detail/CMakeLists.txt
+@@ -1,5 +1,5 @@
+-seqan3_test(bits_of_test.cpp)
+-seqan3_test(to_little_endian_test.cpp)
+-seqan3_test(integer_traits_test.cpp)
+-seqan3_test(exposition_only_concept_test.cpp)
+-seqan3_test(type_name_as_string_test.cpp)
++seqan3_test (bits_of_test.cpp)
++seqan3_test (convertability_concepts_test.cpp)
++seqan3_test (integer_traits_test.cpp)
++seqan3_test (to_little_endian_test.cpp)
++seqan3_test (type_name_as_string_test.cpp)
+diff --git a/test/unit/utility/detail/convertability_concepts_test.cpp b/test/unit/utility/detail/convertability_concepts_test.cpp
+new file mode 100644
+index 000000000..d13b58b3b
+--- /dev/null
++++ b/test/unit/utility/detail/convertability_concepts_test.cpp
+@@ -0,0 +1,83 @@
++// -----------------------------------------------------------------------------------------------------
++// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
++// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
++// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
++// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
++// -----------------------------------------------------------------------------------------------------
++
++#include <gtest/gtest.h>
++
++#include <seqan3/test/concept_helper_classes.hpp>
++#include <seqan3/utility/concept.hpp>
++
++// Requires that two types can be implicitly converted. Same as https://en.cppreference.com/w/cpp/types/is_convertible
++TEST(convertability_concepts, implicitly_convertible_to)
++{
++    EXPECT_TRUE((seqan3::implicitly_convertible_to<type_a, type_a>));
++    EXPECT_FALSE((seqan3::implicitly_convertible_to<type_a, type_b>));
++    EXPECT_FALSE((seqan3::implicitly_convertible_to<type_a, type_c>));
++    EXPECT_FALSE((seqan3::implicitly_convertible_to<type_a, type_d>));
++
++    EXPECT_TRUE((seqan3::implicitly_convertible_to<type_b, type_a>)); // type_a is base of type_b
++    EXPECT_TRUE((seqan3::implicitly_convertible_to<type_b, type_b>));
++    EXPECT_TRUE((seqan3::implicitly_convertible_to<type_b, type_c>)); // custom constructor
++    EXPECT_FALSE((seqan3::implicitly_convertible_to<type_b, type_d>));
++
++    EXPECT_FALSE((seqan3::implicitly_convertible_to<type_c, type_a>));
++    EXPECT_FALSE((seqan3::implicitly_convertible_to<type_c, type_b>));
++    EXPECT_TRUE((seqan3::implicitly_convertible_to<type_c, type_c>));
++    EXPECT_FALSE((seqan3::implicitly_convertible_to<type_c, type_d>));
++
++    EXPECT_TRUE((seqan3::implicitly_convertible_to<type_d, type_a>)); // type_a is base of type_b is base of type_d
++    EXPECT_TRUE((seqan3::implicitly_convertible_to<type_d, type_b>)); // type_b is base of type_d
++    EXPECT_TRUE((seqan3::implicitly_convertible_to<type_d, type_c>)); // type_d -> type_a, then custom constructor
++    EXPECT_FALSE((seqan3::implicitly_convertible_to<type_d, type_d>)); // unconstructible
++}
++
++// Requires that two types can be implicitly converted: static_cast<to>(from).
++TEST(convertability_concepts, explicitly_convertible_to)
++{
++    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_a, type_a>));
++    EXPECT_FALSE((seqan3::explicitly_convertible_to<type_a, type_b>));
++    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_a, type_c>)); // custom constructor
++    EXPECT_FALSE((seqan3::explicitly_convertible_to<type_a, type_d>));
++
++    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_b, type_a>)); // type_a is base of type_b
++    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_b, type_b>));
++    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_b, type_c>)); // custom constructor
++    EXPECT_FALSE((seqan3::explicitly_convertible_to<type_b, type_d>));
++
++    EXPECT_FALSE((seqan3::explicitly_convertible_to<type_c, type_a>));
++    EXPECT_FALSE((seqan3::explicitly_convertible_to<type_c, type_b>));
++    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_c, type_c>));
++    EXPECT_FALSE((seqan3::explicitly_convertible_to<type_c, type_d>));
++
++    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_d, type_a>)); // type_a is base of type_b is base of type_d
++    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_d, type_b>)); // type_b is base of type_d
++    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_d, type_c>)); // type_d -> type_a, then custom constructor
++    EXPECT_FALSE((seqan3::explicitly_convertible_to<type_d, type_d>)); // unconstructible
++}
++
++// Requires that two types are both implicitly and explicitly convertible.
++TEST(convertability_concepts, convertible_to)
++{
++    EXPECT_TRUE((std::convertible_to<type_a, type_a>));
++    EXPECT_FALSE((std::convertible_to<type_a, type_b>));
++    EXPECT_FALSE((std::convertible_to<type_a, type_c>));
++    EXPECT_FALSE((std::convertible_to<type_a, type_d>));
++
++    EXPECT_TRUE((std::convertible_to<type_b, type_a>));
++    EXPECT_TRUE((std::convertible_to<type_b, type_b>));
++    EXPECT_TRUE((std::convertible_to<type_b, type_c>));
++    EXPECT_FALSE((std::convertible_to<type_b, type_d>));
++
++    EXPECT_FALSE((std::convertible_to<type_c, type_a>));
++    EXPECT_FALSE((std::convertible_to<type_c, type_b>));
++    EXPECT_TRUE((std::convertible_to<type_c, type_c>));
++    EXPECT_FALSE((std::convertible_to<type_c, type_d>));
++
++    EXPECT_TRUE((std::convertible_to<type_d, type_a>));
++    EXPECT_TRUE((std::convertible_to<type_d, type_b>));
++    EXPECT_TRUE((std::convertible_to<type_d, type_c>));
++    EXPECT_FALSE((std::convertible_to<type_d, type_d>));
++}
+diff --git a/test/unit/utility/detail/exposition_only_concept_test.cpp b/test/unit/utility/detail/exposition_only_concept_test.cpp
+deleted file mode 100644
+index c46318e88..000000000
+--- a/test/unit/utility/detail/exposition_only_concept_test.cpp
++++ /dev/null
+@@ -1,97 +0,0 @@
+-// -----------------------------------------------------------------------------------------------------
+-// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+-// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
+-// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+-// -----------------------------------------------------------------------------------------------------
+-
+-#include <gtest/gtest.h>
+-
+-#include <seqan3/std/iterator>
+-#include <random>
+-
+-#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+-
+-#include "../../std/concept/auxiliary.hpp"
+-
+-TEST(core_language_concepts, same_as)
+-{
+-    EXPECT_TRUE((std::same_as<int, int>));
+-    EXPECT_TRUE((!std::same_as<int, char>));
+-}
+-
+-TEST(core_language_concepts, derived_from)
+-{
+-    EXPECT_TRUE((std::derived_from<type_b, type_a>));
+-    EXPECT_TRUE((!std::derived_from<type_a, type_b>));
+-}
+-
+-TEST(implicitly_convertible_to, basic)
+-{
+-    EXPECT_TRUE((seqan3::implicitly_convertible_to<type_b, type_c>));
+-    EXPECT_TRUE((!seqan3::implicitly_convertible_to<type_c, type_b>));
+-    EXPECT_TRUE((!seqan3::implicitly_convertible_to<type_a, type_c>));
+-}
+-
+-TEST(explicitly_convertible_to, basic)
+-{
+-    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_b, type_c>));
+-    EXPECT_TRUE((!seqan3::explicitly_convertible_to<type_c, type_b>));
+-    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_a, type_c>));
+-}
+-
+-TEST(core_language_concepts, convertible_to)
+-{
+-    EXPECT_TRUE((std::convertible_to<type_b, type_c>));
+-    EXPECT_TRUE((!std::convertible_to<type_c, type_b>));
+-    EXPECT_TRUE((!std::convertible_to<type_a, type_c>));
+-}
+-
+-TEST(core_language_concepts, common_reference_with)
+-{
+-    EXPECT_TRUE((std::common_reference_with<int32_t, int16_t>));
+-    EXPECT_TRUE((!std::common_reference_with<int32_t, type_c>));
+-}
+-
+-TEST(core_language_concepts, common_with)
+-{
+-    EXPECT_TRUE((std::common_with<type_a, type_b>));
+-    EXPECT_TRUE((!std::common_with<type_a, type_c>));
+-}
+-
+-TEST(core_language_concepts, integral)
+-{
+-    EXPECT_TRUE((std::integral<int>));
+-    EXPECT_TRUE((!std::integral<float>));
+-}
+-
+-TEST(core_language_concepts, signed_integral)
+-{
+-    EXPECT_TRUE((std::signed_integral<int>));
+-    EXPECT_TRUE((!std::signed_integral<unsigned>));
+-}
+-
+-TEST(core_language_concepts, unsigned_integral)
+-{
+-    EXPECT_TRUE((!std::unsigned_integral<int>));
+-    EXPECT_TRUE((std::unsigned_integral<unsigned>));
+-}
+-
+-TEST(core_language_concepts, assignable_from)
+-{
+-    EXPECT_TRUE((std::assignable_from<type_a &, type_a const &>));
+-    EXPECT_TRUE((std::assignable_from<type_c &, type_b const &>));
+-    EXPECT_TRUE((!std::assignable_from<type_a &, type_c &>));
+-}
+-
+-TEST(core_language_concepts, swappable)
+-{
+-    EXPECT_TRUE((std::swappable<type_a>));
+-    EXPECT_TRUE((std::swappable<type_b>));
+-}
+-
+-TEST(core_language_concepts, swappable_with)
+-{
+-    EXPECT_TRUE((std::swappable_with<type_a &, type_a &>));
+-    EXPECT_TRUE((!std::swappable_with<type_b, type_c>));
+-}
+-- 
+2.34.1
+

@@ -1,0 +1,93 @@
+From e71b59bfcd3b1f660314c0a6659a9367b9432c63 Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Mon, 13 Jun 2022 16:46:40 +0200
+Subject: [PATCH 04/11] [NOAPI] [DETAIL] Concept definitions
+
+---
+ test/unit/core/detail/iterator_traits_test.cpp | 4 ++--
+ test/unit/range/iterator_test_template.hpp     | 6 ++----
+ test/unit/range/range_test_template.hpp        | 4 ++--
+ test/unit/test/seqan2_test.cpp                 | 6 +++---
+ 4 files changed, 9 insertions(+), 11 deletions(-)
+
+diff --git a/test/unit/core/detail/iterator_traits_test.cpp b/test/unit/core/detail/iterator_traits_test.cpp
+index 7ed265d98..0d6de2e0b 100644
+--- a/test/unit/core/detail/iterator_traits_test.cpp
++++ b/test/unit/core/detail/iterator_traits_test.cpp
+@@ -18,7 +18,7 @@
+ #include <seqan3/test/expect_same_type.hpp>
+ 
+ template <typename t>
+-SEQAN3_CONCEPT has_iterator_category = requires()
++concept has_iterator_category = requires()
+ {
+     typename t::iterator_category;
+ };
+@@ -181,7 +181,7 @@ TEST(maybe_iterator_category, random_access_iterator_tag)
+ }
+ 
+ template <typename t>
+-SEQAN3_CONCEPT has_iterator_concept = requires()
++concept has_iterator_concept = requires()
+ {
+     typename t::iterator_concept;
+ };
+diff --git a/test/unit/range/iterator_test_template.hpp b/test/unit/range/iterator_test_template.hpp
+index 8bd1b84a8..e2c99bb6b 100644
+--- a/test/unit/range/iterator_test_template.hpp
++++ b/test/unit/range/iterator_test_template.hpp
+@@ -47,11 +47,9 @@ struct iterator_fixture : public ::testing::Test
+ 
+ // Helper concept to check whether the test fixture has a member function expect_eq.
+ template <typename t>
+-SEQAN3_CONCEPT has_expect_equal_member_function = requires(t & a)
++concept has_expect_equal_member_function = requires(t & a)
+ {
+-    SEQAN3_RETURN_TYPE_CONSTRAINT(t::expect_eq(*std::ranges::begin(a.test_range),
+-                                               *std::ranges::begin(a.expected_range)),
+-                                  std::same_as, void);
++    {t::expect_eq(*std::ranges::begin(a.test_range), *std::ranges::begin(a.expected_range))} -> std::same_as<void>;
+ };
+ 
+ // Delegates to the test fixture member function `expect_eq` if available and falls back to EXPECT_EQ otherwise.
+diff --git a/test/unit/range/range_test_template.hpp b/test/unit/range/range_test_template.hpp
+index adb3163c0..ca93d166c 100644
+--- a/test/unit/range/range_test_template.hpp
++++ b/test/unit/range/range_test_template.hpp
+@@ -124,13 +124,13 @@ struct iterator_fixture<range_test_fixture_t> : public ::testing::Test
+ TYPED_TEST_SUITE_P(range_test);
+ 
+ template <typename range_t>
+-SEQAN3_CONCEPT has_size_member = requires(range_t range)
++concept has_size_member = requires(range_t range)
+ {
+     { range.size() };
+ };
+ 
+ template <typename range_t>
+-SEQAN3_CONCEPT has_subscript_member = requires(range_t range)
++concept has_subscript_member = requires(range_t range)
+ {
+     { range[0] };
+ };
+diff --git a/test/unit/test/seqan2_test.cpp b/test/unit/test/seqan2_test.cpp
+index fd2a4beb4..e4ab46e7e 100644
+--- a/test/unit/test/seqan2_test.cpp
++++ b/test/unit/test/seqan2_test.cpp
+@@ -89,10 +89,10 @@ TYPED_TEST(seqan2_container, std_iterator)
+ }
+ 
+ template <typename range_t>
+-SEQAN3_CONCEPT SeqAn2Range = requires(range_t range)
++concept SeqAn2Range = requires(range_t range)
+ {
+-    SEQAN3_RETURN_TYPE_CONSTRAINT(seqan::begin(range), std::same_as, std::ranges::iterator_t<range_t>);
+-    SEQAN3_RETURN_TYPE_CONSTRAINT(seqan::end(range), std::same_as, std::ranges::iterator_t<range_t>);
++    {seqan::begin(range)} -> std::same_as<std::ranges::iterator_t<range_t>>;
++    {seqan::end(range)} -> std::same_as<std::ranges::iterator_t<range_t>>;
+ };
+ 
+ TYPED_TEST(seqan2_container, seqan_range_concept)
+-- 
+2.34.1
+

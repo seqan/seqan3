@@ -1,0 +1,24 @@
+From 8172bf5a2d482d210f8ea4a71d61482611aa0ad3 Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Mon, 13 Jun 2022 17:19:37 +0200
+Subject: [PATCH 07/11] [NOAPI] [DETAIL] container concept
+
+---
+ test/unit/alphabet/container/container_of_container_test.cpp | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/test/unit/alphabet/container/container_of_container_test.cpp b/test/unit/alphabet/container/container_of_container_test.cpp
+index 1676ed546..29dcad18d 100644
+--- a/test/unit/alphabet/container/container_of_container_test.cpp
++++ b/test/unit/alphabet/container/container_of_container_test.cpp
+@@ -31,7 +31,6 @@ TYPED_TEST_SUITE(container_of_container, container_of_container_types, );
+ TYPED_TEST(container_of_container, concepts)
+ {
+     EXPECT_TRUE(seqan3::container<TypeParam>);
+-    EXPECT_TRUE(seqan3::container<std::ranges::range_value_t<TypeParam>>);
+ }
+ 
+ TYPED_TEST(container_of_container, construction)
+-- 
+2.34.1
+

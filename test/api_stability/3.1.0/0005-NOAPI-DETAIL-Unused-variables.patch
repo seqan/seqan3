@@ -1,0 +1,172 @@
+From 76abe0f0056f9f88fa5115553fd7f3829e661b82 Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Mon, 13 Jun 2022 16:46:56 +0200
+Subject: [PATCH 05/11] [NOAPI] [DETAIL] Unused variables
+
+---
+ test/snippet/alphabet/views/translate_usage.cpp   | 15 ++++++++-------
+ test/snippet/alphabet/views/translate_usage.err   |  7 +++++++
+ .../snippet/alphabet/views/trim_quality_dna5q.cpp | 11 ++++-------
+ .../snippet/alphabet/views/trim_quality_dna5q.err |  3 +++
+ .../alphabet/views/trim_quality_phred42.cpp       | 13 +++++++++----
+ .../alphabet/views/trim_quality_phred42.err       |  4 ++++
+ 6 files changed, 35 insertions(+), 18 deletions(-)
+ create mode 100644 test/snippet/alphabet/views/translate_usage.err
+ create mode 100644 test/snippet/alphabet/views/trim_quality_dna5q.err
+ create mode 100644 test/snippet/alphabet/views/trim_quality_phred42.err
+
+diff --git a/test/snippet/alphabet/views/translate_usage.cpp b/test/snippet/alphabet/views/translate_usage.cpp
+index 9412a39ff..cfb82d4de 100644
+--- a/test/snippet/alphabet/views/translate_usage.cpp
++++ b/test/snippet/alphabet/views/translate_usage.cpp
+@@ -1,6 +1,7 @@
+ #include <seqan3/alphabet/nucleotide/dna5.hpp>
+ #include <seqan3/alphabet/views/complement.hpp>
+ #include <seqan3/alphabet/views/translate.hpp>
++#include <seqan3/core/debug_stream.hpp>
+ 
+ int main()
+ {
+@@ -10,29 +11,29 @@ int main()
+ 
+     // default frame translation
+     auto v1 = vec | seqan3::views::translate;
+-    // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[Y,V,R,T],[T,Y,V,R],[R,T,Y]]
++    seqan3::debug_stream << v1 << '\n'; // [TYVR,RTYV,VRT,YVRT,TYVR,RTY]
+ 
+     // single frame translation
+     auto v2 = vec | seqan3::views::translate(seqan3::translation_frames::forward_frame0);
+-    // == [[T,Y,V,R]]
++    seqan3::debug_stream << v2 << '\n'; // [TYVR]
+ 
+     // reverse translation
+     auto v3 = vec | seqan3::views::translate(seqan3::translation_frames::forward_reverse0);
+-    // == [[T,Y,V,R],[Y,V,R,T]]
++    seqan3::debug_stream << v3 << '\n'; // [TYVR,YVRT]
+ 
+     // forward frames translation
+     auto v4 = vec | seqan3::views::translate(seqan3::translation_frames::forward_frames);
+-    // == [[T,Y,V,R],[R,T,Y,V],[V,R,T]]
++    seqan3::debug_stream << v4 << '\n'; // [TYVR,RTYV,VRT]
+ 
+     // six frame translation
+     auto v5 = vec | seqan3::views::translate(seqan3::translation_frames::six_frames);
+-    // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[Y,V,R,T],[T,Y,V,R],[R,T,Y]]
++    seqan3::debug_stream << v5 << '\n'; // [TYVR,RTYV,VRT,YVRT,TYVR,RTY]
+ 
+     // function syntax
+     auto v6 = seqan3::views::translate(vec, seqan3::translation_frames::forward_reverse0);
+-    // == [[T,Y,V,R],[Y,V,R,T]]
++    seqan3::debug_stream << v6 << '\n'; // [TYVR,YVRT]
+ 
+     // combinability
+     auto v7 = vec | seqan3::views::complement | seqan3::views::translate(seqan3::translation_frames::forward_reverse0);
+-    // == [[C,M,H,A],[M,H,A,C]]
++    seqan3::debug_stream << v7 << '\n'; // [CMHA,MHAC]
+ }
+diff --git a/test/snippet/alphabet/views/translate_usage.err b/test/snippet/alphabet/views/translate_usage.err
+new file mode 100644
+index 000000000..b1e0a434e
+--- /dev/null
++++ b/test/snippet/alphabet/views/translate_usage.err
+@@ -0,0 +1,7 @@
++[TYVR,RTYV,VRT,YVRT,TYVR,RTY]
++[TYVR]
++[TYVR,YVRT]
++[TYVR,RTYV,VRT]
++[TYVR,RTYV,VRT,YVRT,TYVR,RTY]
++[TYVR,YVRT]
++[CMHA,MHAC]
+diff --git a/test/snippet/alphabet/views/trim_quality_dna5q.cpp b/test/snippet/alphabet/views/trim_quality_dna5q.cpp
+index 6795aedd3..be9bad4a5 100644
+--- a/test/snippet/alphabet/views/trim_quality_dna5q.cpp
++++ b/test/snippet/alphabet/views/trim_quality_dna5q.cpp
+@@ -6,6 +6,7 @@
+ #include <seqan3/alphabet/quality/phred42.hpp>
+ #include <seqan3/alphabet/views/to_char.hpp>
+ #include <seqan3/alphabet/views/trim_quality.hpp>
++#include <seqan3/core/debug_stream.hpp>
+ 
+ int main()
+ {
+@@ -16,20 +17,16 @@ int main()
+                                    {'G'_dna5, '?'_phred42},
+                                    {'A'_dna5, '5'_phred42},
+                                    {'T'_dna5, '+'_phred42}};
+-    std::vector<seqan3::dna5q> cmp{{'A'_dna5, 'I'_phred42},
+-                                   {'G'_dna5, 'I'_phred42},
+-                                   {'G'_dna5, '?'_phred42},
+-                                   {'A'_dna5, '5'_phred42}};
+ 
+     // trim by phred_value
+     auto v1 = vec | seqan3::views::trim_quality(20u);
+-    assert(std::ranges::equal(v1, cmp));
++    seqan3::debug_stream << v1 << '\n'; // AGGA
+ 
+     // trim by quality character; in this case the nucleotide part of the character is irrelevant
+     auto v2 = vec | seqan3::views::trim_quality(seqan3::dna5q{'C'_dna5, '5'_phred42});
+-    assert(std::ranges::equal(v2, cmp));
++    seqan3::debug_stream << v2 << '\n'; // AGGA
+ 
+     // combinability
+     auto v3 = seqan3::views::trim_quality(vec, 20u) | seqan3::views::to_char;
+-    assert(std::ranges::equal(std::string{"AGGA"}, v3));
++    seqan3::debug_stream << v3 << '\n'; // AGGA
+ }
+diff --git a/test/snippet/alphabet/views/trim_quality_dna5q.err b/test/snippet/alphabet/views/trim_quality_dna5q.err
+new file mode 100644
+index 000000000..b6f022a15
+--- /dev/null
++++ b/test/snippet/alphabet/views/trim_quality_dna5q.err
+@@ -0,0 +1,3 @@
++AGGA
++AGGA
++AGGA
+diff --git a/test/snippet/alphabet/views/trim_quality_phred42.cpp b/test/snippet/alphabet/views/trim_quality_phred42.cpp
+index dad15b221..702578f6e 100644
+--- a/test/snippet/alphabet/views/trim_quality_phred42.cpp
++++ b/test/snippet/alphabet/views/trim_quality_phred42.cpp
+@@ -4,6 +4,7 @@
+ #include <seqan3/alphabet/quality/phred42.hpp>
+ #include <seqan3/alphabet/views/to_char.hpp>
+ #include <seqan3/alphabet/views/trim_quality.hpp>
++#include <seqan3/core/debug_stream.hpp>
+ 
+ using namespace seqan3::literals;
+ 
+@@ -12,14 +13,18 @@ int main()
+     std::vector<seqan3::phred42> vec{"II?5+"_phred42};
+ 
+     // trim by phred_value
+-    auto v1 = vec | seqan3::views::trim_quality(20u);                            // == ['I','I','?','5']
++    auto v1 = vec | seqan3::views::trim_quality(20u);
++    seqan3::debug_stream << v1 << '\n'; // II?5
+ 
+     // trim by quality character
+-    auto v2 = vec | seqan3::views::trim_quality('I'_phred42);                    // == ['I','I']
++    auto v2 = vec | seqan3::views::trim_quality('I'_phred42);
++    seqan3::debug_stream << v2 << '\n'; // II
+ 
+     // function syntax
+-    auto v3 = seqan3::views::trim_quality(vec, '5'_phred42);                     // == ['I','I','?','5']
++    auto v3 = seqan3::views::trim_quality(vec, '5'_phred42);
++    seqan3::debug_stream << v3 << '\n'; // II?5
+ 
+     // combinability
+-    auto v4 = seqan3::views::trim_quality(vec, 20u) | seqan3::views::to_char;    // == "II?5"
++    auto v4 = seqan3::views::trim_quality(vec, 20u) | seqan3::views::to_char;
++    seqan3::debug_stream << v4 << '\n'; // II?5
+ }
+diff --git a/test/snippet/alphabet/views/trim_quality_phred42.err b/test/snippet/alphabet/views/trim_quality_phred42.err
+new file mode 100644
+index 000000000..d530c3716
+--- /dev/null
++++ b/test/snippet/alphabet/views/trim_quality_phred42.err
+@@ -0,0 +1,4 @@
++II?5
++II
++II?5
++II?5
+-- 
+2.34.1
+

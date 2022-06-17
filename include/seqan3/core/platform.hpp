@@ -5,16 +5,16 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+/*!\file
+ * \brief Provides platform and dependency checks.
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ */
+
 #pragma once
 
 #include <cinttypes>
 #include <ciso646> // makes _LIBCPP_VERSION available
 #include <cstddef> // makes __GLIBCXX__ available
-
-/*!\file
- * \brief Provides platform and dependency checks.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- */
 
 // macro cruft
 //!\cond
@@ -292,3 +292,53 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 // macro cruft undefine
 #undef SEQAN3_STR
 #undef SEQAN3_STR_HELPER
+
+// ============================================================================
+// API - Adds deprecations for seqan3/std/iterator. Will be removed in 3.3.0.
+// This is the only file that is guaranteed to be included.
+// Deprecations cannot be in previous header because changing the include to
+// <iterator> will not include the cpp20 definitions.
+// ============================================================================
+
+//!\cond
+namespace std
+{
+
+template <class Container>
+class back_insert_iterator;
+
+template <class Container>
+constexpr back_insert_iterator<Container> back_inserter(Container & c);
+
+template <class CharT>
+class char_traits;
+
+template <class T, class CharT, class Traits>
+class ostream_iterator;
+
+template <class CharT, class Traits>
+class ostreambuf_iterator;
+
+} // namespace std
+
+namespace std::cpp20
+{
+
+// Extra include guard is needed for header tests. Prevents redefinition.
+#ifndef SEQAN3_CPP20_ODR
+#    define SEQAN3_CPP20_ODR 1
+template <class Container>
+SEQAN3_DEPRECATED_330 inline constexpr std::back_insert_iterator<Container> back_inserter(Container & c)
+{
+    return std::back_inserter(c);
+}
+#endif
+
+template <class T, class CharT = char, class Traits = std::char_traits<CharT>>
+using ostream_iterator SEQAN3_DEPRECATED_330 = std::ostream_iterator<T, CharT, Traits>;
+
+template <class CharT, class Traits = std::char_traits<CharT>>
+using ostreambuf_iterator SEQAN3_DEPRECATED_330 = std::ostreambuf_iterator<CharT, Traits>;
+
+} // namespace std::cpp20
+//!\endcond

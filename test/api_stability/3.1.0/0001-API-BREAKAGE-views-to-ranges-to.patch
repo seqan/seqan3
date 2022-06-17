@@ -1,0 +1,363 @@
+From d3d37b0f3f79074d3f3a75418b3559f8c2750972 Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Mon, 13 Jun 2022 16:42:25 +0200
+Subject: [PATCH 01/11] [API] [BREAKAGE] views::to -> ranges::to
+
+---
+ doc/tutorial/alphabet/alphabet_gc_content.cpp  |  2 +-
+ .../alphabet/composite/semialphabet_any.cpp    |  4 ++--
+ .../range/views/range_view_all_retransform.cpp |  4 ++--
+ .../utility/views/convert_int_to_bool.cpp      |  2 +-
+ .../debug_stream_alignment_test.cpp            |  6 +++---
+ ...wise_alignment_collection_test_template.hpp | 10 +++++-----
+ .../bi_fm_index_cursor_collection_test.cpp     | 10 +++++-----
+ .../bi_fm_index_cursor_test.cpp                |  6 +++---
+ .../fm_index_cursor_collection_test.cpp        |  2 +-
+ .../fm_index_cursor/fm_index_cursor_test.cpp   |  2 +-
+ test/unit/search/helper.hpp                    |  2 +-
+ .../search/search_scheme_algorithm_test.cpp    |  6 +++---
+ test/unit/search/search_test.cpp               | 18 +++++++++---------
+ 13 files changed, 37 insertions(+), 37 deletions(-)
+
+diff --git a/doc/tutorial/alphabet/alphabet_gc_content.cpp b/doc/tutorial/alphabet/alphabet_gc_content.cpp
+index 11f68ec2e..7e6288a9e 100644
+--- a/doc/tutorial/alphabet/alphabet_gc_content.cpp
++++ b/doc/tutorial/alphabet/alphabet_gc_content.cpp
+@@ -56,5 +56,5 @@ void alternatively()
+ {
+     std::string input{};
+     // if something changes in here, please update above:
+-    std::vector<seqan3::dna5> sequence = input | seqan3::views::char_to<seqan3::dna5> | seqan3::views::to<std::vector>;
++    std::vector<seqan3::dna5> sequence = input | seqan3::views::char_to<seqan3::dna5> | seqan3::ranges::to<std::vector>();
+ }
+diff --git a/test/snippet/alphabet/composite/semialphabet_any.cpp b/test/snippet/alphabet/composite/semialphabet_any.cpp
+index eea458735..6b9647ff6 100644
+--- a/test/snippet/alphabet/composite/semialphabet_any.cpp
++++ b/test/snippet/alphabet/composite/semialphabet_any.cpp
+@@ -45,7 +45,7 @@ void algo_pre(seqan3::aa10li_vector const & v)
+                                                      {
+                                                          return static_cast<seqan3::semialphabet_any<10>>(in);
+                                                      })
+-                                                   | seqan3::views::to<std::vector>;
++                                                   | seqan3::ranges::to<std::vector>();
+     algorithm(tmp, false);
+ }
+ 
+@@ -56,7 +56,7 @@ void algo_pre(seqan3::aa10murphy_vector const & v)
+                                                      {
+                                                          return static_cast<seqan3::semialphabet_any<10>>(in);
+                                                      })
+-                                                   | seqan3::views::to<std::vector>;
++                                                   | seqan3::ranges::to<std::vector>();
+     algorithm(tmp, true);
+ }
+ 
+diff --git a/test/snippet/range/views/range_view_all_retransform.cpp b/test/snippet/range/views/range_view_all_retransform.cpp
+index 9026fa2d5..494e32529 100644
+--- a/test/snippet/range/views/range_view_all_retransform.cpp
++++ b/test/snippet/range/views/range_view_all_retransform.cpp
+@@ -12,10 +12,10 @@ int main()
+     auto vec_view2 = seqan3::views::complement(vec);
+ 
+     // re-convert to container
+-    seqan3::dna4_vector complemented = vec_view2 | seqan3::views::to<seqan3::dna4_vector>;
++    seqan3::dna4_vector complemented = vec_view2 | seqan3::ranges::to<seqan3::dna4_vector>();
+     assert(complemented == "TGCCAG"_dna4);
+ 
+     // also possible in one step
+-    seqan3::dna4_vector reversed = vec | std::views::reverse | seqan3::views::to<seqan3::dna4_vector>;
++    seqan3::dna4_vector reversed = vec | std::views::reverse | seqan3::ranges::to<seqan3::dna4_vector>();
+     assert(reversed == "CTGGCA"_dna4);
+ }
+diff --git a/test/snippet/utility/views/convert_int_to_bool.cpp b/test/snippet/utility/views/convert_int_to_bool.cpp
+index 5e6be581d..9f2f2d98e 100644
+--- a/test/snippet/utility/views/convert_int_to_bool.cpp
++++ b/test/snippet/utility/views/convert_int_to_bool.cpp
+@@ -17,6 +17,6 @@ int main()
+     seqan3::debug_stream << (vec | seqan3::views::convert<bool> | std::views::reverse) << '\n'; // [1,1,1,0,0,1,0,1,1]
+ 
+     // function notation and immediate conversion to vector again
+-    auto bool_vec = seqan3::views::convert<bool>(vec) | seqan3::views::to<std::vector<bool>>;
++    auto bool_vec = seqan3::views::convert<bool>(vec) | seqan3::ranges::to<std::vector<bool>>();
+     seqan3::debug_stream << std::boolalpha << (bool_vec == std::vector<bool>{1,1,0,1,0,0,1,1,1}) << '\n'; // true
+ }
+diff --git a/test/unit/alignment/aligned_sequence/debug_stream_alignment_test.cpp b/test/unit/alignment/aligned_sequence/debug_stream_alignment_test.cpp
+index 9f40466d1..17734e174 100644
+--- a/test/unit/alignment/aligned_sequence/debug_stream_alignment_test.cpp
++++ b/test/unit/alignment/aligned_sequence/debug_stream_alignment_test.cpp
+@@ -47,11 +47,11 @@ TEST(debug_stream_test, multiple_alignment_without_gaps)
+                std::vector<seqan3::gapped<seqan3::dna4>>> const alignment
+     {
+         "GCGGGTCACTGAGGGCTGGGATGAGGACGGCCACCACTTCGAGGAGTCCCTTCACTACGAGGGCAGGGCCGTGGACATCACCACGTCAGACAGGGACAAGAGCAAGTA"
+-        "CGGCACCCTGTCCAGACTGGCGGTGGAAGCTG"_dna4 | seqan3::views::to<std::vector<seqan3::gapped<seqan3::dna4>>>,
++        "CGGCACCCTGTCCAGACTGGCGGTGGAAGCTG"_dna4 | seqan3::ranges::to<std::vector<seqan3::gapped<seqan3::dna4>>>(),
+         "CTACGGCAGAAGAAGACATCCGAAAAAGCTGACACCTCTCGCCTACAAGCAGTTCATACCTAATGTCGCGGAGAAGACCTTAGGGGCCAGCGGCAGATACGAGGGCAA"
+-        "GATAACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4 | seqan3::views::to<std::vector<seqan3::gapped<seqan3::dna4>>>,
++        "GATAACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4 | seqan3::ranges::to<std::vector<seqan3::gapped<seqan3::dna4>>>(),
+         "CTACGGCAGAAGAAGACATCCCAAGAAGCTGACACCTCTCGCCTACAAGCAGTTTATACCTAATGTCGCGGAGAAGACCTTAGGGGCCAGCGGCAGATACGAGGGCAA"
+-        "GATCACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4 | seqan3::views::to<std::vector<seqan3::gapped<seqan3::dna4>>>
++        "GATCACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4 | seqan3::ranges::to<std::vector<seqan3::gapped<seqan3::dna4>>>()
+     };
+ 
+     std::ostringstream oss;
+diff --git a/test/unit/alignment/pairwise/pairwise_alignment_collection_test_template.hpp b/test/unit/alignment/pairwise/pairwise_alignment_collection_test_template.hpp
+index 99cdb12aa..53a5405e3 100644
+--- a/test/unit/alignment/pairwise/pairwise_alignment_collection_test_template.hpp
++++ b/test/unit/alignment/pairwise/pairwise_alignment_collection_test_template.hpp
+@@ -61,7 +61,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, end_positions)
+     {
+         auto [database, query] = fixture.get_sequences();
+         auto res_vec = seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg)
+-                     | seqan3::views::to<std::vector>;
++                     | seqan3::ranges::to<std::vector>();
+ 
+         EXPECT_RANGE_EQ(res_vec | std::views::transform([] (auto res) { return res.score(); }), fixture.get_scores());
+         EXPECT_RANGE_EQ(res_vec |
+@@ -89,7 +89,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, begin_positions)
+     {
+         auto [database, query] = fixture.get_sequences();
+         auto res_vec = seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg)
+-                     | seqan3::views::to<std::vector>;
++                     | seqan3::ranges::to<std::vector>();
+ 
+         EXPECT_RANGE_EQ(res_vec | std::views::transform([] (auto res) { return res.score(); }),
+                         fixture.get_scores());
+@@ -127,7 +127,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
+     {
+         auto [database, query] = fixture.get_sequences();
+         auto res_vec = seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg)
+-                     | seqan3::views::to<std::vector>;
++                     | seqan3::ranges::to<std::vector>();
+ 
+         EXPECT_RANGE_EQ(res_vec | std::views::transform([] (auto res) { return res.score(); }), fixture.get_scores());
+         EXPECT_RANGE_EQ(res_vec |
+@@ -150,14 +150,14 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
+                         std::views::transform([] (auto res)
+                         {
+                             return std::get<0>(res.alignment()) | seqan3::views::to_char
+-                                                                | seqan3::views::to<std::string>;
++                                                                | seqan3::ranges::to<std::string>();
+                         }),
+                         fixture.get_aligned_sequences1());
+         EXPECT_RANGE_EQ(res_vec |
+                         std::views::transform([] (auto res)
+                         {
+                             return std::get<1>(res.alignment()) | seqan3::views::to_char
+-                                                                | seqan3::views::to<std::string>;
++                                                                | seqan3::ranges::to<std::string>();
+                         }),
+                         fixture.get_aligned_sequences2());
+     }
+diff --git a/test/unit/search/fm_index_cursor/bi_fm_index_cursor_collection_test.cpp b/test/unit/search/fm_index_cursor/bi_fm_index_cursor_collection_test.cpp
+index 79c335d91..177154fcf 100644
+--- a/test/unit/search/fm_index_cursor/bi_fm_index_cursor_collection_test.cpp
++++ b/test/unit/search/fm_index_cursor/bi_fm_index_cursor_collection_test.cpp
+@@ -24,13 +24,13 @@ struct bi_fm_index_cursor_collection_test : public ::testing::Test
+     using alphabet_type = typename index_type::alphabet_type;
+     using text_type = std::vector<alphabet_type>;
+ 
+-    static constexpr auto convert = seqan3::views::char_to<alphabet_type> | seqan3::views::to<text_type>;
++    static constexpr auto convert = seqan3::views::char_to<alphabet_type> | seqan3::ranges::to<text_type>();
+ 
+     text_type text{convert(std::string_view{"ACGGTAGGACGTAGC"})};
+     text_type text1{convert(std::string_view{"AACGATCGGA"})};
+     text_type text2{convert(std::string_view{"TGCTACGATCC"})};
+-    text_type text3 = seqan3::views::slice(text, 0, 11) | seqan3::views::to<text_type>; // "ACGGTAGGACG"
+-    text_type text4 = seqan3::views::slice(text, 0, 14) | seqan3::views::to<text_type>; // "ACGGTAGGACGTAG"
++    text_type text3 = seqan3::views::slice(text, 0, 11) | seqan3::ranges::to<text_type>(); // "ACGGTAGGACG"
++    text_type text4 = seqan3::views::slice(text, 0, 14) | seqan3::ranges::to<text_type>(); // "ACGGTAGGACGTAG"
+ 
+     std::vector<text_type> text_col1{text1, text1};
+     std::vector<text_type> text_col2{text3, text2};
+@@ -38,10 +38,10 @@ struct bi_fm_index_cursor_collection_test : public ::testing::Test
+     std::vector<text_type> text_col4{text, text2};
+ 
+     std::vector<text_type> rev_text1 = text_col1 | seqan3::views::deep{std::views::reverse}
+-                                                 | seqan3::views::to<std::vector<text_type>>;
++                                                 | seqan3::ranges::to<std::vector<text_type>>();
+     std::vector<text_type> rev_text2 = text_col4 | seqan3::views::deep{std::views::reverse}
+                                                  | std::views::reverse
+-                                                 | seqan3::views::to<std::vector<text_type>>;
++                                                 | seqan3::ranges::to<std::vector<text_type>>();
+ 
+     text_type pattern1{convert(std::string_view{"CAG"})};
+     text_type pattern2{convert(std::string_view{"TT"})};
+diff --git a/test/unit/search/fm_index_cursor/bi_fm_index_cursor_test.cpp b/test/unit/search/fm_index_cursor/bi_fm_index_cursor_test.cpp
+index 64c53be6b..cb77fad83 100644
+--- a/test/unit/search/fm_index_cursor/bi_fm_index_cursor_test.cpp
++++ b/test/unit/search/fm_index_cursor/bi_fm_index_cursor_test.cpp
+@@ -25,13 +25,13 @@ struct bi_fm_index_cursor_test : public ::testing::Test
+     using alphabet_type = typename index_type::alphabet_type;
+     using text_type = std::vector<alphabet_type>;
+ 
+-    static constexpr auto convert = seqan3::views::char_to<alphabet_type> | seqan3::views::to<text_type>;
++    static constexpr auto convert = seqan3::views::char_to<alphabet_type> | seqan3::ranges::to<text_type>();
+ 
+     text_type text{convert(std::string_view{"ACGGTAGGACGTAGC"})};
+     text_type text1{convert(std::string_view{"AACGATCGGA"})};
+ 
+-    text_type rev_text1 = text | std::views::reverse | seqan3::views::to<text_type>;
+-    text_type rev_text2 = text1 | std::views::reverse | seqan3::views::to<text_type>;
++    text_type rev_text1 = text | std::views::reverse | seqan3::ranges::to<text_type>();
++    text_type rev_text2 = text1 | std::views::reverse | seqan3::ranges::to<text_type>();
+ 
+     text_type pattern1{convert(std::string_view{"CAG"})};
+     text_type pattern2{convert(std::string_view{"TT"})};
+diff --git a/test/unit/search/fm_index_cursor/fm_index_cursor_collection_test.cpp b/test/unit/search/fm_index_cursor/fm_index_cursor_collection_test.cpp
+index 0604c51a8..07e7b3240 100644
+--- a/test/unit/search/fm_index_cursor/fm_index_cursor_collection_test.cpp
++++ b/test/unit/search/fm_index_cursor/fm_index_cursor_collection_test.cpp
+@@ -31,7 +31,7 @@ struct fm_index_cursor_collection_test : public ::testing::Test
+ 
+     static constexpr bool is_bi_fm_index = seqan3::detail::template_specialisation_of<typename index_type::cursor_type,
+                                                                                       seqan3::bi_fm_index_cursor>;
+-    static constexpr auto convert = seqan3::views::char_to<alphabet_type> | seqan3::views::to<text_type>;
++    static constexpr auto convert = seqan3::views::char_to<alphabet_type> | seqan3::ranges::to<text_type>();
+ 
+     text_type text1{convert(std::string_view{"ACGACG"})};
+     text_type text2{convert(std::string_view{"ACGAACGC"})};
+diff --git a/test/unit/search/fm_index_cursor/fm_index_cursor_test.cpp b/test/unit/search/fm_index_cursor/fm_index_cursor_test.cpp
+index 234cc6c8a..8ddb7a6f2 100644
+--- a/test/unit/search/fm_index_cursor/fm_index_cursor_test.cpp
++++ b/test/unit/search/fm_index_cursor/fm_index_cursor_test.cpp
+@@ -30,7 +30,7 @@ struct fm_index_cursor_test : public ::testing::Test
+ 
+     static constexpr bool is_bi_fm_index = seqan3::detail::template_specialisation_of<typename index_type::cursor_type,
+                                                                                       seqan3::bi_fm_index_cursor>;
+-    static constexpr auto convert = seqan3::views::char_to<alphabet_type> | seqan3::views::to<text_type>;
++    static constexpr auto convert = seqan3::views::char_to<alphabet_type> | seqan3::ranges::to<text_type>();
+ 
+     text_type text1{convert(std::string_view{"ACGACG"})};
+     text_type text2{convert(std::string_view{"ACGAACGC"})};
+diff --git a/test/unit/search/helper.hpp b/test/unit/search/helper.hpp
+index 77fdaab28..d9ef97b2b 100644
+--- a/test/unit/search/helper.hpp
++++ b/test/unit/search/helper.hpp
+@@ -35,7 +35,7 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s,
+ template <typename result_range_t>
+ std::vector<std::ranges::range_value_t<result_range_t>> uniquify(result_range_t && result_range)
+ {
+-    auto unique_res = result_range | views::to<std::vector>;
++    auto unique_res = result_range | seqan3::ranges::to<std::vector>();
+     std::sort(unique_res.begin(), unique_res.end());
+     unique_res.erase(std::unique(unique_res.begin(), unique_res.end()), unique_res.end());
+     return unique_res;
+diff --git a/test/unit/search/search_scheme_algorithm_test.cpp b/test/unit/search/search_scheme_algorithm_test.cpp
+index a982e958b..bb3d2bf8f 100644
+--- a/test/unit/search/search_scheme_algorithm_test.cpp
++++ b/test/unit/search/search_scheme_algorithm_test.cpp
+@@ -63,7 +63,7 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
+     using char_t = typename text_t::value_type;
+ 
+     uint64_t const pos = std::rand() % (text.size() - query_length + 1);
+-    text_t const orig_query = text | seqan3::views::slice(pos, pos + query_length) | seqan3::views::to<text_t>;
++    text_t const orig_query = text | seqan3::views::slice(pos, pos + query_length) | seqan3::ranges::to<text_t>();
+ 
+     // Modify query s.t. it has errors matching error_distribution.
+     auto query = orig_query;
+@@ -123,7 +123,7 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
+     auto remove_predicate_ss = [&text, &orig_query, query_length] (uint64_t const hit)
+     {
+         seqan3::dna4_vector matched_seq = text | seqan3::views::slice(hit, hit + query_length)
+-                                               | seqan3::views::to<seqan3::dna4_vector>;
++                                               | seqan3::ranges::to<seqan3::dna4_vector>();
+         return (matched_seq != orig_query);
+     };
+ 
+@@ -131,7 +131,7 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
+     {
+         // filter only correct error distributions
+         seqan3::dna4_vector matched_seq = text | seqan3::views::slice(hit, hit + query_length)
+-                                               | seqan3::views::to<seqan3::dna4_vector>;
++                                               | seqan3::ranges::to<seqan3::dna4_vector>();
+         if (orig_query != matched_seq)
+             return true;
+ 
+diff --git a/test/unit/search/search_test.cpp b/test/unit/search/search_test.cpp
+index 955320891..f56861206 100644
+--- a/test/unit/search/search_test.cpp
++++ b/test/unit/search/search_test.cpp
+@@ -331,7 +331,7 @@ TYPED_TEST(search_test, search_strategy_best)
+         seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
+                                           seqan3::search_cfg::hit_single_best{};
+ 
+-        std::vector result = search("ACGT"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
++        std::vector result = search("ACGT"_dna4, this->index, cfg) | position | seqan3::ranges::to<std::vector>();
+         ASSERT_EQ(result.size(), 1u);
+         EXPECT_TRUE(std::find(possible_hits.begin(), possible_hits.end(), result[0]) != possible_hits.end());
+ 
+@@ -342,7 +342,7 @@ TYPED_TEST(search_test, search_strategy_best)
+         seqan3::configuration const cfg = seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{1}} |
+                                           seqan3::search_cfg::hit_single_best{};
+ 
+-        std::vector result = search("ACGTT"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
++        std::vector result = search("ACGTT"_dna4, this->index, cfg) | position | seqan3::ranges::to<std::vector>();
+         ASSERT_EQ(result.size(), 1u);
+         EXPECT_TRUE(std::find(possible_hits.begin(), possible_hits.end(), result[0]) != possible_hits.end());
+     }
+@@ -351,7 +351,7 @@ TYPED_TEST(search_test, search_strategy_best)
+         seqan3::configuration const cfg = seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{1}} |
+                                           seqan3::search_cfg::hit_single_best{};
+ 
+-        std::vector result = search("ACGT"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
++        std::vector result = search("ACGT"_dna4, this->index, cfg) | position | seqan3::ranges::to<std::vector>();
+         ASSERT_EQ(result.size(), 1u);
+         EXPECT_TRUE(std::find(possible_hits.begin(), possible_hits.end(), result[0]) != possible_hits.end());
+     }
+@@ -360,7 +360,7 @@ TYPED_TEST(search_test, search_strategy_best)
+         seqan3::configuration const cfg = seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{1}} |
+                                           seqan3::search_cfg::hit_single_best{};
+ 
+-        std::vector result = search("AGT"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
++        std::vector result = search("AGT"_dna4, this->index, cfg) | position | seqan3::ranges::to<std::vector>();
+         ASSERT_EQ(result.size(), 1u);
+         EXPECT_TRUE(std::find(possible_hits.begin(), possible_hits.end(), result[0]) != possible_hits.end());
+     }
+@@ -369,7 +369,7 @@ TYPED_TEST(search_test, search_strategy_best)
+         seqan3::configuration const cfg = seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{1}} |
+                                           seqan3::search_cfg::hit_single_best{};
+ 
+-        std::vector result = search("ACGT"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
++        std::vector result = search("ACGT"_dna4, this->index, cfg) | position | seqan3::ranges::to<std::vector>();
+         ASSERT_EQ(result.size(), 1u);
+         EXPECT_TRUE(std::find(possible_hits.begin(), possible_hits.end(), result[0]) != possible_hits.end());
+     }
+@@ -379,7 +379,7 @@ TYPED_TEST(search_test, search_strategy_best)
+             seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{1}} |
+             seqan3::search_cfg::hit_single_best{};
+ 
+-        std::vector result = search("ACGC"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
++        std::vector result = search("ACGC"_dna4, this->index, cfg) | position | seqan3::ranges::to<std::vector>();
+         ASSERT_EQ(result.size(), 1u);
+         EXPECT_TRUE(std::find(possible_hits.begin(), possible_hits.end(), result[0]) != possible_hits.end());
+     }
+@@ -389,7 +389,7 @@ TYPED_TEST(search_test, search_strategy_best)
+             seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{1}} |
+             seqan3::search_cfg::hit_single_best{};
+ 
+-        std::vector result = search("ACGT"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
++        std::vector result = search("ACGT"_dna4, this->index, cfg) | position | seqan3::ranges::to<std::vector>();
+         ASSERT_EQ(result.size(), 1u);
+         EXPECT_TRUE(std::find(possible_hits.begin(), possible_hits.end(), result[0]) != possible_hits.end());
+     }
+@@ -399,7 +399,7 @@ TYPED_TEST(search_test, search_strategy_best)
+         seqan3::configuration const cfg = seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{2}} |
+                                           seqan3::search_cfg::hit_single_best{};
+ 
+-        std::vector result = search("AGTAGT"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
++        std::vector result = search("AGTAGT"_dna4, this->index, cfg) | position | seqan3::ranges::to<std::vector>();
+         ASSERT_EQ(result.size(), 1u);
+         EXPECT_TRUE(std::find(possible_hits2d.begin(), possible_hits2d.end(), result[0]) != possible_hits2d.end());
+     }
+@@ -409,7 +409,7 @@ TYPED_TEST(search_test, search_strategy_best)
+         seqan3::configuration const cfg = seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{2}} |
+                                           seqan3::search_cfg::hit{seqan3::search_cfg::hit_single_best{}};
+ 
+-        std::vector result = search("AGTAGT"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
++        std::vector result = search("AGTAGT"_dna4, this->index, cfg) | position | seqan3::ranges::to<std::vector>();
+         ASSERT_EQ(result.size(), 1u);
+         EXPECT_TRUE(std::find(possible_hits2d.begin(), possible_hits2d.end(), result[0]) != possible_hits2d.end());
+     }
+-- 
+2.34.1
+
