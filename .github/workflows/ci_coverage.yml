@@ -17,7 +17,7 @@ on:
 # Do not cancel on push events
 concurrency:
   group: coverage-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: false # PRs will be canceled by the clang-format CI
 
 env:
   CMAKE_VERSION: 3.10.3

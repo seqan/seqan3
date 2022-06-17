@@ -233,6 +233,7 @@ jobs:
           CCACHE_COMPRESS: true
           CCACHE_COMPRESSLEVEL: 12
           CCACHE_MAXSIZE: 75M
+          CCACHE_IGNOREOPTIONS: "-fprofile-abs-path"
         run: |
           ccache -z || true
           cd seqan3-build

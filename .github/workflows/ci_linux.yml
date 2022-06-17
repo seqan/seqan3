@@ -124,7 +124,6 @@ jobs:
           CCACHE_COMPRESSLEVEL: 12
           CCACHE_MAXSIZE: ${{ matrix.build == 'coverage' && '525M' || '75M' }}
           CCACHE_IGNOREOPTIONS: "-fprofile-abs-path"
-          GCOV: ${{ github.workspace }}/seqan3/.github/workflows/scripts/gcov.sh
         run: |
           ccache -z
           cd seqan3-build
