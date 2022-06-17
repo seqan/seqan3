@@ -16,7 +16,7 @@ on:
 
 concurrency:
   group: misc-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 
 env:
   SEQAN3_NO_VERSION_CHECK: 1
