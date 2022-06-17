@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/adaptation/all.hpp> // https://github.com/seqan/seqan3/issues/3015
 
 namespace std
 {
