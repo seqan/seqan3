@@ -53,6 +53,7 @@ jobs:
     concurrency:
       group: clang-format-${{ github.event.pull_request.number }}
       cancel-in-progress: true
+    needs: [cancel_linux, cancel_macos, cancel_misc, cancel_coverage]
     runs-on: ubuntu-22.04
     timeout-minutes: 15
     steps:
