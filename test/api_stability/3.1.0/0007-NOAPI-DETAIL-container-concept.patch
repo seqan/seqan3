@@ -1,7 +1,7 @@
-From 8172bf5a2d482d210f8ea4a71d61482611aa0ad3 Mon Sep 17 00:00:00 2001
+From 4925137c30f4beb682c3ceb2532d5106b5bdc2c0 Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Mon, 13 Jun 2022 17:19:37 +0200
-Subject: [PATCH 07/11] [NOAPI] [DETAIL] container concept
+Subject: [PATCH 07/12] [NOAPI] [DETAIL] container concept
 
 ---
  test/unit/alphabet/container/container_of_container_test.cpp | 1 -

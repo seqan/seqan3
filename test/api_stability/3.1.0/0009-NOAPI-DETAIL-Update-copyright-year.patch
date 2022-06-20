@@ -1,7 +1,7 @@
-From 8c4d8576d6d5678dc0ba22422078ceb813321f6c Mon Sep 17 00:00:00 2001
+From 4e5211678e028952ee165d0b8330b068e1370813 Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Mon, 13 Jun 2022 17:25:43 +0200
-Subject: [PATCH 09/11] [NOAPI] [DETAIL] Update copyright year
+Subject: [PATCH 09/12] [NOAPI] [DETAIL] Update copyright year
 
 ---
  .../argument_parser/detail/format_help_test.cpp    | 14 +++++++-------

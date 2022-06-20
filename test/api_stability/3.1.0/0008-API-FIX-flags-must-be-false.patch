@@ -1,7 +1,7 @@
-From d56d85a942a284253434039f5851922171d28a93 Mon Sep 17 00:00:00 2001
+From d7afc1ac49b603118cd36bb495ca8ad1156ebfcf Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Mon, 13 Jun 2022 17:24:30 +0200
-Subject: [PATCH 08/11] [API] [FIX] flags must be false
+Subject: [PATCH 08/12] [API] [FIX] flags must be false
 
 ---
  .../argument_parser_design_error_test.cpp     |  55 +++++-----

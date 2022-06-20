@@ -1,7 +1,7 @@
-From fb4cb41dca810f4fe79c5fde912b91955323cabd Mon Sep 17 00:00:00 2001
+From d1a5e14f308426da79f4b9b9225604a839e81881 Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Mon, 13 Jun 2022 17:31:24 +0200
-Subject: [PATCH 11/11] [API] [FIX] single_pass_input output_range
+Subject: [PATCH 11/12] [API] [FIX] single_pass_input output_range
 
 ---
  test/unit/io/views/detail/take_exactly_view_test.cpp | 2 +-
