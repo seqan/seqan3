@@ -39,11 +39,21 @@ jobs:
     steps:
       - name: "Cancel Misc"
         run: echo "Cancelling Misc"
+  cancel_coverage:
+    name: Cancel Coverage
+    concurrency:
+      group: coverage-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Cancel Coverage"
+        run: echo "Cancelling Coverage"
   lint:
     name: clang-format
     concurrency:
       group: clang-format-${{ github.event.pull_request.number }}
       cancel-in-progress: true
+    needs: [cancel_linux, cancel_macos, cancel_misc, cancel_coverage]
     runs-on: ubuntu-22.04
     timeout-minutes: 15
     steps:

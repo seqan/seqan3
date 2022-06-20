@@ -16,7 +16,7 @@ on:
 
 concurrency:
   group: misc-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 
 env:
   SEQAN3_NO_VERSION_CHECK: 1
@@ -233,6 +233,7 @@ jobs:
           CCACHE_COMPRESS: true
           CCACHE_COMPRESSLEVEL: 12
           CCACHE_MAXSIZE: 75M
+          CCACHE_IGNOREOPTIONS: "-fprofile-abs-path"
         run: |
           ccache -z || true
           cd seqan3-build
