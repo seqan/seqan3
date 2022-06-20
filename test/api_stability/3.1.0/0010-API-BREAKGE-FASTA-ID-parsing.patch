@@ -1,7 +1,7 @@
-From 5238daf90a58f7335ee439daa474f624b57ac0d2 Mon Sep 17 00:00:00 2001
+From 50f7a76f13399faafd1c44e94ad01e5d34cc663d Mon Sep 17 00:00:00 2001
 From: Simon Gene Gottlieb <simon@gottliebtfreitag.de>
 Date: Tue, 26 Oct 2021 10:37:46 +0200
-Subject: [PATCH 10/11] [API] [BREAKGE] FASTA ID parsing
+Subject: [PATCH 10/12] [API] [BREAKGE] FASTA ID parsing
 
 ---
  .../sequence_file_input_aminoacid.cpp         |  6 +-

@@ -1,7 +1,7 @@
-From 76abe0f0056f9f88fa5115553fd7f3829e661b82 Mon Sep 17 00:00:00 2001
+From 9c71f743217efb5728722fbe3eb11bf9a1efe66e Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Mon, 13 Jun 2022 16:46:56 +0200
-Subject: [PATCH 05/11] [NOAPI] [DETAIL] Unused variables
+Subject: [PATCH 05/12] [NOAPI] [DETAIL] Unused variables
 
 ---
  test/snippet/alphabet/views/translate_usage.cpp   | 15 ++++++++-------

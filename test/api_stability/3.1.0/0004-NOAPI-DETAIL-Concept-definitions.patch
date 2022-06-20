@@ -1,7 +1,7 @@
-From e71b59bfcd3b1f660314c0a6659a9367b9432c63 Mon Sep 17 00:00:00 2001
+From d5450d6435accfca62fea75dcf32689b3f96375d Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Mon, 13 Jun 2022 16:46:40 +0200
-Subject: [PATCH 04/11] [NOAPI] [DETAIL] Concept definitions
+Subject: [PATCH 04/12] [NOAPI] [DETAIL] Concept definitions
 
 ---
  test/unit/core/detail/iterator_traits_test.cpp | 4 ++--

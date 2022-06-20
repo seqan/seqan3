@@ -1,7 +1,7 @@
-From 4668cc467c1c78afb7426f2f122956a94c07f6b4 Mon Sep 17 00:00:00 2001
+From b34296417c548d3f9110daa8c57ecc6795a6224b Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Mon, 13 Jun 2022 16:44:30 +0200
-Subject: [PATCH 02/11] [NOAPI] [DETAIL] Remove STL tests
+Subject: [PATCH 02/12] [NOAPI] [DETAIL] Remove STL tests
 
 ---
  .../seqan3/test/concept_helper_classes.hpp    | 165 ++++++++++++

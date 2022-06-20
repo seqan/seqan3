@@ -1,0 +1,31 @@
+From a309f31b3c56bd480f90d05f1b6d06ea51a34eed Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Mon, 20 Dec 2021 10:30:40 +0100
+Subject: [PATCH 12/12] [NOAPI] [DETAIL] Disable warning about ABI
+
+---
+ test/seqan3-test.cmake | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/test/seqan3-test.cmake b/test/seqan3-test.cmake
+index 2c566cc80..6e4f1d31b 100644
+--- a/test/seqan3-test.cmake
++++ b/test/seqan3-test.cmake
+@@ -64,6 +64,14 @@ file(MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googletest/include/)
+ # libraries which are in common for **all** seqan3 tests
+ add_library (seqan3_test INTERFACE)
+ target_compile_options (seqan3_test INTERFACE "-pedantic"  "-Wall" "-Wextra" "-Werror")
++
++# GCC12 and above: Disable warning about std::hardware_destructive_interference_size not being ABI-stable.
++if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
++    if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 12)
++        target_compile_options (seqan3_test INTERFACE "-Wno-interference-size")
++    endif ()
++endif ()
++
+ target_link_libraries (seqan3_test INTERFACE "seqan3::seqan3" "pthread")
+ target_include_directories (seqan3_test INTERFACE "${SEQAN3_TEST_INCLUDE_DIR}")
+ add_library (seqan3::test ALIAS seqan3_test)
+-- 
+2.34.1
+

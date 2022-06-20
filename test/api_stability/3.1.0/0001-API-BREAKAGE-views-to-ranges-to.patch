@@ -1,7 +1,7 @@
-From d3d37b0f3f79074d3f3a75418b3559f8c2750972 Mon Sep 17 00:00:00 2001
+From c17b5b026c1646b25393156e77f6a86ffbd89dbb Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Mon, 13 Jun 2022 16:42:25 +0200
-Subject: [PATCH 01/11] [API] [BREAKAGE] views::to -> ranges::to
+Subject: [PATCH 01/12] [API] [BREAKAGE] views::to -> ranges::to
 
 ---
  doc/tutorial/alphabet/alphabet_gc_content.cpp  |  2 +-
