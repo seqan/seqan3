@@ -830,7 +830,7 @@ namespace seqan3::views
  *
  * \hideinitializer
  *
- * \experimentalapi
+ * \noapi{This is a implementation of the C++23 chunk_view. It will be replaced with std::views::chunk.}
  */
 inline constexpr auto chunk = detail::chunk_fn{};
 
