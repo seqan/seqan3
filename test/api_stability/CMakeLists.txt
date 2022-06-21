@@ -7,15 +7,15 @@ find_package (Git)
 include (../seqan3-test.cmake)
 
 include (ExternalProject)
-set (SEQAN3_LAST_STABLE_VERSION "3.1.0")
+set (SEQAN3_LAST_STABLE_VERSION "3.2.0")
 set (SEQAN3_LAST_STABLE_SOURCE_URL
      "https://github.com/seqan/seqan3/releases/download/${SEQAN3_LAST_STABLE_VERSION}/seqan3-${SEQAN3_LAST_STABLE_VERSION}-Source.tar.xz"
 )
-set (SEQAN3_LAST_STABLE_SOURCE_SHA256 "0b37b1c3450e19c0ebe42c052c3f87babb8074bd772f10a553949c312c285726")
+set (SEQAN3_LAST_STABLE_SOURCE_SHA256 "2737a9dc20c1d728674010662c0c9452aabbb3d4a64725bda24f28335468994c")
 
 set (SEQAN3_API_STABILITY_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSEQAN3_DISABLE_DEPRECATED_WARNINGS=1")
 
-macro (seqan3_api_stability_test test_suite)
+macro (seqan3_api_stability_test test_suite git_apply)
     ExternalProject_Add (
         api_stability_${test_suite}
         URL ${SEQAN3_LAST_STABLE_SOURCE_URL}
@@ -31,16 +31,18 @@ macro (seqan3_api_stability_test test_suite)
         COMMAND ${CMAKE_COMMAND} -E remove_directory "<SOURCE_DIR>/include"
         COMMAND ${CMAKE_COMMAND} -E remove_directory "<SOURCE_DIR>/submodules"
         COMMAND ${CMAKE_COMMAND} -E remove_directory "<SOURCE_DIR>/build_system"
-        COMMAND sh -c
-                "${GIT_EXECUTABLE} apply --verbose ${CMAKE_CURRENT_LIST_DIR}/${SEQAN3_LAST_STABLE_VERSION}/*.patch"
+        COMMAND sh -c "${git_apply}"
         TEST_BEFORE_INSTALL TRUE
         TEST_COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -j2
         INSTALL_COMMAND "")
 endmacro ()
 
 if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/${SEQAN3_LAST_STABLE_VERSION}")
-    seqan3_api_stability_test ("snippet")
-    seqan3_api_stability_test ("unit")
+    set (SEQAN3_GIT_APPLY "${GIT_EXECUTABLE} apply --verbose ${CMAKE_CURRENT_LIST_DIR}/${SEQAN3_LAST_STABLE_VERSION}/*.patch")
 else ()
-    message (FATAL_ERROR "No patches found in ${CMAKE_CURRENT_LIST_DIR}/${SEQAN3_LAST_STABLE_VERSION}:")
+    set (SEQAN3_GIT_APPLY "true")
+    message (STATUS "No patches found in ${CMAKE_CURRENT_LIST_DIR}/${SEQAN3_LAST_STABLE_VERSION}.")
 endif ()
+
+seqan3_api_stability_test ("snippet" "${SEQAN3_GIT_APPLY}")
+seqan3_api_stability_test ("unit" "${SEQAN3_GIT_APPLY}")
