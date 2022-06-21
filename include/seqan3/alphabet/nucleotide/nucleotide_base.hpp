@@ -142,28 +142,34 @@ public:
     }
 
 private:
+    // clang-format off
     //!\brief Implementation of #char_is_valid().
-    static constexpr std::array<bool, 256> valid_char_table{[]() constexpr {// init with false
-                                                                            std::array<bool, 256> ret{};
-
-    // the original valid chars and their lower cases
-    for (size_t rank = 0u; rank < derived_type::alphabet_size; ++rank)
+    static constexpr std::array<bool, 256> valid_char_table
     {
-        uint8_t c = derived_type::rank_to_char(rank);
-        ret[c] = true;
-        ret[to_lower(c)] = true;
-    }
+        []() constexpr {
+            std::array<bool, 256> ret{};
 
-    // U and T shall be accepted for all
-    ret['U'] = true;
-    ret['T'] = true;
-    ret['u'] = true;
-    ret['t'] = true;
+            // Value-initialisation of std::array does usually initialise. `fill` is explicit.
+            ret.fill(false);
 
-    return ret;
-}()
-}; // namespace seqan3
-}
-;
+            // the original valid chars and their lower cases
+            for (size_t rank = 0u; rank < derived_type::alphabet_size; ++rank)
+            {
+                uint8_t c = derived_type::rank_to_char(rank);
+                ret[c] = true;
+                ret[to_lower(c)] = true;
+            }
+
+            // U and T shall be accepted for all
+            ret['U'] = true;
+            ret['T'] = true;
+            ret['u'] = true;
+            ret['t'] = true;
+
+            return ret;
+        }()
+    };
+};
+    // clang-format off
 
 } // namespace seqan3
