@@ -108,10 +108,11 @@ public:
     //!\}
 
 protected:
+    // clang-format off
     //!\brief Rank to char conversion table.
-    static constexpr std::array<char_type, alphabet_size> rank_to_char{
-        []()
-        {
+    static constexpr std::array<char_type, alphabet_size> rank_to_char
+    {
+        []() constexpr {
             std::array<char_type, alphabet_size> ret{};
 
             for (size_t i = 0; i < alphabet_size; ++i)
@@ -122,28 +123,32 @@ protected:
             }
 
             return ret;
-        }()};
+        }()
+    };
 
     //!\brief Char to rank conversion table.
-    static constexpr std::array<rank_type, detail::size_in_values_v<char_type>> char_to_rank{
-        []()
-        {
+    static constexpr std::array<rank_type, detail::size_in_values_v<char_type>> char_to_rank
+    {
+        []() constexpr {
             std::array<rank_type, detail::size_in_values_v<char_type>> ret{};
 
             for (size_t i = 0; i < 256; ++i)
             {
-                char_type c = static_cast<char_type>(i);
+                char_type const c = static_cast<char_type>(i);
 
                 ret[i] = is_lower(c) ? seqan3::to_rank(seqan3::assign_char_to(c, sequence_alphabet_type{})) * 2
                                      : seqan3::to_rank(seqan3::assign_char_to(c, sequence_alphabet_type{}));
             }
 
             return ret;
-        }()};
+        }()
+    };
 };
+// clang-format on
 
 //!\brief Type deduction guide enables usage of masked without specifying template args.
 //!\relates masked
 template <typename sequence_alphabet_type>
 masked(sequence_alphabet_type &&, mask const &) -> masked<std::decay_t<sequence_alphabet_type>>;
+
 } //namespace seqan3
