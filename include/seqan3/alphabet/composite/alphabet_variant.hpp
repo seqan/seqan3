@@ -481,62 +481,11 @@ protected:
         return seqan3::assign_rank_to(to_rank() - partial_sum_sizes[index], alternative_t{});
     }
 
-    /*!\brief Compile-time generated lookup table which contains the partial
-     * sum up to the position of each alternative.
-     *
-     * An array which contains the prefix sum over all
-     * alternative_types::alphabet_size's.
-     *
+    /*!\brief Converts an object of one of the given alternatives into the internal representation.
+     * \tparam index The position of `alternative_t` in the template pack `alternative_types`.
+     * \tparam alternative_t One of the alternative types.
+     * \param alternative The value of a alternative.
      */
-    static constexpr std::array<rank_type, sizeof...(alternative_types) + 1> partial_sum_sizes = []() constexpr
-    {
-        constexpr size_t N = sizeof...(alternative_types) + 1;
-
-        std::array<rank_type, N> partial_sum{0, seqan3::alphabet_size<alternative_types>...};
-        for (size_t i = 1u; i < N; ++i)
-            partial_sum[i] += partial_sum[i - 1];
-
-        return partial_sum;
-    }
-    ();
-
-    //!\copydoc seqan3::alphabet_variant::rank_to_char
-    static constexpr std::array<char_type, alphabet_size> rank_to_char_table = []() constexpr
-    {
-        // Explicitly writing assign_rank_to_char within assign_rank_to_char
-        // causes this bug (g++-7 and g++-8):
-        // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84684
-        auto assign_rank_to_char = [](auto alternative, size_t rank) constexpr
-        {
-            return seqan3::to_char(seqan3::assign_rank_to(rank, alternative));
-        };
-
-        auto assign_value_to_char = [assign_rank_to_char](auto alternative,
-                                                          auto & value_to_char,
-                                                          auto & value) constexpr
-        {
-            using alternative_t = std::decay_t<decltype(alternative)>;
-            for (size_t i = 0u; i < seqan3::alphabet_size<alternative_t>; ++i, ++value)
-                value_to_char[value] = assign_rank_to_char(alternative, i);
-        };
-
-        unsigned value = 0u;
-        std::array<char_type, alphabet_size> value_to_char{};
-
-        // initializer lists guarantee sequencing;
-        // the following expression behaves as:
-        // for(auto alternative: alternative_types)
-        //    assign_rank_to_char(alternative, rank_to_char, value);
-        ((assign_value_to_char(alternative_types{}, value_to_char, value)), ...);
-
-        return value_to_char;
-    }
-    ();
-
-    //!\brief Converts an object of one of the given alternatives into the internal representation.
-    //!\tparam index The position of `alternative_t` in the template pack `alternative_types`.
-    //!\tparam alternative_t One of the alternative types.
-    //!\param alternative The value of a alternative.
     template <size_t index, typename alternative_t>
         requires (is_alternative<alternative_t>())
     static constexpr rank_type rank_by_index_(alternative_t const & alternative) noexcept
@@ -544,10 +493,11 @@ protected:
         return partial_sum_sizes[index] + static_cast<rank_type>(seqan3::to_rank(alternative));
     }
 
-    //!\brief Converts an object of one of the given alternatives into the internal representation.
-    //!\details Finds the index of alternative_t in the given types.
-    //!\tparam alternative_t One of the alternative types.
-    //!\param alternative The value of a alternative.
+    /*!\brief Converts an object of one of the given alternatives into the internal representation.
+     * \details Finds the index of alternative_t in the given types.
+     * \tparam alternative_t One of the alternative types.
+     * \param alternative The value of a alternative.
+     */
     template <typename alternative_t>
         requires (is_alternative<alternative_t>())
     static constexpr rank_type rank_by_type_(alternative_t const & alternative) noexcept
@@ -556,83 +506,124 @@ protected:
         return rank_by_index_<index>(alternative);
     }
 
-    /*!\brief Compile-time generated lookup table which maps the char to the index of the first alphabet that fulfils
-     *        char_is_valid_for.
-     */
-    static constexpr auto first_valid_char_table{
-        []() constexpr {constexpr size_t alternative_size = sizeof...(alternative_types);
-    constexpr size_t table_size = detail::size_in_values_v<char_type>;
-    using first_alphabet_t = detail::min_viable_uint_t<alternative_size>;
-
-    std::array<first_alphabet_t, table_size> lookup_table{};
-
-    for (size_t i = 0u; i < table_size; ++i)
-    {
-        char_type chr = static_cast<char_type>(i);
-
-        std::array<bool, alternative_size> valid_chars{char_is_valid_for<alternative_types>(chr)...};
-
-#if defined(__cpp_lib_constexpr_algorithms) && __cpp_lib_constexpr_algorithms >= 201806L
-        // the following lines only works beginning from c++20
-        auto found_it = std::find(valid_chars.begin(), valid_chars.end(), true);
-        lookup_table[i] = found_it - valid_chars.begin();
-#else
-        size_t found_index = 0u;
-        for (; found_index < valid_chars.size() && !valid_chars[found_index]; ++found_index)
-            ;
-        lookup_table[i] = found_index;
-#endif // defined(__cpp_lib_constexpr_algorithms) && __cpp_lib_constexpr_algorithms >= 201806L
-    }
-
-    return lookup_table;
-}()
-}; // namespace seqan3
-
-//!\copydoc seqan3::alphabet_variant::char_to_rank
-static constexpr std::array<rank_type, detail::size_in_values_v<char_type>> char_to_rank_table = []() constexpr
-{
-    constexpr size_t alternative_size = sizeof...(alternative_types);
-    constexpr size_t table_size = detail::size_in_values_v<char_type>;
-
-    std::array<rank_type, table_size> char_to_rank{};
-
-    for (size_t i = 0u; i < table_size; ++i)
-    {
-        char_type chr = static_cast<char_type>(i);
-
-        std::array<rank_type, alternative_size> ranks{rank_by_type_(assign_char_to(chr, alternative_types{}))...};
-
-        // if no char_is_valid_for any alternative use the rank of the first alternative
-        char_to_rank[i] = first_valid_char_table[i] < alternative_size ? ranks[first_valid_char_table[i]] : 0;
-    }
-
-    return char_to_rank;
-}
-();
-
-/*!\brief Compile-time generated lookup table which maps the rank to char.
+    /*!\brief Compile-time generated lookup table which maps the rank to char.
      *
      * A map generated at compile time where the key is the rank of the variant
      * of all alternatives and the value is the corresponding char of that rank
      * and alternative.
      */
-static constexpr char_type rank_to_char(rank_type const rank)
-{
-    return rank_to_char_table[rank];
-}
+    static constexpr char_type rank_to_char(rank_type const rank)
+    {
+        return rank_to_char_table[rank];
+    }
 
-/*!\brief Compile-time generated lookup table which maps the char to rank.
+    /*!\brief Compile-time generated lookup table which maps the char to rank.
+        *
+        * A map generated at compile time where the key is the char of one of the
+        * alternatives and the value is the corresponding rank over all alternatives (by
+        * conflict will default to the first).
+        */
+    static constexpr rank_type char_to_rank(char_type const chr)
+    {
+        using index_t = std::make_unsigned_t<char_type>;
+        return char_to_rank_table[static_cast<index_t>(chr)];
+    }
+
+    // clang-format off
+    /*!\brief Compile-time generated lookup table which contains the partial
+     * sum up to the position of each alternative.
      *
-     * A map generated at compile time where the key is the char of one of the
-     * alternatives and the value is the corresponding rank over all alternatives (by
-     * conflict will default to the first).
+     * An array which contains the prefix sum over all
+     * alternative_types::alphabet_size's.
+     *
      */
-static constexpr rank_type char_to_rank(char_type const chr)
-{
-    using index_t = std::make_unsigned_t<char_type>;
-    return char_to_rank_table[static_cast<index_t>(chr)];
-}
-}
-;
+    static constexpr std::array<rank_type, sizeof...(alternative_types) + 1> partial_sum_sizes
+    {
+        []() constexpr {
+            constexpr size_t N = sizeof...(alternative_types) + 1;
+
+            std::array<rank_type, N> partial_sum{0, seqan3::alphabet_size<alternative_types>...};
+
+            for (size_t i = 1u; i < N; ++i)
+                partial_sum[i] += partial_sum[i - 1];
+
+            return partial_sum;
+        }()
+    };
+
+    //!\copydoc seqan3::alphabet_variant::rank_to_char
+    static constexpr std::array<char_type, alphabet_size> rank_to_char_table
+    {
+        []() constexpr {
+            auto assign_value_to_char = [](auto alternative, auto & value_to_char, auto & value) constexpr
+            {
+                using alternative_t = std::decay_t<decltype(alternative)>;
+                for (size_t i = 0u; i < seqan3::alphabet_size<alternative_t>; ++i, ++value)
+                    value_to_char[value] = seqan3::to_char(seqan3::assign_rank_to(i, alternative));
+            };
+
+            size_t value{};
+            std::array<char_type, alphabet_size> value_to_char{};
+
+            // initializer lists guarantee sequencing;
+            // the following expression behaves as:
+            // for(auto alternative: alternative_types)
+            //    assign_rank_to_char(alternative, rank_to_char, value);
+            ((assign_value_to_char(alternative_types{}, value_to_char, value)), ...);
+
+            return value_to_char;
+        }()
+    };
+
+    /*!\brief Compile-time generated lookup table which maps the char to the index of the first alphabet that fulfils
+     *        char_is_valid_for.
+     */
+    static constexpr auto first_valid_char_table
+    {
+        []() constexpr {
+            constexpr size_t alternative_size = sizeof...(alternative_types);
+            constexpr size_t table_size = detail::size_in_values_v<char_type>;
+            using first_alphabet_t = detail::min_viable_uint_t<alternative_size>;
+
+            std::array<first_alphabet_t, table_size> lookup_table{};
+
+            for (size_t i = 0u; i < table_size; ++i)
+            {
+                char_type chr = static_cast<char_type>(i);
+
+                std::array<bool, alternative_size> valid_chars{char_is_valid_for<alternative_types>(chr)...};
+
+                auto found_it = std::find(valid_chars.begin(), valid_chars.end(), true);
+                lookup_table[i] = found_it - valid_chars.begin();
+            }
+
+            return lookup_table;
+        }()
+    };
+
+    //!\copydoc seqan3::alphabet_variant::char_to_rank
+    static constexpr std::array<rank_type, detail::size_in_values_v<char_type>> char_to_rank_table
+    {
+        []() constexpr {
+            constexpr size_t alternative_size = sizeof...(alternative_types);
+            constexpr size_t table_size = detail::size_in_values_v<char_type>;
+
+            std::array<rank_type, table_size> char_to_rank{};
+
+            for (size_t i = 0u; i < table_size; ++i)
+            {
+                char_type chr = static_cast<char_type>(i);
+
+                std::array<rank_type, alternative_size> ranks{rank_by_type_(assign_char_to(chr, alternative_types{}))...};
+
+                // if no char_is_valid_for any alternative, use the rank of the first alternative
+                char_to_rank[i] = first_valid_char_table[i] < alternative_size ? ranks[first_valid_char_table[i]] : 0;
+            }
+
+            return char_to_rank;
+        }()
+    };
+};
+// clang-format on
 
 } // namespace seqan3
