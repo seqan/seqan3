@@ -172,14 +172,14 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 #    endif
 #endif
 
-//!\brief Deprecation message for SeqAn 3.3.0 release.
-#ifndef SEQAN3_REMOVE_DEPRECATED_330
-#    ifndef SEQAN3_DEPRECATED_330
+//!\brief Deprecation message for SeqAn 3.4.0 release.
+#ifndef SEQAN3_REMOVE_DEPRECATED_340
+#    ifndef SEQAN3_DEPRECATED_340
 #        ifndef SEQAN3_DISABLE_DEPRECATED_WARNINGS
-#            define SEQAN3_DEPRECATED_330                                                                              \
-                [[deprecated("This will be removed in SeqAn-3.3.0; please see the documentation.")]]
+#            define SEQAN3_DEPRECATED_340                                                                              \
+                [[deprecated("This will be removed in SeqAn-3.4.0; please see the documentation.")]]
 #        else
-#            define SEQAN3_DEPRECATED_330 /**/
+#            define SEQAN3_DEPRECATED_340 /**/
 #        endif
 #    endif
 #endif
