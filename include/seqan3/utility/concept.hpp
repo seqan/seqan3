@@ -70,29 +70,6 @@ template <typename t>
 concept arithmetic = std::is_arithmetic_v<t>;
 //!\endcond
 
-/*!\interface seqan3::floating_point <>
- * \ingroup utility_concept
- * \brief An alias for `std::floating_point<t>`.
- *
- * \details
- *
- * \sa https://en.cppreference.com/w/cpp/concepts/floating_point
- *
- * \deprecated Use std::floating_point<t> instead.
- *
- * \noapi
- */
-//!\cond
-namespace deprecated
-{
-template <typename t>
-concept floating_point = arithmetic<t> && std::is_floating_point_v<t>;
-} // namespace deprecated
-
-template <typename t>
-SEQAN3_DEPRECATED_330 constexpr bool floating_point = deprecated::floating_point<t>;
-//!\endcond
-
 /*!\interface seqan3::builtin_character <>
  * \ingroup utility_concept
  * \extends std::integral

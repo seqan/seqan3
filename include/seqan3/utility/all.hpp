@@ -28,7 +28,6 @@
 #pragma once
 
 #include <seqan3/utility/char_operations/all.hpp>
-#include <seqan3/utility/concept/all.hpp>
 #include <seqan3/utility/container/all.hpp>
 #include <seqan3/utility/math.hpp>
 #include <seqan3/utility/parallel/all.hpp>
