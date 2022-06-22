@@ -53,7 +53,7 @@ public:
     {
         spin_delay delay{};
         while (num_waiting.load(std::memory_order_acquire) > 0)
-            delay.wait();
+            delay.wait(); // LCOV_EXCL_LINE
     }
 
     /*!\brief Constructs the latch with the expected number of threads.
