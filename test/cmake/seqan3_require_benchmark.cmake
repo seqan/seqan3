@@ -79,11 +79,18 @@ macro (seqan3_require_benchmark)
 
         # NOTE: google benchmark's CMakeLists.txt already defines Shlwapi
         add_library (gbenchmark ALIAS benchmark_main)
+
+        if (NOT TARGET gbenchmark_build)
+            add_custom_target (gbenchmark_build DEPENDS gbenchmark)
+            target_compile_options ("gbenchmark" PUBLIC "-w")
+        endif ()
     else ()
         message (STATUS "Use Google Benchmark as external project:")
 
         seqan3_require_benchmark_old ("${gbenchmark_git_tag}")
-    endif ()
 
-    add_custom_target (gbenchmark_build DEPENDS gbenchmark)
+        if (NOT TARGET gbenchmark_build)
+            add_custom_target (gbenchmark_build DEPENDS gbenchmark)
+        endif ()
+    endif ()
 endmacro ()
