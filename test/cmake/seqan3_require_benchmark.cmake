@@ -82,7 +82,7 @@ macro (seqan3_require_benchmark)
 
         if (NOT TARGET gbenchmark_build)
             add_custom_target (gbenchmark_build DEPENDS gbenchmark)
-            target_compile_options ("gbenchmark" PUBLIC "-w")
+            target_compile_options ("benchmark_main" PUBLIC "-w")
         endif ()
     else ()
         message (STATUS "Use Google Benchmark as external project:")
