@@ -25,6 +25,7 @@
 namespace seqan3::detail
 {
 
+// clang-format off
 /*!\brief A precomputed conversion table for two alphabets based on their char representations.
  * \ingroup alphabet
  * \tparam in_t The type of the input, must satisfy seqan3::alphabet.
@@ -32,15 +33,18 @@ namespace seqan3::detail
  * \hideinitializer
  */
 template <alphabet in_t, alphabet out_t>
-constexpr std::array<out_t, alphabet_size<in_t>> convert_through_char_representation{
-    []() constexpr {std::array<out_t, alphabet_size<in_t>> ret{};
-// for (decltype(alphabet_size<in_t>) i = 0; ...) causes indefinite compilation :(
-for (auto i = decltype(alphabet_size<in_t>){0}; i < alphabet_size<in_t>; ++i)
-    assign_char_to(to_char(assign_rank_to(i, in_t{})), ret[i]);
-return ret;
-} // namespace seqan3::detail
-()
-}
-;
+constexpr std::array<out_t, alphabet_size<in_t>> convert_through_char_representation
+{
+    []() constexpr {
+        std::array<out_t, alphabet_size<in_t>> ret{};
+
+        // for (decltype(alphabet_size<in_t>) i = 0; ...) causes indefinite compilation :(
+        for (auto i = decltype(alphabet_size<in_t>){0}; i < alphabet_size<in_t>; ++i)
+            assign_char_to(to_char(assign_rank_to(i, in_t{})), ret[i]);
+
+        return ret;
+    }()
+};
+// clang-format on
 
 } // namespace seqan3::detail
