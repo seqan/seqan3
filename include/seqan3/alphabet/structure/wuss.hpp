@@ -13,6 +13,7 @@
 #pragma once
 
 #include <cmath>
+#include <limits>
 #include <vector>
 
 #include <seqan3/alphabet/alphabet_base.hpp>
@@ -148,90 +149,88 @@ public:
     //!\}
 
 private:
-    //!\copydoc seqan3::dna4::rank_to_char_table
-    static constexpr std::array<char_type, alphabet_size> rank_to_char_table{
-        []() constexpr {std::array<char_type, alphabet_size>
-                            chars{'.', ':', ',', '-', '_', '~', ';', '<', '(', '[', '{', '>', ')', ']', '}'};
-
-    // pseudoknot letters
-    for (rank_type rnk = 15u; rnk + 1u < alphabet_size; rnk += 2u)
+    //!\copydoc seqan3::dna4::rank_to_char
+    static constexpr char_type rank_to_char(rank_type const rank)
     {
-        char_type const off = static_cast<char_type>((rnk - 15u) / 2u);
-        chars[rnk] = 'A' + off;
-        chars[rnk + 1u] = 'a' + off;
+        return rank_to_char_table[rank];
     }
 
-    return chars;
-}()
-}; // namespace seqan3
+    //!\copydoc seqan3::dna4::char_to_rank
+    static constexpr rank_type char_to_rank(char_type const chr)
+    {
+        using index_t = std::make_unsigned_t<char_type>;
+        return char_to_rank_table[static_cast<index_t>(chr)];
+    }
 
-//!\copydoc seqan3::dna4::char_to_rank_table
-static constexpr std::array<rank_type, 256> char_to_rank_table{[]() constexpr {std::array<rank_type, 256> rank_table{};
+    // clang-format off
+    //!\copydoc seqan3::dna4::rank_to_char_table
+    static constexpr std::array<char_type, alphabet_size> rank_to_char_table
+    {
+        []() constexpr {
+            std::array<char_type, alphabet_size> chars{'.', ':', ',', '-', '_', '~', ';', '<', '(', '[', '{', '>', ')',
+                                                       ']', '}'};
 
-// initialize with unpaired (std::array::fill unfortunately not constexpr)
-for (rank_type & rnk : rank_table)
-    rnk = 6u;
+            // pseudoknot letters
+            for (rank_type rnk = 15u; rnk + 1u < alphabet_size; rnk += 2u)
+            {
+                char_type const off = static_cast<char_type>((rnk - 15u) / 2u);
+                chars[rnk] = 'A' + off;
+                chars[rnk + 1u] = 'a' + off;
+            }
 
-// set alphabet values
-for (rank_type rnk = 0u; rnk < alphabet_size; ++rnk)
-    rank_table[rank_to_char_table[rnk]] = rnk;
-return rank_table;
-}
-()
-}
-;
+            return chars;
+        }()
+    };
 
-//!\copydoc seqan3::dna4::rank_to_char
-static constexpr char_type rank_to_char(rank_type const rank)
-{
-    return rank_to_char_table[rank];
-}
+    //!\copydoc seqan3::dna4::char_to_rank_table
+    static constexpr std::array<rank_type, 256> char_to_rank_table
+    {
+        []() constexpr {
+            std::array<rank_type, 256> rank_table{};
 
-//!\copydoc seqan3::dna4::char_to_rank
-static constexpr rank_type char_to_rank(char_type const chr)
-{
-    using index_t = std::make_unsigned_t<char_type>;
-    return char_to_rank_table[static_cast<index_t>(chr)];
-}
+            rank_table.fill(6u);
 
-/*!\brief Lookup table for interactions: unpaired (0), pair-open (< 0), pair-close (> 0).
+            // set alphabet values
+            for (rank_type rnk = 0u; rnk < alphabet_size; ++rnk)
+                rank_table[rank_to_char_table[rnk]] = rnk;
+
+            return rank_table;
+        }()
+    };
+
+    /*!\brief Lookup table for interactions: unpaired (0), pair-open (< 0), pair-close (> 0).
      * Paired brackets have the same absolute value.
      */
-static std::array<int8_t, SIZE> const interaction_tab;
-}
-;
-
-template <uint8_t SIZE>
-constexpr std::array<int8_t, SIZE> wuss<SIZE>::interaction_tab = []() constexpr
-{
-    std::array<int8_t, alphabet_size> interaction_table{};
-    int cnt_open = 0;
-    int cnt_close = 0;
-
-    for (rank_type rnk = 0u; rnk <= 6u; ++rnk)
+    static constexpr std::array<int8_t, SIZE> interaction_tab
     {
-        interaction_table[rnk] = 0;
-    }
+        []() constexpr {
+            static_assert(static_cast<int16_t>(std::numeric_limits<int8_t>::max()) >= SIZE);
+            static_assert(- static_cast<int16_t>(std::numeric_limits<int8_t>::min()) >= SIZE);
 
-    for (rank_type rnk = 7u; rnk <= 10u; ++rnk)
-    {
-        interaction_table[rnk] = --cnt_open;
-    }
+            std::array<int8_t, alphabet_size> interaction_table{};
+            int8_t cnt_open = 0;
+            int8_t cnt_close = 0;
 
-    for (rank_type rnk = 11u; rnk <= 14u; ++rnk)
-    {
-        interaction_table[rnk] = ++cnt_close;
-    }
+            for (rank_type rnk = 0u; rnk <= 6u; ++rnk)
+                interaction_table[rnk] = 0;
 
-    for (rank_type rnk = 15u; rnk + 1u < alphabet_size; rnk += 2u)
-    {
-        interaction_table[rnk] = --cnt_open;
-        interaction_table[rnk + 1u] = ++cnt_close;
-    }
+            for (rank_type rnk = 7u; rnk <= 10u; ++rnk)
+                interaction_table[rnk] = --cnt_open;
 
-    return interaction_table;
-}
-();
+            for (rank_type rnk = 11u; rnk <= 14u; ++rnk)
+                interaction_table[rnk] = ++cnt_close;
+
+            for (rank_type rnk = 15u; rnk + 1u < alphabet_size; rnk += 2u)
+            {
+                interaction_table[rnk] = --cnt_open;
+                interaction_table[rnk + 1u] = ++cnt_close;
+            }
+
+            return interaction_table;
+        }()
+    };
+};
+// clang-format on
 
 /*!\brief Alias for the default type wuss51.
  * \relates seqan3::wuss
