@@ -38,7 +38,8 @@ macro (seqan3_api_stability_test test_suite git_apply)
 endmacro ()
 
 if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/${SEQAN3_LAST_STABLE_VERSION}")
-    set (SEQAN3_GIT_APPLY "${GIT_EXECUTABLE} apply --verbose ${CMAKE_CURRENT_LIST_DIR}/${SEQAN3_LAST_STABLE_VERSION}/*.patch")
+    set (SEQAN3_GIT_APPLY
+         "${GIT_EXECUTABLE} apply --verbose ${CMAKE_CURRENT_LIST_DIR}/${SEQAN3_LAST_STABLE_VERSION}/*.patch")
 else ()
     set (SEQAN3_GIT_APPLY "true")
     message (STATUS "No patches found in ${CMAKE_CURRENT_LIST_DIR}/${SEQAN3_LAST_STABLE_VERSION}.")
