@@ -55,7 +55,8 @@ private:
 
     //!\brief Befriend seqan3::nucleotide_base.
     friend base_t;
-    //!\cond \brief Befriend seqan3::alphabet_base.
+    //!\cond
+    //!\brief Befriend seqan3::alphabet_base.
     friend base_t::base_t;
     //!\endcond
     //!\brief Befriend seqan3::rna5 so it can copy #char_to_rank.
@@ -92,58 +93,60 @@ private:
     //!\copydoc seqan3::dna4::rank_to_char_table
     static constexpr char_type rank_to_char_table[alphabet_size]{'A', 'C', 'G', 'N', 'T'};
 
-    //!\copydoc seqan3::dna4::char_to_rank_table
-    static constexpr std::array<rank_type, 256> char_to_rank_table{[]() constexpr {std::array<rank_type, 256> ret{};
+    //!\copydoc seqan3::dna4::rank_complement_table
+    static constexpr rank_type rank_complement_table[alphabet_size]{
+        4, // T is complement of 'A'_dna5
+        2, // G is complement of 'C'_dna5
+        1, // C is complement of 'G'_dna5
+        3, // N is complement of 'N'_dna5
+        0  // A is complement of 'T'_dna5
+    };
 
-    // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
-    for (auto & c : ret)
-        c = 3; // == 'N'
-
-    // reverse mapping for characters and their lowercase
-    for (size_t rnk = 0u; rnk < alphabet_size; ++rnk)
+    //!\copydoc seqan3::dna4::rank_complement
+    static constexpr rank_type rank_complement(rank_type const rank)
     {
-        ret[rank_to_char_table[rnk]] = rnk;
-        ret[to_lower(rank_to_char_table[rnk])] = rnk;
+        return rank_complement_table[rank];
     }
 
-    // set U equal to T
-    ret['U'] = ret['T'];
-    ret['u'] = ret['t'];
+    //!\copydoc seqan3::dna4::rank_to_char
+    static constexpr char_type rank_to_char(rank_type const rank)
+    {
+        return rank_to_char_table[rank];
+    }
 
-    // iupac characters are implicitly "UNKNOWN"
-    return ret;
-}()
-}; // namespace seqan3
+    //!\copydoc seqan3::dna4::char_to_rank
+    static constexpr rank_type char_to_rank(char_type const chr)
+    {
+        using index_t = std::make_unsigned_t<char_type>;
+        return char_to_rank_table[static_cast<index_t>(chr)];
+    }
 
-//!\copydoc seqan3::dna4::rank_complement_table
-static constexpr rank_type rank_complement_table[alphabet_size]{
-    4, // T is complement of 'A'_dna5
-    2, // G is complement of 'C'_dna5
-    1, // C is complement of 'G'_dna5
-    3, // N is complement of 'N'_dna5
-    0  // A is complement of 'T'_dna5
+    // clang-format off
+    //!\copydoc seqan3::dna4::char_to_rank_table
+    static constexpr std::array<rank_type, 256> char_to_rank_table
+    {
+        []() constexpr {
+            std::array<rank_type, 256> ret{};
+
+            ret.fill(3u); // initialize with UNKNOWN ('N')
+
+            // reverse mapping for characters and their lowercase
+            for (size_t rnk = 0u; rnk < alphabet_size; ++rnk)
+            {
+                ret[rank_to_char_table[rnk]] = rnk;
+                ret[to_lower(rank_to_char_table[rnk])] = rnk;
+            }
+
+            // set U equal to T
+            ret['U'] = ret['T'];
+            ret['u'] = ret['t'];
+
+            // iupac characters are implicitly "UNKNOWN"
+            return ret;
+        }()
+    };
 };
-
-//!\copydoc seqan3::dna4::rank_complement
-static constexpr rank_type rank_complement(rank_type const rank)
-{
-    return rank_complement_table[rank];
-}
-
-//!\copydoc seqan3::dna4::rank_to_char
-static constexpr char_type rank_to_char(rank_type const rank)
-{
-    return rank_to_char_table[rank];
-}
-
-//!\copydoc seqan3::dna4::char_to_rank
-static constexpr rank_type char_to_rank(char_type const chr)
-{
-    using index_t = std::make_unsigned_t<char_type>;
-    return char_to_rank_table[static_cast<index_t>(chr)];
-}
-}
-;
+// clang-format on
 
 // ------------------------------------------------------------------
 // containers
