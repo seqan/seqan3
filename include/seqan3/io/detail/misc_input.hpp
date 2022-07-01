@@ -29,6 +29,7 @@
 #    include <seqan3/contrib/stream/bgzf_stream_util.hpp>
 #    include <seqan3/contrib/stream/gz_istream.hpp>
 #endif
+#include <seqan3/contrib/stream/bgzf.hpp>
 #include <seqan3/io/detail/magic_header.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/utility/concept.hpp>
