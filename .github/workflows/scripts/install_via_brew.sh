@@ -30,7 +30,7 @@ brew list --versions $brew_package_name && \
 # If the package is installed, we upgrade. Otherwise, we install it.
 brew list --versions $brew_package_name && \
     brew upgrade --force-bottle $brew_package_name \
-|| brew install --force-bottle $brew_package_name
+|| brew install --force-bottle --overwrite $brew_package_name
 
 # We link the package, i.e. we add symlinks into /usr/local/bin. They requested version of the package should superseed
 # other installed versions (`--overwrite`). For example, when requesting gcc@10 while gcc@11 is already installed and
