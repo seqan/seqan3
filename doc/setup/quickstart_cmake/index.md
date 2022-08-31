@@ -91,8 +91,10 @@ Please note that you may have to manually clone the submodules by running `git s
 
 \endcollapsible
 
-\attention After installing, `g++ --version` should print the desired version.
+\attention After installing, `g++ --version` should print the desired gcc version.
            If not, you may have to use, for example, `g++-11 --version` or even specify the full path to your compiler.
+           In this case, you need to set the environment variables CC and CXX before calling cmake for the first time, e.g.:
+           `export CC=gcc-11; export CXX=g++-11;`
 
 Similarly, you may need to install CMake and git, e.g. `apt install cmake git`.
 
