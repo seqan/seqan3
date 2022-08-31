@@ -236,3 +236,8 @@ target_link_libraries (my_app PUBLIC seqan3::seqan3)
   export PATH=/usr/bin:$PATH
   ```
   and run `cmake` again.
+
+* **SDSL library not found**: `The SDSL library is required, but wasn't found.`
+  This has two potential sources:
+  + The repository wasn't cloned correctly. This can be verified by checking if `submodules/sdsl-lite/include/version.hpp` exists.
+  + Or, you are using MacOS and forgot to set `CC` and `CXX` variables and cmake is using Apple Clang as a compiler instead of GCC.
