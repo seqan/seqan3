@@ -5,7 +5,7 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 3.10...3.22)
+cmake_minimum_required (VERSION 3.12...3.22)
 project (seqan3_header_test CXX)
 
 include (../seqan3-test.cmake)
@@ -112,24 +112,7 @@ macro (seqan3_header_test component header_base_path exclude_regex)
                                         "${CMAKE_CURRENT_SOURCE_DIR}/generate_header_source.cmake")
 
             add_library (${header_target} OBJECT "${header_target_source}")
-
-            # NOTE: a simple target_link_libraries (${header_target} seqan3::test::header)
-            # is not possible for OBJECT libraries before cmake 3.12
-            if (CMAKE_VERSION VERSION_LESS 3.12)
-                target_compile_options (${header_target}
-                                        PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_COMPILE_OPTIONS>)
-                target_compile_definitions (
-                    ${header_target} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_COMPILE_DEFINITIONS>)
-                target_include_directories (
-                    ${header_target} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_INCLUDE_DIRECTORIES>)
-                target_include_directories (
-                    ${header_target} SYSTEM
-                    PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>)
-                add_dependencies (${header_target} gtest gbenchmark)
-            else ()
-                target_link_libraries (${header_target} seqan3::test::header)
-            endif ()
-
+            target_link_libraries (${header_target} seqan3::test::header)
             target_sources (${target} PRIVATE $<TARGET_OBJECTS:${header_target}>)
         endforeach ()
     endforeach ()

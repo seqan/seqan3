@@ -5,7 +5,7 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required (VERSION 3.12)
 
 function (generate_include_dependencies_impl)
     cmake_parse_arguments (
@@ -46,17 +46,7 @@ function (generate_include_dependencies_impl)
 
     # filter out object files, e.g., discard "utility/views/CMakeFiles/zip_test.dir/zip_test.cpp.o: " in the line
     # `utility/views/CMakeFiles/zip_test.dir/zip_test.cpp.o: /seqan3/include/seqan3/core/platform.hpp`
-    if (CMAKE_VERSION VERSION_LESS 3.12)
-        set (_header_files "${header_files}")
-        set (header_files "")
-        foreach (header_file ${_header_files})
-            string (REGEX REPLACE "^.+: " "" header_file "${header_file}")
-            list (APPEND header_files "${header_file}")
-        endforeach ()
-    else () # ^^^ workaround / no workaround vvv
-        # list (TRANSFORM) needs cmake >= 3.12
-        list (TRANSFORM header_files REPLACE "^.+: " "")
-    endif ()
+    list (TRANSFORM header_files REPLACE "^.+: " "")
 
     if (NOT header_files)
         # The pre-processing step that generates the dependency file did not produce it.
