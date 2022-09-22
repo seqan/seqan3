@@ -46,7 +46,7 @@ read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
                                     "\tzz:Z:str"
                                     "\tCC:i:300"
                                     "\tcc:i:-300\n"
-                                    "read2\t42\tref\t2\t62\t1H7M1D1M1S\tref\t10\t300\tAGGCTGNAG\t!##$&'()*\tbc:B:c,-3"
+                                    "read2\t42\tref\t2\t62\t1H7M1D1M1S2H\tref\t10\t300\tAGGCTGNAG\t!##$&'()*\tbc:B:c,-3"
                                     "\tbC:B:C,3,200"
                                     "\tbs:B:s,-3,200,-300"
                                     "\tbS:B:S,300,40,500"
