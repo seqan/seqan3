@@ -26,6 +26,10 @@ struct sam_file_read<seqan3::format_bam> : public sam_file_data
     // -u disables gzip compression, but the output is still bgzf compressed (decompression via bgzip)
     // pass --no-PG to samtools if you do not want PG tags which may be added automatically
 
+    // To print out something like the below strings, store a file in SAM format (e.g. test.sam)
+    // and use the folliwng commandline call:
+    // samtools view --no-PG -u test.bam | bgzip -d | hexdump -v -e '"\\\x" 1/1 "%02x"' | sed 's;\\;Y, Y\\;g' | sed 's;$;Y;' | tr 'Y' "'" | cut -c 4- | sed -e "s/.\{112\}/&\n/g"
+
     using stream_type = std::istringstream;
 
     std::string big_header_input{
