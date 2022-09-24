@@ -44,7 +44,7 @@ jobs:
             build_threads: 2
             test_threads: 1 # snippets create and delete files and some separate tests create/delete the same files
             cxx_flags: "-std=c++2a"
-            cmake: 3.10.3
+            cmake: 3.16.9
             requires_toolchain: true
             requires_ccache: true
             skip_build_tests: false
@@ -59,7 +59,7 @@ jobs:
             build_threads: 2
             test_threads: 2
             cxx_flags: "-std=c++2a"
-            cmake: 3.10.3
+            cmake: 3.16.9
             requires_toolchain: true
             requires_ccache: true
             skip_build_tests: false
@@ -73,7 +73,7 @@ jobs:
             build_type: Release
             build_threads: 2
             test_threads: 2
-            cmake: 3.10.3
+            cmake: 3.16.9
             requires_toolchain: true
             requires_ccache: true
             skip_build_tests: false
@@ -88,7 +88,7 @@ jobs:
             build_threads: 2
             test_threads: 2
             cxx_flags: "-std=c++2a"
-            cmake: 3.10.3
+            cmake: 3.16.9
             requires_toolchain: true
             requires_ccache: true
             skip_build_tests: false
@@ -103,7 +103,7 @@ jobs:
             build_threads: 2
             test_threads: 2
             cxx_flags: "-std=c++2a"
-            cmake: 3.10.3
+            cmake: 3.16.9
             requires_toolchain: true
             requires_ccache: true
             skip_build_tests: true
@@ -118,7 +118,7 @@ jobs:
             build_threads: 1 # output is important to be in sequential order
             test_threads: 2
             cxx_flags: "-std=c++2a"
-            cmake: 3.14.6 # the whole test suite needs at least cmake 3.14
+            cmake: 3.16.9
             requires_toolchain: true
             requires_ccache: false
             skip_build_tests: false
@@ -129,7 +129,7 @@ jobs:
             build: documentation
             build_threads: 2
             test_threads: 2
-            cmake: 3.10.3
+            cmake: 3.16.9
             doxygen: 1.9.4
             requires_toolchain: false
             requires_ccache: false

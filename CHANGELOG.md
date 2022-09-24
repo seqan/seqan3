@@ -118,6 +118,8 @@ deprecated. Please keep this in mind if you encounter errors with `seqan3::views
 
 #### Dependencies
   * We now use Doxygen version 1.9.4 to build our documentation ([\#2979](https://github.com/seqan/seqan3/pull/2979)).
+  * We require at least CMake 3.16 for our test suite. Note that the minimum requirement for using SeqAn3 is unchanged
+    ([\#3050](https://github.com/seqan/seqan3/pull/3050)).
   * Removed range-v3 ([\#2998](https://github.com/seqan/seqan3/pull/2998)).
   * Updated cereal to 1.3.2 ([\#3012](https://github.com/seqan/seqan3/pull/3012)).
   * Updated sdsl-lite to 3.0.1 ([\#3012](https://github.com/seqan/seqan3/pull/3012)).

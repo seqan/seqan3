@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: false # PRs will be canceled by the clang-format CI
 
 env:
-  CMAKE_VERSION: 3.10.3
+  CMAKE_VERSION: 3.16.9
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
 
