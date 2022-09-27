@@ -39,7 +39,8 @@ read2	42	ref	2	62	1H7M1D1M1S2H	ref	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
 read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 )"};
 
-    std::string verbose_reads_input{"read1\t41\tref\t1\t61\t1S1M1D1M1I\t=\t10\t300\tACGT\t!##$\taa:A:c"
+    std::string verbose_reads_input{"@HD\tVN:1.6\n@SQ\tSN:ref\tLN:34\n"
+                                    "read1\t41\tref\t1\t61\t1S1M1D1M1I\t=\t10\t300\tACGT\t!##$\taa:A:c"
                                     "\tNM:i:-7"
                                     "\tAS:i:2"
                                     "\tff:f:3.1"
