@@ -42,6 +42,9 @@ struct sam_file_data : public ::testing::Test
         header.ref_dict[header.ref_ids()[0]] = 0; // set up header which is otherwise done on file level
     }
 
+    // expected data for 3 reads
+    // -------------------------------------------------------------------------
+
     std::vector<seqan3::dna5_vector> seqs{"ACGT"_dna5, "AGGCTGNAG"_dna5, "GGAGTATA"_dna5};
 
     std::vector<std::string> ids{"read1", "read2", "read3"};
@@ -97,9 +100,34 @@ struct sam_file_data : public ::testing::Test
                                                                                            {0, 9, 300},
                                                                                            {0, 9, 300}};
 
-    std::vector<seqan3::sam_tag_dictionary> tag_dicts{seqan3::sam_tag_dictionary{},
-                                                      seqan3::sam_tag_dictionary{},
-                                                      seqan3::sam_tag_dictionary{}};
+    std::vector<seqan3::sam_tag_dictionary> tag_dicts = [] ()
+    {
+        std::vector<seqan3::sam_tag_dictionary> td{{},{},{}};
+        td[0]["NM"_tag] = 7;
+        td[0]["AS"_tag] = 2;
+        td[1]["xy"_tag] = std::vector<uint16_t>{3, 4, 5};
+        return td;
+    }();
+
+    std::vector<seqan3::sam_tag_dictionary> full_tag_dicts = [] ()
+    {
+        std::vector<seqan3::sam_tag_dictionary> td{{},{},{}};
+        td[0]["NM"_tag] = -7;
+        td[0]["AS"_tag] = 2;
+        td[0]["CC"_tag] = 300;
+        td[0]["cc"_tag] = -300;
+        td[0]["aa"_tag] = 'c';
+        td[0]["ff"_tag] = 3.1f;
+        td[0]["zz"_tag] = "str";
+        td[1]["bc"_tag] = std::vector<int8_t>{-3};
+        td[1]["bC"_tag] = std::vector<uint8_t>{3u, 200u};
+        td[1]["bs"_tag] = std::vector<int16_t>{-3, 200, -300};
+        td[1]["bS"_tag] = std::vector<uint16_t>{300u, 40u, 500u};
+        td[1]["bi"_tag] = std::vector<int32_t>{-3, 200, -66000};
+        td[1]["bI"_tag] = std::vector<uint32_t>{294967296u};
+        td[1]["bf"_tag] = std::vector<float>{3.5f, 0.1f, 43.8f};
+        return td;
+    }();
 
     std::vector<seqan3::dna5_vector> ref_sequences{};
     std::vector<std::string> ref_ids{};
@@ -169,21 +197,7 @@ TYPED_TEST_P(sam_file_read, read_in_all_data)
     typename TestFixture::stream_type istream{this->verbose_reads_input};
     seqan3::sam_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
 
-    this->tag_dicts[0]["NM"_tag] = -7;
-    this->tag_dicts[0]["AS"_tag] = 2;
-    this->tag_dicts[0]["CC"_tag] = 300;
-    this->tag_dicts[0]["cc"_tag] = -300;
-    this->tag_dicts[0]["aa"_tag] = 'c';
-    this->tag_dicts[0]["ff"_tag] = 3.1f;
-    this->tag_dicts[0]["zz"_tag] = "str";
-    this->tag_dicts[1]["bc"_tag] = std::vector<int8_t>{-3};
-    this->tag_dicts[1]["bC"_tag] = std::vector<uint8_t>{3u, 200u};
-    this->tag_dicts[1]["bs"_tag] = std::vector<int16_t>{-3, 200, -300};
-    this->tag_dicts[1]["bS"_tag] = std::vector<uint16_t>{300u, 40u, 500u};
-    this->tag_dicts[1]["bi"_tag] = std::vector<int32_t>{-3, 200, -66000};
-    this->tag_dicts[1]["bI"_tag] = std::vector<uint32_t>{294967296u};
-    this->tag_dicts[1]["bf"_tag] = std::vector<float>{3.5f, 0.1f, 43.8f};
-    this->tag_dicts[1]["bH"_tag] = std::vector<std::byte>{std::byte{0x1A}, std::byte{0xE3}, std::byte{0x01}};
+    this->full_tag_dicts[1]["bH"_tag] = std::vector<std::byte>{std::byte{0x1A}, std::byte{0xE3}, std::byte{0x01}};
 
     size_t i{0};
     for (auto & rec : fin)
@@ -201,7 +215,7 @@ TYPED_TEST_P(sam_file_read, read_in_all_data)
         EXPECT_EQ(rec.mate_reference_id(), std::get<0>(this->mates[i]));
         EXPECT_EQ(rec.mate_position(), std::get<1>(this->mates[i]));
         EXPECT_EQ(rec.template_length(), std::get<2>(this->mates[i]));
-        EXPECT_EQ(rec.tags(), this->tag_dicts[i]);
+        EXPECT_EQ(rec.tags(), this->full_tag_dicts[i]);
         ++i;
     }
 }
@@ -450,10 +464,6 @@ TYPED_TEST_P(sam_file_write, write_empty_members)
 
 TYPED_TEST_P(sam_file_write, default_options_all_members_specified)
 {
-    this->tag_dicts[0]["NM"_tag] = 7;
-    this->tag_dicts[0]["AS"_tag] = 2;
-    this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3, 4, 5};
-
     {
         seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
@@ -480,10 +490,6 @@ TYPED_TEST_P(sam_file_write, default_options_all_members_specified)
 
 TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
 {
-    this->tag_dicts[0]["NM"_tag] = 7;
-    this->tag_dicts[0]["AS"_tag] = 2;
-    this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3, 4, 5};
-
     {
         // header ref_id_type is std::string
         seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
@@ -547,21 +553,6 @@ TYPED_TEST_P(sam_file_write, with_header)
     header.read_groups.emplace_back("group1", "DS:more info");
     header.comments.push_back("This is a comment.");
 
-    this->tag_dicts[0]["NM"_tag] = -7;
-    this->tag_dicts[0]["AS"_tag] = 2;
-    this->tag_dicts[0]["CC"_tag] = 300;
-    this->tag_dicts[0]["cc"_tag] = -300;
-    this->tag_dicts[0]["aa"_tag] = 'c';
-    this->tag_dicts[0]["ff"_tag] = 3.1f;
-    this->tag_dicts[0]["zz"_tag] = "str";
-    this->tag_dicts[1]["bc"_tag] = std::vector<int8_t>{-3};
-    this->tag_dicts[1]["bC"_tag] = std::vector<uint8_t>{3u, 200u};
-    this->tag_dicts[1]["bs"_tag] = std::vector<int16_t>{-3, 200, -300};
-    this->tag_dicts[1]["bS"_tag] = std::vector<uint16_t>{300u, 40u, 500u};
-    this->tag_dicts[1]["bi"_tag] = std::vector<int32_t>{-3, 200, -66000};
-    this->tag_dicts[1]["bI"_tag] = std::vector<uint32_t>{294967296u};
-    this->tag_dicts[1]["bf"_tag] = std::vector<float>{3.5f, 0.1f, 43.8f};
-
     {
         seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
@@ -578,7 +569,7 @@ TYPED_TEST_P(sam_file_write, with_header)
                                               this->mates[i],
                                               this->seqs[i],
                                               this->quals[i],
-                                              this->tag_dicts[i]));
+                                              this->full_tag_dicts[i]));
         }
     }
 
@@ -610,10 +601,6 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
                                                      {1, 'D'_cigar_operation},
                                                      {1, 'M'_cigar_operation},
                                                      {1, 'S'_cigar_operation}}};
-
-    this->tag_dicts[0]["NM"_tag] = 7;
-    this->tag_dicts[0]["AS"_tag] = 2;
-    this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3, 4, 5};
 
     {
         seqan3::sam_file_output fout{this->ostream, TypeParam{}}; // default fields contain CIGAR and alignment
@@ -703,7 +690,7 @@ TYPED_TEST_P(sam_file_write, special_cases)
                                           mate,
                                           this->seqs[0],
                                           this->quals[0],
-                                          this->tag_dicts[0]));
+                                          seqan3::sam_tag_dictionary{}));
     }
 
     this->ostream.flush();
@@ -729,7 +716,7 @@ TYPED_TEST_P(sam_file_write, special_cases)
                                           mate_str,
                                           this->seqs[0],
                                           this->quals[0],
-                                          this->tag_dicts[0]));
+                                          seqan3::sam_tag_dictionary{}));
     }
 
     this->ostream.flush();
