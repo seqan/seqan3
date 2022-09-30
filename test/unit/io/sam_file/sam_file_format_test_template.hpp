@@ -65,6 +65,33 @@ struct sam_file_data : public ::testing::Test
     std::vector<seqan3::gapped<seqan3::dna5>> ref_seq_gapped3 =
         {'T'_dna5, seqan3::gap{}, 'G'_dna5, seqan3::gap{}, 'A'_dna5, seqan3::gap{}, 'T'_dna5, 'C'_dna5};
 
+    std::vector<std::vector<seqan3::cigar>> cigars
+    {
+        {{1, 'S'_cigar_operation}, // 1S1M1D1M1I
+         {1, 'M'_cigar_operation},
+         {1, 'D'_cigar_operation},
+         {1, 'M'_cigar_operation},
+         {1, 'I'_cigar_operation}},
+
+        {{1, 'H'_cigar_operation}, // 1H7M1D1M1S2H
+         {7, 'M'_cigar_operation},
+         {1, 'D'_cigar_operation},
+         {1, 'M'_cigar_operation},
+         {1, 'S'_cigar_operation},
+         {2, 'H'_cigar_operation}},
+
+        {{1, 'S'_cigar_operation}, //1S1M1P1M1I1M1I1D1M1S
+         {1, 'M'_cigar_operation},
+         {1, 'P'_cigar_operation},
+         {1, 'M'_cigar_operation},
+         {1, 'I'_cigar_operation},
+         {1, 'M'_cigar_operation},
+         {1, 'I'_cigar_operation},
+         {1, 'D'_cigar_operation},
+         {1, 'M'_cigar_operation},
+         {1, 'S'_cigar_operation}}
+    };
+
     std::string ref_id = "ref";
 
     std::vector<int32_t> ref_offsets{0, 1, 2};
@@ -339,34 +366,12 @@ TYPED_TEST_P(sam_file_read, read_mate_but_not_ref_id_without_ref)
 
 TYPED_TEST_P(sam_file_read, cigar_vector)
 {
-    std::vector<std::vector<seqan3::cigar>> expected{{{1, 'S'_cigar_operation},
-                                                      {1, 'M'_cigar_operation},
-                                                      {1, 'D'_cigar_operation},
-                                                      {1, 'M'_cigar_operation},
-                                                      {1, 'I'_cigar_operation}},
-                                                     {{1, 'H'_cigar_operation},
-                                                      {7, 'M'_cigar_operation},
-                                                      {1, 'D'_cigar_operation},
-                                                      {1, 'M'_cigar_operation},
-                                                      {1, 'S'_cigar_operation},
-                                                      {2, 'H'_cigar_operation}},
-                                                     {{1, 'S'_cigar_operation},
-                                                      {1, 'M'_cigar_operation},
-                                                      {1, 'P'_cigar_operation},
-                                                      {1, 'M'_cigar_operation},
-                                                      {1, 'I'_cigar_operation},
-                                                      {1, 'M'_cigar_operation},
-                                                      {1, 'I'_cigar_operation},
-                                                      {1, 'D'_cigar_operation},
-                                                      {1, 'M'_cigar_operation},
-                                                      {1, 'S'_cigar_operation}}};
-
     typename TestFixture::stream_type istream{this->simple_three_reads_input};
     seqan3::sam_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::cigar>{}};
 
     size_t i{0};
     for (auto & [cigar_v] : fin)
-        EXPECT_EQ(cigar_v, expected[i++]);
+        EXPECT_EQ(cigar_v, this->cigars[i++]);
 }
 
 TYPED_TEST_P(sam_file_read, format_error_ref_id_not_in_reference_information)
@@ -580,28 +585,6 @@ TYPED_TEST_P(sam_file_write, with_header)
 
 TYPED_TEST_P(sam_file_write, cigar_vector)
 {
-    std::vector<std::vector<seqan3::cigar>> cigar_v{{{1, 'S'_cigar_operation},
-                                                     {1, 'M'_cigar_operation},
-                                                     {1, 'D'_cigar_operation},
-                                                     {1, 'M'_cigar_operation},
-                                                     {1, 'I'_cigar_operation}},
-                                                    {{1, 'H'_cigar_operation},
-                                                     {7, 'M'_cigar_operation},
-                                                     {1, 'D'_cigar_operation},
-                                                     {1, 'M'_cigar_operation},
-                                                     {1, 'S'_cigar_operation},
-                                                     {2, 'H'_cigar_operation}},
-                                                    {{1, 'S'_cigar_operation},
-                                                     {1, 'M'_cigar_operation},
-                                                     {1, 'P'_cigar_operation},
-                                                     {1, 'M'_cigar_operation},
-                                                     {1, 'I'_cigar_operation},
-                                                     {1, 'M'_cigar_operation},
-                                                     {1, 'I'_cigar_operation},
-                                                     {1, 'D'_cigar_operation},
-                                                     {1, 'M'_cigar_operation},
-                                                     {1, 'S'_cigar_operation}}};
-
     {
         seqan3::sam_file_output fout{this->ostream, TypeParam{}}; // default fields contain CIGAR and alignment
         for (size_t i = 0ul; i < 3ul; ++i)
@@ -612,7 +595,7 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
                                               0 /*ref_id*/,
                                               this->ref_offsets[i],
                                               this->alignments[i],
-                                              cigar_v[i],
+                                              this->cigars[i],
                                               this->mapqs[i],
                                               this->quals[i],
                                               this->flags[i],
@@ -654,7 +637,7 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
                                               0 /*ref_id*/,
                                               this->ref_offsets[i],
                                               this->mapqs[i],
-                                              cigar_v[i],
+                                              this->cigars[i],
                                               this->offsets[i],
                                               this->mates[i],
                                               this->seqs[i],
