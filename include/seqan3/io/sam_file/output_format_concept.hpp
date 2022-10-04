@@ -119,6 +119,13 @@ concept sam_file_output_format = requires (detail::sam_file_output_format_expose
                                  };
 //!\endcond
 
+// Workaround for https://github.com/doxygen/doxygen/issues/9379
+#if SEQAN3_DOXYGEN_ONLY(1) 0
+template <typename t>
+class sam_file_output_format
+{};
+#endif
+
 /*!\name Requirements for seqan3::sam_file_output_format
  * \brief You can expect these **members** on all types that implement seqan3::sam_file_output_format.
  * \memberof seqan3::sam_file_output_format
