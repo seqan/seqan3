@@ -55,8 +55,6 @@ struct sam_file_data : public ::testing::Test
         {"!!*+,-./"_phred42},
     };
 
-    std::vector<int32_t> offsets{1, 0, 1};
-
     seqan3::dna5_vector ref_seq = "ACTGATCGAGAGGATCTAGAGGAGATCGTAGGAC"_dna5;
 
     std::vector<seqan3::gapped<seqan3::dna5>> ref_seq_gapped1 = {'A'_dna5, 'C'_dna5, 'T'_dna5, seqan3::gap{}};
@@ -209,7 +207,6 @@ TYPED_TEST_P(sam_file_read, read_in_all_data)
         EXPECT_EQ(rec.sequence(), this->seqs[i]);
         EXPECT_EQ(rec.id(), this->ids[i]);
         EXPECT_EQ(rec.base_qualities(), this->quals[i]);
-        EXPECT_EQ(rec.sequence_position(), this->offsets[i]);
         EXPECT_RANGE_EQ(rec.cigar_sequence(), this->cigars[i]);
         EXPECT_EQ(rec.reference_id(), 0);
         EXPECT_EQ(*rec.reference_position(), this->ref_offsets[i]);
@@ -231,7 +228,6 @@ TYPED_TEST_P(sam_file_read, read_in_all_but_empty_data)
     EXPECT_TRUE((*fin.begin()).sequence().empty());
     EXPECT_TRUE((*fin.begin()).id().empty());
     EXPECT_TRUE((*fin.begin()).base_qualities().empty());
-    EXPECT_EQ((*fin.begin()).sequence_position(), 0);
     EXPECT_TRUE((*fin.begin()).cigar_sequence().empty());
     EXPECT_TRUE(!(*fin.begin()).reference_id().has_value());
     EXPECT_TRUE(!(*fin.begin()).reference_position().has_value());
@@ -337,7 +333,6 @@ using sam_fields = seqan3::fields<seqan3::field::header_ptr,
                                   seqan3::field::ref_offset,
                                   seqan3::field::mapq,
                                   seqan3::field::cigar,
-                                  seqan3::field::offset,
                                   seqan3::field::mate,
                                   seqan3::field::seq,
                                   seqan3::field::qual,
@@ -381,7 +376,6 @@ TYPED_TEST_P(sam_file_write, write_empty_members)
                           -1,
                           0,
                           std::vector<seqan3::cigar>{},
-                          0,
                           default_mate_t{},
                           std::string_view{},
                           std::string_view{},
@@ -406,7 +400,6 @@ TYPED_TEST_P(sam_file_write, default_options_all_members_specified)
                                               this->ref_offsets[i],
                                               this->mapqs[i],
                                               this->cigars[i],
-                                              this->offsets[i],
                                               this->mates[i],
                                               this->seqs[i],
                                               this->quals[i],
@@ -432,7 +425,6 @@ TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
                                           this->ref_offsets[0],
                                           this->mapqs[0],
                                           this->cigars[0],
-                                          this->offsets[0],
                                           this->mates[0],
                                           this->seqs[0],
                                           this->quals[0],
@@ -446,7 +438,6 @@ TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
                                           this->ref_offsets[1],
                                           this->mapqs[1],
                                           this->cigars[1],
-                                          this->offsets[1],
                                           this->mates[1],
                                           this->seqs[1],
                                           this->quals[1],
@@ -460,7 +451,6 @@ TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
                                           this->ref_offsets[2],
                                           this->mapqs[2],
                                           this->cigars[2],
-                                          this->offsets[2],
                                           this->mates[2],
                                           this->seqs[2],
                                           this->quals[2],
@@ -495,7 +485,6 @@ TYPED_TEST_P(sam_file_write, with_header)
                                               this->ref_offsets[i],
                                               this->mapqs[i],
                                               this->cigars[i],
-                                              this->offsets[i],
                                               this->mates[i],
                                               this->seqs[i],
                                               this->quals[i],
@@ -516,7 +505,6 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
         {
             ASSERT_NO_THROW(fout.emplace_back(this->seqs[i],
                                               this->ids[i],
-                                              this->offsets[i],
                                               0 /*ref_id*/,
                                               this->ref_offsets[i],
                                               this->cigars[i],
@@ -546,7 +534,6 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
                                                     seqan3::field::ref_offset,
                                                     seqan3::field::mapq,
                                                     seqan3::field::cigar,
-                                                    seqan3::field::offset,
                                                     seqan3::field::mate,
                                                     seqan3::field::seq,
                                                     seqan3::field::qual,
@@ -561,7 +548,6 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
                                               this->ref_offsets[i],
                                               this->mapqs[i],
                                               this->cigars[i],
-                                              this->offsets[i],
                                               this->mates[i],
                                               this->seqs[i],
                                               this->quals[i],
@@ -592,7 +578,6 @@ TYPED_TEST_P(sam_file_write, special_cases)
                                           this->ref_offsets[0],
                                           this->mapqs[0],
                                           this->cigars[0],
-                                          this->offsets[0],
                                           mate,
                                           this->seqs[0],
                                           this->quals[0],
@@ -618,7 +603,6 @@ TYPED_TEST_P(sam_file_write, special_cases)
                                           this->ref_offsets[0],
                                           this->mapqs[0],
                                           this->cigars[0],
-                                          this->offsets[0],
                                           mate_str,
                                           this->seqs[0],
                                           this->quals[0],
@@ -642,7 +626,6 @@ TYPED_TEST_P(sam_file_write, format_errors)
                                    this->ref_offsets[0],
                                    this->mapqs[0],
                                    this->cigars[0],
-                                   this->offsets[0],
                                    this->mates[0],
                                    this->seqs[0],
                                    this->quals[0],
@@ -657,7 +640,6 @@ TYPED_TEST_P(sam_file_write, format_errors)
                                    -3,
                                    this->mapqs[0],
                                    this->cigars[0],
-                                   this->offsets[0],
                                    this->mates[0],
                                    this->seqs[0],
                                    this->quals[0],

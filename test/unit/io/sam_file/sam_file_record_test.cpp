@@ -42,7 +42,6 @@ struct sam_record : public ::testing::Test
     using types = seqan3::type_list<std::string,                  // seqan3::field::id,
                                     seqan3::dna5_vector,          // seqan3::field::seq,
                                     std::vector<seqan3::phred42>, // seqan3::field::qual,
-                                    int32_t,                      // seqan3::field::offset,
                                     std::optional<int32_t>,       // seqan3::field::ref_id,
                                     std::optional<int32_t>,       // seqan3::field::ref_offset,
                                     // seqan3::field::header_ptr,
@@ -56,7 +55,6 @@ struct sam_record : public ::testing::Test
     using types_as_ids = seqan3::fields<seqan3::field::id,
                                         seqan3::field::seq,
                                         seqan3::field::qual,
-                                        seqan3::field::offset,
                                         seqan3::field::ref_id,
                                         seqan3::field::ref_offset,
                                         seqan3::field::header_ptr,
@@ -73,7 +71,6 @@ struct sam_record : public ::testing::Test
         return {/*.id =*/"MY ID",
                 /*.sequence =*/"ACGT"_dna5,
                 /*.base_qualities =*/"!##$"_phred42,
-                /*.sequence_position =*/1,
                 /*.reference_id =*/0, // "ref"
                 /*.reference_position =*/0,
                 /*.header_ptr =*/nullptr,
@@ -95,7 +92,6 @@ TEST_F(sam_record, definition_tuple_traits)
     EXPECT_SAME_TYPE((std::tuple<std::string,
                                  seqan3::dna5_vector,
                                  std::vector<seqan3::phred42>,
-                                 int32_t,
                                  std::optional<int32_t>,
                                  std::optional<int32_t>,
                                  seqan3::sam_file_header<std::vector<std::string>> *,
@@ -109,15 +105,14 @@ TEST_F(sam_record, definition_tuple_traits)
     EXPECT_SAME_TYPE(std::string, (std::tuple_element_t<0, record_type>));
     EXPECT_SAME_TYPE(seqan3::dna5_vector, (std::tuple_element_t<1, record_type>));
     EXPECT_SAME_TYPE(std::vector<seqan3::phred42>, (std::tuple_element_t<2, record_type>));
-    EXPECT_SAME_TYPE(int32_t, (std::tuple_element_t<3, record_type>));
+    EXPECT_SAME_TYPE(std::optional<int32_t>, (std::tuple_element_t<3, record_type>));
     EXPECT_SAME_TYPE(std::optional<int32_t>, (std::tuple_element_t<4, record_type>));
-    EXPECT_SAME_TYPE(std::optional<int32_t>, (std::tuple_element_t<5, record_type>));
-    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> *, (std::tuple_element_t<6, record_type>));
-    EXPECT_SAME_TYPE(seqan3::sam_flag, (std::tuple_element_t<7, record_type>));
-    EXPECT_SAME_TYPE(mate_t, (std::tuple_element_t<8, record_type>));
-    EXPECT_SAME_TYPE(uint8_t, (std::tuple_element_t<9, record_type>));
-    EXPECT_SAME_TYPE(std::vector<seqan3::cigar>, (std::tuple_element_t<10, record_type>));
-    EXPECT_SAME_TYPE(seqan3::sam_tag_dictionary, (std::tuple_element_t<11, record_type>));
+    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> *, (std::tuple_element_t<5, record_type>));
+    EXPECT_SAME_TYPE(seqan3::sam_flag, (std::tuple_element_t<6, record_type>));
+    EXPECT_SAME_TYPE(mate_t, (std::tuple_element_t<7, record_type>));
+    EXPECT_SAME_TYPE(uint8_t, (std::tuple_element_t<8, record_type>));
+    EXPECT_SAME_TYPE(std::vector<seqan3::cigar>, (std::tuple_element_t<9, record_type>));
+    EXPECT_SAME_TYPE(seqan3::sam_tag_dictionary, (std::tuple_element_t<10, record_type>));
 
     EXPECT_EQ(std::tuple_size_v<record_type>, 12ul);
 
@@ -136,15 +131,14 @@ TEST_F(sam_record, get_by_index)
     EXPECT_EQ(std::get<0>(r), "MY ID");
     EXPECT_RANGE_EQ(std::get<1>(r), "ACGT"_dna5);
     EXPECT_RANGE_EQ(std::get<2>(r), "!##$"_phred42);
-    EXPECT_DOUBLE_EQ(std::get<3>(r), 1);
-    EXPECT_EQ(std::get<4>(r), 0); // "ref"
-    EXPECT_EQ(std::get<5>(r), 0);
-    EXPECT_EQ(std::get<6>(r), nullptr);
-    EXPECT_EQ(std::get<7>(r), seqan3::sam_flag{41u});
-    EXPECT_EQ(std::get<8>(r), (mate_t{0, 9, 300}));
-    EXPECT_EQ(std::get<9>(r), 61u);
-    EXPECT_RANGE_EQ(std::get<10>(r), "1S1M1D1M1I"_cigar);
-    EXPECT_EQ(std::get<11>(r), seqan3::sam_tag_dictionary{});
+    EXPECT_EQ(std::get<3>(r), 0); // "ref"
+    EXPECT_EQ(std::get<4>(r), 0);
+    EXPECT_EQ(std::get<5>(r), nullptr);
+    EXPECT_EQ(std::get<6>(r), seqan3::sam_flag{41u});
+    EXPECT_EQ(std::get<7>(r), (mate_t{0, 9, 300}));
+    EXPECT_EQ(std::get<8>(r), 61u);
+    EXPECT_RANGE_EQ(std::get<9>(r), "1S1M1D1M1I"_cigar);
+    EXPECT_EQ(std::get<10>(r), seqan3::sam_tag_dictionary{});
 }
 
 TEST_F(sam_record, get_by_type)
@@ -154,7 +148,6 @@ TEST_F(sam_record, get_by_type)
     EXPECT_EQ(std::get<std::string>(r), "MY ID");
     EXPECT_RANGE_EQ(std::get<seqan3::dna5_vector>(r), "ACGT"_dna5);
     EXPECT_RANGE_EQ(std::get<std::vector<seqan3::phred42>>(r), "!##$"_phred42);
-    EXPECT_DOUBLE_EQ(std::get<int32_t>(r), 1);
     // EXPECT_EQ(std::get<std::optional<int32_t>>(r), 0); // "ref" // ambiguous
     // EXPECT_EQ(std::get<std::optional<int32_t>>(r), 0); // ambiguous
     EXPECT_EQ(std::get<seqan3::sam_file_header<std::vector<std::string>> *>(r), nullptr);
@@ -172,7 +165,6 @@ TEST_F(sam_record, get_by_member)
     EXPECT_EQ(r.id(), "MY ID");
     EXPECT_RANGE_EQ(r.sequence(), "ACGT"_dna5);
     EXPECT_RANGE_EQ(r.base_qualities(), "!##$"_phred42);
-    EXPECT_DOUBLE_EQ(r.sequence_position(), 1);
     EXPECT_EQ(r.reference_id(), 0); // "ref"
     EXPECT_EQ(r.reference_position(), 0);
     EXPECT_EQ(r.header_ptr(), nullptr);
@@ -192,7 +184,6 @@ TEST_F(sam_record, member_types)
     EXPECT_SAME_TYPE(std::string &, decltype(r.id()));
     EXPECT_SAME_TYPE(seqan3::dna5_vector &, decltype(r.sequence()));
     EXPECT_SAME_TYPE(std::vector<seqan3::phred42> &, decltype(r.base_qualities()));
-    EXPECT_SAME_TYPE(int32_t &, decltype(r.sequence_position()));
     EXPECT_SAME_TYPE(std::optional<int32_t> &, decltype(r.reference_id()));
     EXPECT_SAME_TYPE(std::optional<int32_t> &, decltype(r.reference_position()));
     EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> *&, decltype(r.header_ptr()));
@@ -207,7 +198,6 @@ TEST_F(sam_record, member_types)
     EXPECT_SAME_TYPE(std::string const &, decltype(std::as_const(r.id())));
     EXPECT_SAME_TYPE(seqan3::dna5_vector const &, decltype(std::as_const(r.sequence())));
     EXPECT_SAME_TYPE(std::vector<seqan3::phred42> const &, decltype(std::as_const(r.base_qualities())));
-    EXPECT_SAME_TYPE(int32_t const &, decltype(std::as_const(r.sequence_position())));
     EXPECT_SAME_TYPE(std::optional<int32_t> const &, decltype(std::as_const(r.reference_id())));
     EXPECT_SAME_TYPE(std::optional<int32_t> const &, decltype(std::as_const(r.reference_position())));
     EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * const &,
@@ -223,7 +213,6 @@ TEST_F(sam_record, member_types)
     EXPECT_SAME_TYPE(std::string &&, decltype(std::move(r.id())));
     EXPECT_SAME_TYPE(seqan3::dna5_vector &&, decltype(std::move(r.sequence())));
     EXPECT_SAME_TYPE(std::vector<seqan3::phred42> &&, decltype(std::move(r.base_qualities())));
-    EXPECT_SAME_TYPE(int32_t &&, decltype(std::move(r.sequence_position())));
     EXPECT_SAME_TYPE(std::optional<int32_t> &&, decltype(std::move(r.reference_id())));
     EXPECT_SAME_TYPE(std::optional<int32_t> &&, decltype(std::move(r.reference_position())));
     EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * &&, decltype(std::move(r.header_ptr())));
@@ -238,7 +227,6 @@ TEST_F(sam_record, member_types)
     EXPECT_SAME_TYPE(std::string const &&, decltype(std::move(std::as_const(r.id()))));
     EXPECT_SAME_TYPE(seqan3::dna5_vector const &&, decltype(std::move(std::as_const(r.sequence()))));
     EXPECT_SAME_TYPE(std::vector<seqan3::phred42> const &&, decltype(std::move(std::as_const(r.base_qualities()))));
-    EXPECT_SAME_TYPE(int32_t const &&, decltype(std::move(std::as_const(r.sequence_position()))));
     EXPECT_SAME_TYPE(std::optional<int32_t> const &&, decltype(std::move(std::as_const(r.reference_id()))));
     EXPECT_SAME_TYPE(std::optional<int32_t> const &&, decltype(std::move(std::as_const(r.reference_position()))));
     EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * const &&,

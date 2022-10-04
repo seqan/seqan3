@@ -74,7 +74,7 @@ protected:
                                  header_type & header,
                                  ref_seqs_type & /*tag*/);
 
-    void transfer_soft_clipping_to(std::vector<cigar> const & cigar_vector, int32_t & sc_begin, int32_t & sc_end) const;
+    int32_t soft_clipping_at_front(std::vector<cigar> const & cigar_vector) const;
 
     template <typename stream_view_t>
     void read_byte_field(stream_view_t && stream_view, std::byte & byte_target);
@@ -142,15 +142,13 @@ inline void format_sam_base::check_and_assign_ref_id(ref_id_type & ref_id,
     }
 }
 
-/*!\brief Transfer soft clipping information from the \p cigar_vector to \p sc_begin and \p sc_end.
+/*!\brief Returns the soft clipping value at the front of the \p cigar_vector or 0 if none present.
  * \param[in] cigar_vector The cigar information to parse for soft-clipping.
- * \param[out] sc_begin    The soft clipping at the beginning of the alignment to set.
- * \param[out] sc_end      The soft clipping at the end of the alignment to set.
  */
-inline void format_sam_base::transfer_soft_clipping_to(std::vector<cigar> const & cigar_vector,
-                                                       int32_t & sc_begin,
-                                                       int32_t & sc_end) const
+inline int32_t format_sam_base::soft_clipping_at_front(std::vector<cigar> const & cigar_vector) const
 {
+    int32_t sc_front{};
+
     // Checks if the given index in the cigar vector is a soft clip.
     auto soft_clipping_at = [&](size_t const index)
     {
@@ -174,20 +172,11 @@ inline void format_sam_base::transfer_soft_clipping_to(std::vector<cigar> const 
 
     // check for soft clipping at the first two positions
     if (vector_size_at_least(1) && soft_clipping_at(0))
-        sc_begin = cigar_count_at(0);
+        sc_front = cigar_count_at(0);
     else if (vector_size_at_least(2) && hard_clipping_at(0) && soft_clipping_at(1))
-        sc_begin = cigar_count_at(1);
+        sc_front = cigar_count_at(1);
 
-    // Check for soft clipping at the last two positions. But only if the vector size has at least 2, respectively
-    // 3 elements. Accordingly, if the following arithmetics overflow they are protected by the corresponding
-    // if expressions below.
-    auto last_index = cigar_vector.size() - 1;
-    auto second_last_index = last_index - 1;
-
-    if (vector_size_at_least(2) && soft_clipping_at(last_index))
-        sc_end = cigar_count_at(last_index);
-    else if (vector_size_at_least(3) && hard_clipping_at(last_index) && soft_clipping_at(second_last_index))
-        sc_end = cigar_count_at(second_last_index);
+    return sc_front;
 }
 
 /*!\brief Reads std::byte fields using std::from_chars.

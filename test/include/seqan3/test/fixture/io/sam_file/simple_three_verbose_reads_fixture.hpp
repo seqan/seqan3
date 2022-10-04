@@ -35,7 +35,6 @@ struct simple_three_verbose_reads_fixture
     using types = seqan3::type_list<std::string,                  // seqan3::field::id,
                                     seqan3::dna5_vector,          // seqan3::field::seq,
                                     std::vector<seqan3::phred42>, // seqan3::field::qual,
-                                    int32_t,                      // seqan3::field::offset,
                                     alignment_t,                  // seqan3::field::alignment,
                                     std::optional<int32_t>,       // seqan3::field::ref_id,
                                     std::optional<int32_t>,       // seqan3::field::ref_offset,
@@ -49,7 +48,6 @@ struct simple_three_verbose_reads_fixture
     using types_as_ids = seqan3::fields<seqan3::field::id,
                                         seqan3::field::seq,
                                         seqan3::field::qual,
-                                        seqan3::field::offset,
                                         seqan3::field::alignment,
                                         seqan3::field::ref_id,
                                         seqan3::field::ref_offset,
@@ -77,7 +75,6 @@ struct simple_three_verbose_reads_fixture
     record_type record1{/*.id =*/"read1",
                         /*.sequence =*/"ACGT"_dna5,
                         /*.base_qualities =*/"!##$"_phred42,
-                        /*.sequence_position =*/1,
                         /*.alignment =*/alignment_t{"ACT-"_gapped_dna5, "C-GT"_gapped_dna5},
                         /*.reference_id =*/0, // "ref"
                         /*.reference_position =*/0,
@@ -104,7 +101,6 @@ struct simple_three_verbose_reads_fixture
         /*.id =*/"read2",
         /*.sequence =*/"AGGCTGNAG"_dna5,
         /*.base_qualities =*/"!##$&'()*"_phred42,
-        /*.sequence_position =*/0,
         /*.alignment =*/alignment_t{"CTGATCGAG"_gapped_dna5, "AGGCTGN-A"_gapped_dna5},
         /*.reference_id =*/0, // "ref"
         /*.reference_position =*/1,
@@ -132,7 +128,6 @@ struct simple_three_verbose_reads_fixture
     record_type record3{/*.id =*/"read3",
                         /*.sequence =*/"GGAGTATA"_dna5,
                         /*.base_qualities =*/"!!*+,-./"_phred42,
-                        /*.sequence_position =*/1,
                         /*.alignment =*/alignment_t{"T-G-A-TC"_gapped_dna5, "G-AGTA-T"_gapped_dna5},
                         /*.reference_id =*/0, // "ref"
                         /*.reference_position =*/2,

@@ -156,7 +156,6 @@ protected:
               typename stream_pos_type,
               typename seq_type,
               typename id_type,
-              typename offset_type,
               typename ref_seq_type,
               typename ref_id_type,
               typename ref_offset_type,
@@ -176,7 +175,6 @@ protected:
                                seq_type & seq,
                                qual_type & qual,
                                id_type & id,
-                               offset_type & offset,
                                ref_seq_type & SEQAN3_DOXYGEN_ONLY(ref_seq),
                                ref_id_type & ref_id,
                                ref_offset_type & ref_offset,
@@ -205,7 +203,6 @@ protected:
                                 seq_type && seq,
                                 qual_type && qual,
                                 id_type && id,
-                                int32_t const offset,
                                 ref_seq_type && SEQAN3_DOXYGEN_ONLY(ref_seq),
                                 ref_id_type && ref_id,
                                 std::optional<int32_t> ref_offset,
@@ -333,7 +330,6 @@ inline void format_sam::write_sequence_record(stream_type & stream,
                            /*seq*/ default_or(sequence),
                            /*qual*/ default_or(qualities),
                            /*id*/ default_or(id),
-                           /*offset*/ 0,
                            /*ref_seq*/ std::string_view{},
                            /*ref_id*/ std::string_view{},
                            /*ref_offset*/ -1,
@@ -354,7 +350,6 @@ template <typename stream_type, // constraints checked by file
           typename stream_pos_type,
           typename seq_type,
           typename id_type,
-          typename offset_type,
           typename ref_seq_type,
           typename ref_id_type,
           typename ref_offset_type,
@@ -375,7 +370,6 @@ format_sam::read_alignment_record(stream_type & stream,
                                   seq_type & seq,
                                   qual_type & qual,
                                   id_type & id,
-                                  offset_type & offset,
                                   ref_seq_type & SEQAN3_DOXYGEN_ONLY(ref_seq),
                                   ref_id_type & ref_id,
                                   ref_offset_type & ref_offset,
@@ -447,10 +441,6 @@ format_sam::read_alignment_record(stream_type & stream,
         {
             int32_t ref_length{}, seq_length{}; // length of aligned part for ref and query
             std::tie(cigar_vector, ref_length, seq_length) = detail::parse_cigar(field_view);
-            int32_t soft_clipping_end{};
-            int32_t offset_tmp{};
-            transfer_soft_clipping_to(cigar_vector, offset_tmp, soft_clipping_end);
-            offset = offset_tmp;
         }
         else
         {
@@ -586,7 +576,6 @@ inline void format_sam::write_alignment_record(stream_type & stream,
                                                seq_type && seq,
                                                qual_type && qual,
                                                id_type && id,
-                                               int32_t const SEQAN3_DOXYGEN_ONLY(offset),
                                                ref_seq_type && SEQAN3_DOXYGEN_ONLY(ref_seq),
                                                ref_id_type && ref_id,
                                                std::optional<int32_t> ref_offset,

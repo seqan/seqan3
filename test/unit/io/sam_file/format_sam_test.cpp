@@ -351,21 +351,6 @@ TEST_F(sam_format, format_error_invalid_sam_tag_format)
     }
 }
 
-TEST_F(sam_format, short_cigar_string_with_softclipping)
-{
-    using seqan3::operator""_dna5;
-
-    {
-        std::istringstream istream("id	16	ref	0	255	5S10M	*	0	0	AGAGGGGGATAACCA	*\n");
-        seqan3::sam_file_input fin{istream,
-                                   ref_ids,
-                                   ref_sequences,
-                                   seqan3::format_sam{},
-                                   seqan3::fields<seqan3::field::cigar, seqan3::field::offset>{}};
-        EXPECT_EQ((*fin.begin()).sequence_position(), 5);
-    }
-}
-
 TEST_F(sam_format, write_different_header)
 {
     std::ostringstream ostream;

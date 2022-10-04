@@ -88,7 +88,6 @@ concept sam_file_output_format = requires (detail::sam_file_output_format_expose
                                            dna5_vector & seq,
                                            std::vector<phred42> & qual,
                                            std::string & id,
-                                           int32_t & offset,
                                            dna5_vector & ref_seq,
                                            std::optional<int32_t> & ref_id,
                                            std::optional<int32_t> & ref_offset,
@@ -108,7 +107,6 @@ concept sam_file_output_format = requires (detail::sam_file_output_format_expose
                                                                   seq,
                                                                   qual,
                                                                   id,
-                                                                  offset,
                                                                   ref_seq,
                                                                   ref_id,
                                                                   ref_offset,
@@ -142,7 +140,6 @@ class sam_file_output_format
                                    seq_type                               && seq,
                                    qual_type                              && qual,
                                    id_type                                && id,
-                                   offset_type                            && offset,
                                    ref_seq_type                           && ref_seq,
                                    ref_id_type                            && ref_id,
                                    ref_offset_type                        && ref_offset,
@@ -157,7 +154,6 @@ class sam_file_output_format
  * \tparam stream_type      Output stream, must model seqan3::output_stream_over with `char`.
  * \tparam seq_type         Type of the seqan3
  * \tparam id_type          Type of the seqan3
- * \tparam offset_type      Type of the seqan3
  * \tparam ref_seq_type     Type of the seqan3
  * \tparam ref_id_type      Type of the seqan3
  * \tparam ref_offset_type  Type of the seqan3
@@ -175,7 +171,6 @@ class sam_file_output_format
  * \param[in] seq The data for seqan3::field::seq, i.e. the query sequence.
  * \param[in] qual The data for seqan3::field::qual, e.g. the query quality sequence.
  * \param[in] id The data for seqan3::field::id, e.g. the read id.
- * \param[in] offset The data for seqan3::field::offset, i.e. the start position of the alignment in \p seq.
  * \param[in] ref_seq The data for seqan3::field::ref_offset, i.e. the reference sequence.
  * \param[in] ref_id The data for seqan3::field::ref_id, e.g. the reference id..
  * \param[in] ref_offset The data for seqan3::field::ref_offset, i.e. the start position of the alignment in \p ref_seq.

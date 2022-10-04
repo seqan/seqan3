@@ -141,7 +141,6 @@ concept sam_file_input_traits =
         requires std::ranges::forward_range<std::ranges::range_reference_t<typename t::ref_ids>>;
         requires std::ranges::forward_range<typename t::ref_ids>;
 
-        // field::offset is fixed to int32_t
         // field::ref_offset is fixed to std::optional<int32_t>
         // field::flag is fixed to seqan3::sam_flag
         // field::mapq is fixed to uint8_t
@@ -229,7 +228,6 @@ struct sam_file_input_default_traits
 template <sam_file_input_traits traits_type_ = sam_file_input_default_traits<>,
           detail::fields_specialisation selected_field_ids_ = fields<field::seq,
                                                                      field::id,
-                                                                     field::offset,
                                                                      field::ref_id,
                                                                      field::ref_offset,
                                                                      field::cigar,
@@ -281,8 +279,6 @@ public:
     using sequence_type = typename traits_type::template sequence_container<typename traits_type::sequence_alphabet>;
     //!\brief The type of field::id (default std::string by default).
     using id_type = typename traits_type::template id_container<char>;
-    //!\brief The type of field::offset is fixed to int32_t.
-    using offset_type = int32_t;
     /*!\brief The type of field::ref_seq (default depends on construction).
      *
      * If no reference information are given on construction, this type deduces to a sized view that throws on
@@ -323,7 +319,6 @@ public:
     //!\brief The previously defined types aggregated in a seqan3::type_list.
     using field_types = type_list<sequence_type,
                                   id_type,
-                                  offset_type,
                                   ref_id_type,
                                   ref_offset_type,
                                   std::vector<cigar>,
@@ -336,19 +331,18 @@ public:
 
     /*!\brief The subset of seqan3::field tags valid for this file; order corresponds to the types in \ref field_types.
      *
-     * The SAM file abstraction supports reading 11 different fields:
+     * The SAM file abstraction supports reading 10 different fields:
      *
      *   1. seqan3::field::seq
      *   2. seqan3::field::id
-     *   3. seqan3::field::offset
-     *   4. seqan3::field::ref_id
-     *   5. seqan3::field::ref_offset
-     *   6. seqan3::field::cigar
-     *   7. seqan3::field::mapq
-     *   8. seqan3::field::qual
-     *   9. seqan3::field::flag
-     *   10. seqan3::field::mate
-     *   11. seqan3::field::tags
+     *   3. seqan3::field::ref_id
+     *   4. seqan3::field::ref_offset
+     *   5. seqan3::field::cigar
+     *   6. seqan3::field::mapq
+     *   7. seqan3::field::qual
+     *   8. seqan3::field::flag
+     *   9. seqan3::field::mate
+     *   10. seqan3::field::tags
      *
      * There exists one more field for SAM files, the seqan3::field::header_ptr, but this field is mostly used
      * internally. Please see the seqan3::sam_file_output::header member function for details on how to access
@@ -356,7 +350,6 @@ public:
      */
     using field_ids = fields<field::seq,
                              field::id,
-                             field::offset,
                              field::ref_id,
                              field::ref_offset,
                              field::cigar,
@@ -370,6 +363,10 @@ public:
     static_assert(!selected_field_ids::contains(field::alignment),
                   "The field::alignment is deprecated and only field::cigar is supported. Please see "
                   "seqan3::alignment_from_cigar on how to get an alignment from the cigar information.");
+
+    static_assert(!selected_field_ids::contains(field::offset),
+                  "The field::offset is deprecated. Please access field::cigar and retrieve the soft clipping (S) "
+                  "value at the front of the CIGAR string (offset = 0 if there is no soft clipping at the front).");
 
     static_assert(
         []() constexpr
@@ -858,7 +855,6 @@ protected:
                                             detail::get_or_ignore<field::seq>(record_buffer),
                                             detail::get_or_ignore<field::qual>(record_buffer),
                                             detail::get_or_ignore<field::id>(record_buffer),
-                                            detail::get_or_ignore<field::offset>(record_buffer),
                                             detail::get_or_ignore<field::ref_seq>(record_buffer),
                                             detail::get_or_ignore<field::ref_id>(record_buffer),
                                             detail::get_or_ignore<field::ref_offset>(record_buffer),
