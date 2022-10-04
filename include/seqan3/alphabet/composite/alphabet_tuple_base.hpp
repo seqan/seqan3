@@ -357,7 +357,7 @@ public:
         return component_proxy<t, index>{val, l};
     }
 
-    /*!\copybrief get
+    /*!\copybrief seqan3::alphabet_tuple_base::get
      * \tparam type Return the element of specified type; only available if the type is unique in the set of components.
      * \returns A proxy to the contained element that models the same alphabets concepts and supports assignment.
      *
@@ -370,7 +370,7 @@ public:
         return get<seqan3::list_traits::find<type, component_list>>(l);
     }
 
-    /*!\copybrief get
+    /*!\copybrief seqan3::alphabet_tuple_base::get
      * \tparam index Return the i-th element.
      * \returns A copy of the contained element.
      *
@@ -386,7 +386,7 @@ public:
         return seqan3::assign_rank_to(l.to_component_rank<index>(), t{});
     }
 
-    /*!\copybrief get
+    /*!\copybrief seqan3::alphabet_tuple_base::get
      * \tparam type Return the element of specified type; only available if the type is unique in the set of components.
      * \returns A copy of the contained element.
      *
@@ -441,7 +441,7 @@ public:
         return get<component_type>(lhs) == rhs;
     }
 
-    //!\copydoc operator==(derived_type_t const lhs, indirect_component_type const rhs)
+    //!\copydoc seqan3::alphabet_tuple_base::operator==(derived_type_t const lhs, indirect_component_type const rhs)
     template <typename derived_type_t, typename indirect_component_type>
     friend constexpr auto operator==(indirect_component_type const lhs, derived_type_t const rhs) noexcept
         -> std::enable_if_t<
@@ -451,7 +451,7 @@ public:
         return rhs == lhs;
     }
 
-    //!\copydoc operator==(derived_type_t const lhs, indirect_component_type const rhs)
+    //!\copydoc seqan3::alphabet_tuple_base::operator==(derived_type_t const lhs, indirect_component_type const rhs)
     template <typename derived_type_t, typename indirect_component_type>
     friend constexpr auto operator!=(derived_type_t const lhs, indirect_component_type const rhs) noexcept
         -> std::enable_if_t<
@@ -465,7 +465,7 @@ public:
         return get<component_type>(lhs) != rhs;
     }
 
-    //!\copydoc operator==(derived_type_t const lhs, indirect_component_type const rhs)
+    //!\copydoc seqan3::alphabet_tuple_base::operator==(derived_type_t const lhs, indirect_component_type const rhs)
     template <typename derived_type_t, typename indirect_component_type>
     friend constexpr auto operator!=(indirect_component_type const lhs, derived_type_t const rhs) noexcept
         -> std::enable_if_t<
@@ -475,7 +475,7 @@ public:
         return rhs != lhs;
     }
 
-    //!\copydoc operator==(derived_type_t const lhs, indirect_component_type const rhs)
+    //!\copydoc seqan3::alphabet_tuple_base::operator==(derived_type_t const lhs, indirect_component_type const rhs)
     template <typename derived_type_t, typename indirect_component_type>
     friend constexpr auto operator<(derived_type_t const lhs, indirect_component_type const rhs) noexcept
         -> std::enable_if_t<
@@ -489,7 +489,7 @@ public:
         return get<component_type>(lhs) < rhs;
     }
 
-    //!\copydoc operator==(derived_type_t const lhs, indirect_component_type const rhs)
+    //!\copydoc seqan3::alphabet_tuple_base::operator==(derived_type_t const lhs, indirect_component_type const rhs)
     template <typename derived_type_t, typename indirect_component_type>
     friend constexpr auto operator<(indirect_component_type const lhs, derived_type_t const rhs) noexcept
         -> std::enable_if_t<
@@ -499,7 +499,7 @@ public:
         return rhs > lhs;
     }
 
-    //!\copydoc operator==(derived_type_t const lhs, indirect_component_type const rhs)
+    //!\copydoc seqan3::alphabet_tuple_base::operator==(derived_type_t const lhs, indirect_component_type const rhs)
     template <typename derived_type_t, typename indirect_component_type>
     friend constexpr auto operator<=(derived_type_t const lhs, indirect_component_type const rhs) noexcept
         -> std::enable_if_t<
@@ -513,7 +513,7 @@ public:
         return get<component_type>(lhs) <= rhs;
     }
 
-    //!\copydoc operator==(derived_type_t const lhs, indirect_component_type const rhs)
+    //!\copydoc seqan3::alphabet_tuple_base::operator==(derived_type_t const lhs, indirect_component_type const rhs)
     template <typename derived_type_t, typename indirect_component_type>
     friend constexpr auto operator<=(indirect_component_type const lhs, derived_type_t const rhs) noexcept
         -> std::enable_if_t<
@@ -523,7 +523,7 @@ public:
         return rhs >= lhs;
     }
 
-    //!\copydoc operator==(derived_type_t const lhs, indirect_component_type const rhs)
+    //!\copydoc seqan3::alphabet_tuple_base::operator==(derived_type_t const lhs, indirect_component_type const rhs)
     template <typename derived_type_t, typename indirect_component_type>
     friend constexpr auto operator>(derived_type_t const lhs, indirect_component_type const rhs) noexcept
         -> std::enable_if_t<
@@ -537,7 +537,7 @@ public:
         return get<component_type>(lhs) > rhs;
     }
 
-    //!\copydoc operator==(derived_type_t const lhs, indirect_component_type const rhs)
+    //!\copydoc seqan3::alphabet_tuple_base::operator==(derived_type_t const lhs, indirect_component_type const rhs)
     template <typename derived_type_t, typename indirect_component_type>
     friend constexpr auto operator>(indirect_component_type const lhs, derived_type_t const rhs) noexcept
         -> std::enable_if_t<
@@ -547,7 +547,7 @@ public:
         return rhs < lhs;
     }
 
-    //!\copydoc operator==(derived_type_t const lhs, indirect_component_type const rhs)
+    //!\copydoc seqan3::alphabet_tuple_base::operator==(derived_type_t const lhs, indirect_component_type const rhs)
     template <typename derived_type_t, typename indirect_component_type>
     friend constexpr auto operator>=(derived_type_t const lhs, indirect_component_type const rhs) noexcept
         -> std::enable_if_t<
@@ -561,7 +561,7 @@ public:
         return get<component_type>(lhs) >= rhs;
     }
 
-    //!\copydoc operator==(derived_type_t const lhs, indirect_component_type const rhs)
+    //!\copydoc seqan3::alphabet_tuple_base::operator==(derived_type_t const lhs, indirect_component_type const rhs)
     template <typename derived_type_t, typename indirect_component_type>
     friend constexpr auto operator>=(indirect_component_type const lhs, derived_type_t const rhs) noexcept
         -> std::enable_if_t<

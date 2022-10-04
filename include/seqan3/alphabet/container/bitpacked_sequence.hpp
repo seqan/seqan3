@@ -1016,7 +1016,7 @@ public:
         std::swap(data, rhs.data);
     }
 
-    //!\copydoc swap()
+    //!\copydoc seqan3::bitpacked_sequence::swap
     constexpr void swap(bitpacked_sequence && rhs) noexcept
     {
         std::swap(data, rhs.data);

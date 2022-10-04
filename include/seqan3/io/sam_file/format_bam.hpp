@@ -235,7 +235,7 @@ static std::string get_tag_dict_str(sam_tag_dictionary const & tag_dict);
 }
 ;
 
-//!\copydoc sam_file_input_format::read_alignment_record
+//!\copydoc seqan3::sam_file_input_format::read_alignment_record
 template <typename stream_type, // constraints checked by file
           typename seq_legal_alph_type,
           typename ref_seqs_type,
@@ -628,7 +628,7 @@ format_bam::read_alignment_record(stream_type & stream,
         std::swap(cigar_vector, tmp_cigar_vector);
 }
 
-//!\copydoc sam_file_output_format::write_alignment_record
+//!\copydoc seqan3::sam_file_output_format::write_alignment_record
 template <typename stream_type,
           typename header_type,
           typename seq_type,

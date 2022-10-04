@@ -425,7 +425,7 @@ public:
         return (*this)[i];
     }
 
-    //!\copydoc at()
+    //!\copydoc seqan3::small_vector::at()
     const_reference at(size_type const i) const
     {
         if (i >= size()) // [[unlikely]]
@@ -458,7 +458,7 @@ public:
         return data_[i];
     }
 
-    //!\copydoc operator[]()
+    //!\copydoc seqan3::small_vector::operator[]()
     constexpr const_reference operator[](size_type const i) const noexcept
     {
         assert(i < size());
@@ -486,7 +486,7 @@ public:
         return (*this)[0];
     }
 
-    //!\copydoc front()
+    //!\copydoc seqan3::small_vector::front()
     constexpr const_reference front() const noexcept
     {
         assert(size() > 0);
@@ -514,7 +514,7 @@ public:
         return (*this)[size() - 1];
     }
 
-    //!\copydoc back()
+    //!\copydoc seqan3::small_vector::back()
     constexpr const_reference back() const noexcept
     {
         assert(size() > 0);
@@ -530,7 +530,7 @@ public:
         return data_.data();
     }
 
-    //!\copydoc data()
+    //!\copydoc seqan3::small_vector::data()
     constexpr value_type const * data() const noexcept
     {
         return data_.data();
@@ -897,9 +897,9 @@ public:
         sz = count;
     }
 
-    /*!\copybrief resize()
+    /*!\copybrief seqan3::small_vector::resize()
      * \param value Append copies of value when resizing.
-     * \copydetails resize()
+     * \copydetails seqan3::small_vector::resize()
      */
     constexpr void resize(size_type const count, value_type const value) noexcept
     {
