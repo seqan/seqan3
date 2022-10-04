@@ -22,6 +22,9 @@ set -x
 # brew_package_name: The package followed by an optional version, e.g. "ccache" and "gcc@11".
 # `--force-bottle` will cause brew to use precompiled binaries. Sometimes brew likes to build compilers from scratch.
 
+export HOMEBREW_NO_INSTALL_CLEANUP=1 # Do not run brew cleanup automatically.
+export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 # Do not automatically update packages.
+
 # If the package is installed, we unlink the package. brew unlink does not take a version.
 brew list --versions $brew_package_name && \
     brew unlink $package_name \
