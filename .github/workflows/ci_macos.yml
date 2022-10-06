@@ -30,7 +30,7 @@ defaults:
 jobs:
   build:
     name: ${{ matrix.name }}
-    runs-on: macos-10.15
+    runs-on: macos-12
     timeout-minutes: 120
     if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'clang-format'
     strategy:
@@ -38,21 +38,21 @@ jobs:
       matrix:
         include:
           - name: "Unit gcc12"
-            os: macos-10.15
+            os: macos-12
             cxx: "g++-12"
             cc: "gcc-12"
             build: unit
             build_type: Release
 
           - name: "Unit gcc11"
-            os: macos-10.15
+            os: macos-12
             cxx: "g++-11"
             cc: "gcc-11"
             build: unit
             build_type: Release
 
           - name: "Unit gcc10"
-            os: macos-10.15
+            os: macos-12
             cxx: "g++-10"
             cc: "gcc-10"
             build: unit
@@ -103,6 +103,7 @@ jobs:
         run: |
           env cmake --version
           env ${{ matrix.cxx }} --version
+          sudo xcode-select -s '/Applications/Xcode_13.4.1.app/Contents/Developer' # https://github.com/actions/runner-images/issues/6350
 
       - name: Configure tests
         env:
