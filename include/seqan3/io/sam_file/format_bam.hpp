@@ -161,79 +161,83 @@ private:
         int32_t tlen;             //!< The template length of the read and its mate.
     };
 
+    // clang-format off
     //!\brief Converts a cigar op character to the rank according to the official BAM specifications.
-    static constexpr std::array<uint8_t, 256> char_to_sam_rank{[]() constexpr {std::array<uint8_t, 256> ret{};
+    static constexpr std::array<uint8_t, 256> char_to_sam_rank
+    {
+        []() constexpr {
+            std::array<uint8_t, 256> ret{};
 
-    using index_t = std::make_unsigned_t<char>;
+            using index_t = std::make_unsigned_t<char>;
 
-    // ret['M'] = 0; set anyway by initialization
-    ret[static_cast<index_t>('I')] = 1;
-    ret[static_cast<index_t>('D')] = 2;
-    ret[static_cast<index_t>('N')] = 3;
-    ret[static_cast<index_t>('S')] = 4;
-    ret[static_cast<index_t>('H')] = 5;
-    ret[static_cast<index_t>('P')] = 6;
-    ret[static_cast<index_t>('=')] = 7;
-    ret[static_cast<index_t>('X')] = 8;
+            // ret['M'] = 0; set anyway by initialization
+            ret[static_cast<index_t>('I')] = 1;
+            ret[static_cast<index_t>('D')] = 2;
+            ret[static_cast<index_t>('N')] = 3;
+            ret[static_cast<index_t>('S')] = 4;
+            ret[static_cast<index_t>('H')] = 5;
+            ret[static_cast<index_t>('P')] = 6;
+            ret[static_cast<index_t>('=')] = 7;
+            ret[static_cast<index_t>('X')] = 8;
 
-    return ret;
-}()
-}; // namespace seqan3
+            return ret;
+        }()
+    };
+    // clang-format on
 
-//!\brief Computes the bin number for a given region [beg, end), copied from the official SAM specifications.
-static uint16_t reg2bin(int32_t beg, int32_t end) noexcept
-{
-    --end;
-    if (beg >> 14 == end >> 14)
-        return ((1 << 15) - 1) / 7 + (beg >> 14);
-    if (beg >> 17 == end >> 17)
-        return ((1 << 12) - 1) / 7 + (beg >> 17);
-    if (beg >> 20 == end >> 20)
-        return ((1 << 9) - 1) / 7 + (beg >> 20);
-    if (beg >> 23 == end >> 23)
-        return ((1 << 6) - 1) / 7 + (beg >> 23);
-    if (beg >> 26 == end >> 26)
-        return ((1 << 3) - 1) / 7 + (beg >> 26);
-    return 0;
-}
+    //!\brief Computes the bin number for a given region [beg, end), copied from the official SAM specifications.
+    static uint16_t reg2bin(int32_t beg, int32_t end) noexcept
+    {
+        --end;
+        if (beg >> 14 == end >> 14)
+            return ((1 << 15) - 1) / 7 + (beg >> 14);
+        if (beg >> 17 == end >> 17)
+            return ((1 << 12) - 1) / 7 + (beg >> 17);
+        if (beg >> 20 == end >> 20)
+            return ((1 << 9) - 1) / 7 + (beg >> 20);
+        if (beg >> 23 == end >> 23)
+            return ((1 << 6) - 1) / 7 + (beg >> 23);
+        if (beg >> 26 == end >> 26)
+            return ((1 << 3) - 1) / 7 + (beg >> 26);
+        return 0;
+    }
 
-/*!\brief Reads a arithmetic field from binary stream by directly reinterpreting the bits.
+    /*!\brief Reads a arithmetic field from binary stream by directly reinterpreting the bits.
      * \tparam stream_view_type  The type of the stream as a view.
      * \tparam number_type       The type of number to parse; must model std::integral.
      * \param[in, out] stream_view  The stream view to read from.
      * \param[out]     target       An integral value to store the parsed value in.
      */
-template <typename stream_view_type, std::integral number_type>
-void read_integral_byte_field(stream_view_type && stream_view, number_type & target)
-{
-    std::ranges::copy_n(std::ranges::begin(stream_view), sizeof(target), reinterpret_cast<char *>(&target));
-}
+    template <typename stream_view_type, std::integral number_type>
+    void read_integral_byte_field(stream_view_type && stream_view, number_type & target)
+    {
+        std::ranges::copy_n(std::ranges::begin(stream_view), sizeof(target), reinterpret_cast<char *>(&target));
+    }
 
-/*!\brief Reads a float field from binary stream by directly reinterpreting the bits.
+    /*!\brief Reads a float field from binary stream by directly reinterpreting the bits.
      * \tparam stream_view_type  The type of the stream as a view.
      * \param[in, out] stream_view  The stream view to read from.
      * \param[out]     target       An float value to store the parsed value in.
      */
-template <typename stream_view_type>
-void read_float_byte_field(stream_view_type && stream_view, float & target)
-{
-    std::ranges::copy_n(std::ranges::begin(stream_view), sizeof(int32_t), reinterpret_cast<char *>(&target));
-}
+    template <typename stream_view_type>
+    void read_float_byte_field(stream_view_type && stream_view, float & target)
+    {
+        std::ranges::copy_n(std::ranges::begin(stream_view), sizeof(int32_t), reinterpret_cast<char *>(&target));
+    }
 
-template <typename stream_view_type, typename value_type>
-void read_sam_dict_vector(seqan3::detail::sam_tag_variant & variant,
-                          stream_view_type && stream_view,
-                          value_type const & SEQAN3_DOXYGEN_ONLY(value));
+    template <typename stream_view_type, typename value_type>
+    void read_sam_dict_vector(seqan3::detail::sam_tag_variant & variant,
+                              stream_view_type && stream_view,
+                              value_type const & SEQAN3_DOXYGEN_ONLY(value));
 
-template <typename stream_view_type>
-void read_sam_dict_field(stream_view_type && stream_view, sam_tag_dictionary & target);
+    template <typename stream_view_type>
+    void read_sam_dict_field(stream_view_type && stream_view, sam_tag_dictionary & target);
 
-template <typename cigar_input_type>
-auto parse_binary_cigar(cigar_input_type && cigar_input, uint16_t n_cigar_op) const;
+    template <typename cigar_input_type>
+    auto parse_binary_cigar(cigar_input_type && cigar_input, uint16_t n_cigar_op) const;
 
-static std::string get_tag_dict_str(sam_tag_dictionary const & tag_dict);
-}
-;
+    static std::string get_tag_dict_str(sam_tag_dictionary const & tag_dict);
+};
 
 //!\copydoc seqan3::sam_file_input_format::read_alignment_record
 template <typename stream_type, // constraints checked by file
