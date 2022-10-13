@@ -117,26 +117,20 @@ TEST(tmp_directory, cleanup_on_destruction)
         EXPECT_TRUE(std::filesystem::exists(path / "file1"));
         EXPECT_TRUE(std::filesystem::exists(path / "somefolder/file2"));
 
-        // Should warn about unclean temporary directory
+        // Should not warn about unclean temporary directory
         testing::internal::CaptureStderr();
     }
 
     std::string output = testing::internal::GetCapturedStderr();
-    EXPECT_FALSE(output.empty());
-
-    std::regex re{"temporary directory \"[^ ]*\" has some files that should be deleted\n"
-                  "- \"[^ ]*\"\n"
-                  "- \"[^ ]*\"\n"
-                  "- \"[^ ]*\"\n"};
-    EXPECT_TRUE(std::regex_match(output, re)) << "Actual output: " << output;
+    EXPECT_TRUE(output.empty());
 
     EXPECT_FALSE(std::filesystem::exists(path));
     EXPECT_FALSE(std::filesystem::exists(path / "file1"));
     EXPECT_FALSE(std::filesystem::exists(path / "somefolder/file2"));
 }
 
-// check destructor warns if someone else deletes the temp directory
-TEST(tmp_directory, warn_about_missing_managed_tmp_directory_on_destruction)
+// check destructor doesnt warn if someone else deletes the temp directory
+TEST(tmp_directory, dont_warn_about_missing_managed_tmp_directory_on_destruction)
 {
     std::filesystem::path path;
     {
@@ -149,14 +143,13 @@ TEST(tmp_directory, warn_about_missing_managed_tmp_directory_on_destruction)
 
         std::filesystem::remove_all(t1.path());
 
-        // Should warn about unclean temporary directory
+        // Should not warn about unclean temporary directory
         testing::internal::CaptureStderr();
     }
 
     std::string output = testing::internal::GetCapturedStderr();
 
-    std::regex re{"temporary directory \"[^ ]*\" was deleted externally. This is discouraged program behaviour\n"};
-    EXPECT_TRUE(std::regex_match(output, re)) << "Actual output: " << output;
+    EXPECT_TRUE(output.empty());
 }
 
 // check a unwritable tmp file fails
