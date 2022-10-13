@@ -46,7 +46,7 @@ set (CMAKE_CXX_FLAGS_FEDORA
 # ----------------------------------------------------------------------------
 
 find_path (SEQAN3_TEST_INCLUDE_DIR
-           NAMES seqan3/test/tmp_filename.hpp
+           NAMES seqan3/test/tmp_directory.hpp
            HINTS "${CMAKE_CURRENT_LIST_DIR}/include/")
 find_path (SEQAN3_TEST_CMAKE_MODULE_DIR
            NAMES seqan3_test_component.cmake
