@@ -18,3 +18,4 @@
 #pragma once
 
 #include <seqan3/alignment/cigar_conversion/alignment_from_cigar.hpp>
+#include <seqan3/alignment/cigar_conversion/cigar_from_alignment.hpp>
