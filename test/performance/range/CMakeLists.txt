@@ -1,5 +1,6 @@
 add_subdirectories ()
 
+seqan3_benchmark (container_assignment_benchmark.cpp)
 seqan3_benchmark (container_push_back_benchmark.cpp)
 seqan3_benchmark (container_seq_read_benchmark.cpp)
 seqan3_benchmark (container_seq_write_benchmark.cpp)
