@@ -641,10 +641,6 @@ public:
     /*!\brief Returns the number of elements that the container has currently allocated space for.
      * \returns The capacity of the currently allocated storage.
      *
-     * \attention
-     *
-     * This does not operate on underlying concat container, see concat_capacity().
-     *
      * ### Complexity
      *
      * Constant.
@@ -687,7 +683,7 @@ public:
 
     /*!\brief Requests the removal of unused capacity.
      *
-     * It is a non-binding request to reduce capacity() to size() and concat_capacity() to concat_size().
+     * It is a non-binding request to reduce capacity() to size().
      * It depends on the implementation if the request is fulfilled.
      * If reallocation occurs, all iterators, including the past the end iterator, and all references to the elements
      * are invalidated. If no reallocation takes place, no iterators or references are invalidated.
@@ -765,7 +761,7 @@ public:
      *
      * ### Complexity
      *
-     * Worst-case linear in concat_size(). This is a drawback over e.g. `std::vector<std::vector<alphabet>>`.
+     * Worst-case linear in size().
      *
      * ### Exceptions
      *
@@ -834,7 +830,7 @@ public:
      *
      * ### Complexity
      *
-     * Worst-case linear in concat_size(). This is a drawback over e.g. `std::vector<std::vector<alphabet>>`.
+     * Worst-case linear in size().
      *
      * ### Exceptions
      *
