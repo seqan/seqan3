@@ -258,7 +258,7 @@ public:
 
 private:
     //!\brief The value of the alphabet letter is stored as the rank.
-    rank_type rank{};
+    rank_type rank;
 };
 
 } // namespace seqan3

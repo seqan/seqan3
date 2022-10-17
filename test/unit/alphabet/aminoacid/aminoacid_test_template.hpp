@@ -20,6 +20,8 @@ TYPED_TEST_SUITE_P(aminoacid);
 
 TYPED_TEST_P(aminoacid, concept_check)
 {
+    EXPECT_TRUE(std::is_trivial_v<TypeParam>);
+
     EXPECT_TRUE(seqan3::aminoacid_alphabet<TypeParam>);
     EXPECT_TRUE(seqan3::aminoacid_alphabet<TypeParam &>);
     EXPECT_TRUE(seqan3::aminoacid_alphabet<TypeParam const>);
