@@ -62,6 +62,7 @@ function (seqan3_macro_benchmark macro_benchmark_cpp)
               COMMAND ${target} #
                       --benchmark_repetitions=${MACRO_BENCHMARK_REPETITIONS} #
                       --benchmark_min_time=0 #
+                      --benchmark_enable_random_interleaving=true #
                       --benchmark_out=$<TARGET_FILE_NAME:${target}>.json #
                       --benchmark_out_format=json)
 endfunction ()
