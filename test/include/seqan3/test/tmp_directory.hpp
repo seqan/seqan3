@@ -99,7 +99,7 @@ public:
         /* The current hold directory is cleaned. A simple std::swap is not
          * performed to avoid prolonging the life of the temporary directory.
          */
-        warn_and_clean();
+        clean();
         directory_path = std::exchange(other.directory_path, std::nullopt);
         return *this;
     }
@@ -133,7 +133,7 @@ public:
      */
     ~tmp_directory()
     {
-        warn_and_clean();
+        clean();
     }
     //!\}
 
@@ -157,43 +157,20 @@ public:
         return exists(directory_path.value()) && is_empty(directory_path.value());
     }
 
-    /*!\brief Removes all files from the temporary directory
-     */
-    void clean()
-    {
-        assert(directory_path);
-
-        // Deletes all directories recursivly without following symlinks.
-        // Function will throw on error.
-        std::filesystem::remove_all(directory_path.value());
-        directory_path = std::nullopt;
-    }
-
 private:
     /*!\brief Warns and cleans if directory is not empty
      */
-    void warn_and_clean()
+    void clean()
     {
         if (!directory_path)
         {
             return;
         }
 
-        if (!exists(directory_path.value()))
-        {
-            std::cerr << "temporary directory " << directory_path.value()
-                      << " was deleted externally. This is discouraged program behaviour\n";
-            return;
-        }
-        if (!empty())
-        {
-            std::cerr << "temporary directory " << directory_path.value() << " has some files that should be deleted\n";
-            for (auto & p : std::filesystem::recursive_directory_iterator(directory_path.value()))
-            {
-                std::cerr << "- " << p << "\n";
-            }
-        }
-        clean();
+        // Deletes all directories recursivly without following symlinks.
+        // Function will throw on error.
+        std::filesystem::remove_all(directory_path.value());
+        directory_path = std::nullopt;
     }
 
 private:
