@@ -145,7 +145,7 @@ jobs:
 
       - name: Import GPG key
         if: ${{ steps.changed_files.outputs.list }}
-        uses: crazy-max/ghaction-import-gpg@v4
+        uses: crazy-max/ghaction-import-gpg@v5
         with:
           workdir: seqan3
           gpg_private_key: ${{ secrets.SEQAN_ACTIONS_GPG_KEY }}
