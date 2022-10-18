@@ -91,7 +91,7 @@ private:
         //!\brief Update the sdsl-proxy.
         constexpr void on_update() noexcept
         {
-            internal_proxy = static_cast<base_t &>(*this).to_rank();
+            internal_proxy = base_t::to_rank();
         }
 
     public:
@@ -110,10 +110,12 @@ private:
         ~reference_proxy_type() noexcept = default;                                                  //!< Defaulted.
 
         //!\brief Initialise from internal proxy type.
-        reference_proxy_type(std::ranges::range_reference_t<data_type> const & internal) noexcept :
+        reference_proxy_type(std::ranges::range_reference_t<data_type> const internal) noexcept :
             internal_proxy{internal}
         {
-            static_cast<base_t &>(*this).assign_rank(internal);
+            // Call alphabet_base's assign_rank to prevent calling on_update() during construction
+            // which is not necessary, because internal_proxy is already correctly initialised!
+            base_t::base_t::assign_rank(static_cast<alphabet_rank_t<alphabet_type>>(internal));
         }
         //!\}
     };
