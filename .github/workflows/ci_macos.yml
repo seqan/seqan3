@@ -60,19 +60,19 @@ jobs:
 
     steps:
       - name: Checkout SeqAn3
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: seqan3
-          fetch-depth: 2
+          fetch-depth: 1
           submodules: true
 
       - name: Checkout SeqAn2
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: seqan/seqan
           ref: develop
           path: seqan3/submodules/seqan
-          fetch-depth: 2
+          fetch-depth: 1
 
       - name: Configure Homebrew
         uses: Homebrew/actions/setup-homebrew@master
@@ -89,7 +89,7 @@ jobs:
         run: bash ./seqan3/.github/workflows/scripts/install_via_brew.sh $(echo ${CC/clang/llvm} | awk -F '-' '{print $1, $2}')
 
       - name: Load ccache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: .ccache
           key: ${{ runner.os }}-${{ matrix.name }}-ccache-${{ github.ref }}-${{ github.run_number }}
@@ -114,8 +114,7 @@ jobs:
           cd seqan3-build
           cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
                                                    -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
-                                                   -DSEQAN3_VERBOSE_TESTS=OFF \
-                                                   -DSEQAN3_BENCHMARK_MIN_TIME=0.01
+                                                   -DSEQAN3_VERBOSE_TESTS=OFF
           make -j3 gtest_build
 
       - name: Build tests
@@ -125,7 +124,6 @@ jobs:
           CCACHE_COMPRESS: true
           CCACHE_COMPRESSLEVEL: 12
           CCACHE_MAXSIZE: 75M
-          CCACHE_IGNOREOPTIONS: "-fprofile-abs-path"
         run: |
           ccache -z
           cd seqan3-build

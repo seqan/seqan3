@@ -48,17 +48,17 @@ jobs:
       # How many commits do we need to fetch to also fetch the branch point?
       - name: Get fetch depth
         id: fetch_depth
-        run: echo "::set-output name=depth::$(( ${{ github.event.pull_request.commits }} + 1 ))"
+        run: echo "depth=$(( ${{ github.event.pull_request.commits }} + 2 ))" >> $GITHUB_OUTPUT
 
       - name: Checkout SeqAn3
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: seqan3
           fetch-depth: ${{ steps.fetch_depth.outputs.depth }}
           submodules: true
 
       - name: Checkout SeqAn2
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: seqan/seqan
           ref: develop
@@ -88,7 +88,7 @@ jobs:
           pip install gcovr==5.0
 
       - name: Load ccache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: .ccache
           key: ${{ runner.os }}-${{ matrix.name }}-ccache-${{ github.ref }}-${{ github.run_number }}
@@ -133,7 +133,7 @@ jobs:
           ccache -sv
 
       - name: Submit coverage build
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           files: ${{ github.workspace }}/seqan3-build/seqan3_coverage.xml
           root_dir: ${{ github.workspace }}/seqan3

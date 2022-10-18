@@ -34,19 +34,19 @@ jobs:
 
     steps:
       - name: Checkout SeqAn3
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: seqan3
-          fetch-depth: 2
+          fetch-depth: 1
           submodules: true
 
       - name: Checkout SeqAn2
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: seqan/seqan
           ref: develop
           path: seqan3/submodules/seqan
-          fetch-depth: 2
+          fetch-depth: 1
 
       - name: Configure APT
         continue-on-error: true
@@ -97,7 +97,7 @@ jobs:
           body="${body//'%'/'%25'}"
           body="${body//$'\n'/'%0A'}"
           body="${body//$'\r'/'%0D'}"
-          echo ::set-output name=body::$body
+          echo "body=$body" >> $GITHUB_OUTPUT
 
       - name: Reopen issue
         if: ${{ failure() }}
