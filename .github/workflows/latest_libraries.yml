@@ -35,7 +35,7 @@ jobs:
 
     steps:
       - name: Checkout SeqAn3
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: seqan3
           submodules: true
@@ -60,7 +60,7 @@ jobs:
           grep 'gbenchmark_git_tag ".*"' seqan3/test/cmake/seqan3_require_benchmark.cmake
 
       - name: Checkout SeqAn2
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: seqan/seqan
           ref: develop
@@ -123,7 +123,7 @@ jobs:
           body="${body//'%'/'%25'}"
           body="${body//$'\n'/'%0A'}"
           body="${body//$'\r'/'%0D'}"
-          echo ::set-output name=body::$body
+          echo "body=$body" >> $GITHUB_OUTPUT
 
       - name: Reopen issue
         if: ${{ failure() }}

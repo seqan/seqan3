@@ -28,7 +28,7 @@ jobs:
     if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Configure APT
         continue-on-error: true
@@ -41,7 +41,7 @@ jobs:
         run: bash .github/workflows/scripts/install_doxygen.sh
 
       - name: Load cached documentation
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: doc-build
           key: ${{ runner.os }}-documentation-${{ env.DOXYGEN_VERSION }}

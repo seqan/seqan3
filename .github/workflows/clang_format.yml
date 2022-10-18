@@ -74,11 +74,11 @@ jobs:
           QUERY="/repos/${{ github.repository }}/compare/${COMMIT_RANGE}"
           ANSWER=$(gh api -H "Accept: application/vnd.github.v3+json" ${QUERY})
           NBEHIND=$(jq '.behind_by' <<< "${ANSWER}")
-          echo "::set-output name=depth::$(( ${NBEHIND} + 1 ))"
-          echo "::set-output name=pr_depth::$(( ${{ github.event.pull_request.commits }} + 1 ))"
+          echo "depth=$(( ${NBEHIND} + 1 ))" >> $GITHUB_OUTPUT
+          echo "pr_depth=$(( ${{ github.event.pull_request.commits }} + 1 ))" >> $GITHUB_OUTPUT
 
       - name: Checkout SeqAn3
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
@@ -123,7 +123,7 @@ jobs:
           LIST=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} | \
           { grep -v -E "(include/seqan3/contrib/|submodules/|*.sh|*.pl|*.py|*.patch)" || test $? = 1; } | \
           { grep -E "(.cpp|.hpp|include/seqan3/std/)" || test $? = 1; } | xargs)
-          echo "::set-output name=list::$LIST"
+          echo "list=$LIST" >> $GITHUB_OUTPUT
 
       - name: Install clang-format
         if: ${{ steps.changed_files.outputs.list }}

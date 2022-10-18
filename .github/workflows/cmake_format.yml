@@ -28,7 +28,7 @@ jobs:
     if: github.repository_owner == 'seqan'
     steps:
       - name: Checkout SeqAn3
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: seqan3
           submodules: false
