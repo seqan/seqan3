@@ -11,9 +11,9 @@ cmake_minimum_required (VERSION 3.16)
 macro (seqan3_require_benchmark)
     enable_testing ()
 
-    set (gbenchmark_git_tag "v1.6.1")
+    set (gbenchmark_git_tag "v1.7.0")
 
-    message (STATUS "Fetch Google Benchmark:")
+    message (STATUS "Fetching Google Benchmark ${gbenchmark_git_tag}:")
 
     include (FetchContent)
     FetchContent_Declare (
@@ -22,6 +22,7 @@ macro (seqan3_require_benchmark)
         GIT_TAG "${gbenchmark_git_tag}")
     option (BENCHMARK_ENABLE_TESTING "" OFF)
     option (BENCHMARK_ENABLE_WERROR "" OFF) # Does not apply to Debug builds.
+    option (BENCHMARK_ENABLE_INSTALL "" OFF)
     FetchContent_MakeAvailable (gbenchmark_fetch_content)
 
     # NOTE: google benchmark's CMakeLists.txt already defines Shlwapi
