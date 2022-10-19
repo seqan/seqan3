@@ -216,34 +216,6 @@ protected:
         ++stream_it;
 
         /* Qualities */
-        /* if constexpr (seq_qual_combined)
-        {
-            auto oit = std::ranges::begin(qualities);
-            using real_qual_t = typename std::ranges::range_value_t<qual_type>::quality_alphabet_type;
-
-            while (sequence_size_after > sequence_size_before)
-            {
-                if (stream_it == e)
-                    throw unexpected_end_of_input{"Expected qualities, got end-of-file."};
-
-                if ((!is_space)(*stream_it))
-                {
-                    --sequence_size_after;
-
-                    if (!char_is_valid_for<real_qual_t>(*stream_it))
-                    {
-                        throw parse_error{std::string{"Encountered bad letter for qual: "} +
-                                          detail::make_printable(*stream_it)};
-                    }
-
-                    assign_char_to(*stream_it, get<real_qual_t>(*oit));
-
-                    ++oit;
-                }
-                ++stream_it;
-            }
-        }
-        else  */
         if constexpr (!detail::decays_to_ignore_v<qual_type>)
         {
             while (sequence_size_after > sequence_size_before)
