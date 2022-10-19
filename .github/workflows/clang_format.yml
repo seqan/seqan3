@@ -69,7 +69,7 @@ jobs:
         id: fetch_depth
         env:
           GITHUB_TOKEN: ${{ secrets.SEQAN_ACTIONS_PAT }}
-          COMMIT_RANGE: ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}
+          COMMIT_RANGE: ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.base.ref }}
         run: |
           QUERY="/repos/${{ github.repository }}/compare/${COMMIT_RANGE}"
           ANSWER=$(gh api -H "Accept: application/vnd.github.v3+json" ${QUERY})
