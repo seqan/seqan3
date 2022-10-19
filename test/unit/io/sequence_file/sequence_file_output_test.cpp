@@ -12,7 +12,7 @@
 
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
-#include <seqan3/test/tmp_filename.hpp>
+#include <seqan3/test/tmp_directory.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
 using seqan3::operator""_dna5;
@@ -67,30 +67,33 @@ TEST(general, construct_by_filename)
 {
     /* just the filename */
     {
-        seqan3::test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
-        EXPECT_NO_THROW(seqan3::sequence_file_output<>{filename.get_path()});
+        seqan3::test::tmp_directory tmp;
+        auto filename = tmp.path() / "sequence_file_output_constructor.fasta";
+        EXPECT_NO_THROW(seqan3::sequence_file_output<>{filename});
     }
 
     /* wrong extension */
     {
-        seqan3::test::tmp_filename filename{"sequence_file_output_constructor.xyz"};
-        std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-        EXPECT_THROW(seqan3::sequence_file_output<>{filename.get_path()}, seqan3::unhandled_extension_error);
+        seqan3::test::tmp_directory tmp;
+        auto filename = tmp.path() / "sequence_file_output_constructor.xyz";
+        std::ofstream filecreator{filename, std::ios::out | std::ios::binary};
+        EXPECT_THROW(seqan3::sequence_file_output<>{filename}, seqan3::unhandled_extension_error);
     }
 
     /* unknown file */
     {
-        seqan3::test::tmp_filename filename{"I/do/not/exist.fasta"};
-        EXPECT_THROW(seqan3::sequence_file_output<>{filename.get_path()}, seqan3::file_open_error);
+        seqan3::test::tmp_directory tmp;
+        auto filename = tmp.path() / "I/do/not/exist.fasta";
+        EXPECT_THROW(seqan3::sequence_file_output<>{filename}, seqan3::file_open_error);
     }
 
     /* filename + fields */
     using fields_seq = seqan3::fields<seqan3::field::seq>;
     {
-        seqan3::test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
-        EXPECT_NO_THROW(
-            (seqan3::sequence_file_output<fields_seq, seqan3::type_list<seqan3::format_fasta>>{filename.get_path(),
-                                                                                               fields_seq{}}));
+        seqan3::test::tmp_directory tmp;
+        auto filename = tmp.path() / "sequence_file_output_constructor.fasta";
+        EXPECT_NO_THROW((
+            seqan3::sequence_file_output<fields_seq, seqan3::type_list<seqan3::format_fasta>>{filename, fields_seq{}}));
     }
 }
 
@@ -127,9 +130,10 @@ TEST(general, default_template_args_and_deduction_guides)
 
     /* guided filename constructor */
     {
-        seqan3::test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
+        seqan3::test::tmp_directory tmp;
+        auto filename = tmp.path() / "sequence_file_output_constructor.fasta";
 
-        seqan3::sequence_file_output fout{filename.get_path()};
+        seqan3::sequence_file_output fout{filename};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, default_fields>));
@@ -139,9 +143,10 @@ TEST(general, default_template_args_and_deduction_guides)
 
     /* guided filename constructor + custom fields */
     {
-        seqan3::test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
+        seqan3::test::tmp_directory tmp;
+        auto filename = tmp.path() / "sequence_file_output_constructor.fasta";
 
-        seqan3::sequence_file_output fout{filename.get_path(), seqan3::fields<seqan3::field::seq>{}};
+        seqan3::sequence_file_output fout{filename, seqan3::fields<seqan3::field::seq>{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, seqan3::fields<seqan3::field::seq>>)); // changed
@@ -412,10 +417,10 @@ TEST(columns, writing_id_seq_qual)
 // compression
 // ----------------------------------------------------------------------------
 
-std::string compression_by_filename_impl([[maybe_unused]] seqan3::test::tmp_filename & filename)
+std::string compression_by_filename_impl(seqan3::test::sandboxed_path const & filename)
 {
     {
-        seqan3::sequence_file_output fout{filename.get_path()};
+        seqan3::sequence_file_output fout{filename};
         fout.options.fasta_blank_before_id = true;
         fout.options.fasta_letters_per_line = 0;
 
@@ -432,7 +437,7 @@ std::string compression_by_filename_impl([[maybe_unused]] seqan3::test::tmp_file
     std::string buffer;
 
     {
-        std::ifstream fi{filename.get_path(), std::ios::binary};
+        std::ifstream fi{filename, std::ios::binary};
 
         buffer = std::string{std::istreambuf_iterator<char>{fi}, std::istreambuf_iterator<char>{}};
     }
@@ -476,7 +481,8 @@ std::string expected_bgzf{
 
 TEST(compression, by_filename_gz)
 {
-    seqan3::test::tmp_filename filename{"sequence_file_output_test.fasta.gz"};
+    seqan3::test::tmp_directory tmp;
+    auto filename = tmp.path() / "sequence_file_output_test.fasta.gz";
 
     std::string buffer = compression_by_filename_impl(filename);
     buffer[9] = '\x00'; // zero out OS byte
@@ -499,7 +505,8 @@ TEST(compression, by_stream_gz)
 
 TEST(compression, by_filename_bgzf)
 {
-    seqan3::test::tmp_filename filename{"sequence_file_output_test.fasta.bgzf"};
+    seqan3::test::tmp_directory tmp;
+    auto filename = tmp.path() / "sequence_file_output_test.fasta.bgzf";
 
     std::string buffer = compression_by_filename_impl(filename);
     buffer[9] = '\x00'; // zero out OS byte
@@ -534,7 +541,8 @@ std::string expected_bz2{'\x42', '\x5A', '\x68', '\x39', '\x31', '\x41', '\x59',
 
 TEST(compression, by_filename_bz2)
 {
-    seqan3::test::tmp_filename filename{"sequence_file_output_test.fasta.bz2"};
+    seqan3::test::tmp_directory tmp;
+    auto filename = tmp.path() / "sequence_file_output_test.fasta.bz2";
 
     std::string buffer = compression_by_filename_impl(filename);
     EXPECT_EQ(buffer, expected_bz2);
