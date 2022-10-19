@@ -33,6 +33,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   * Added `seqan3::views::char_strictly_to`. Behaves like `seqan3::views::char_to`, but throws on invalid
     input ([\#2898](https://github.com/seqan/seqan3/pull/2898)).
   * Improved performance of vector assignment for alphabets ([\#3038](https://github.com/seqan/seqan3/pull/3038)).
+  * Improved performance of `seqan3::dna4::complement()` ([\#3026](https://github.com/seqan/seqan3/pull/3026)).
 
 #### I/O
  * Added `seqan3::sequence_file_option::fasta_ignore_blanks_before_id` to ignore blanks before IDs when reading FASTA
