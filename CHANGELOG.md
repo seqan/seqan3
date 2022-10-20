@@ -404,7 +404,7 @@ Header Changes:
   * If you used files as views with `seqan3::views::get<seqan3::field::id>` to project a single field, e.g.
     * `seqan3::views::get<seqan3::field::id>(fin)` => `std::views::transform(fin, [](auto && record){ return record.id(); })`
     * `fin | seqan3::views::get<seqan3::field::id>()` => `fin | std::views::transform([](auto && record){ return record.id(); })`
-    * or per projection: `fin | std::views::transform(&decltype(fin)::record_type::id)`
+    * or per projection: `fin | std::views::transform(&decltype(fin)::%record_type::id)`
   * `seqan3::sequence_record`:
     * `seqan3::get<seqan3::field::id>(record)` => `record.id()`
     * `seqan3::get<seqan3::field::seq>(record)` => `record.sequence()`

@@ -557,13 +557,13 @@ public:
         return iterator{*this};
     }
 
-    //!\copydoc begin()
+    //!\copydoc seqan3::dynamic_bitset::begin()
     constexpr const_iterator begin() const noexcept
     {
         return const_iterator{*this};
     }
 
-    //!\copydoc begin()
+    //!\copydoc seqan3::dynamic_bitset::begin()
     constexpr const_iterator cbegin() const noexcept
     {
         return begin();
@@ -584,13 +584,13 @@ public:
         return iterator{*this, size()};
     }
 
-    //!\copydoc end()
+    //!\copydoc seqan3::dynamic_bitset::end()
     constexpr const_iterator end() const noexcept
     {
         return const_iterator{*this, size()};
     }
 
-    //!\copydoc end()
+    //!\copydoc seqan3::dynamic_bitset::end()
     constexpr const_iterator cend() const noexcept
     {
         return end();
@@ -1064,7 +1064,7 @@ public:
         return (*this)[i];
     }
 
-    //!\copydoc at()
+    //!\copydoc seqan3::dynamic_bitset::at()
     constexpr const_reference at(size_t const i) const
     {
         if (i >= size()) // [[unlikely]]
@@ -1073,7 +1073,7 @@ public:
         return (*this)[i];
     }
 
-    //!\copydoc at()
+    //!\copydoc seqan3::dynamic_bitset::at()
     constexpr const_reference test(size_t const i) const
     {
         return at(i);
@@ -1108,7 +1108,7 @@ public:
         return {data, i};
     }
 
-    //!\copydoc operator[]()
+    //!\copydoc seqan3::dynamic_bitset::operator[]()
     constexpr const_reference operator[](size_t const i) const noexcept
     {
         assert(i < size());
@@ -1139,7 +1139,7 @@ public:
         return (*this)[0];
     }
 
-    //!\copydoc front()
+    //!\copydoc seqan3::dynamic_bitset::front()
     constexpr const_reference front() const noexcept
     {
         assert(size() > 0);
@@ -1169,7 +1169,7 @@ public:
         return (*this)[size() - 1];
     }
 
-    //!\copydoc back()
+    //!\copydoc seqan3::dynamic_bitset::back()
     constexpr const_reference back() const noexcept
     {
         assert(size() > 0);
@@ -1185,7 +1185,7 @@ public:
         return &data;
     }
 
-    //!\copydoc raw_data()
+    //!\copydoc seqan3::dynamic_bitset::raw_data()
     constexpr bitfield const * raw_data() const noexcept
     {
         return &data;

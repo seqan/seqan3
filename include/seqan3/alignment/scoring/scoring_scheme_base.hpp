@@ -219,7 +219,7 @@ public:
         return matrix[to_rank(static_cast<alphabet_t>(alph1))][to_rank(static_cast<alphabet_t>(alph2))];
     }
 
-    //!\copydoc score
+    //!\copydoc seqan3::scoring_scheme_base::score
     template <typename alph1_t, typename alph2_t>
         requires explicitly_convertible_to<alph1_t, alphabet_t> && explicitly_convertible_to<alph2_t, alphabet_t>
     constexpr score_t score(alph1_t const alph1, alph2_t const alph2) const noexcept

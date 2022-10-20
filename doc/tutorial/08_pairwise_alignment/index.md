@@ -92,7 +92,7 @@ possibilities.
 The configuration object is the core of the alignment interface. It allows to easily configure the alignment algorithm
 without changing the interface of the pairwise alignment. It uses a seqan3::configuration object to chain different
 configuration elements together using the logical or-operator ('|'-operator).
-You can find an overview over the available configurations \ref configuration "here".
+You can find an overview over the available configurations \ref seqan3::configuration "here".
 The configurations for the alignment module are available in:
 
 \snippet doc/tutorial/08_pairwise_alignment/configurations.cpp include
@@ -335,7 +335,7 @@ You can use the std::views::filter to get only those alignments that fit the req
 Chaining the configurations to build an individual alignment algorithm is a strong advantage of this design. However,
 some combinations would result in an invalid alignment configuration. To explicitly prevent this we added some security
 details. First, if a combination is invalid (for example by providing the same configuration more than once) a static
-assert will inform you about the invalid combination. \ref configuration "Here" you can find a
+assert will inform you about the invalid combination. \ref seqan3::configuration "Here" you can find a
 table depicting the valid configurations. Further, if the seqan3::align_pairwise is called, it checks if the input
 data can be used with the given configuration. For example, a static assertion is emitted if the alphabet types of the
 sequences together with the provided scoring scheme do not model the concept seqan3::scoring_scheme_for.

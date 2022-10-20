@@ -211,7 +211,7 @@ public:
         data_[0] = '\0';
     }
 
-    //!\copydoc seqan3::small_vector::push_back(value_type const value)
+    //!\copydoc seqan3::small_vector::push_back
     constexpr void push_back(char const value) noexcept
     {
         assert(sz < capacity_);
@@ -228,13 +228,13 @@ public:
         data_[sz] = '\0';
     }
 
-    //!\copydoc seqan3::small_vector::resize(size_type const)
+    //!\copydoc seqan3::small_vector::resize(seqan3::small_vector::size_type)
     constexpr void resize(size_type const count) noexcept
     {
         resize(count, '\0');
     }
 
-    //!\copydoc seqan3::small_vector::resize(size_type const, value_type const value)
+    //!\copydoc seqan3::small_vector::resize(seqan3::small_vector::size_type,seqan3::small_vector::value_type)
     constexpr void resize(size_type const count, char const value) noexcept
     {
         assert(count <= capacity_);

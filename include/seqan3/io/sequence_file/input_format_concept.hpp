@@ -92,6 +92,13 @@ concept sequence_file_input_format =
     };
 //!\endcond
 
+// Workaround for https://github.com/doxygen/doxygen/issues/9379
+#if SEQAN3_DOXYGEN_ONLY(1) 0
+template <typename t>
+class sequence_file_input_format
+{};
+#endif
+
 /*!\name Requirements for seqan3::sequence_file_input_format
  * \brief You can expect these **members** on all types that implement seqan3::sequence_file_input_format.
  * \memberof seqan3::sequence_file_input_format
