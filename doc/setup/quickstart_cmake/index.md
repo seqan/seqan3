@@ -191,6 +191,33 @@ If you create a new `cpp` file and want to compile it, you need to add another `
 For example, after adding `another_program.cpp` your `CMakeLists.txt` may look like this:
 \snippet test/external_project/seqan3_setup_tutorial/CMakeLists.txt adding_files
 
+# Including SeqAn3 as external project
+
+```cmake
+cmake_minimum_required (VERSION 3.14)
+
+project (my_app LANGUAGES CXX VERSION 1.0.0)
+
+set (seqan3_git_tag "#.#.#") # adapt as needed, e.g. "3.2.0" or "master"
+
+message (STATUS "Fetching SeqAn3 ${seqan3_git_tag}:")
+
+include (FetchContent)
+FetchContent_Declare (
+    seqan3_fetch_content
+    GIT_REPOSITORY "https://github.com/seqan/seqan3.git"
+    GIT_TAG "${seqan3_git_tag}"
+)
+
+# Download and make SeqAn3 available.
+FetchContent_MakeAvailable (seqan3_fetch_content)
+
+add_executable (my_app my_app.cpp)
+
+# Set up everything needed to use SeqAn3 with my_app:
+target_link_libraries (my_app PUBLIC seqan3::seqan3)
+```
+
 # Encountered issues
 
 * **Using conda's gcc package:** ``/usr/lib/x86_64-linux-gnu/libstdc++.so.6: version 'CXXABI_1.3.11' not found``<br>
