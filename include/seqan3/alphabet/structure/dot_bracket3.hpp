@@ -198,7 +198,7 @@ constexpr dot_bracket3 operator""_db3(char const ch) noexcept
  *
  * \experimentalapi{Experimental since version 3.1.}
  */
-inline std::vector<dot_bracket3> operator""_db3(char const * str, std::size_t len)
+SEQAN3_WORKAROUND_LITERAL std::vector<dot_bracket3> operator""_db3(char const * str, std::size_t len)
 {
     std::vector<dot_bracket3> vec;
     vec.resize(len);

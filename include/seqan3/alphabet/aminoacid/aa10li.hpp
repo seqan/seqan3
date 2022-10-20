@@ -228,7 +228,7 @@ constexpr aa10li operator""_aa10li(char const c) noexcept
  *
  * \stableapi{Since version 3.1.}
  */
-inline aa10li_vector operator""_aa10li(char const * const s, size_t const n)
+SEQAN3_WORKAROUND_LITERAL aa10li_vector operator""_aa10li(char const * const s, size_t const n)
 {
     aa10li_vector r;
     r.resize(n);

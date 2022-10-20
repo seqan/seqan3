@@ -187,7 +187,7 @@ constexpr aa20 operator""_aa20(char const c) noexcept
  *
  * \stableapi{Since version 3.1.}
  */
-inline aa20_vector operator""_aa20(char const * const s, size_t const n)
+SEQAN3_WORKAROUND_LITERAL aa20_vector operator""_aa20(char const * const s, size_t const n)
 {
     aa20_vector r;
     r.resize(n);

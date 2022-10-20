@@ -207,7 +207,7 @@ constexpr dna3bs operator""_dna3bs(char const c) noexcept
  *
  * \stableapi{Since version 3.1.}
  */
-inline dna3bs_vector operator""_dna3bs(char const * s, std::size_t n)
+SEQAN3_WORKAROUND_LITERAL dna3bs_vector operator""_dna3bs(char const * s, std::size_t n)
 {
     dna3bs_vector r;
     r.resize(n);

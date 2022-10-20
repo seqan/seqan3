@@ -153,7 +153,7 @@ constexpr rna5 operator""_rna5(char const c) noexcept
  *
  * \stableapi{Since version 3.1.}
  */
-inline rna5_vector operator""_rna5(char const * s, std::size_t n)
+SEQAN3_WORKAROUND_LITERAL rna5_vector operator""_rna5(char const * s, std::size_t n)
 {
     rna5_vector r;
     r.resize(n);

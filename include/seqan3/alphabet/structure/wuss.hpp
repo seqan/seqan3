@@ -269,7 +269,7 @@ constexpr wuss51 operator""_wuss51(char const ch) noexcept
  *
  * \experimentalapi{Experimental since version 3.1.}
  */
-inline std::vector<wuss51> operator""_wuss51(char const * str, std::size_t len)
+SEQAN3_WORKAROUND_LITERAL std::vector<wuss51> operator""_wuss51(char const * str, std::size_t len)
 {
     std::vector<wuss51> vec;
     vec.resize(len);
