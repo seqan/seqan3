@@ -54,14 +54,14 @@ namespace seqan3
  * [SAM format specifications](https://samtools.github.io/hts-specs/SAMv1.pdf).
  * **SeqAn implements version 1.6 of the SAM specification**.
  *
- * Take a look at our tutorial \ref tutorial_sam_file for a walk through of how to read alignment files.
+ * Take a look at our tutorial \ref tutorial_sam_file for a walk through of how to read SAM/BAM files.
  *
  * ### fields_specialisation
  *
  * The SAM format provides the following fields:
- * seqan3::field::alignment, seqan3::field::seq, seqan3::field::qual,
+ * seqan3::field::seq, seqan3::field::qual,
  * seqan3::field::id, seqan3::field::ref_seq, seqan3::field::ref_id
- * seqan3::field::ref_ossfet, seqan3::field::offset, seqan3::field::flag,
+ * seqan3::field::ref_offset, seqan3::field::offset, seqan3::field::flag,
  * seqan3::field::mapq and seqan3::field::mate.
  * In addition there is the seqan3::field::header_ptr, which is usually only used internally
  * to provide the range-based functionality of the file.
@@ -74,28 +74,19 @@ namespace seqan3
  * Since many users will be accustomed to the columns of the SAM format, here is a
  * mapping of the common SAM format columns to the SeqAn record fields:
  *
- * | #  | SAM Column ID |  FIELD name                                       |
- * |:--:|:--------------|:--------------------------------------------------|
- * | 1  | QNAME         | seqan3::field::id                                 |
- * | 2  | FLAG          | seqan3::field::flag                               |
- * | 3  | RNAME         | seqan3::field::ref_id                             |
- * | 4  | POS           | seqan3::field::ref_offset                         |
- * | 5  | MAPQ          | seqan3::field::mapq                               |
- * | 6  | CIGAR         | implicilty stored in seqan3::field::alignment     |
- * | 7  | RNEXT         | seqan3::field::mate (tuple pos 0)                 |
- * | 8  | PNEXT         | seqan3::field::mate (tuple pos 1)                 |
- * | 9  | TLEN          | seqan3::field::mate (tuple pos 2)                 |
- * | 10 | SEQ           | seqan3::field::seq                                |
- * | 11 | QUAL          | seqan3::field::qual                               |
- *
- * The (read sequence/query) **OFFSET** will be required to store the soft
- * clipping information at the read start (end clipping will be automatically
- * deduced by how much the read sequence length + offset is larger than the
- * alignment length).
- *
- * Note: SeqAn currently does not support hard clipping. When reading SAM,
- * hard-clipping is discarded; but the resulting alignment/sequence combination
- * is still valid.
+ * | #  | SAM Column ID |  FIELD name                       |
+ * |:--:|:--------------|:----------------------------------|
+ * | 1  | QNAME         | seqan3::field::id                 |
+ * | 2  | FLAG          | seqan3::field::flag               |
+ * | 3  | RNAME         | seqan3::field::ref_id             |
+ * | 4  | POS           | seqan3::field::ref_offset         |
+ * | 5  | MAPQ          | seqan3::field::mapq               |
+ * | 6  | CIGAR         | seqan3::field::cigar              |
+ * | 7  | RNEXT         | seqan3::field::mate (tuple pos 0) |
+ * | 8  | PNEXT         | seqan3::field::mate (tuple pos 1) |
+ * | 9  | TLEN          | seqan3::field::mate (tuple pos 2) |
+ * | 10 | SEQ           | seqan3::field::seq                |
+ * | 11 | QUAL          | seqan3::field::qual               |
  *
  * ### Format Check
  *
@@ -169,7 +160,6 @@ protected:
               typename ref_seq_type,
               typename ref_id_type,
               typename ref_offset_type,
-              typename align_type,
               typename cigar_type,
               typename flag_type,
               typename mapq_type,
@@ -190,7 +180,6 @@ protected:
                                ref_seq_type & SEQAN3_DOXYGEN_ONLY(ref_seq),
                                ref_id_type & ref_id,
                                ref_offset_type & ref_offset,
-                               align_type & align,
                                cigar_type & cigar_vector,
                                flag_type & flag,
                                mapq_type & mapq,
@@ -205,7 +194,6 @@ protected:
               typename id_type,
               typename ref_seq_type,
               typename ref_id_type,
-              typename align_type,
               typename qual_type,
               typename mate_type,
               typename tag_dict_type,
@@ -221,7 +209,6 @@ protected:
                                 ref_seq_type && SEQAN3_DOXYGEN_ONLY(ref_seq),
                                 ref_id_type && ref_id,
                                 std::optional<int32_t> ref_offset,
-                                align_type && align,
                                 std::vector<cigar> const & cigar_vector,
                                 sam_flag const flag,
                                 uint8_t const mapq,
@@ -311,7 +298,6 @@ inline void format_sam::read_sequence_record(stream_type & stream,
                               std::ignore,
                               std::ignore,
                               std::ignore,
-                              std::ignore,
                               std::ignore);
     }
 
@@ -337,7 +323,6 @@ inline void format_sam::write_sequence_record(stream_type & stream,
                                               id_type && id,
                                               qual_type && qualities)
 {
-    using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
     using default_mate_t = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
 
     sam_file_output_options output_options;
@@ -352,7 +337,6 @@ inline void format_sam::write_sequence_record(stream_type & stream,
                            /*ref_seq*/ std::string_view{},
                            /*ref_id*/ std::string_view{},
                            /*ref_offset*/ -1,
-                           /*align*/ default_align_t{},
                            /*cigar_vector*/ std::vector<cigar>{},
                            /*flag*/ sam_flag::none,
                            /*mapq*/ 0,
@@ -374,7 +358,6 @@ template <typename stream_type, // constraints checked by file
           typename ref_seq_type,
           typename ref_id_type,
           typename ref_offset_type,
-          typename align_type,
           typename cigar_type,
           typename flag_type,
           typename mapq_type,
@@ -396,7 +379,6 @@ format_sam::read_alignment_record(stream_type & stream,
                                   ref_seq_type & SEQAN3_DOXYGEN_ONLY(ref_seq),
                                   ref_id_type & ref_id,
                                   ref_offset_type & ref_offset,
-                                  align_type & align,
                                   cigar_type & cigar_vector,
                                   flag_type & flag,
                                   mapq_type & mapq,
@@ -412,13 +394,8 @@ format_sam::read_alignment_record(stream_type & stream,
     auto stream_view = detail::istreambuf(stream);
     auto field_view = stream_view | detail::take_until_or_throw_and_consume(is_char<'\t'>);
 
-    // these variables need to be stored to compute the ALIGNMENT
-    int32_t ref_offset_tmp{};
-    std::ranges::range_value_t<decltype(header.ref_ids())> ref_id_tmp{};
-    [[maybe_unused]] int32_t offset_tmp{};
-    [[maybe_unused]] int32_t soft_clipping_end{};
-    [[maybe_unused]] std::vector<cigar> tmp_cigar_vector{};
-    [[maybe_unused]] int32_t ref_length{0}, seq_length{0}; // length of aligned part for ref and query
+    int32_t ref_offset_tmp{}; // needed to read the ref_offset (int) beofre storing it in std::optional<uint32_t>
+    std::ranges::range_value_t<decltype(header.ref_ids())> ref_id_tmp{}; // in case mate is requested but ref_offset not
 
     // Header
     // -------------------------------------------------------------------------------------------------------------
@@ -464,13 +441,16 @@ format_sam::read_alignment_record(stream_type & stream,
 
     // Field 6: CIGAR
     // -------------------------------------------------------------------------------------------------------------
-    if constexpr (!detail::decays_to_ignore_v<align_type> || !detail::decays_to_ignore_v<cigar_type>)
+    if constexpr (!detail::decays_to_ignore_v<cigar_type>)
     {
         if (!is_char<'*'>(*std::ranges::begin(stream_view))) // no cigar information given
         {
-            std::tie(tmp_cigar_vector, ref_length, seq_length) = detail::parse_cigar(field_view);
-            transfer_soft_clipping_to(tmp_cigar_vector, offset_tmp, soft_clipping_end);
-            // the actual cigar_vector is swapped with tmp_cigar_vector at the end to avoid copying
+            int32_t ref_length{}, seq_length{}; // length of aligned part for ref and query
+            std::tie(cigar_vector, ref_length, seq_length) = detail::parse_cigar(field_view);
+            int32_t soft_clipping_end{};
+            int32_t offset_tmp{};
+            transfer_soft_clipping_to(cigar_vector, offset_tmp, soft_clipping_end);
+            offset = offset_tmp;
         }
         else
         {
@@ -481,8 +461,6 @@ format_sam::read_alignment_record(stream_type & stream,
     {
         detail::consume(field_view);
     }
-
-    offset = offset_tmp;
 
     // Field 7-9: (RNEXT PNEXT TLEN) = MATE
     // -------------------------------------------------------------------------------------------------------------
@@ -541,52 +519,11 @@ format_sam::read_alignment_record(stream_type & stream,
 
         if constexpr (detail::decays_to_ignore_v<seq_type>)
         {
-            if constexpr (!detail::decays_to_ignore_v<align_type>)
-            {
-                static_assert(sequence_container<std::remove_reference_t<decltype(get<1>(align))>>,
-                              "If you want to read ALIGNMENT but not SEQ, the alignment"
-                              " object must store a sequence container at the second (query) position.");
-
-                if (!tmp_cigar_vector.empty()) // only parse alignment if cigar information was given
-                {
-
-                    auto tmp_iter = std::ranges::begin(seq_stream);
-                    std::ranges::advance(tmp_iter, offset_tmp);
-
-                    for (; seq_length > 0; --seq_length) // seq_length is not needed anymore
-                    {
-                        get<1>(align).push_back(
-                            std::ranges::range_value_t<decltype(get<1>(align))>{}.assign_char(*tmp_iter));
-                        ++tmp_iter;
-                    }
-
-                    std::ranges::advance(tmp_iter, soft_clipping_end);
-                }
-                else
-                {
-                    get<1>(align) = std::remove_reference_t<decltype(get<1>(align))>{}; // empty container
-                }
-            }
-            else
-            {
-                detail::consume(seq_stream);
-            }
+            detail::consume(seq_stream);
         }
         else
         {
             read_forward_range_field(seq_stream, seq);
-
-            if constexpr (!detail::decays_to_ignore_v<align_type>)
-            {
-                if (!tmp_cigar_vector
-                         .empty()) // if no alignment info is given, the field::alignment should remain empty
-                {
-                    assign_unaligned(get<1>(align),
-                                     seq
-                                         | views::slice(static_cast<decltype(std::ranges::size(seq))>(offset_tmp),
-                                                        std::ranges::size(seq) - soft_clipping_end));
-                }
-            }
         }
     }
     else
@@ -629,29 +566,6 @@ format_sam::read_alignment_record(stream_type & stream,
     }
 
     detail::consume(stream_view | detail::take_until(!(is_char<'\r'> || is_char<'\n'>))); // consume new line
-
-    // DONE READING - wrap up
-    // -------------------------------------------------------------------------------------------------------------
-    // Alignment object construction
-    // Note that the query sequence in get<1>(align) has already been filled while reading Field 10.
-    if constexpr (!detail::decays_to_ignore_v<align_type>)
-    {
-        int32_t ref_idx{(ref_id_tmp.empty() /*unmapped read?*/) ? -1 : 0};
-
-        if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>)
-        {
-            if (!ref_id_tmp.empty())
-            {
-                assert(header.ref_dict.count(ref_id_tmp) != 0); // taken care of in check_and_assign_ref_id()
-                ref_idx = header.ref_dict[ref_id_tmp];          // get index for reference sequence
-            }
-        }
-
-        construct_alignment(align, tmp_cigar_vector, ref_idx, ref_seqs, ref_offset_tmp, ref_length);
-    }
-
-    if constexpr (!detail::decays_to_ignore_v<cigar_type>)
-        std::swap(cigar_vector, tmp_cigar_vector);
 }
 
 //!\copydoc sam_file_output_format::write_alignment_record
@@ -661,7 +575,6 @@ template <typename stream_type,
           typename id_type,
           typename ref_seq_type,
           typename ref_id_type,
-          typename align_type,
           typename qual_type,
           typename mate_type,
           typename tag_dict_type,
@@ -677,7 +590,6 @@ inline void format_sam::write_alignment_record(stream_type & stream,
                                                ref_seq_type && SEQAN3_DOXYGEN_ONLY(ref_seq),
                                                ref_id_type && ref_id,
                                                std::optional<int32_t> ref_offset,
-                                               align_type && align,
                                                std::vector<cigar> const & cigar_vector,
                                                sam_flag const flag,
                                                uint8_t const mapq,
@@ -722,16 +634,6 @@ inline void format_sam::write_alignment_record(stream_type & stream,
             static_assert(!detail::decays_to_ignore_v<header_type>,
                           "If you give indices as reference id information the header must also be present.");
     }
-
-    static_assert(tuple_like<std::remove_cvref_t<align_type>>,
-                  "The align object must be a std::pair of two ranges whose "
-                  "value_type is comparable to seqan3::gap");
-
-    static_assert((std::tuple_size_v<std::remove_cvref_t<align_type>> == 2
-                   && std::equality_comparable_with<gap, std::ranges::range_reference_t<decltype(std::get<0>(align))>>
-                   && std::equality_comparable_with<gap, std::ranges::range_reference_t<decltype(std::get<1>(align))>>),
-                  "The align object must be a std::pair of two ranges whose "
-                  "value_type is comparable to seqan3::gap");
 
     static_assert((std::ranges::forward_range<qual_type> && alphabet<std::ranges::range_reference_t<qual_type>>),
                   "The qual object must be a std::ranges::forward_range "
@@ -866,23 +768,6 @@ inline void format_sam::write_alignment_record(stream_type & stream,
     {
         for (auto & c : cigar_vector) //TODO THIS IS PROBABLY TERRIBLE PERFORMANCE_WISE
             stream_it.write_range(c.to_string());
-    }
-    else if (!std::ranges::empty(get<0>(align)) && !std::ranges::empty(get<1>(align)))
-    {
-        // compute possible distance from alignment end to sequence end
-        // which indicates soft clipping at the end.
-        // This should be replace by a free count_gaps function for
-        // aligned sequences which is more efficient if possible.
-        size_t off_end{std::ranges::size(seq) - offset};
-        for (auto chr : get<1>(align))
-            if (chr == gap{})
-                ++off_end;
-
-        // Might happen if get<1>(align) doesn't correspond to the reference.
-        assert(off_end >= std::ranges::size(get<1>(align)));
-        off_end -= std::ranges::size(get<1>(align));
-
-        write_range_or_asterisk(stream_it, detail::get_cigar_string(align, offset, off_end));
     }
     else
     {

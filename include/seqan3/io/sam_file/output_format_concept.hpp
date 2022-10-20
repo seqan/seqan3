@@ -18,7 +18,6 @@
 #include <vector>
 
 #include <seqan3/alphabet/cigar/cigar.hpp>
-#include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
@@ -31,7 +30,7 @@
 namespace seqan3::detail
 {
 
-/*!\brief Internal class used to expose the actual format interface to write alignment records into the file.
+/*!\brief Internal class used to expose the actual format interface to write SAM/BAM records into the file.
  * \ingroup io_sam_file
  *
  * \tparam format_type The type of the format to be exposed.
@@ -93,7 +92,6 @@ concept sam_file_output_format = requires (detail::sam_file_output_format_expose
                                            dna5_vector & ref_seq,
                                            std::optional<int32_t> & ref_id,
                                            std::optional<int32_t> & ref_offset,
-                                           std::pair<std::vector<gapped<dna4>>, std::vector<gapped<dna4>>> & align,
                                            std::vector<cigar> & cigar,
                                            sam_flag & flag,
                                            uint8_t & mapq,
@@ -114,7 +112,6 @@ concept sam_file_output_format = requires (detail::sam_file_output_format_expose
                                                                   ref_seq,
                                                                   ref_id,
                                                                   ref_offset,
-                                                                  align,
                                                                   cigar,
                                                                   flag,
                                                                   mapq,
@@ -149,7 +146,6 @@ class sam_file_output_format
                                    ref_seq_type                           && ref_seq,
                                    ref_id_type                            && ref_id,
                                    ref_offset_type                        && ref_offset,
-                                   align_type                             && align,
                                    std::vector<cigar>                     &  cigar_vector,
                                    flag_type                              && flag,
                                    mapq_type                              && mapq,
@@ -165,7 +161,6 @@ class sam_file_output_format
  * \tparam ref_seq_type     Type of the seqan3
  * \tparam ref_id_type      Type of the seqan3
  * \tparam ref_offset_type  Type of the seqan3
- * \tparam align_type       Type of the seqan3
  * \tparam flag_type        Type of the seqan3
  * \tparam mapq_type        Type of the seqan3
  * \tparam qual_type        Type of the seqan3
@@ -184,7 +179,6 @@ class sam_file_output_format
  * \param[in] ref_seq The data for seqan3::field::ref_offset, i.e. the reference sequence.
  * \param[in] ref_id The data for seqan3::field::ref_id, e.g. the reference id..
  * \param[in] ref_offset The data for seqan3::field::ref_offset, i.e. the start position of the alignment in \p ref_seq.
- * \param[in] align The data for seqan3::field::align, e.g. the alignment between query and ref.
  * \param[in] cigar_vector The data for seqan3::field::cigar, e.g. representing the alignment between query and ref.
  * \param[in] flag The data for seqan3::field::flag, e.g. the SAM mapping flag value.
  * \param[in] mapq The data for seqan3::field::mapq, e.g. the mapping quality value.

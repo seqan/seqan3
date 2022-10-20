@@ -30,7 +30,7 @@ opening from stream it would not have.
 
 \include test/snippet/io/sam_file/record_based_writing.cpp
 
-The easiest way to write to an alignment file is to use the `push_back()` member functions. These
+The easiest way to write to a SAM/BAM file is to use the `push_back()` member functions. These
 work similarly to how they work on a std::vector.
 You may also use a tuple like interface or the `emplace_back()`
 function but this is not recommended since one would have to keep track of the
@@ -57,7 +57,7 @@ writing to another, because you don't have to configure the output file to match
 
 \include test/snippet/io/sam_file/sam_file_output_custom_fields.cpp
 
-This will copy the \ref seqan3::field "seqan3::field::flag" and \ref seqan3::field "seqan3::field::ref_offset" value 
+This will copy the \ref seqan3::field "seqan3::field::flag" and \ref seqan3::field "seqan3::field::ref_offset" value
 into the new output file.
 
 \note Note that the other SAM columns in the output file will have a default value, so unless you specify to read

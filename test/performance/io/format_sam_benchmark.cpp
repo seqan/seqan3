@@ -7,6 +7,7 @@
 
 #include <benchmark/benchmark.h>
 
+#include <seqan3/alignment/cigar_conversion/cigar_from_alignment.hpp>
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/io/sam_file/input.hpp>
 #include <seqan3/io/sam_file/output.hpp>
@@ -55,7 +56,7 @@ static std::string create_sam_file_string(size_t const n_queries)
                                           seqan3::field::offset,
                                           seqan3::field::ref_id,
                                           seqan3::field::ref_offset,
-                                          seqan3::field::alignment,
+                                          seqan3::field::cigar,
                                           seqan3::field::mapq,
                                           seqan3::field::qual,
                                           seqan3::field::flag>;
@@ -69,15 +70,15 @@ static std::string create_sam_file_string(size_t const n_queries)
             auto align_result = *(seqan3::align_pairwise(std::tie(reference, query), config).begin());
             std::string const current_query_id = query_prefix + std::to_string(i);
 
-            sam_out.emplace_back(query,                                   // field::seq
-                                 current_query_id,                        // field::id
-                                 align_result.sequence2_begin_position(), // field::offset
-                                 reference_id,                            // field::ref_id
-                                 align_result.sequence1_begin_position(), // field::ref_offset
-                                 align_result.alignment(),                // field::alignment
-                                 align_result.score(),                    // field::mapq
-                                 qualities,                               // field::qual
-                                 seqan3::sam_flag::none);                 // field::flag
+            sam_out.emplace_back(query,                                                  // field::seq
+                                 current_query_id,                                       // field::id
+                                 align_result.sequence2_begin_position(),                // field::offset
+                                 reference_id,                                           // field::ref_id
+                                 align_result.sequence1_begin_position(),                // field::ref_offset
+                                 seqan3::cigar_from_alignment(align_result.alignment()), // field::cigar
+                                 align_result.score(),                                   // field::mapq
+                                 qualities,                                              // field::qual
+                                 seqan3::sam_flag::none);                                // field::flag
         }
 
         file_dict[n_queries] = stream.str();

@@ -7,8 +7,6 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/test/expect_range_eq.hpp>
-
 #include "sam_file_format_test_template.hpp"
 
 template <>
@@ -83,14 +81,6 @@ read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
     // formatted output
     // -----------------------------------------------------------------------------------------------------------------
 
-    std::string simple_three_reads_output{// compared to simple_three_reads_input this has no hard clipping
-                                          R"(@HD	VN:1.6
-@SQ	SN:ref	LN:34
-read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	NM:i:7
-read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
-read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
-)"};
-
     std::string verbose_output{
         R"(@HD	VN:1.6	SO:unknown	GO:none
 @SQ	SN:ref	LN:34	AN:other_name
@@ -98,7 +88,7 @@ read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 @PG	ID:prog1	PN:cool_program	CL:./prog1	PP:a	DS:b	VN:c
 @CO	This is a comment.
 read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	CC:i:300	NM:i:-7	aa:A:c	cc:i:-300	ff:f:3.1	zz:Z:str
-read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	bC:B:C,3,200	bI:B:I,294967296	bS:B:S,300,40,500	bc:B:c,-3	bf:B:f,3.5,0.1,43.8	bi:B:i,-3,200,-66000	bs:B:s,-3,200,-300
+read2	42	ref	2	62	1H7M1D1M1S2H	ref	10	300	AGGCTGNAG	!##$&'()*	bC:B:C,3,200	bI:B:I,294967296	bS:B:S,300,40,500	bc:B:c,-3	bf:B:f,3.5,0.1,43.8	bi:B:i,-3,200,-66000	bs:B:s,-3,200,-300
 read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 )"};
 
@@ -365,25 +355,14 @@ TEST_F(sam_format, short_cigar_string_with_softclipping)
 {
     using seqan3::operator""_dna5;
 
-    // The member function transfer_soft_clipping_to needs to work on 2 element cigar strings
-    {
-        std::istringstream istream("id	16	ref	0	255	10M5S	*	0	0	AGAGGGGGATAACCA	*\n");
-        seqan3::sam_file_input fin{istream,
-                                   ref_ids,
-                                   ref_sequences,
-                                   seqan3::format_sam{},
-                                   seqan3::fields<seqan3::field::alignment>{}};
-        EXPECT_RANGE_EQ(std::get<1>(std::get<0>(*fin.begin())), "AGAGGGGGAT"_dna5);
-    }
-
     {
         std::istringstream istream("id	16	ref	0	255	5S10M	*	0	0	AGAGGGGGATAACCA	*\n");
         seqan3::sam_file_input fin{istream,
                                    ref_ids,
                                    ref_sequences,
                                    seqan3::format_sam{},
-                                   seqan3::fields<seqan3::field::alignment>{}};
-        EXPECT_RANGE_EQ(std::get<1>(std::get<0>(*fin.begin())), "GGGATAACCA"_dna5);
+                                   seqan3::fields<seqan3::field::cigar, seqan3::field::offset>{}};
+        EXPECT_EQ((*fin.begin()).sequence_position(), 5);
     }
 }
 

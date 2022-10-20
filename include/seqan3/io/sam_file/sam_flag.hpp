@@ -18,7 +18,7 @@
 namespace seqan3
 {
 
-//!\brief Type tag which indicates that no reference information has been passed to the alignment file on construction.
+//!\brief Type tag which indicates that no reference information has been passed to the SAM file on construction.
 //!\ingroup io_sam_file
 struct ref_info_not_given
 {};

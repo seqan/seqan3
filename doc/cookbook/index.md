@@ -137,14 +137,7 @@ To search for either 1 insertion or 1 deletion you can use the seqan3::search_cf
 
 \snippet doc/tutorial/09_search/search_small_snippets.cpp error_search
 
-# Reading the CIGAR information into an actual alignment
-
-In SeqAn, the conversion from a CIGAR string to an alignment (two `seqan3::aligned_sequence`s) is done automatically for
-you. You can access the resulting alignment via seqan3::sam_record::alignment:
-
-\snippet doc/tutorial/10_sam_file/sam_file_alignments_without_ref.cpp main
-
-# Combining sequence and alignment files
+# Reading the CIGAR information from a SAM file and constructing an alignment
 
 This recipe can be used to:
 1. Read in a FASTA file with the reference and a SAM file with the alignment

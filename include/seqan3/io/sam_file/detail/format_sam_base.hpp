@@ -74,14 +74,6 @@ protected:
                                  header_type & header,
                                  ref_seqs_type & /*tag*/);
 
-    template <typename align_type, typename ref_seqs_type>
-    void construct_alignment(align_type & align,
-                             std::vector<cigar> & cigar_vector,
-                             [[maybe_unused]] int32_t rid,
-                             [[maybe_unused]] ref_seqs_type & ref_seqs,
-                             [[maybe_unused]] int32_t ref_start,
-                             size_t ref_length);
-
     void transfer_soft_clipping_to(std::vector<cigar> const & cigar_vector, int32_t & sc_begin, int32_t & sc_end) const;
 
     template <typename stream_view_t>
@@ -196,68 +188,6 @@ inline void format_sam_base::transfer_soft_clipping_to(std::vector<cigar> const 
         sc_end = cigar_count_at(last_index);
     else if (vector_size_at_least(3) && hard_clipping_at(last_index) && soft_clipping_at(second_last_index))
         sc_end = cigar_count_at(second_last_index);
-}
-
-/*!\brief Construct the field::alignment depending on the given information.
- * \tparam align_type      The alignment type.
- * \tparam ref_seqs_type   The type of reference sequences (might decay to ignore).
- * \param[in,out] align    The alignment (pair of aligned sequences) to fill.
- * \param[in] cigar_vector The cigar information to convert to an alignment.
- * \param[in] rid          The index of the reference sequence in header.ref_ids().
- * \param[in] ref_seqs     The reference sequence information.
- * \param[in] ref_start    The start position of the alignment in the reference sequence.
- * \param[in] ref_length   The length of the aligned reference sequence.
- */
-template <typename align_type, typename ref_seqs_type>
-inline void format_sam_base::construct_alignment(align_type & align,
-                                                 std::vector<cigar> & cigar_vector,
-                                                 [[maybe_unused]] int32_t rid,
-                                                 [[maybe_unused]] ref_seqs_type & ref_seqs,
-                                                 [[maybe_unused]] int32_t ref_start,
-                                                 size_t ref_length)
-{
-    if (rid > -1 && ref_start > -1 &&       // read is mapped
-        !cigar_vector.empty() &&            // alignment field was not empty
-        !std::ranges::empty(get<1>(align))) // seq field was not empty
-    {
-        if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>)
-        {
-            assert(static_cast<size_t>(ref_start + ref_length) <= std::ranges::size(ref_seqs[rid]));
-            // copy over unaligned reference sequence part
-            assign_unaligned(get<0>(align), ref_seqs[rid] | views::slice(ref_start, ref_start + ref_length));
-        }
-        else
-        {
-            using unaligned_t = std::remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
-            auto dummy_seq = views::repeat_n(std::ranges::range_value_t<unaligned_t>{}, ref_length)
-                           | std::views::transform(detail::access_restrictor_fn{});
-            static_assert(std::same_as<unaligned_t, decltype(dummy_seq)>,
-                          "No reference information was given so the type of the first alignment tuple position"
-                          "must have an unaligned sequence type of a dummy sequence ("
-                          "views::repeat_n(dna5{}, size_t{}) | "
-                          "std::views::transform(detail::access_restrictor_fn{}))");
-
-            assign_unaligned(get<0>(align), dummy_seq); // assign dummy sequence
-        }
-
-        // insert gaps according to the cigar information
-        detail::alignment_from_cigar(align, cigar_vector);
-    }
-    else // not enough information for an alignment, assign an empty view/dummy_sequence
-    {
-        if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>) // reference info given
-        {
-            assert(std::ranges::size(ref_seqs) > 0); // we assume that the given ref info is not empty
-            assign_unaligned(get<0>(align), ref_seqs[0] | views::slice(0, 0));
-        }
-        else
-        {
-            using unaligned_t = std::remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
-            assign_unaligned(get<0>(align),
-                             views::repeat_n(std::ranges::range_value_t<unaligned_t>{}, 0)
-                                 | std::views::transform(detail::access_restrictor_fn{}));
-        }
-    }
 }
 
 /*!\brief Reads std::byte fields using std::from_chars.

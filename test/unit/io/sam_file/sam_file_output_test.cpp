@@ -105,7 +105,6 @@ TEST(general, default_template_args_and_deduction_guides)
                                  seqan3::field::offset,
                                  seqan3::field::ref_id,
                                  seqan3::field::ref_offset,
-                                 seqan3::field::alignment,
                                  seqan3::field::cigar,
                                  seqan3::field::mapq,
                                  seqan3::field::qual,
@@ -142,11 +141,10 @@ TEST(general, default_template_args_and_deduction_guides)
         seqan3::test::tmp_directory tmp{};
         auto filename = tmp.path() / "sam_file_output_constructor.sam";
 
-        seqan3::sam_file_output fout{filename, seqan3::fields<seqan3::field::alignment>{}};
+        seqan3::sam_file_output fout{filename, seqan3::fields<seqan3::field::cigar>{}};
 
         using t = decltype(fout);
-        EXPECT_TRUE(
-            (std::is_same_v<typename t::selected_field_ids, seqan3::fields<seqan3::field::alignment>>)); // changed
+        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, seqan3::fields<seqan3::field::cigar>>)); // changed
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats, comp2>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type, comp3>));
     }

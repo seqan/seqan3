@@ -4,6 +4,7 @@
 #    include <fstream>
 #    include <span>
 
+#    include <seqan3/alignment/cigar_conversion/cigar_from_alignment.hpp>
 #    include <seqan3/alignment/configuration/all.hpp>
 #    include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #    include <seqan3/argument_parser/all.hpp>
@@ -53,7 +54,7 @@ void map_reads(std::filesystem::path const & query_path,
                                                    seqan3::field::id,
                                                    seqan3::field::ref_id,
                                                    seqan3::field::ref_offset,
-                                                   seqan3::field::alignment,
+                                                   seqan3::field::cigar,
                                                    seqan3::field::qual,
                                                    seqan3::field::mapq>{}};
     //! [sam_file_output]
@@ -80,7 +81,7 @@ void map_reads(std::filesystem::path const & query_path,
 
             for (auto && alignment : seqan3::align_pairwise(std::tie(text_view, query), align_config))
             {
-                auto aligned_seq = alignment.alignment();
+                auto cigar = seqan3::cigar_from_alignment(alignment.alignment());
                 size_t ref_offset = alignment.sequence1_begin_position() + 2 + start;
                 size_t map_qual = 60u + alignment.score();
 
@@ -88,7 +89,7 @@ void map_reads(std::filesystem::path const & query_path,
                                      record.id(),
                                      storage.ids[result.reference_id()],
                                      ref_offset,
-                                     aligned_seq,
+                                     cigar,
                                      record.base_qualities(),
                                      map_qual);
             }

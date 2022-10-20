@@ -25,6 +25,7 @@ r003	2064	chr2	18	10	5M	*	0	0	TAGGC	*
 #include <string>
 #include <vector>
 
+#include <seqan3/alignment/cigar_conversion/alignment_from_cigar.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/core/debug_stream.hpp>
@@ -59,14 +60,19 @@ int main()
 
     for (auto & record : mapping_file | mapq_filter)
     {
+        auto alignment = seqan3::alignment_from_cigar(record.cigar_sequence(),
+                                                      reference_sequences[record.reference_id().value()],
+                                                      record.reference_position().value(),
+                                                      record.sequence());
+
         // as loop
         size_t sum_reference{};
-        for (auto const & char_reference : std::get<0>(record.alignment()))
+        for (auto const & char_reference : std::get<0>(alignment))
             if (char_reference == seqan3::gap{})
                 ++sum_reference;
 
         // or via std::ranges::count
-        size_t sum_read = std::ranges::count(std::get<1>(record.alignment()), seqan3::gap{});
+        size_t sum_read = std::ranges::count(std::get<1>(alignment), seqan3::gap{});
 
         // The reference_id is ZERO based and an optional. -1 is represented by std::nullopt (= reference not known).
         std::optional reference_id = record.reference_id();

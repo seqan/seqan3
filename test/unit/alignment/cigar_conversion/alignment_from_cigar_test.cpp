@@ -158,3 +158,24 @@ TEST_F(alignment_from_cigar, with_hard_clipping)
     EXPECT_RANGE_EQ(std::get<0>(alignment), this->cigar_with_hard_clipping_gapped_ref);
     EXPECT_RANGE_EQ(std::get<1>(alignment), this->cigar_with_hard_clipping_gapped_seq);
 }
+
+TEST_F(alignment_from_cigar, short_cigar_string_with_softclipping)
+{
+    seqan3::dna5_vector seq = "AGAGGGGGATAACCA"_dna5;
+
+    { // soft clipping at front
+        std::vector<seqan3::cigar> short_cigar{{5, 'S'_cigar_operation}, {10, 'M'_cigar_operation}}; // 5S 10M
+
+        auto alignment = seqan3::alignment_from_cigar(short_cigar, this->ref, 0, seq);
+
+        EXPECT_RANGE_EQ(std::get<1>(alignment), "GGGATAACCA"_dna5);
+    }
+
+    { // soft clipping at back
+        std::vector<seqan3::cigar> short_cigar{{10, 'M'_cigar_operation}, {5, 'S'_cigar_operation}}; // 10M 5S
+
+        auto alignment = seqan3::alignment_from_cigar(short_cigar, this->ref, 0, seq);
+
+        EXPECT_RANGE_EQ(std::get<1>(alignment), "AGAGGGGGAT"_dna5);
+    }
+}

@@ -9,12 +9,13 @@ of the file name. Constructing from a stream can be used if you have a non-file 
 std::istringstream. It also comes in handy, if you cannot use file-extension based detection, but know that
 your input file has a certain format.
 <br><br>
-The reference information is specific to the SAM format. The SAM format only stores a "semi-alignment" meaning that
-it has the query sequence and the cigar string representing the gap information but not the reference information.
-If you want to retrieve valid/full alignments, you need to pass the corresponding reference information:
+Passing reference information, e.g.
 
 - ref_ids: The name of the references, e.g. "chr1", "chr2", ...
 - ref_sequences: The reference sequence information **in the same order as the ref_ids**.
+
+comes in handy once you want to convert the CIGAR string, read from your file, into an actual alignment.
+This will be covered in the section \ref transform_cigar "Transforming the CIGAR information into an actual alignment".
 
 In most cases the template parameters are deduced automatically:
 
@@ -79,6 +80,21 @@ In this case you immediately get the two elements of the tuple: `flag` of seqan3
 of seqan3::sam_file_input::mapq_type.
 
 \note But beware: with structured bindings you do need to get the order of elements correctly!
+
+#### Transforming the CIGAR information into an actual alignment
+\anchor transform_cigar
+
+In SeqAn, we represent an alignment as a tuple of two `seqan3::aligned_sequence`s.
+
+The conversion from a CIGAR string to an alignment can be done with the function `seqan3::alignment_from_cigar`.
+You need to pass the reference sequence with the position the read was aligned to and the read sequence. All
+of it is already in the `record` when reading a SAM file:
+
+\include snippet/alignment/cigar_conversion/alignment_from_cigar_io.cpp
+
+The code will print the following:
+
+\include snippet/alignment/cigar_conversion/alignment_from_cigar_io.err
 
 #### Views on files
 

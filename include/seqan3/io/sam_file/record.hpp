@@ -152,28 +152,22 @@ public:
         return get_impl(field_constant<seqan3::field::offset>{}, static_cast<tuple_base_t const &>(*this));
     }
 
-    /*!\brief The (pairwise) alignment stored in an object that models seqan3::detail::pairwise_alignment.
-     * \returns seqan3::sam_file_input::alignment_type per default
+    /*!\brief [DEPRECATED] The (pairwise) alignment stored in an object that models seqan3::detail::pairwise_alignment.
+     *
+     * This member is deprecated. Please access `cigar()` and then use `seqan3::alignment_from_cigar` to retrieve the
+     * alignment.
      */
-    decltype(auto) alignment() &&
-    {
-        return get_impl(field_constant<seqan3::field::alignment>{}, static_cast<tuple_base_t &&>(*this));
-    }
+    SEQAN3_DEPRECATED_340 decltype(auto) alignment() &&
+    {}
     //!\copydoc seqan3::sam_record::alignment
-    decltype(auto) alignment() const &&
-    {
-        return get_impl(field_constant<seqan3::field::alignment>{}, static_cast<tuple_base_t const &&>(*this));
-    }
+    SEQAN3_DEPRECATED_340 decltype(auto) alignment() const &&
+    {}
     //!\copydoc seqan3::sam_record::alignment
-    decltype(auto) alignment() &
-    {
-        return get_impl(field_constant<seqan3::field::alignment>{}, static_cast<tuple_base_t &>(*this));
-    }
+    SEQAN3_DEPRECATED_340 decltype(auto) alignment() &
+    {}
     //!\copydoc seqan3::sam_record::alignment
-    decltype(auto) alignment() const &
-    {
-        return get_impl(field_constant<seqan3::field::alignment>{}, static_cast<tuple_base_t const &>(*this));
-    }
+    SEQAN3_DEPRECATED_340 decltype(auto) alignment() const &
+    {}
 
     /*!\brief The identifier of the (reference) sequence that seqan3::sam_record::sequence was aligned to.
      *        (SAM Column ID: RNAME)
