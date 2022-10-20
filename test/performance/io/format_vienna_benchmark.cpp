@@ -12,7 +12,6 @@
 
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
-#include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/io/structure_file/format_vienna.hpp>
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/io/structure_file/output.hpp>

@@ -125,7 +125,7 @@ concept align_pairwise_single_input =
  * a) An lvalue range, whose reference type is a tuple like lvalue reference,
  * b) A range, whose reference type is a tuple over viewable ranges.
  * This covers also transforming and non-transforming views (e.g. views::zip, or views::take).
- * Only a temporary non-view range piped with detail::persist can't be handled securely.
+ * Only a temporary non-view range piped with seqan3::detail::all can't be handled securely.
  */
 //!\cond
 template <typename t>
