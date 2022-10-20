@@ -69,7 +69,7 @@ public:
      * \throws std::invalid_argument if hashes resulting from the shape/alphabet combination cannot be represented in
      *         `uint64_t`, i.e. \f$s>\frac{64}{\log_2\sigma}\f$ with shape size \f$s\f$ and alphabet size \f$\sigma\f$.
      */
-    kmer_hash_view(urng_t urange_, shape const & s_) : urange{std::move(urange_)}, shape_{s_}
+    explicit kmer_hash_view(urng_t urange_, shape const & s_) : urange{std::move(urange_)}, shape_{s_}
     {
         if (shape_.count() > (64 / std::log2(alphabet_size<std::ranges::range_reference_t<urng_t>>)))
         {
@@ -85,7 +85,7 @@ public:
     template <typename rng_t>
         requires (!std::same_as<std::remove_cvref_t<rng_t>, kmer_hash_view>) && std::ranges::viewable_range<rng_t>
                   && std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
-    kmer_hash_view(rng_t && urange_, shape const & s_) :
+    explicit kmer_hash_view(rng_t && urange_, shape const & s_) :
         urange{std::views::all(std::forward<rng_t>(urange_))},
         shape_{s_}
     {

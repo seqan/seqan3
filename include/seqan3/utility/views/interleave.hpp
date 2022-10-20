@@ -102,7 +102,7 @@ public:
      * \param[in] _step_size      The step size for the insertion.
      * \param[in] _inserted_range The range to be inserted.
      */
-    view_interleave(urng_t && _urange, size_t const _step_size, inserted_rng_t && _inserted_range) :
+    explicit constexpr view_interleave(urng_t && _urange, size_t const _step_size, inserted_rng_t && _inserted_range) :
         urange{_urange},
         step_size{_step_size},
         inserted_range{std::forward<inserted_rng_t>(_inserted_range)}
@@ -120,7 +120,7 @@ public:
     template <typename orng_t, typename oirng_t>
         requires std::constructible_from<urng_t, decltype(views::type_reduce(std::declval<orng_t>()))>
               && std::constructible_from<inserted_rng_t, decltype(detail::persist(std::declval<oirng_t>()))>
-    view_interleave(orng_t && _urange, size_t const _step_size, oirng_t && _inserted_range) :
+    explicit constexpr view_interleave(orng_t && _urange, size_t const _step_size, oirng_t && _inserted_range) :
         view_interleave{views::type_reduce(std::forward<orng_t>(_urange)),
                         _step_size,
                         detail::persist(std::forward<oirng_t>(_inserted_range))}

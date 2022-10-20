@@ -101,7 +101,7 @@ public:
     *                        std::ranges::forward_range.
     * \param[in] window_size The number of values in one window.
     */
-    minimiser_view(urng1_t urange1, size_t const window_size) :
+    explicit minimiser_view(urng1_t urange1, size_t const window_size) :
         minimiser_view{std::move(urange1), default_urng2_t{}, window_size}
     {}
 
@@ -115,7 +115,7 @@ public:
     template <typename other_urng1_t>
         requires (std::ranges::viewable_range<other_urng1_t>
                   && std::constructible_from<urng1_t, std::ranges::ref_view<std::remove_reference_t<other_urng1_t>>>)
-    minimiser_view(other_urng1_t && urange1, size_t const window_size) :
+    explicit minimiser_view(other_urng1_t && urange1, size_t const window_size) :
         urange1{std::views::all(std::forward<other_urng1_t>(urange1))},
         urange2{default_urng2_t{}},
         window_size{window_size}
@@ -128,7 +128,7 @@ public:
     *                        std::ranges::forward_range.
     * \param[in] window_size The number of values in one window.
     */
-    minimiser_view(urng1_t urange1, urng2_t urange2, size_t const window_size) :
+    explicit minimiser_view(urng1_t urange1, urng2_t urange2, size_t const window_size) :
         urange1{std::move(urange1)},
         urange2{std::move(urange2)},
         window_size{window_size}
@@ -156,7 +156,7 @@ public:
                   && std::constructible_from<urng1_t, std::views::all_t<other_urng1_t>>
                   && std::ranges::viewable_range<other_urng2_t>
                   && std::constructible_from<urng2_t, std::views::all_t<other_urng2_t>>)
-    minimiser_view(other_urng1_t && urange1, other_urng2_t && urange2, size_t const window_size) :
+    explicit minimiser_view(other_urng1_t && urange1, other_urng2_t && urange2, size_t const window_size) :
         urange1{std::views::all(std::forward<other_urng1_t>(urange1))},
         urange2{std::views::all(std::forward<other_urng2_t>(urange2))},
         window_size{window_size}
@@ -266,7 +266,7 @@ public:
     //!\brief Allow iterator on a const range to be constructible from an iterator over a non-const range.
     basic_iterator(basic_iterator<!const_range> const & it)
         requires const_range
-    :
+        :
         minimiser_value{std::move(it.minimiser_value)},
         urng1_iterator{std::move(it.urng1_iterator)},
         urng1_sentinel{std::move(it.urng1_sentinel)},
