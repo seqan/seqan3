@@ -28,7 +28,7 @@ namespace seqan3
  * \stableapi{Since version 3.1.}
  */
 template <typename derived_type, auto size>
-class aminoacid_base : public alphabet_base<derived_type, size, char>, public aminoacid_empty_base
+class aminoacid_base : public aminoacid_empty_base, public alphabet_base<derived_type, size, char>
 {
 private:
     //!\brief Type of the base class.
