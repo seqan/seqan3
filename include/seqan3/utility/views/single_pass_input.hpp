@@ -92,7 +92,7 @@ public:
     ~single_pass_input_view() = default;
 
     //!\brief Construction from the underlying view.
-    explicit single_pass_input_view(urng_t _urng) : state_ptr{new state{std::move(_urng)}}
+    explicit constexpr single_pass_input_view(urng_t _urng) : state_ptr{new state{std::move(_urng)}}
     {}
 
     //!\brief Construction from std::ranges::viewable_range.
@@ -101,7 +101,7 @@ public:
                   && std::ranges::viewable_range<other_urng_t>
                   && // Must come after self type check to avoid conflicts with the move constructor.
                   std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<other_urng_t>>>)
-    explicit single_pass_input_view(other_urng_t && _urng) : single_pass_input_view{std::views::all(_urng)}
+    explicit constexpr single_pass_input_view(other_urng_t && _urng) : single_pass_input_view{std::views::all(_urng)}
     {}
     //!\}
 
