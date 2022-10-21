@@ -28,6 +28,13 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## New features
 
+#### Alignment
+* The function `seqan3::alignment_from_cigar` creates an alignment (tuple of 2 aligned sequences) from a
+  CIGAR vector (`std::vector<seqan3::cigar>`) ([\#3057](https://github.com/seqan/seqan3/pull/3057)) or a
+  CIGAR string (`std::string`) ([\#3077](https://github.com/seqan/seqan3/pull/3077)).
+* The function `seqan3::cigar_from_alignment` creates a CIGAR vector (`std::vector<seqan3::cigar>`) from an alignment
+  (tuple of 2 aligned sequences) ([\#3057](https://github.com/seqan/seqan3/pull/3057)).
+
 #### Alphabet
   * Improved performance of vector assignment for alphabets ([\#3038](https://github.com/seqan/seqan3/pull/3038)).
   * Improved performance of `seqan3::dna4::complement()` ([\#3026](https://github.com/seqan/seqan3/pull/3026)).
