@@ -74,8 +74,8 @@ jobs:
           QUERY="/repos/${{ github.repository }}/compare/${COMMIT_RANGE}"
           ANSWER=$(gh api -H "Accept: application/vnd.github.v3+json" ${QUERY})
           NBEHIND=$(jq '.behind_by' <<< "${ANSWER}")
-          echo "depth=$(( ${NBEHIND} + 1 ))" >> $GITHUB_OUTPUT
-          echo "pr_depth=$(( ${{ github.event.pull_request.commits }} + 1 ))" >> $GITHUB_OUTPUT
+          echo "depth=$(( ${NBEHIND} + 3 ))" >> $GITHUB_OUTPUT
+          echo "pr_depth=$(( ${{ github.event.pull_request.commits }} + 3 ))" >> $GITHUB_OUTPUT
 
       - name: Checkout SeqAn3
         uses: actions/checkout@v3
