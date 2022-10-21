@@ -198,3 +198,14 @@ This will use `4` threads by default and can be adjusted by setting `seqan3::con
 the desired value:
 
 \snippet doc/cookbook/compression_threads.cpp example
+
+# Auto vectorized dna4 complement
+
+Our alphabet seqan3::dna4 cannot be easily auto-vectorized by the compiler.
+
+See [this discussion](https://github.com/seqan/seqan3/issues/1970) for more details.
+
+You can add your own alphabet that is auto-vectorizable in some use cases.
+Here is an example for a dna4-like alphabet:
+
+\snippet test/performance/simd_dna4.hpp cookbook

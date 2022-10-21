@@ -12,6 +12,7 @@
 #include <numeric>
 
 #include <seqan3/alphabet/all.hpp>
+#include <seqan3/test/performance/simd_dna4.hpp>
 #include <seqan3/test/seqan2.hpp>
 
 #if SEQAN3_HAS_SEQAN2
@@ -38,6 +39,7 @@ void assign_char(benchmark::State & state)
 BENCHMARK_TEMPLATE(assign_char, seqan3::gap);
 BENCHMARK_TEMPLATE(assign_char, seqan3::dna4);
 BENCHMARK_TEMPLATE(assign_char, seqan3::rna4);
+BENCHMARK_TEMPLATE(assign_char, seqan3::simd_dna4);
 BENCHMARK_TEMPLATE(assign_char, seqan3::dna5);
 BENCHMARK_TEMPLATE(assign_char, seqan3::rna5);
 BENCHMARK_TEMPLATE(assign_char, seqan3::dna15);

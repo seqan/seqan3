@@ -91,6 +91,12 @@ public:
     }
     //!\}
 
+    //!\brief Returns the complement of the current nucleotide.
+    constexpr dna4 complement() const noexcept
+    {
+        return dna4{}.assign_rank(to_rank() ^ 0b11);
+    }
+
 private:
     /*!\brief The lookup table used in #rank_to_char.
      * \details
