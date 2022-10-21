@@ -3,6 +3,6 @@ checkoutLocation: "tutorial/seqan3"
 workspaceLocation: "/tutorial"
 tasks:
   - name: Setup
-    before: mkdir -p build source && cd tutorial/seqan3 && git submodule update --init
+    before: mkdir -p build source && cd seqan3 && git submodule update --init
     init: HOMEBREW_NO_INSTALL_CLEANUP=1 HOMEBREW_NO_ENV_HINTS=1 brew install cmake gcc@12 tree
     command: echo && echo "GCC 12 available via g++-12" && echo && echo "g++-12 --version" && g++-12 --version
