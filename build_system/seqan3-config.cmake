@@ -210,6 +210,26 @@ option (SEQAN3_NO_ZLIB "Don't use ZLIB, even if present." OFF)
 option (SEQAN3_NO_BZIP2 "Don't use BZip2, even if present." OFF)
 
 # ----------------------------------------------------------------------------
+# Check supported compilers
+# ----------------------------------------------------------------------------
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 10)
+    message (FATAL_ERROR "GCC < 10 is not supported. The detected compiler version is ${CMAKE_CXX_COMPILER_VERSION}.")
+endif ()
+
+option (SEQAN3_DISABLE_COMPILER_CHECK "Skips the check for supported compilers." OFF)
+
+if (NOT SEQAN3_DISABLE_COMPILER_CHECK)
+    if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        message (FATAL_ERROR "Only GCC is supported. "
+                             "The detected compiler version is ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}. "
+                             "You can disable this error by passing -DSEQAN3_DISABLE_COMPILER_CHECK=ON to CMake.")
+    endif ()
+else ()
+    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_DISABLE_COMPILER_CHECK")
+endif ()
+
+# ----------------------------------------------------------------------------
 # Require C++20
 # ----------------------------------------------------------------------------
 

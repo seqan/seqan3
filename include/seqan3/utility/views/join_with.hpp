@@ -125,7 +125,7 @@ public:
     }
 
     constexpr auto end()
-#if defined(__GNUC__) && (__GNUC__ == 10) // GCC10 needs a little help with the return type
+#if SEQAN3_COMPILER_IS_GCC && (__GNUC__ == 10) // GCC10 needs a little help with the return type
         -> std::conditional_t<std::ranges::forward_range<V> && std::is_reference_v<InnerRng>
                                   && std::ranges::forward_range<InnerRng> && std::ranges::common_range<V>
                                   && std::ranges::common_range<InnerRng>,
@@ -345,7 +345,7 @@ public:
         requires Const && std::convertible_to<std::ranges::iterator_t<V>, OuterIter>
                   && std::convertible_to<std::ranges::iterator_t<InnerRng>, InnerIter>
                   && std::convertible_to<std::ranges::iterator_t<Pattern>, PatternIter>
-    : outer_it_(std::move(i.outer_it_)), parent_(i.parent_)
+        : outer_it_(std::move(i.outer_it_)), parent_(i.parent_)
     {
         if (i.inner_it_.index() == 0)
             inner_it_.template emplace<0>(std::get<0>(std::move(i.inner_it_)));
@@ -488,7 +488,7 @@ public:
     sentinel() = default;
     constexpr sentinel(sentinel<!Const> s)
         requires Const && std::convertible_to<std::ranges::sentinel_t<V>, std::ranges::sentinel_t<Base>>
-    : end_(std::move(s.end_))
+        : end_(std::move(s.end_))
     {}
 
     template <bool OtherConst>
