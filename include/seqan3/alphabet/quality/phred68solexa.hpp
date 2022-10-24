@@ -113,7 +113,7 @@ constexpr phred68solexa operator""_phred68solexa(char const c) noexcept
  *
  * \stableapi{Since version 3.1.}
  */
-inline std::vector<phred68solexa> operator""_phred68solexa(char const * s, std::size_t n)
+SEQAN3_WORKAROUND_LITERAL std::vector<phred68solexa> operator""_phred68solexa(char const * s, std::size_t n)
 {
     std::vector<phred68solexa> r;
     r.resize(n);

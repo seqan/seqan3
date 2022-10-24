@@ -18,7 +18,8 @@
 namespace seqan3::test
 {
 
-inline std::vector<seqan3::gapped<seqan3::dna5>> operator""_gapped_dna5(char const * s, std::size_t n)
+SEQAN3_WORKAROUND_LITERAL std::vector<seqan3::gapped<seqan3::dna5>> operator""_gapped_dna5(char const * s,
+                                                                                           std::size_t n)
 {
     std::vector<seqan3::gapped<seqan3::dna5>> r;
     r.resize(n);

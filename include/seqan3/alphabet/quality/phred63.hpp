@@ -120,7 +120,7 @@ constexpr phred63 operator""_phred63(char const c) noexcept
  *
  * \stableapi{Since version 3.1.}
  */
-inline std::vector<phred63> operator""_phred63(char const * s, std::size_t n)
+SEQAN3_WORKAROUND_LITERAL std::vector<phred63> operator""_phred63(char const * s, std::size_t n)
 {
     std::vector<phred63> r;
     r.resize(n);

@@ -149,7 +149,7 @@ constexpr dssp9 operator""_dssp9(char const ch) noexcept
  *
  * \experimentalapi{Experimental since version 3.1.}
  */
-inline std::vector<dssp9> operator""_dssp9(char const * str, std::size_t len)
+SEQAN3_WORKAROUND_LITERAL std::vector<dssp9> operator""_dssp9(char const * str, std::size_t len)
 {
     std::vector<dssp9> vec;
     vec.resize(len);

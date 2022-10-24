@@ -273,6 +273,13 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 #    endif
 #endif
 
+//!\brief Our char literals returning std::vector should be constexpr if constexpr std::vector is supported.
+#if defined(__cpp_lib_constexpr_vector) && __cpp_lib_constexpr_vector >= 201907L
+#    define SEQAN3_WORKAROUND_LITERAL constexpr
+#else
+#    define SEQAN3_WORKAROUND_LITERAL inline
+#endif
+
 #if SEQAN3_DOXYGEN_ONLY(1) 0
 //!\brief This disables the warning you would get if -D_GLIBCXX_USE_CXX11_ABI=0 is set.
 #    define SEQAN3_DISABLE_LEGACY_STD_DIAGNOSTIC

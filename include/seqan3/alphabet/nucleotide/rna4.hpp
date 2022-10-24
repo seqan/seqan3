@@ -153,7 +153,7 @@ constexpr rna4 operator""_rna4(char const c) noexcept
  *
  * \stableapi{Since version 3.1.}
  */
-inline rna4_vector operator""_rna4(char const * s, std::size_t n)
+SEQAN3_WORKAROUND_LITERAL rna4_vector operator""_rna4(char const * s, std::size_t n)
 {
     rna4_vector r;
     r.resize(n);

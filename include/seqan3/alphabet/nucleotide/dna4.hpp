@@ -255,7 +255,7 @@ constexpr dna4 operator""_dna4(char const c) noexcept
  *
  * \stableapi{Since version 3.1.}
  */
-inline dna4_vector operator""_dna4(char const * s, std::size_t n)
+SEQAN3_WORKAROUND_LITERAL dna4_vector operator""_dna4(char const * s, std::size_t n)
 {
     dna4_vector r;
     r.resize(n);

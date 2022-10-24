@@ -156,7 +156,7 @@ constexpr rna15 operator""_rna15(char const c) noexcept
  *
  * \stableapi{Since version 3.1.}
  */
-inline rna15_vector operator""_rna15(char const * s, std::size_t n)
+SEQAN3_WORKAROUND_LITERAL rna15_vector operator""_rna15(char const * s, std::size_t n)
 {
     rna15_vector r;
     r.resize(n);

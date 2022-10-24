@@ -203,7 +203,7 @@ constexpr dna15 operator""_dna15(char const c) noexcept
  *
  * \stableapi{Since version 3.1.}
  */
-inline dna15_vector operator""_dna15(char const * s, std::size_t n)
+SEQAN3_WORKAROUND_LITERAL dna15_vector operator""_dna15(char const * s, std::size_t n)
 {
     dna15_vector r;
     r.resize(n);

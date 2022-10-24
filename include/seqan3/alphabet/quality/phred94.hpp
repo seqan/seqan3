@@ -117,7 +117,7 @@ constexpr phred94 operator""_phred94(char const c) noexcept
  *
  * \stableapi{Since version 3.1.}
  */
-inline std::vector<phred94> operator""_phred94(char const * s, std::size_t n)
+SEQAN3_WORKAROUND_LITERAL std::vector<phred94> operator""_phred94(char const * s, std::size_t n)
 {
     std::vector<phred94> r;
     r.resize(n);

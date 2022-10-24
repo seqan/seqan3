@@ -24,6 +24,24 @@ The following API changes should be documented as such:
 If possible, provide tooling that performs the changes, e.g. a shell-script.
 -->
 
+# 3.3.0
+
+## New features
+
+#### Alphabet
+  * Improved performance of vector assignment for alphabets ([\#3038](https://github.com/seqan/seqan3/pull/3038)).
+  * Improved performance of `seqan3::dna4::complement()` ([\#3026](https://github.com/seqan/seqan3/pull/3026)).
+  * Char literals returning std::vector are now constexpr if supported by the compiler
+    ([\#3073](https://github.com/seqan/seqan3/pull/3073)).
+
+## Notable Bug-fixes
+
+## API changes
+
+#### Dependencies
+  * We require at least CMake 3.16 for our test suite. Note that the minimum requirement for using SeqAn3 is unchanged
+    ([\#3050](https://github.com/seqan/seqan3/pull/3050)).
+
 # 3.2.0
 
 ## New features
@@ -32,8 +50,6 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   * `seqan3::cigar` can now be assigned from `std::string_view` ([\#2966](https://github.com/seqan/seqan3/pull/2966)).
   * Added `seqan3::views::char_strictly_to`. Behaves like `seqan3::views::char_to`, but throws on invalid
     input ([\#2898](https://github.com/seqan/seqan3/pull/2898)).
-  * Improved performance of vector assignment for alphabets ([\#3038](https://github.com/seqan/seqan3/pull/3038)).
-  * Improved performance of `seqan3::dna4::complement()` ([\#3026](https://github.com/seqan/seqan3/pull/3026)).
 
 #### I/O
  * Added `seqan3::sequence_file_option::fasta_ignore_blanks_before_id` to ignore blanks before IDs when reading FASTA
@@ -120,8 +136,6 @@ deprecated. Please keep this in mind if you encounter errors with `seqan3::views
 
 #### Dependencies
   * We now use Doxygen version 1.9.4 to build our documentation ([\#2979](https://github.com/seqan/seqan3/pull/2979)).
-  * We require at least CMake 3.16 for our test suite. Note that the minimum requirement for using SeqAn3 is unchanged
-    ([\#3050](https://github.com/seqan/seqan3/pull/3050)).
   * Removed range-v3 ([\#2998](https://github.com/seqan/seqan3/pull/2998)).
   * Updated cereal to 1.3.2 ([\#3012](https://github.com/seqan/seqan3/pull/3012)).
   * Updated sdsl-lite to 3.0.1 ([\#3012](https://github.com/seqan/seqan3/pull/3012)).

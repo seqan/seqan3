@@ -158,7 +158,7 @@ constexpr aa27 operator""_aa27(char const c) noexcept
  *
  * \stableapi{Since version 3.1.}
  */
-inline aa27_vector operator""_aa27(char const * const s, size_t const n)
+SEQAN3_WORKAROUND_LITERAL aa27_vector operator""_aa27(char const * const s, size_t const n)
 {
     aa27_vector r;
     r.resize(n);

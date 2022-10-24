@@ -226,7 +226,7 @@ constexpr aa10murphy operator""_aa10murphy(char const c) noexcept
  *
  * \stableapi{Since version 3.1.}
  */
-inline aa10murphy_vector operator""_aa10murphy(char const * const s, size_t const n)
+SEQAN3_WORKAROUND_LITERAL aa10murphy_vector operator""_aa10murphy(char const * const s, size_t const n)
 {
     aa10murphy_vector r;
     r.resize(n);

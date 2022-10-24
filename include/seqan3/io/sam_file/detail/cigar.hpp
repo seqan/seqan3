@@ -145,7 +145,7 @@ inline void update_alignment_lengths(int32_t & ref_length,
  * `{[(H,1), (M,4), (D,1), (M,2), (S,2)], 7, 6}`.
  */
 template <typename cigar_input_type>
-inline std::tuple<std::vector<cigar>, int32_t, int32_t> parse_cigar(cigar_input_type && cigar_input)
+SEQAN3_WORKAROUND_LITERAL std::tuple<std::vector<cigar>, int32_t, int32_t> parse_cigar(cigar_input_type && cigar_input)
 {
     std::vector<cigar> operations{};
     std::array<char, 20> buffer{}; // buffer to parse numbers with from_chars. Biggest number should fit in uint64_t

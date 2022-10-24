@@ -190,7 +190,7 @@ constexpr dna16sam operator""_dna16sam(char const c) noexcept
  *
  * \stableapi{Since version 3.1.}
  */
-inline dna16sam_vector operator""_dna16sam(char const * s, size_t n)
+SEQAN3_WORKAROUND_LITERAL dna16sam_vector operator""_dna16sam(char const * s, size_t n)
 {
     dna16sam_vector r;
     r.resize(n);

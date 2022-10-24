@@ -193,7 +193,7 @@ constexpr dna5 operator""_dna5(char const c) noexcept
  *
  * \stableapi{Since version 3.1.}
  */
-inline dna5_vector operator""_dna5(char const * s, std::size_t n)
+SEQAN3_WORKAROUND_LITERAL dna5_vector operator""_dna5(char const * s, std::size_t n)
 {
     dna5_vector r;
     r.resize(n);
