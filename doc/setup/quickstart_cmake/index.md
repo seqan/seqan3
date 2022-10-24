@@ -236,10 +236,11 @@ target_link_libraries (my_app PUBLIC seqan3::seqan3)
   ```
   and run `cmake` again.
 
-* **SDSL library not found**: `The SDSL library is required, but wasn't found.`
-  Or similar for other dependencies. Dependencies are checked by compiling a small file. A library not being found can
-  have two potential causes:
-  - The repository was not cloned correctly. This can be verified by checking whether
-    `submodules/sdsl-lite/include/version.hpp` exists.
-  - The incorrect compiler is used (e.g., Apple Clang instead of GCC). Be sure to set `-DCMAKE_CXX_COMPILER=`. For an
-    example, see \ref remark_cmake_cxx_compiler "this remark".
+* **SDSL library not found**: `The SDSL library is required, but wasn't found.`<br>
+  The repository was not cloned correctly. This can be verified by checking whether
+  `submodules/sdsl-lite/include/version.hpp` exists.
+  If it does not, try running `git submodule update --init` within the seqan3 directory.
+
+* **Incorrect compiler**: `Your compiler is not supported.` or `Only GCC is supported.`<br>
+  The incorrect compiler is used (e.g., Apple Clang instead of GCC). Be sure to set `-DCMAKE_CXX_COMPILER=`. For an
+  example, see \ref remark_cmake_cxx_compiler "this remark".
