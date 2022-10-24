@@ -122,38 +122,6 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 #endif
 //!\endcond
 
-// Lemon [optional]
-/*!\def SEQAN3_WITH_LEMON
- * \brief Whether Lemon support is available or not.
- * \ingroup core
- */
-#ifndef SEQAN3_WITH_LEMON
-#    if __has_include(<lemon/config.h>)
-#        define SEQAN3_WITH_LEMON 1
-#    else
-#        define SEQAN3_WITH_LEMON 0
-#    endif
-#elif SEQAN3_WITH_LEMON != 0
-#    if !__has_include(<lemon/config.h>)
-#        error Lemon was marked as required, but not found!
-#    endif
-#endif
-#if SEQAN3_WITH_LEMON == 1
-#    define LEMON_HAVE_LONG_LONG 1
-#    define LEMON_CXX11 1
-#    if defined(__unix__) || defined(__APPLE__)
-#        define LEMON_USE_PTHREAD 1
-#        define LEMON_USE_WIN32_THREADS 0
-#        define LEMON_WIN32 0
-#    else
-#        define LEMON_USE_PTHREAD 0
-#        define LEMON_USE_WIN32_THREADS 1
-#        define LEMON_WIN32 1
-#    endif
-#endif
-
-// TODO (doesn't have a version.hpp, yet)
-
 // ============================================================================
 //  Deprecation Messages
 // ============================================================================
