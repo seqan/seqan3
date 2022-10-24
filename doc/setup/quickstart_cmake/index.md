@@ -91,10 +91,8 @@ Please note that you may have to manually clone the submodules by running `git s
 
 \endcollapsible
 
-\attention After installing, `g++ --version` should print the desired gcc version.
+\attention After installing, `g++ --version` should print the desired GCC version.
            If not, you may have to use, for example, `g++-11 --version` or even specify the full path to your compiler.
-           In this case, you need to set the environment variables CC and CXX before calling cmake for the first time, e.g.:
-           `export CC=gcc-11; export CXX=g++-11;`
 
 Similarly, you may need to install CMake and git, e.g. `apt install cmake git`.
 
@@ -180,6 +178,7 @@ suitable for the end user. Programs built using `-DCMAKE_BUILD_TYPE=Debug` will 
 of errors easier. `Debug` is suitable for contributors, and we recommend using it while working with our
 [Tutorials](usergroup1.html).
 
+\anchor remark_cmake_cxx_compiler
 \remark Depending on the standard C++ compiler on your system, you may need to specify the compiler via
 `-DCMAKE_CXX_COMPILER=`, for example:
 ```bash
@@ -238,6 +237,9 @@ target_link_libraries (my_app PUBLIC seqan3::seqan3)
   and run `cmake` again.
 
 * **SDSL library not found**: `The SDSL library is required, but wasn't found.`
-  This has two potential sources:
-  + The repository wasn't cloned correctly. This can be verified by checking if `submodules/sdsl-lite/include/version.hpp` exists.
-  + Or, you are using MacOS and forgot to set `CC` and `CXX` variables and cmake is using Apple Clang as a compiler instead of GCC.
+  Or similar for other dependencies. Dependencies are checked by compiling a small file. A library not being found can
+  have two potential causes:
+  - The repository was not cloned correctly. This can be verified by checking whether
+    `submodules/sdsl-lite/include/version.hpp` exists.
+  - The incorrect compiler is used (e.g., Apple Clang instead of GCC). Be sure to set `-DCMAKE_CXX_COMPILER=`. For an
+    example, see \ref remark_cmake_cxx_compiler "this remark".
