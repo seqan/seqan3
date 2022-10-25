@@ -30,16 +30,14 @@
 #   ZLIB      -- zlib compression library
 #   BZip2     -- libbz2 compression library
 #   Cereal    -- Serialisation library
-#   Lemon     -- Graph library
 #
-# If you don't wish for these to be detected (and used), you may define SEQAN3_NO_ZLIB,
-# SEQAN3_NO_BZIP2, SEQAN3_NO_CEREAL and SEQAN3_NO_LEMON respectively.
+# If you don't wish for these to be detected (and used), you may define SEQAN3_NO_SHARG, SEQAN3_NO_ZLIB,
+# SEQAN3_NO_BZIP2, and SEQAN3_NO_CEREAL respectively.
 #
 # If you wish to require the presence of ZLIB or BZip2, just check for the module before
-# finding SeqAn3, e.g. "find_package (ZLIB REQUIRED)".
+# finding SeqAn3, e.g. "find_package (ZLIB REQUIRED)" and "find_package (BZip2 REQUIRED)".
 # If you wish to require the presence of SHARG, you may define SEQAN3_SHARG.
 # If you wish to require the presence of CEREAL, you may define SEQAN3_CEREAL.
-# If you wish to require the presence of LEMON, you may define SEQAN3_LEMON.
 #
 # Once the search has been performed, the following variables will be set.
 #
@@ -208,25 +206,6 @@ elseif (SEQAN3_NO_CEREAL)
     set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_WITH_CEREAL=0")
 endif ()
 
-# Lemon is auto-detected by default, i.e. used if found, not used if not found.
-# You can optionally set a hard requirement so a build fails without Lemon,
-# or you can force-disable Lemon even if present on the system.
-option (SEQAN3_LEMON "Require Lemon and fail if not present." OFF)
-option (SEQAN3_NO_LEMON "Don't use Lemon, even if present." OFF)
-
-if (SEQAN3_LEMON AND SEQAN3_NO_LEMON)
-    # this is always a user error, therefore we always error-out, even if SeqAn is not required
-    message (FATAL_ERROR "You may not specify SEQAN3_LEMON and SEQAN3_NO_LEMON at the same time.\n\
-                          You can specify neither (use auto-detection), or specify either to force on/off.")
-    return ()
-endif ()
-
-if (SEQAN3_LEMON)
-    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_WITH_LEMON=1")
-elseif (SEQAN3_NO_LEMON)
-    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_WITH_LEMON=0")
-endif ()
-
 # These two are "opt-in", because detected by CMake
 # If you want to force-require these, just do find_package (zlib REQUIRED) before find_package (seqan3)
 option (SEQAN3_NO_ZLIB "Don't use ZLIB, even if present." OFF)
@@ -381,28 +360,6 @@ if (NOT SEQAN3_NO_CEREAL)
             seqan3_config_error ("The (optional) cereal library was marked as required, but wasn't found.")
         else ()
             seqan3_config_print ("Optional dependency:        Cereal not found.")
-        endif ()
-    endif ()
-endif ()
-
-# ----------------------------------------------------------------------------
-# Lemon dependency is optional, but may set as required
-# ----------------------------------------------------------------------------
-
-if (NOT SEQAN3_NO_LEMON)
-    check_include_file_cxx (lemon/config.h _SEQAN3_HAVE_LEMON)
-
-    if (_SEQAN3_HAVE_LEMON)
-        if (SEQAN3_LEMON)
-            seqan3_config_print ("Required dependency:        Lemon found.")
-        else ()
-            seqan3_config_print ("Optional dependency:        Lemon found.")
-        endif ()
-    else ()
-        if (SEQAN3_LEMON)
-            seqan3_config_error ("The (optional) Lemon library was marked as required, but wasn't found.")
-        else ()
-            seqan3_config_print ("Optional dependency:        Lemon not found.")
         endif ()
     endif ()
 endif ()
