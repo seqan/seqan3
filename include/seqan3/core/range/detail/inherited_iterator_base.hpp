@@ -95,13 +95,13 @@ public:
     //!\brief Delegate to base class if inheriting from non-pointer iterator.
     constexpr inherited_iterator_base(base_t it) noexcept(std::is_nothrow_move_constructible_v<base_t>)
         requires (!wrap_base)
-    : base_t{std::move(it)}
+        : base_t{std::move(it)}
     {}
 
     //!\brief Initialise member if deriving from pointer.
     constexpr inherited_iterator_base(base_t it) noexcept
         requires wrap_base
-    : member{std::move(it)}
+        : member{std::move(it)}
     {}
     //!\}
 

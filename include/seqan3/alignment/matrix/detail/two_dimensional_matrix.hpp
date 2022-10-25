@@ -379,7 +379,7 @@ public:
     //!\brief Construction of cons-iterator from non-const-iterator.
     constexpr basic_iterator(basic_iterator<!const_range> const & other) noexcept
         requires const_range
-    : matrix_ptr{other.matrix_ptr}, host_iter{other.host_iter}
+        : matrix_ptr{other.matrix_ptr}, host_iter{other.host_iter}
     {}
     //!\}
 
