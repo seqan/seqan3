@@ -151,4 +151,12 @@ concept two_dimensional_matrix_iterator =
                } -> std::same_as<matrix_coordinate>;
        };
 //!\endcond
+
+// Workaround for https://github.com/doxygen/doxygen/issues/9379
+#if SEQAN3_DOXYGEN_ONLY(1) 0
+template <typename iter_t>
+class two_dimensional_matrix_iterator
+{};
+#endif
+
 } // namespace seqan3::detail

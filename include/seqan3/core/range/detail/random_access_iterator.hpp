@@ -274,7 +274,7 @@ private:
         return static_cast<derived_t *>(this);
     }
 
-    //!\copydoc this_derived
+    //!\copydoc seqan3::detail::random_access_iterator_base::this_derived
     constexpr derived_t const * this_derived() const
     {
         return static_cast<derived_t const *>(this);

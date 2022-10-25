@@ -143,7 +143,7 @@ public:
 
 private:
     // clang-format off
-    //!\brief Implementation of #char_is_valid().
+    //!\brief Implementation of seqan3::nucleotide_base::char_is_valid().
     static constexpr std::array<bool, 256> valid_char_table
     {
         []() constexpr {

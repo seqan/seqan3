@@ -376,7 +376,7 @@ private:
             return *this;
     }
 
-    //!\copydoc as_base
+    //!\copydoc seqan3::detail::inherited_iterator_base::as_base
     constexpr base_t const & as_base() const & noexcept
     {
         if constexpr (wrap_base)
@@ -391,7 +391,7 @@ private:
         return static_cast<derived_t *>(this);
     }
 
-    //!\copydoc this_derived
+    //!\copydoc seqan3::detail::inherited_iterator_base::this_derived
     constexpr derived_t const * this_derived() const
     {
         return static_cast<derived_t const *>(this);
