@@ -103,7 +103,8 @@ public:
                              field::header_ptr>;
 
     static_assert(
-        []() constexpr {
+        []() constexpr
+        {
             for (field f : selected_field_ids::as_array)
                 if (!field_ids::contains(f))
                     return false;
@@ -149,8 +150,24 @@ public:
     sam_file_output(sam_file_output &&) = default;
     //!\brief Move assignment is defaulted.
     sam_file_output & operator=(sam_file_output &&) = default;
-    //!\brief Destructor is defaulted.
-    ~sam_file_output() = default;
+    //!\brief The destructor will write the header if it has not been written before.
+    ~sam_file_output()
+    {
+        if (header_has_been_written)
+            return;
+
+        assert(!format.valueless_by_exception());
+
+        std::visit(
+            [&](auto & f)
+            {
+                if constexpr (std::same_as<ref_ids_type, ref_info_not_given>)
+                    f.write_header(*secondary_stream, options, std::ignore);
+                else
+                    f.write_header(*secondary_stream, options, *header_ptr);
+            },
+            format);
+    }
 
     /*!\brief Construct from filename.
      * \param[in] filename      Path to the file you wish to open.
@@ -592,6 +609,9 @@ public:
 
 protected:
     //!\privatesection
+    //!\brief This is needed during deconstruction to know whether a header still needs to be written.
+    bool header_has_been_written{false};
+
     //!\brief A larger (compared to stl default) stream buffer to use when reading from a file.
     std::vector<char> stream_buffer{std::vector<char>(1'000'000)};
 
@@ -690,6 +710,8 @@ protected:
                 }
             },
             format);
+
+        header_has_been_written = true; // when writing a record, the header is written automatically
     }
 
     //!\brief Befriend iterator so it can access the buffers.

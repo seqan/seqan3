@@ -20,6 +20,11 @@ struct sam_file_read<seqan3::format_sam> : public sam_file_data
 
     using stream_type = std::istringstream;
 
+    std::string minimal_header{
+        R"(@HD	VN:1.6
+@SQ	SN:ref	LN:34
+)"};
+
     std::string big_header_input{
         R"(@HD	VN:1.6	SO:coordinate	SS:coordinate:queryname	GO:none
 @PG	ID:qc	PN:quality_control	CL:qc -f file1	DS:trim reads with low qual	VN:1.0.0
