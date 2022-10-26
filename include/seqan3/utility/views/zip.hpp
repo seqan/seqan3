@@ -104,7 +104,7 @@ template <bool is_const, typename... range_ts>
 concept all_forward = (std::ranges::forward_range<view_helper::maybe_const<is_const, range_ts>> && ...);
 
 // Pre cpp20-iterators: Infer iterator_category from modelled concepts.
-#if defined(__GNUC__) && (__GNUC__ == 10)
+#if SEQAN3_COMPILER_IS_GCC && (__GNUC__ == 10)
 template <bool is_const, typename... range_ts>
 concept all_contiguous = (std::ranges::contiguous_range<view_helper::maybe_const<is_const, range_ts>> && ...);
 
@@ -224,7 +224,7 @@ zip_view(range_ts &&...) -> zip_view<seqan3::detail::all_t<range_ts>...>;
 template <std::ranges::input_range... Views>
     requires (std::ranges::view<Views> && ...) && (sizeof...(Views) > 0)
 template <bool Const>
-#if defined(__GNUC__) && (__GNUC__ == 10) // cpp17 iterators
+#if SEQAN3_COMPILER_IS_GCC && (__GNUC__ == 10) // cpp17 iterators
 class zip_view<Views...>::iterator : public zip::iterator_category_t<Const, Views...>
 #else // cpp20 iterators
 class zip_view<Views...>::iterator : public zip::iterator_category_t<zip::all_forward<Const, Views...>>
@@ -259,7 +259,7 @@ public:
               && (std::convertible_to<std::ranges::iterator_t<Views>,
                                       std::ranges::iterator_t<view_helper::maybe_const<Const, Views>>>
                   && ...)
-    : current_(std::move(i.current))
+        : current_(std::move(i.current))
     {}
 
     constexpr auto operator*() const
@@ -489,7 +489,7 @@ public:
               && (std::convertible_to<std::ranges::sentinel_t<Views>,
                                       std::ranges::sentinel_t<view_helper::maybe_const<Const, Views>>>
                   && ...)
-    : end_(std::move(i.end_))
+        : end_(std::move(i.end_))
     {}
 
     template <bool OtherConst>

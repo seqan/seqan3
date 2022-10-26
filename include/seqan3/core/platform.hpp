@@ -33,28 +33,79 @@
 #endif
 
 // ============================================================================
-//  Compiler support
+//  Compiler support general
 // ============================================================================
 
-#if defined(__GNUC__) && (__GNUC__ < 10)
-#    error "SeqAn 3.1.x is the last version that supports GCC 7, 8, and 9. Please upgrade your compiler or use 3.1.x."
-#endif // defined(__GNUC__) && (__GNUC__ < 10)
+/*!\def SEQAN3_COMPILER_IS_GCC
+ * \brief Whether the current compiler is GCC.
+ * \ingroup core
+ * \details
+ * __GNUC__ is also used to indicate the support for GNU compiler extensions. To detect the presence of the GCC
+ * compiler, one has to rule out other compilers.
+ *
+ * \sa https://sourceforge.net/p/predef/wiki/Compilers
+ */
+#if defined(__GNUC__) && !defined(__llvm__) && !defined(__INTEL_COMPILER)
+#    define SEQAN3_COMPILER_IS_GCC 1
+#else
+#    define SEQAN3_COMPILER_IS_GCC 0
+#endif
 
 #if SEQAN3_DOXYGEN_ONLY(1) 0
-//!\brief This disables the warning you would get if your compiler is newer than the latest supported version.
-#    define SEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC
+//!\brief This disables the warning you would get if your compiler is not known to work.
+#    define SEQAN3_DISABLE_COMPILER_CHECK
 #endif // SEQAN3_DOXYGEN_ONLY(1)0
 
-#ifndef SEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC
-#    if defined(__GNUC__) && (__GNUC__ > 12)
-#        pragma message                                                                                                \
-            "Your compiler is newer than the latest supported compiler of this SeqAn version (gcc-12). It might be that SeqAn does not compile due to this. You can disable this warning by setting -DSEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC."
-#    endif // defined(__GNUC__) && (__GNUC__ > 12)
-#endif     // SEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC
+// ============================================================================
+//  Compiler support GCC
+// ============================================================================
+
+#if SEQAN3_COMPILER_IS_GCC
+#    if (__GNUC__ < 10)
+#        error                                                                                                         \
+            "SeqAn 3.1.x is the last version that supports GCC 7, 8, and 9. Please upgrade your compiler or use 3.1.x."
+#    endif // (__GNUC__ < 10)
+
+#    if (__GNUC__ == 10 && __GNUC_MINOR__ <= 3)
+#        pragma GCC warning "Be aware that GCC < 10.4 might have bugs that cause SeqAn3 fail to compile."
+#    endif // (__GNUC__ == 10 && __GNUC_MINOR__ <= 3)
+
+#    if (__GNUC__ == 11 && __GNUC_MINOR__ <= 2)
+#        pragma GCC warning "Be aware that GCC < 11.3 might have bugs that cause SeqAn3 fail to compile."
+#    endif // (__GNUC__ == 11 && __GNUC_MINOR__ <= 2)
+
+#    if (__GNUC__ == 12 && __GNUC_MINOR__ <= 1)
+#        pragma GCC warning "Be aware that GCC < 12.2 might have bugs that cause SeqAn3 fail to compile."
+#    endif // (__GNUC__ == 12 && __GNUC_MINOR__ <= 1)
+
+#    if SEQAN3_DOXYGEN_ONLY(1) 0
+//!\brief This disables the warning you would get if your compiler is newer than the latest supported version.
+#        define SEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC
+#    endif // SEQAN3_DOXYGEN_ONLY(1)0
+
+#    ifndef SEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC
+#        if (__GNUC__ > 12)
+#            pragma message                                                                                            \
+                "Your compiler is newer than the latest supported compiler of this SeqAn version (gcc-12). It might be that SeqAn does not compile due to this. You can disable this warning by setting -DSEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC."
+#        endif(__GNUC__ > 12)
+#    endif // SEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC
+
+// ============================================================================
+//  Compiler support other
+// ============================================================================
+
+#elif !defined(SEQAN3_DISABLE_COMPILER_CHECK)
+#    error                                                                                                             \
+        "Your compiler is not supported. Currently, only GCC is known to work. You can disable this error by setting -DSEQAN3_DISABLE_COMPILER_CHECK."
+#endif // SEQAN3_COMPILER_IS_GCC
 
 // ============================================================================
 //  C++ standard and features
 // ============================================================================
+
+#if __has_include(<version>)
+#    include <version>
+#endif
 
 // C++ standard [required]
 // Note: gcc10 -std=c++20 still defines __cplusplus=201709
@@ -64,10 +115,6 @@
 #    endif
 #else
 #    error "This is not a C++ compiler."
-#endif
-
-#if __has_include(<version>)
-#    include <version>
 #endif
 
 // ============================================================================
@@ -128,7 +175,7 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 
 //!\brief _Pragma requires a string-literal and # makes it a string
 #ifndef SEQAN3_PRAGMA
-#    define SEQAN3_PRAGMA(non_string_literal) _Pragma(#    non_string_literal)
+#    define SEQAN3_PRAGMA(non_string_literal) _Pragma(#non_string_literal)
 #endif
 
 //!\brief Deprecation message for deprecated header.
@@ -156,19 +203,6 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 //  Workarounds
 // ============================================================================
 
-/*!\brief Warn about gcc 10.0 and gcc 10.1
- * Known Issues:
- * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93983
- * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95371
- * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95578
- * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=99318
- * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93467
- */
-#if defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ <= 2)
-#    pragma GCC warning                                                                                                \
-        "Be aware that gcc 10.0, 10.1 and 10.2 are known to have several bugs that might make SeqAn3 fail to compile. Please use gcc >= 10.3."
-#endif // defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ <= 1)
-
 #ifndef SEQAN3_WORKAROUND_VIEW_PERFORMANCE
 //!\brief Performance of views, especially filter and join is currently bad, especially in I/O.
 #    define SEQAN3_WORKAROUND_VIEW_PERFORMANCE 1
@@ -176,7 +210,7 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 
 //!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=96070 and https://github.com/seqan/product_backlog/issues/151
 #ifndef SEQAN3_WORKAROUND_GCC_96070 // fixed since gcc10.4
-#    if defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ < 4)
+#    if SEQAN3_COMPILER_IS_GCC && (__GNUC__ == 10 && __GNUC_MINOR__ < 4)
 #        define SEQAN3_WORKAROUND_GCC_96070 1
 #    else
 #        define SEQAN3_WORKAROUND_GCC_96070 0
@@ -186,7 +220,7 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 //!\brief Workaround to access the static id of the configuration elements inside of the concept definition
 //!       (fixed in gcc11).
 #ifndef SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
-#    if defined(__GNUC__) && (__GNUC__ < 11)
+#    if SEQAN3_COMPILER_IS_GCC && (__GNUC__ < 11)
 #        define SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT 1
 #    else
 #        define SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT 0
@@ -195,7 +229,7 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 
 //!\brief A view does not need to be default constructible. This change is first implemented in gcc12.
 #ifndef SEQAN3_WORKAROUND_DEFAULT_CONSTRUCTIBLE_VIEW
-#    if defined(__GNUC__) && (__GNUC__ < 12)
+#    if SEQAN3_COMPILER_IS_GCC && (__GNUC__ < 12)
 #        define SEQAN3_WORKAROUND_DEFAULT_CONSTRUCTIBLE_VIEW 1
 #    else
 #        define SEQAN3_WORKAROUND_DEFAULT_CONSTRUCTIBLE_VIEW 0
@@ -205,7 +239,7 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 //!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100139
 //!       std::views::{take, drop} do not type-erase. This is a defect within the standard lib (fixed in gcc12).
 #ifndef SEQAN3_WORKAROUND_GCC_100139
-#    if defined(__GNUC__) && (__GNUC__ < 12)
+#    if SEQAN3_COMPILER_IS_GCC && (__GNUC__ < 12)
 #        define SEQAN3_WORKAROUND_GCC_100139 1
 #    else
 #        define SEQAN3_WORKAROUND_GCC_100139 0
@@ -216,7 +250,7 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
  * \see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105545
  */
 #ifndef SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#    if defined(__GNUC__) && (__GNUC__ == 12 && __GNUC_MINOR__ < 3)
+#    if SEQAN3_COMPILER_IS_GCC && (__GNUC__ == 12 && __GNUC_MINOR__ < 3)
 #        define SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY 1
 #    else
 #        define SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY 0

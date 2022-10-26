@@ -15,9 +15,7 @@
 #
 # SeqAn has the following platform requirements:
 #
-#   C++17
-#   C++ Concepts (either via Concepts TS or C++20)
-#   C++ Filesystem (part of C++17 but needs extra linking on some platforms)
+#   C++20
 #   pthread
 #
 # SeqAn requires the following libraries:
@@ -212,6 +210,26 @@ option (SEQAN3_NO_ZLIB "Don't use ZLIB, even if present." OFF)
 option (SEQAN3_NO_BZIP2 "Don't use BZip2, even if present." OFF)
 
 # ----------------------------------------------------------------------------
+# Check supported compilers
+# ----------------------------------------------------------------------------
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 10)
+    message (FATAL_ERROR "GCC < 10 is not supported. The detected compiler version is ${CMAKE_CXX_COMPILER_VERSION}.")
+endif ()
+
+option (SEQAN3_DISABLE_COMPILER_CHECK "Skips the check for supported compilers." OFF)
+
+if (NOT SEQAN3_DISABLE_COMPILER_CHECK)
+    if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        message (FATAL_ERROR "Only GCC is supported. "
+                             "The detected compiler version is ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}. "
+                             "You can disable this error by passing -DSEQAN3_DISABLE_COMPILER_CHECK=ON to CMake.")
+    endif ()
+else ()
+    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_DISABLE_COMPILER_CHECK")
+endif ()
+
+# ----------------------------------------------------------------------------
 # Require C++20
 # ----------------------------------------------------------------------------
 
@@ -249,44 +267,6 @@ elseif (SEQAN3_CPP20_FLAG)
     seqan3_config_print ("C++ Standard-20 support:    via ${SEQAN3_FEATURE_CPP20_FLAG_${SEQAN3_CPP20_FLAG}}")
 else ()
     seqan3_config_error ("SeqAn3 requires C++20, but your compiler does not support it.")
-endif ()
-
-# ----------------------------------------------------------------------------
-# Require C++ Concepts
-# ----------------------------------------------------------------------------
-
-set (CMAKE_REQUIRED_FLAGS_SAVE ${CMAKE_REQUIRED_FLAGS})
-
-set (CXXSTD_TEST_SOURCE "static_assert (__cpp_concepts >= 201507);\
-                         int main() {}")
-
-set (SEQAN3_FEATURE_CONCEPT_FLAG_BUILTIN "")
-set (SEQAN3_FEATURE_CONCEPT_FLAG_STD20 "-std=c++20")
-set (SEQAN3_FEATURE_CONCEPT_FLAG_STD2a "-std=c++2a")
-set (SEQAN3_FEATURE_CONCEPT_FLAG_GCC_TS "-fconcepts")
-
-set (SEQAN3_CONCEPTS_FLAG "")
-
-foreach (_FLAG BUILTIN STD20 STD2a GCC_TS)
-    set (CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS_SAVE} ${SEQAN3_FEATURE_CONCEPT_FLAG_${_FLAG}}")
-
-    check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" CONCEPTS_FLAG_${_FLAG})
-
-    if (CONCEPTS_FLAG_${_FLAG})
-        set (SEQAN3_CONCEPTS_FLAG ${_FLAG})
-        break ()
-    endif ()
-endforeach ()
-
-set (CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS_SAVE})
-
-if (SEQAN3_CONCEPTS_FLAG STREQUAL "BUILTIN")
-    seqan3_config_print ("C++ Concepts support:       builtin")
-elseif (SEQAN3_CONCEPTS_FLAG)
-    set (SEQAN3_CXX_FLAGS "${SEQAN3_CXX_FLAGS} ${SEQAN3_FEATURE_CONCEPT_FLAG_${SEQAN3_CONCEPTS_FLAG}}")
-    seqan3_config_print ("C++ Concepts support:       via ${SEQAN3_FEATURE_CONCEPT_FLAG_${SEQAN3_CONCEPTS_FLAG}}")
-else ()
-    seqan3_config_error ("SeqAn3 requires C++ Concepts, but your compiler does not support them.")
 endif ()
 
 # ----------------------------------------------------------------------------
