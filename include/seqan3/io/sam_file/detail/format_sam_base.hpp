@@ -98,9 +98,8 @@ protected:
                      sam_file_header<ref_ids_type> & hdr,
                      ref_seqs_type & /*ref_id_to_pos_map*/);
 
-    template <typename stream_t, typename ref_ids_type>
-    void
-    write_header(stream_t & stream, sam_file_output_options const & options, sam_file_header<ref_ids_type> & header);
+    template <typename stream_t, typename header_type>
+    void write_header(stream_t & stream, sam_file_output_options const & options, header_type & header);
 };
 
 /*!\brief Checks for known reference ids or adds a new reference is and assigns a reference id to `ref_id`.
@@ -702,115 +701,117 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
  * according to the rules of the official
  * [SAM format specifications](https://samtools.github.io/hts-specs/SAMv1.pdf).
  */
-template <typename stream_t, typename ref_ids_type>
-inline void format_sam_base::write_header(stream_t & stream,
-                                          sam_file_output_options const & options,
-                                          sam_file_header<ref_ids_type> & header)
+template <typename stream_t, typename header_type>
+inline void
+format_sam_base::write_header(stream_t & stream, sam_file_output_options const & options, header_type & header)
 {
-    // -----------------------------------------------------------------
-    // Check Header
-    // -----------------------------------------------------------------
-
-    // (@HD) Check header line
-    // The format version string will be taken from the local member variable
-    if (!header.sorting.empty()
-        && !(header.sorting == "unknown" || header.sorting == "unsorted" || header.sorting == "queryname"
-             || header.sorting == "coordinate"))
-        throw format_error{"SAM format error: The header.sorting member must be "
-                           "one of [unknown, unsorted, queryname, coordinate]."};
-
-    if (!header.grouping.empty()
-        && !(header.grouping == "none" || header.grouping == "query" || header.grouping == "reference"))
-        throw format_error{"SAM format error: The header.grouping member must be "
-                           "one of [none, query, reference]."};
-
-    // (@SQ) Check Reference Sequence Dictionary lines
-
-    // TODO
-
-    // - sorting order be one of ...
-    // - grouping can be one of ...
-    // - reference names must be unique
-    // - ids of read groups must be unique
-    // - program ids need to be unique
-    // many more small semantic things, like fits REGEX
-
-    // -----------------------------------------------------------------
-    // Write Header
-    // -----------------------------------------------------------------
-    std::ostreambuf_iterator stream_it{stream};
-
-    // (@HD) Write header line [required].
-    stream << "@HD\tVN:";
-    std::ranges::copy(format_version, stream_it);
-
-    if (!header.sorting.empty())
-        stream << "\tSO:" << header.sorting;
-
-    if (!header.subsorting.empty())
-        stream << "\tSS:" << header.subsorting;
-
-    if (!header.grouping.empty())
-        stream << "\tGO:" << header.grouping;
-
-    detail::write_eol(stream_it, options.add_carriage_return);
-
-    // (@SQ) Write Reference Sequence Dictionary lines [required].
-    for (auto const & [ref_name, ref_info] : views::zip(header.ref_ids(), header.ref_id_info))
+    if constexpr (!detail::decays_to_ignore_v<header_type>)
     {
-        stream << "@SQ\tSN:";
+        // -----------------------------------------------------------------
+        // Check Header
+        // -----------------------------------------------------------------
 
-        std::ranges::copy(ref_name, stream_it);
+        // (@HD) Check header line
+        // The format version string will be taken from the local member variable
+        if (!header.sorting.empty()
+            && !(header.sorting == "unknown" || header.sorting == "unsorted" || header.sorting == "queryname"
+                 || header.sorting == "coordinate"))
+            throw format_error{"SAM format error: The header.sorting member must be "
+                               "one of [unknown, unsorted, queryname, coordinate]."};
 
-        stream << "\tLN:" << get<0>(ref_info);
+        if (!header.grouping.empty()
+            && !(header.grouping == "none" || header.grouping == "query" || header.grouping == "reference"))
+            throw format_error{"SAM format error: The header.grouping member must be "
+                               "one of [none, query, reference]."};
 
-        if (!get<1>(ref_info).empty())
-            stream << "\t" << get<1>(ref_info);
+        // (@SQ) Check Reference Sequence Dictionary lines
+
+        // TODO
+
+        // - sorting order be one of ...
+        // - grouping can be one of ...
+        // - reference names must be unique
+        // - ids of read groups must be unique
+        // - program ids need to be unique
+        // many more small semantic things, like fits REGEX
+
+        // -----------------------------------------------------------------
+        // Write Header
+        // -----------------------------------------------------------------
+        std::ostreambuf_iterator stream_it{stream};
+
+        // (@HD) Write header line [required].
+        stream << "@HD\tVN:";
+        std::ranges::copy(format_version, stream_it);
+
+        if (!header.sorting.empty())
+            stream << "\tSO:" << header.sorting;
+
+        if (!header.subsorting.empty())
+            stream << "\tSS:" << header.subsorting;
+
+        if (!header.grouping.empty())
+            stream << "\tGO:" << header.grouping;
 
         detail::write_eol(stream_it, options.add_carriage_return);
-    }
 
-    // Write read group (@RG) lines if specified.
-    for (auto const & read_group : header.read_groups)
-    {
-        stream << "@RG"
-               << "\tID:" << get<0>(read_group);
+        // (@SQ) Write Reference Sequence Dictionary lines [required].
+        for (auto const & [ref_name, ref_info] : views::zip(header.ref_ids(), header.ref_id_info))
+        {
+            stream << "@SQ\tSN:";
 
-        if (!get<1>(read_group).empty())
-            stream << "\t" << get<1>(read_group);
+            std::ranges::copy(ref_name, stream_it);
 
-        detail::write_eol(stream_it, options.add_carriage_return);
-    }
+            stream << "\tLN:" << get<0>(ref_info);
 
-    // Write program (@PG) lines if specified.
-    for (auto const & program : header.program_infos)
-    {
-        stream << "@PG"
-               << "\tID:" << program.id;
+            if (!get<1>(ref_info).empty())
+                stream << "\t" << get<1>(ref_info);
 
-        if (!program.name.empty())
-            stream << "\tPN:" << program.name;
+            detail::write_eol(stream_it, options.add_carriage_return);
+        }
 
-        if (!program.command_line_call.empty())
-            stream << "\tCL:" << program.command_line_call;
+        // Write read group (@RG) lines if specified.
+        for (auto const & read_group : header.read_groups)
+        {
+            stream << "@RG"
+                   << "\tID:" << get<0>(read_group);
 
-        if (!program.previous.empty())
-            stream << "\tPP:" << program.previous;
+            if (!get<1>(read_group).empty())
+                stream << "\t" << get<1>(read_group);
 
-        if (!program.description.empty())
-            stream << "\tDS:" << program.description;
+            detail::write_eol(stream_it, options.add_carriage_return);
+        }
 
-        if (!program.version.empty())
-            stream << "\tVN:" << program.version;
+        // Write program (@PG) lines if specified.
+        for (auto const & program : header.program_infos)
+        {
+            stream << "@PG"
+                   << "\tID:" << program.id;
 
-        detail::write_eol(stream_it, options.add_carriage_return);
-    }
+            if (!program.name.empty())
+                stream << "\tPN:" << program.name;
 
-    // Write comment (@CO) lines if specified.
-    for (auto const & comment : header.comments)
-    {
-        stream << "@CO\t" << comment;
-        detail::write_eol(stream_it, options.add_carriage_return);
+            if (!program.command_line_call.empty())
+                stream << "\tCL:" << program.command_line_call;
+
+            if (!program.previous.empty())
+                stream << "\tPP:" << program.previous;
+
+            if (!program.description.empty())
+                stream << "\tDS:" << program.description;
+
+            if (!program.version.empty())
+                stream << "\tVN:" << program.version;
+
+            detail::write_eol(stream_it, options.add_carriage_return);
+        }
+
+        // Write comment (@CO) lines if specified.
+        for (auto const & comment : header.comments)
+        {
+            stream << "@CO\t" << comment;
+            detail::write_eol(stream_it, options.add_carriage_return);
+        }
     }
 }
 
