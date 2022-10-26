@@ -364,7 +364,10 @@ TEST(interleaved_bloom_filter_test, decompression)
     seqan3::interleaved_bloom_filter ibf{seqan3::bin_count{64u}, seqan3::bin_size{1024u}};
 
     // Only use every other bin.
-    auto take_odd = [] (auto number) { return number & 1; };
+    auto take_odd = [](auto number)
+    {
+        return number & 1;
+    };
     for (size_t bin_idx : std::views::iota(0, 64) | std::views::filter(take_odd))
         for (size_t hash : std::views::iota(0, 64))
             ibf.emplace(hash, seqan3::bin_index{bin_idx});
