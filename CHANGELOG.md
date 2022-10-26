@@ -41,6 +41,11 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   * Char literals returning std::vector are now constexpr if supported by the compiler
     ([\#3073](https://github.com/seqan/seqan3/pull/3073)).
 
+#### Search
+
+* Added a constructor to the `seqan3::interleaved_bloom_filter` for decompressing a compressed
+  `seqan3::interleaved_bloom_filter` ([\#3082](https://github.com/seqan/seqan3/pull/3082)).
+
 ## Notable Bug-fixes
 
 #### I/O
