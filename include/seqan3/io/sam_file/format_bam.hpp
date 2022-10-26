@@ -730,8 +730,9 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type & st
     if constexpr (detail::decays_to_ignore_v<header_type>)
     {
         throw format_error{"BAM can only be written with a header but you did not provide enough information! "
-                           "You can either construct the output file with ref_ids and ref_seqs information and "
-                           "the header will be created for you, or you can access the `header` member directly."};
+                           "You can either construct the output file with reference names and reference length "
+                           "information and the header will be created for you, or you can access the `header` member "
+                           "directly."};
     }
     else
     {
