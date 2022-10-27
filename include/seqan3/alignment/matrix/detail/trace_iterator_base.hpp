@@ -157,7 +157,7 @@ public:
         {
             derived().go_up(matrix_iter);
             // Set new trace direction if last position was up_open.
-            if (static_cast<bool>(old_dir & trace_directions::up_open))
+            if (static_cast<bool>(old_dir & trace_directions::up_open) || !static_cast<bool>(old_dir & trace_directions::up))
                 set_trace_direction(*matrix_iter);
         }
         else if (current_direction == trace_directions::left)
