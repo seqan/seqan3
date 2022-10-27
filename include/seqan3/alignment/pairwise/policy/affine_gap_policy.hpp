@@ -121,6 +121,16 @@ private:
 
         score_cell.up = (score_cell.up < tmp) ? (trace_cell.up = trace_directions::up_open, tmp)
                                               : (trace_cell.up = trace_directions::up, score_cell.up);
+
+        if (trace_cell.up == trace_directions::up)
+        {
+            if ((trace_cell.current != trace_directions::up_open) && (trace_cell.current != trace_directions::up))
+            {
+            trace_cell.current = trace_directions::up_open;
+            score_cell.current = score_cell.up - cache.gap_extension_score;
+            }
+        }
+
         score_cell.w_left = (score_cell.w_left < tmp) ? (trace_cell.w_left = trace_directions::left_open, tmp)
                                                       : (trace_cell.w_left = trace_directions::left, score_cell.w_left);
     }
