@@ -126,8 +126,8 @@ private:
         {
             if ((trace_cell.current != trace_directions::up_open) && (trace_cell.current != trace_directions::up))
             {
-            trace_cell.current = trace_directions::up_open;
-            score_cell.current = score_cell.up - cache.gap_extension_score;
+                trace_cell.current = trace_directions::up_open;
+                score_cell.current = score_cell.up - cache.gap_extension_score;
             }
         }
 
