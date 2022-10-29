@@ -258,6 +258,18 @@ public:
     }
     //!\endcond
 
+    //!\brief Returns the maximum (closest to 0) mismatch score.
+    constexpr score_t max_mismatch_score() const noexcept
+    {
+        score_t const * start = &matrix[0][0];
+        score_t const * end = start + matrix_size * matrix_size;
+        score_t min_score{std::numeric_limits<score_t>::min()};
+        for (; start != end; ++start)
+            if (score_t score = *start; score < 0 && score > min_score)
+                min_score = score;
+        return min_score;
+    }
+
 private:
     //!\brief The actual data member.
     matrix_type matrix{};

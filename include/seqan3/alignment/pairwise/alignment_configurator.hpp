@@ -348,6 +348,12 @@ public:
             }
         }
 
+        if constexpr (cfg.template exists<align_cfg::output_alignment>())
+        {
+            if (scoring_scheme.max_mismatch_score() > gap_cost.open_score + 2 * gap_cost.extension_score)
+                throw invalid_alignment_configuration{"Cannot do traceback :( "};
+        }
+
         // ----------------------------------------------------------------------------
         // Check if invalid configuration was used.
         // ----------------------------------------------------------------------------
