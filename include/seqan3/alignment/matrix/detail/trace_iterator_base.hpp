@@ -114,7 +114,9 @@ public:
     /*!\name Associated types
      * \{
      */
-    using value_type = trace_directions;                 //!< The value type.
+    // Doxygen: https://github.com/seqan/product_backlog/issues/424
+    //!\brief The value type.
+    using value_type = trace_directions;
     using reference = trace_directions const &;          //!< The reference type.
     using pointer = value_type const *;                  //!< The pointer type.
     using difference_type = std::ptrdiff_t;              //!< The difference type.

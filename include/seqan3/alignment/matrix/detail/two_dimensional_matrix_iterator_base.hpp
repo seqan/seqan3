@@ -363,7 +363,7 @@ private:
         return static_cast<derived_t &>(*this);
     }
 
-    //!\copydoc as_derived
+    //!\copydoc seqan3::detail::two_dimensional_matrix_iterator_base::as_derived
     constexpr derived_t const & as_derived() const
     {
         return static_cast<derived_t const &>(*this);

@@ -44,7 +44,9 @@ private:
     //!\brief The base type.
     using base_t = alphabet_base<derived_type, size, char>;
 
-    //!\brief Befriend the base type so it can access #char_to_rank and #rank_to_char.
+    /*!\brief Befriend the base type so it can access seqan3::alphabet_base::char_to_rank
+     *        and seqan3::alphabet_base::rank_to_char.
+     */
     friend base_t;
 
     /*!\name Constructors, destructor and assignment

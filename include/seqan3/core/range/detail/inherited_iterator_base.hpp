@@ -95,13 +95,13 @@ public:
     //!\brief Delegate to base class if inheriting from non-pointer iterator.
     constexpr inherited_iterator_base(base_t it) noexcept(std::is_nothrow_move_constructible_v<base_t>)
         requires (!wrap_base)
-    : base_t{std::move(it)}
+        : base_t{std::move(it)}
     {}
 
     //!\brief Initialise member if deriving from pointer.
     constexpr inherited_iterator_base(base_t it) noexcept
         requires wrap_base
-    : member{std::move(it)}
+        : member{std::move(it)}
     {}
     //!\}
 
@@ -376,7 +376,7 @@ private:
             return *this;
     }
 
-    //!\copydoc as_base
+    //!\copydoc seqan3::detail::inherited_iterator_base::as_base
     constexpr base_t const & as_base() const & noexcept
     {
         if constexpr (wrap_base)
@@ -391,7 +391,7 @@ private:
         return static_cast<derived_t *>(this);
     }
 
-    //!\copydoc this_derived
+    //!\copydoc seqan3::detail::inherited_iterator_base::this_derived
     constexpr derived_t const * this_derived() const
     {
         return static_cast<derived_t const *>(this);

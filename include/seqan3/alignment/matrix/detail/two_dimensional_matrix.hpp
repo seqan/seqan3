@@ -78,7 +78,9 @@ public:
     /*!\name Associated types
      * \{
      */
-    using value_type = typename storage_type::value_type;           //!< The value type.
+    // Doxygen: https://github.com/seqan/product_backlog/issues/424
+    //!\brief The value type.
+    using value_type = typename storage_type::value_type;
     using reference = typename storage_type::reference;             //!< The reference type.
     using const_reference = typename storage_type::const_reference; //!< The const reference type.
     using pointer = typename storage_type::pointer;                 //!< The pointer type.
@@ -194,7 +196,7 @@ public:
                                  column_index_type{static_cast<std::ptrdiff_t>(coordinate.col)}});
     }
 
-    //!\copydoc operator[]
+    //!\copydoc seqan3::detail::two_dimensional_matrix::operator[]
     constexpr const_reference operator[](matrix_coordinate const & coordinate) const noexcept
     {
         assert(coordinate.col < cols());
@@ -377,7 +379,7 @@ public:
     //!\brief Construction of cons-iterator from non-const-iterator.
     constexpr basic_iterator(basic_iterator<!const_range> const & other) noexcept
         requires const_range
-    : matrix_ptr{other.matrix_ptr}, host_iter{other.host_iter}
+        : matrix_ptr{other.matrix_ptr}, host_iter{other.host_iter}
     {}
     //!\}
 
