@@ -17,6 +17,7 @@
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alignment/decorator/gap_decorator.hpp>
 #include <seqan3/alphabet/cigar/cigar.hpp>
+#include <seqan3/io/sam_file/detail/cigar.hpp>
 #include <seqan3/utility/views/slice.hpp>
 
 namespace seqan3
@@ -221,6 +222,18 @@ inline auto alignment_from_cigar(std::vector<cigar> const & cigar_vector,
     }
 
     return alignment;
+}
+
+/*!\overload
+ * \ingroup cigar_conversion
+ */
+template <typename reference_type, typename sequence_type>
+inline auto alignment_from_cigar(std::string const & cigar_string,
+                                 reference_type const & reference,
+                                 uint32_t const zero_based_reference_start_position,
+                                 sequence_type const & query)
+{
+    alignment_from_cigar(detail::parse_cigar(cigar_string), reference, zero_based_reference_start_position, query);
 }
 
 } // namespace seqan3
