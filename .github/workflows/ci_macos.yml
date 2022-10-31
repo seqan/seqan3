@@ -103,7 +103,6 @@ jobs:
         run: |
           env cmake --version
           env ${{ matrix.cxx }} --version
-          sudo xcode-select -s '/Applications/Xcode_13.4.1.app/Contents/Developer' # https://github.com/actions/runner-images/issues/6350
 
       - name: Configure tests
         env:
