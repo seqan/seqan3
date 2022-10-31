@@ -113,7 +113,7 @@ namespace seqan3
  *
  * \remark For a complete overview, take a look at \ref io_sam_file
  */
-class format_sam : private detail::format_sam_base
+class format_sam : protected detail::format_sam_base
 {
 public:
     /*!\name Constructors, destructor and assignment

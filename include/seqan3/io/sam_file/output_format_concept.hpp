@@ -38,8 +38,8 @@ namespace seqan3::detail
  *
  * \details
  *
- * Exposes the protected member function `write_alignment_record` from the given `format_type`, such that the file can
- * call the proper function for the selected format.
+ * Exposes the protected member function `write_alignment_record` and `write_header` from the given `format_type`, such
+ * that the file can call the proper function for the selected format.
  *
  * \remark For a complete overview, take a look at \ref io_sam_file
  */
@@ -54,6 +54,13 @@ public:
     void write_alignment_record(ts &&... args)
     {
         format_type::write_alignment_record(std::forward<ts>(args)...);
+    }
+
+    //!\brief Forwards to `format_type::write_header`.
+    template <typename stream_t, typename header_type>
+    void write_header(stream_t & stream, sam_file_output_options const & options, header_type & header)
+    {
+        format_type::write_header(stream, options, header);
     }
 };
 

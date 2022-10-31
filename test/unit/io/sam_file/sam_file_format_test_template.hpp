@@ -441,6 +441,17 @@ TYPED_TEST_P(sam_file_write, output_concept)
     EXPECT_TRUE((seqan3::sam_file_output_format<TypeParam>));
 }
 
+TYPED_TEST_P(sam_file_write, no_records)
+{
+    {
+        auto ref_lengths = this->ref_sequences | std::views::transform([] (auto const & v) { return v.size(); });
+        seqan3::sam_file_output fout{this->ostream, this->ref_ids, ref_lengths, TypeParam{}, sam_fields{}};
+    }
+
+    this->ostream.flush();
+    EXPECT_EQ(this->ostream.str(), this->minimal_header);
+}
+
 TYPED_TEST_P(sam_file_write, write_empty_members)
 {
     {
@@ -708,7 +719,8 @@ TYPED_TEST_P(sam_file_write, special_cases)
 
 TYPED_TEST_P(sam_file_write, format_errors)
 {
-    seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+    auto ref_lengths = this->ref_sequences | std::views::transform([] (auto const & v) { return v.size(); });
+    seqan3::sam_file_output fout{this->ostream, this->ref_ids, ref_lengths, TypeParam{}, sam_fields{}};
 
     // ensure that only a ref_id that is listed in the header is allowed
     EXPECT_THROW(fout.emplace_back(&(this->header),
@@ -757,6 +769,7 @@ REGISTER_TYPED_TEST_SUITE_P(sam_file_read,
                             issue2423);
 
 REGISTER_TYPED_TEST_SUITE_P(sam_file_write,
+                            no_records,
                             write_empty_members,
                             output_concept,
                             default_options_all_members_specified,

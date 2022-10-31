@@ -27,10 +27,18 @@ struct sam_file_read<seqan3::format_bam> : public sam_file_data
     // pass --no-PG to samtools if you do not want PG tags which may be added automatically
 
     // To print out something like the below strings, store a file in SAM format (e.g. test.sam)
+    // transform it to BAM via
+    // samtools view --no-PG -b test.sam > test.bam
     // and use the folliwng commandline call:
     // samtools view --no-PG -u test.bam | bgzip -d | hexdump -v -e '"\\\x" 1/1 "%02x"' | sed 's;\\;Y, Y\\;g' | sed 's;$;Y;' | tr 'Y' "'" | cut -c 4- | sed -e "s/.\{112\}/&\n/g"
 
     using stream_type = std::istringstream;
+
+    std::string minimal_header{'\x42', '\x41', '\x4d', '\x01', '\x1c', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44',
+                               '\x09', '\x56', '\x4e', '\x3a', '\x31', '\x2e', '\x36', '\x0a', '\x40', '\x53', '\x51',
+                               '\x09', '\x53', '\x4e', '\x3a', '\x72', '\x65', '\x66', '\x09', '\x4c', '\x4e', '\x3a',
+                               '\x33', '\x34', '\x0a', '\x01', '\x00', '\x00', '\x00', '\x04', '\x00', '\x00', '\x00',
+                               '\x72', '\x65', '\x66', '\x00', '\x22', '\x00', '\x00', '\x00'};
 
     std::string big_header_input{
         '\x42', '\x41', '\x4D', '\x01', '\xB7', '\x01', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56', '\x4E',

@@ -43,6 +43,10 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## Notable Bug-fixes
 
+#### I/O
+* Empty SAM/BAM files must at least write a header to ensure a valid file
+  ([\#3081](https://github.com/seqan/seqan3/pull/3081)).
+
 ## API changes
 
 #### Dependencies

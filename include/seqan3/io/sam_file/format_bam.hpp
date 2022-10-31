@@ -137,6 +137,10 @@ protected:
                                 [[maybe_unused]] double SEQAN3_DOXYGEN_ONLY(e_value),
                                 [[maybe_unused]] double SEQAN3_DOXYGEN_ONLY(bit_score));
 
+    //!\privatesection
+    template <typename stream_t, typename header_type>
+    void write_header(stream_t & stream, sam_file_output_options const & options, header_type & header);
+
 private:
     //!\brief A variable that tracks whether the content of header has been read or not.
     bool header_was_read{false};
@@ -726,8 +730,9 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type & st
     if constexpr (detail::decays_to_ignore_v<header_type>)
     {
         throw format_error{"BAM can only be written with a header but you did not provide enough information! "
-                           "You can either construct the output file with ref_ids and ref_seqs information and "
-                           "the header will be created for you, or you can access the `header` member directly."};
+                           "You can either construct the output file with reference names and reference length "
+                           "information and the header will be created for you, or you can access the `header` member "
+                           "directly."};
     }
     else
     {
@@ -745,28 +750,7 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type & st
         // ---------------------------------------------------------------------
         if (!header_was_written)
         {
-            stream << "BAM\1";
-            std::ostringstream os;
-            write_header(os, options, header); // write SAM header to temporary stream to query the size.
-            int32_t l_text{static_cast<int32_t>(os.str().size())};
-            std::ranges::copy_n(reinterpret_cast<char *>(&l_text), 4, stream_it); // write read id
-
-            stream << os.str();
-
-            int32_t n_ref{static_cast<int32_t>(header.ref_ids().size())};
-            std::ranges::copy_n(reinterpret_cast<char *>(&n_ref), 4, stream_it); // write read id
-
-            for (int32_t ridx = 0; ridx < n_ref; ++ridx)
-            {
-                int32_t l_name{static_cast<int32_t>(header.ref_ids()[ridx].size()) + 1}; // plus null character
-                std::ranges::copy_n(reinterpret_cast<char *>(&l_name), 4, stream_it);    // write l_name
-                // write reference name:
-                std::ranges::copy(header.ref_ids()[ridx].begin(), header.ref_ids()[ridx].end(), stream_it);
-                stream_it = '\0';
-                // write reference sequence length:
-                std::ranges::copy_n(reinterpret_cast<char *>(&get<0>(header.ref_id_info[ridx])), 4, stream_it);
-            }
-
+            write_header(stream, options, header);
             header_was_written = true;
         }
 
@@ -959,6 +943,58 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type & st
         // write optional fields
         stream << tag_dict_binary_str;
     } // if constexpr (!detail::decays_to_ignore_v<header_type>)
+}
+
+//!\copydoc seqan3::detail::format_sam_base::write_header
+template <typename stream_t, typename header_type>
+inline void format_bam::write_header(stream_t & stream, sam_file_output_options const & options, header_type & header)
+{
+    if constexpr (detail::decays_to_ignore_v<header_type>)
+    {
+        throw format_error{"BAM can only be written with a header but you did not provide enough information! "
+                           "You can either construct the output file with reference names and reference length "
+                           "information and the header will be created for you, or you can access the `header` member "
+                           "directly."};
+    }
+    else
+    {
+        detail::fast_ostreambuf_iterator stream_it{*stream.rdbuf()};
+
+        std::ranges::copy_n("BAM\1", 4, stream_it); // Do not copy the null terminator
+
+        // write SAM header to temporary stream first to query its size.
+        std::ostringstream os;
+        detail::format_sam_base::write_header(os, options, header);
+#if SEQAN3_COMPILER_IS_GCC && (__GNUC__ == 10)
+        int32_t const l_text{static_cast<int32_t>(os.str().size())};
+#else
+        int32_t const l_text{static_cast<int32_t>(os.view().size())};
+#endif
+        std::ranges::copy_n(reinterpret_cast<char const *>(&l_text), 4, stream_it); // write text length
+
+#if SEQAN3_COMPILER_IS_GCC && (__GNUC__ == 10)
+        auto header_view = os.str();
+#else
+        auto header_view = os.view();
+#endif
+        std::ranges::copy(header_view, stream_it);
+
+        assert(header.ref_ids().size() < (1ull << 32));
+        int32_t const n_ref{static_cast<int32_t>(header.ref_ids().size())};
+        std::ranges::copy_n(reinterpret_cast<char const *>(&n_ref), 4, stream_it); // write number of references
+
+        for (int32_t ridx = 0; ridx < n_ref; ++ridx)
+        {
+            assert(header.ref_ids()[ridx].size() + 1 < (1ull << 32));
+            int32_t const l_name{static_cast<int32_t>(header.ref_ids()[ridx].size()) + 1}; // plus null character
+            std::ranges::copy_n(reinterpret_cast<char const *>(&l_name), 4, stream_it);    // write l_name
+            // write reference name:
+            std::ranges::copy(header.ref_ids()[ridx], stream_it);
+            stream_it = '\0'; // ++ is not necessary for ostream_iterator
+            // write reference sequence length:
+            std::ranges::copy_n(reinterpret_cast<char *>(&get<0>(header.ref_id_info[ridx])), 4, stream_it);
+        }
+    }
 }
 
 //!\copydoc seqan3::format_sam::read_sam_dict_vector
