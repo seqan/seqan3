@@ -10,7 +10,6 @@
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/views/rank_to.hpp>
-#include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/seqan2.hpp>

@@ -18,7 +18,7 @@
 #include <seqan3/core/algorithm/algorithm_result_generator_range.hpp>
 #include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
-#include <seqan3/core/detail/persist_view.hpp>
+#include <seqan3/core/detail/all_view.hpp>
 #include <seqan3/search/configuration/default_configuration.hpp>
 #include <seqan3/search/configuration/on_result.hpp>
 #include <seqan3/search/configuration/parallel.hpp>
@@ -213,7 +213,7 @@ inline auto search(std::initializer_list<char const * const> const & queries,
                           {
                               query.push_back(std::string_view{q});
                           });
-    return search(std::move(query) | detail::persist, index, cfg);
+    return search(std::move(query) | seqan3::detail::all, index, cfg);
 }
 //!\endcond
 
