@@ -5,5 +5,5 @@
 
 int main()
 {
-    simd_dna4 [[maybe_unused]] letter{};
+    [[maybe_unused]] simd_dna4 letter{};
 }
