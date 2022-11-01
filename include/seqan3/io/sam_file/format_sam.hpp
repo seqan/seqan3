@@ -294,7 +294,6 @@ inline void format_sam::read_sequence_record(stream_type & stream,
                               std::ignore,
                               std::ignore,
                               std::ignore,
-                              std::ignore,
                               std::ignore);
     }
 
