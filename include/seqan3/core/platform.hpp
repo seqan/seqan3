@@ -87,7 +87,7 @@
 #        if (__GNUC__ > 12)
 #            pragma message                                                                                            \
                 "Your compiler is newer than the latest supported compiler of this SeqAn version (gcc-12). It might be that SeqAn does not compile due to this. You can disable this warning by setting -DSEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC."
-#        endif(__GNUC__ > 12)
+#        endif // (__GNUC__ > 12)
 #    endif // SEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC
 
 // ============================================================================
