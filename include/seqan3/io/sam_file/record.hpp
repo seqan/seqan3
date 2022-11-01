@@ -154,8 +154,7 @@ public:
 
     /*!\brief [DEPRECATED] The (pairwise) alignment stored in an object that models seqan3::detail::pairwise_alignment.
      *
-     * This member is deprecated. Please access `cigar()` and then use `seqan3::alignment_from_cigar` to retrieve the
-     * alignment.
+     *\deprecated Please access `cigar()` and then use `seqan3::alignment_from_cigar` to retrieve the alignment.
      */
     SEQAN3_DEPRECATED_340 decltype(auto) alignment() &&
     {}
