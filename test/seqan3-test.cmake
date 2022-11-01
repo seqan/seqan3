@@ -79,7 +79,7 @@ endif ()
 # needed for performance test cases in seqan3/test/performance
 if (NOT TARGET seqan3::test::performance)
     add_library (seqan3_test_performance INTERFACE)
-    target_link_libraries (seqan3_test_performance INTERFACE "seqan3::test" "gbenchmark")
+    target_link_libraries (seqan3_test_performance INTERFACE "seqan3::test" "benchmark_main" "benchmark")
 
     if (SEQAN3_BENCHMARK_ALIGN_LOOPS)
         target_compile_options (seqan3_test_performance INTERFACE "-falign-loops=32")
