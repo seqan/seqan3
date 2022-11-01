@@ -114,7 +114,7 @@ TEST_F(sam_record, definition_tuple_traits)
     EXPECT_SAME_TYPE(std::vector<seqan3::cigar>, (std::tuple_element_t<9, record_type>));
     EXPECT_SAME_TYPE(seqan3::sam_tag_dictionary, (std::tuple_element_t<10, record_type>));
 
-    EXPECT_EQ(std::tuple_size_v<record_type>, 12ul);
+    EXPECT_EQ(std::tuple_size_v<record_type>, 11ul);
 
     EXPECT_TRUE(seqan3::tuple_like<record_type>);
 }

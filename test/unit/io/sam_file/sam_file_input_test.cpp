@@ -141,7 +141,6 @@ TEST_F(sam_file_input_f, default_template_args_and_deduction_guides)
     using comp0 = seqan3::sam_file_input_default_traits<>;
     using comp1 = seqan3::fields<seqan3::field::seq,
                                  seqan3::field::id,
-                                 seqan3::field::offset,
                                  seqan3::field::ref_id,
                                  seqan3::field::ref_offset,
                                  seqan3::field::cigar,
