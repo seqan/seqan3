@@ -77,7 +77,6 @@ protected:
               typename ref_seq_type,
               typename ref_id_type,
               typename ref_offset_type,
-              typename align_type,
               typename cigar_type,
               typename flag_type,
               typename mapq_type,
@@ -98,7 +97,6 @@ protected:
                                ref_seq_type & SEQAN3_DOXYGEN_ONLY(ref_seq),
                                ref_id_type & ref_id,
                                ref_offset_type & ref_offset,
-                               align_type & align,
                                cigar_type & cigar_vector,
                                flag_type & flag,
                                mapq_type & mapq,
@@ -113,7 +111,6 @@ protected:
               typename id_type,
               typename ref_seq_type,
               typename ref_id_type,
-              typename align_type,
               typename cigar_type,
               typename qual_type,
               typename mate_type,
@@ -128,7 +125,6 @@ protected:
                                 [[maybe_unused]] ref_seq_type && SEQAN3_DOXYGEN_ONLY(ref_seq),
                                 [[maybe_unused]] ref_id_type && ref_id,
                                 [[maybe_unused]] std::optional<int32_t> ref_offset,
-                                [[maybe_unused]] align_type && align,
                                 [[maybe_unused]] cigar_type && cigar_vector,
                                 [[maybe_unused]] sam_flag const flag,
                                 [[maybe_unused]] uint8_t const mapq,
@@ -255,7 +251,6 @@ template <typename stream_type, // constraints checked by file
           typename ref_seq_type,
           typename ref_id_type,
           typename ref_offset_type,
-          typename align_type,
           typename cigar_type,
           typename flag_type,
           typename mapq_type,
@@ -277,7 +272,6 @@ format_bam::read_alignment_record(stream_type & stream,
                                   ref_seq_type & SEQAN3_DOXYGEN_ONLY(ref_seq),
                                   ref_id_type & ref_id,
                                   ref_offset_type & ref_offset,
-                                  align_type & align,
                                   cigar_type & cigar_vector,
                                   flag_type & flag,
                                   mapq_type & mapq,
@@ -298,11 +292,8 @@ format_bam::read_alignment_record(stream_type & stream,
 
     auto stream_view = seqan3::detail::istreambuf(stream);
 
-    // these variables need to be stored to compute the ALIGNMENT
-    [[maybe_unused]] int32_t offset_tmp{};
-    [[maybe_unused]] int32_t soft_clipping_end{};
-    [[maybe_unused]] std::vector<cigar> tmp_cigar_vector{};
-    [[maybe_unused]] int32_t ref_length{0}, seq_length{0}; // length of aligned part for ref and query
+    [[maybe_unused]] int32_t offset_tmp{}; // needed in case the cigar string was stored in the tag dictionary
+    [[maybe_unused]] int32_t ref_length{}; // needed in case the cigar string was stored in the tag dictionary
 
     // Header
     // -------------------------------------------------------------------------------------------------------------
@@ -434,11 +425,12 @@ format_bam::read_alignment_record(stream_type & stream,
 
     // read cigar string
     // -------------------------------------------------------------------------------------------------------------
-    if constexpr (!detail::decays_to_ignore_v<align_type> || !detail::decays_to_ignore_v<cigar_type>)
+    if constexpr (!detail::decays_to_ignore_v<cigar_type>)
     {
-        std::tie(tmp_cigar_vector, ref_length, seq_length) = parse_binary_cigar(stream_view, core.n_cigar_op);
-        transfer_soft_clipping_to(tmp_cigar_vector, offset_tmp, soft_clipping_end);
-        // the actual cigar_vector is swapped with tmp_cigar_vector at the end to avoid copying
+        int32_t seq_length{};
+        std::tie(cigar_vector, ref_length, seq_length) = parse_binary_cigar(stream_view, core.n_cigar_op);
+        int32_t soft_clipping_end{};
+        transfer_soft_clipping_to(cigar_vector, offset_tmp, soft_clipping_end);
     }
     else
     {
@@ -468,56 +460,7 @@ format_bam::read_alignment_record(stream_type & stream,
                     ++std::ranges::begin(stream_view);
             };
 
-            if constexpr (!detail::decays_to_ignore_v<align_type>)
-            {
-                static_assert(sequence_container<std::remove_reference_t<decltype(get<1>(align))>>,
-                              "If you want to read ALIGNMENT but not SEQ, the alignment"
-                              " object must store a sequence container at the second (query) position.");
-
-                if (!tmp_cigar_vector.empty()) // only parse alignment if cigar information was given
-                {
-                    assert(core.l_seq == (seq_length + offset_tmp + soft_clipping_end)); // sanity check
-                    using alph_t = std::ranges::range_value_t<decltype(get<1>(align))>;
-                    constexpr auto from_dna16 = detail::convert_through_char_representation<dna16sam, alph_t>;
-
-                    get<1>(align).reserve(seq_length);
-
-                    auto tmp_iter = std::ranges::begin(seq_stream);
-                    std::ranges::advance(tmp_iter, offset_tmp / 2); // skip soft clipped bases at the beginning
-
-                    if (offset_tmp & 1)
-                    {
-                        get<1>(align).push_back(from_dna16[to_rank(get<1>(*tmp_iter))]);
-                        ++tmp_iter;
-                        --seq_length;
-                    }
-
-                    for (size_t i = (seq_length / 2); i > 0; --i)
-                    {
-                        get<1>(align).push_back(from_dna16[to_rank(get<0>(*tmp_iter))]);
-                        get<1>(align).push_back(from_dna16[to_rank(get<1>(*tmp_iter))]);
-                        ++tmp_iter;
-                    }
-
-                    if (seq_length & 1)
-                    {
-                        get<1>(align).push_back(from_dna16[to_rank(get<0>(*tmp_iter))]);
-                        ++tmp_iter;
-                        --soft_clipping_end;
-                    }
-
-                    std::ranges::advance(tmp_iter, (soft_clipping_end + !(seq_length & 1)) / 2);
-                }
-                else
-                {
-                    skip_sequence_bytes();
-                    get<1>(align) = std::remove_reference_t<decltype(get<1>(align))>{}; // assign empty container
-                }
-            }
-            else
-            {
-                skip_sequence_bytes();
-            }
+            skip_sequence_bytes();
         }
         else
         {
@@ -536,14 +479,6 @@ format_bam::read_alignment_record(stream_type & stream,
                     dna16sam{}.assign_rank(std::min(15, static_cast<uint8_t>(*std::ranges::begin(stream_view)) >> 4));
                 seq.push_back(from_dna16[to_rank(d)]);
                 ++std::ranges::begin(stream_view);
-            }
-
-            if constexpr (!detail::decays_to_ignore_v<align_type>)
-            {
-                assign_unaligned(get<1>(align),
-                                 seq
-                                     | views::slice(static_cast<std::ranges::range_difference_t<seq_type>>(offset_tmp),
-                                                    std::ranges::distance(seq) - soft_clipping_end));
             }
         }
     }
@@ -578,7 +513,7 @@ format_bam::read_alignment_record(stream_type & stream,
 
     // DONE READING - wrap up
     // -------------------------------------------------------------------------------------------------------------
-    if constexpr (!detail::decays_to_ignore_v<align_type> || !detail::decays_to_ignore_v<cigar_type>)
+    if constexpr (!detail::decays_to_ignore_v<cigar_type>)
     {
         // Check cigar, if it matches ‘kSmN’, where ‘k’ equals lseq, ‘m’ is the reference sequence length in the
         // alignment, and ‘S’ and ‘N’ are the soft-clipping and reference-clip, then the cigar string was larger
@@ -611,29 +546,15 @@ format_bam::read_alignment_record(stream_type & stream,
                         "record.")};
 
                 auto cigar_view = std::views::all(std::get<std::string>(it->second));
-                std::tie(tmp_cigar_vector, ref_length, seq_length) = detail::parse_cigar(cigar_view);
-                offset_tmp = soft_clipping_end = 0;
-                transfer_soft_clipping_to(tmp_cigar_vector, offset_tmp, soft_clipping_end);
+                int32_t seq_length{};
+                std::tie(cigar_vector, ref_length, seq_length) = detail::parse_cigar(cigar_view);
+                offset_tmp = 0;
+                int32_t soft_clipping_end{};
+                transfer_soft_clipping_to(cigar_vector, offset_tmp, soft_clipping_end);
                 tag_dict.erase(it); // remove redundant information
-
-                if constexpr (!detail::decays_to_ignore_v<align_type>)
-                {
-                    assign_unaligned(
-                        get<1>(align),
-                        seq
-                            | views::slice(static_cast<std::ranges::range_difference_t<seq_type>>(offset_tmp),
-                                           std::ranges::distance(seq) - soft_clipping_end));
-                }
             }
         }
     }
-
-    // Alignment object construction
-    if constexpr (!detail::decays_to_ignore_v<align_type>)
-        construct_alignment(align, tmp_cigar_vector, core.refID, ref_seqs, core.pos, ref_length); // inherited from SAM
-
-    if constexpr (!detail::decays_to_ignore_v<cigar_type>)
-        std::swap(cigar_vector, tmp_cigar_vector);
 }
 
 //!\copydoc seqan3::sam_file_output_format::write_alignment_record
@@ -643,7 +564,6 @@ template <typename stream_type,
           typename id_type,
           typename ref_seq_type,
           typename ref_id_type,
-          typename align_type,
           typename cigar_type,
           typename qual_type,
           typename mate_type,
@@ -658,7 +578,6 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type & st
                                                [[maybe_unused]] ref_seq_type && SEQAN3_DOXYGEN_ONLY(ref_seq),
                                                [[maybe_unused]] ref_id_type && ref_id,
                                                [[maybe_unused]] std::optional<int32_t> ref_offset,
-                                               [[maybe_unused]] align_type && align,
                                                [[maybe_unused]] cigar_type && cigar_vector,
                                                [[maybe_unused]] sam_flag const flag,
                                                [[maybe_unused]] uint8_t const mapq,
@@ -689,16 +608,6 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type & st
                       "The ref_id object must be a std::ranges::forward_range "
                       "over letters that model seqan3::alphabet or an integral or a std::optional<integral>.");
     }
-
-    static_assert(tuple_like<std::remove_cvref_t<align_type>>,
-                  "The align object must be a std::pair of two ranges whose "
-                  "value_type is comparable to seqan3::gap");
-
-    static_assert((std::tuple_size_v<std::remove_cvref_t<align_type>> == 2
-                   && std::equality_comparable_with<gap, std::ranges::range_reference_t<decltype(std::get<0>(align))>>
-                   && std::equality_comparable_with<gap, std::ranges::range_reference_t<decltype(std::get<1>(align))>>),
-                  "The align object must be a std::pair of two ranges whose "
-                  "value_type is comparable to seqan3::gap");
 
     static_assert((std::ranges::forward_range<qual_type> && alphabet<std::ranges::range_reference_t<qual_type>>),
                   "The qual object must be a std::ranges::forward_range "
@@ -759,30 +668,12 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type & st
         // ---------------------------------------------------------------------
         int32_t ref_length{};
 
-        // if alignment is non-empty, replace cigar_vector.
-        // else, compute the ref_length from given cigar_vector which is needed to fill field `bin`.
+        // Compute the ref_length from given cigar_vector which is needed to fill field `bin`.
         if (!std::ranges::empty(cigar_vector))
         {
             int32_t dummy_seq_length{};
             for (auto & [count, operation] : cigar_vector)
                 detail::update_alignment_lengths(ref_length, dummy_seq_length, operation.to_char(), count);
-        }
-        else if (!std::ranges::empty(get<0>(align)) && !std::ranges::empty(get<1>(align)))
-        {
-            ref_length = std::ranges::distance(get<1>(align));
-
-            // compute possible distance from alignment end to sequence end
-            // which indicates soft clipping at the end.
-            // This should be replaced by a free count_gaps function for
-            // aligned sequences which is more efficient if possible.
-            int32_t off_end{static_cast<int32_t>(std::ranges::distance(seq)) - offset};
-
-            for (auto chr : get<1>(align))
-                if (chr == gap{})
-                    ++off_end;
-
-            off_end -= ref_length;
-            cigar_vector = detail::get_cigar_vector(align, offset, off_end);
         }
 
         if (cigar_vector.size() >= (1 << 16)) // must be written into the sam tag CG
@@ -790,7 +681,7 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type & st
             tag_dict["CG"_tag] = detail::get_cigar_string(cigar_vector);
             cigar_vector.resize(2);
             cigar_vector[0] = cigar{static_cast<uint32_t>(std::ranges::distance(seq)), 'S'_cigar_operation};
-            cigar_vector[1] = cigar{static_cast<uint32_t>(std::ranges::distance(get<1>(align))), 'N'_cigar_operation};
+            cigar_vector[1] = cigar{static_cast<uint32_t>(ref_length), 'N'_cigar_operation};
         }
 
         std::string tag_dict_binary_str = get_tag_dict_str(tag_dict);

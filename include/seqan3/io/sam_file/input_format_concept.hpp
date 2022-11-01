@@ -32,7 +32,7 @@
 namespace seqan3::detail
 {
 
-/*!\brief Internal class used to expose the actual format interface to read alignment records from the file.
+/*!\brief Internal class used to expose the actual format interface to read SAM records from the file.
  * \ingroup io_sam_file
  *
  * \tparam format_type The type of the format to be exposed.
@@ -88,7 +88,6 @@ concept sam_file_input_format = requires (detail::sam_file_input_format_exposer<
                                           dna5_vector & ref_seq,
                                           std::optional<int32_t> & ref_id,
                                           std::optional<int32_t> & ref_offset,
-                                          std::pair<std::vector<gapped<dna4>>, std::vector<gapped<dna4>>> & align,
                                           std::vector<cigar> & cigar,
                                           sam_flag & flag,
                                           uint8_t & mapq,
@@ -112,7 +111,6 @@ concept sam_file_input_format = requires (detail::sam_file_input_format_exposer<
                                                                 ref_seq,
                                                                 ref_id,
                                                                 ref_offset,
-                                                                align,
                                                                 cigar,
                                                                 flag,
                                                                 mapq,
@@ -128,7 +126,6 @@ concept sam_file_input_format = requires (detail::sam_file_input_format_exposer<
                                                                 std::ignore,
                                                                 header,
                                                                 position_buffer,
-                                                                std::ignore,
                                                                 std::ignore,
                                                                 std::ignore,
                                                                 std::ignore,
@@ -172,7 +169,6 @@ class sam_file_input_format
  *                                ref_seq_type & ref_seq,
  *                                ref_id_type & ref_id,
  *                                ref_offset_type & ref_offset,
- *                                align_type & align,
  *                                cigar_type & cigar_vector,
  *                                flag_type & flag,
  *                                mapq_type & mapq,
@@ -191,7 +187,6 @@ class sam_file_input_format
  * \tparam ref_seq_type       Type of the seqan3::field::ref_seq input (see seqan3::sam_file_input_traits).
  * \tparam ref_id_type        Type of the seqan3::field::ref_id input (see seqan3::sam_file_input_traits).
  * \tparam ref_offset_type    Type of the seqan3::field::ref_offset input (see seqan3::sam_file_input_traits).
- * \tparam align_type         Type of the seqan3::field::alignment input (see seqan3::sam_file_input_traits).
  * \tparam cigar_type         Type of the seqan3::field::cigar input (a std::vector<cigar> or std::ignore).
  * \tparam flag_type          Type of the seqan3::field::flag input (see seqan3::sam_file_input_traits).
  * \tparam mapq_type          Type of the seqan3::field::mapq input (see seqan3::sam_file_input_traits).
@@ -212,7 +207,6 @@ class sam_file_input_format
  * \param[out]    ref_seq     The buffer for seqan3::field::ref_seq input.
  * \param[out]    ref_id      The buffer for seqan3::field::ref_id input.
  * \param[out]    ref_offset  The buffer for seqan3::field::ref_offset input.
- * \param[out]    align       The buffer for seqan3::field::alignment input.
  * \param[out]    cigar_vector The buffer for seqan3::field::cigar input.
  * \param[out]    flag        The buffer for seqan3::field::flag input.
  * \param[out]    mapq        The buffer for seqan3::field::mapq input.

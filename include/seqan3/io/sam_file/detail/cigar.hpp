@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Auxiliary functions for the alignment IO.
+ * \brief Auxiliary functions for the SAM IO.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
@@ -40,60 +40,6 @@ struct view_equality_fn
         return std::ranges::equal(rng1, rng2);
     }
 };
-
-/*!\brief Compares two seqan3::aligned_sequence values and returns their cigar operation.
- * \ingroup io_sam_file
- * \tparam reference_char_type Must be equality comparable to seqan3::gap.
- * \tparam query_char_type     Must be equality comparable to seqan3::gap.
- * \param  reference_char      The aligned character of the reference to compare.
- * \param  query_char          The aligned character of the query to compare.
- * \param  extended_cigar      Whether to print the extended cigar alphabet or not. See cigar operation.
- * \returns A seqan3::cigar::operation representing the alignment operation between the two values.
- *
- * \details
- *
- * \note The resulting cigar operation is based on the query character (`query_char`).
- *
- * ### Example:
- *
- * The following alignment column shows the reference char ('C') on top and a
- * gap for the query char at the bottom.
- * ```
- * ... C ...
- *     |
- * ... - ...
- * ```
- * In this case, the function seqan3::detail::map_aligned_values_to_cigar_op will return
- * 'D' since the query char is "deleted".
- *
- * The next alignment column shows the reference char ('C') on top and a
- * query char ('G') at the bottom.
- * ```
- * ... C ...
- *     |
- * ... G ...
- * ```
- * In this case, the function seqan3::detail::map_aligned_values_to_cigar_op will return
- * 'M', for the basic cigar the two bases are aligned, while
- * in the extended cigar alphabet (`extended_cigar` = `true`) the function
- * will return an 'X' since the bases are aligned but are not
- * equal.
- * \sa seqan3::aligned_sequence
- */
-template <typename reference_char_type, typename query_char_type>
-[[nodiscard]] constexpr cigar::operation map_aligned_values_to_cigar_op(reference_char_type const reference_char,
-                                                                        query_char_type const query_char,
-                                                                        bool const extended_cigar)
-    requires seqan3::detail::weakly_equality_comparable_with<reference_char_type, gap>
-          && seqan3::detail::weakly_equality_comparable_with<query_char_type, gap>
-{
-    constexpr std::array<char, 6> operators{'M', 'D', 'I', 'P', 'X', '='}; // contains the possible cigar operators.
-    uint8_t key = (static_cast<uint8_t>(reference_char == gap{}) << 1) | static_cast<uint8_t>(query_char == gap{});
-    if (extended_cigar && (key == 0)) // in extended format refine the substitution operator to match/mismatch.
-        key |= ((1 << 2) | static_cast<uint8_t>(query_char == reference_char)); // maps to [4, 5].
-
-    return assign_char_to(operators[key], cigar::operation{});
-}
 
 /*!\brief Updates the sequence lengths by `cigar_count` depending on the cigar operation `op`.
  * \ingroup io_sam_file
@@ -174,100 +120,6 @@ SEQAN3_WORKAROUND_LITERAL std::tuple<std::vector<cigar>, int32_t, int32_t> parse
     return {operations, ref_length, seq_length};
 }
 
-/*!\brief Creates a cigar string (SAM format) given a seqan3::detail::pairwise_alignment represented by two
- *        seqan3::aligned_sequence's.
- * \ingroup io_sam_file
- *
- * \tparam alignment_type  Must model seqan3::detail::pairwise_alignment.
- * \param  alignment       The alignment, represented by a pair of aligned sequences,
- *                         to be transformed into cigar vector based on the
- *                         second (query) sequence.
- * \param  query_start_pos The start position of the alignment in the query
- *                         sequence indicating soft-clipping.
- * \param  query_end_pos   The end position of the alignment in the query
- *                         sequence indicating soft-clipping.
- * \param  extended_cigar  Whether to print the extended cigar alphabet or not. See cigar operation.
- * \returns A std::vector\<seqan3::cigar\> representing the alignment.
- *
- * \details
- *
- * \note The resulting cigar_vector is based on the query sequence, which is the second sequence in the `alignment`
- *       pair.
- *
- * ### Example:
- *
- * Given the following alignment reference sequence on top and the query sequence at
- * the bottom:
- * ```
- * ATGG--CGTAGAGC
- * |||X  |||X|  |
- * ATGCCCCGTTG--C
- * ```
- * In this case, the function seqan3::detail::get_cigar_vector will return
- * the following cigar vector: "[('M',4),('I',2),('M',5),('D',2),('M',1)]".
- * The extended cigar string would look like this: "[('=',3)('X',1)('I',2)('=',3)('X',1)('=',1)('D',2)('=',1)]".
- *
- * \include test/snippet/io/sam_file/get_cigar_vector.cpp
- *
- * \sa seqan3::aligned_sequence
- */
-template <seqan3::detail::pairwise_alignment alignment_type>
-[[nodiscard]] inline std::vector<cigar> get_cigar_vector(alignment_type && alignment,
-                                                         uint32_t const query_start_pos = 0,
-                                                         uint32_t const query_end_pos = 0,
-                                                         bool const extended_cigar = false)
-{
-    using std::get;
-
-    auto & ref_seq = get<0>(alignment);
-    auto & query_seq = get<1>(alignment);
-
-    if (ref_seq.size() != query_seq.size())
-        throw std::logic_error{"The aligned sequences must have the same length."};
-
-    std::vector<cigar> result{};
-
-    if (!ref_seq.size())
-        return result; // return empty string if sequences are empty
-
-    // Add (S)oft-clipping at the start of the read
-    if (query_start_pos)
-        result.emplace_back(query_start_pos, 'S'_cigar_operation);
-
-    // Create cigar string from alignment
-    // -------------------------------------------------------------------------
-    // initialize first operation and count value:
-    cigar::operation operation{map_aligned_values_to_cigar_op(ref_seq[0], query_seq[0], extended_cigar)};
-    uint32_t count{0};
-
-    // go through alignment columns
-    for (auto column : views::zip(ref_seq, query_seq))
-    {
-        cigar::operation next_op =
-            map_aligned_values_to_cigar_op(std::get<0>(column), std::get<1>(column), extended_cigar);
-
-        if (operation == next_op)
-        {
-            ++count;
-        }
-        else
-        {
-            result.emplace_back(count, operation);
-            operation = next_op;
-            count = 1;
-        }
-    }
-
-    // append last cigar element
-    result.emplace_back(count, operation);
-
-    // Add (S)oft-clipping at the end of the read
-    if (query_end_pos)
-        result.emplace_back(query_end_pos, 'S'_cigar_operation);
-
-    return result;
-}
-
 /*!\brief Transforms a vector of cigar elements into a string representation.
  * \ingroup io_sam_file
  * \param  cigar_vector The std::vector of seqan3::cigar elements to be transformed into a std::string.
@@ -282,48 +134,6 @@ template <seqan3::detail::pairwise_alignment alignment_type>
                               result.append(static_cast<std::string_view>(cig.to_string()));
                           });
     return result;
-}
-
-/*!\brief Creates a cigar string (SAM format) given a seqan3::detail::pairwise_alignment.
- * \ingroup io_sam_file
- *
- * \tparam alignment_type  Must model seqan3::detail::pairwise_alignment.
- * \param  alignment       The alignment, represented by a seqan3::pair_like of seqan3::aligned_sequence's,
- *                         to be transformed into cigar vector based on the
- *                         second (query) sequence.
- * \param  query_start_pos The start position of the alignment in the query
- *                         sequence indicating soft-clipping.
- * \param  query_end_pos   The end position of the alignment in the query
- *                         sequence indicating soft-clipping.
- * \param  extended_cigar  Whether to print the extended cigar alphabet or not. See cigar operation.
- * \returns A std::string representing the alignment as a cigar string.
- *
- * \details
- *
- * \note The resulting cigar_vector is based on the query sequence, which is the second sequence in the `alignment`
- *       pair.
- *
- * ### Example:
- *
- * The following alignment reference sequence on top and the query sequence at
- * the bottom.
- * ```
- * ATGG--CGTAGAGC
- * |||X  |||X|  |
- * ATGCCCCGTTG--C
- * ```
- * In this case, the function seqan3::detail::get_cigar_string will return
- * the following cigar string when printed: "4M2I5M2D1M". The extended cigar
- * string would look like this: "3=1X2I3=1X1=2D1=".
- * \sa seqan3::aligned_sequence
- */
-template <seqan3::detail::pairwise_alignment alignment_type>
-[[nodiscard]] inline std::string get_cigar_string(alignment_type && alignment,
-                                                  uint32_t const query_start_pos = 0,
-                                                  uint32_t const query_end_pos = 0,
-                                                  bool const extended_cigar = false)
-{
-    return get_cigar_string(get_cigar_vector(alignment, query_start_pos, query_end_pos, extended_cigar));
 }
 
 /*!\brief Transforms an alignment represented by two seqan3::aligned_sequence's into the corresponding cigar string.
@@ -367,79 +177,6 @@ template <seqan3::aligned_sequence ref_seq_type, seqan3::aligned_sequence query_
                                                   bool const extended_cigar = false)
 {
     return get_cigar_string(std::tie(ref_seq, query_seq), query_start_pos, query_end_pos, extended_cigar);
-}
-
-/*!\brief Transforms a std::vector of operation-count pairs (representing the cigar string).
- * \ingroup io_sam_file
- *
- * \tparam alignment_type The type of alignment; must model seqan3::detail::writable_pairwise_alignment.
- *
- * \param[in,out] alignment    The alignment to fill with gaps according to the cigar information.
- * \param[in]     cigar_vector The cigar information given as a std::vector over seqan3::cigar.
- *
- * \details
- *
- * ### Example:
- *
- * Given the following cigar string "4M2I5M2D1M", the cigar information extracted by seqan3::detail::parse_cigar
- * would be "[(M,4), (I,2), (M,5), (D,2), (M,1)]". Given those cigar information, and an alignment variable containing
- * the two unaligned sequences "(ATGGCGTAGAGC, ATGCCCCGTTGC)", the alignment will be filled with the following gaps:
- *
- * ```
- * ATGG--CGTAGAGC
- * |||   ||| |  |
- * ATGCCCCGTTG--C
- * ```
- */
-template <seqan3::detail::writable_pairwise_alignment alignment_type>
-inline void alignment_from_cigar(alignment_type & alignment, std::vector<cigar> const & cigar_vector)
-{
-    using std::get;
-    auto current_ref_pos = std::ranges::begin(get<0>(alignment));
-    auto current_read_pos = std::ranges::begin(get<1>(alignment));
-
-    for (auto [cigar_count, cigar_operation] : cigar_vector)
-    {
-        // ignore since alignment shall contain sliced sequences
-        if (('S'_cigar_operation == cigar_operation) || ('H'_cigar_operation == cigar_operation))
-            continue;
-
-        assert(('M'_cigar_operation == cigar_operation) || ('='_cigar_operation == cigar_operation)
-               || ('X'_cigar_operation == cigar_operation) || ('D'_cigar_operation == cigar_operation)
-               || ('N'_cigar_operation == cigar_operation) || ('I'_cigar_operation == cigar_operation)
-               || ('P'_cigar_operation == cigar_operation)); // checked during IO
-
-        if (('M'_cigar_operation == cigar_operation) || ('='_cigar_operation == cigar_operation)
-            || ('X'_cigar_operation == cigar_operation))
-        {
-            std::ranges::advance(current_ref_pos, cigar_count);
-            std::ranges::advance(current_read_pos, cigar_count);
-        }
-        else if (('D'_cigar_operation == cigar_operation) || ('N'_cigar_operation == cigar_operation))
-        {
-            // insert gaps into read
-
-            assert(std::distance(current_read_pos, std::ranges::end(get<1>(alignment))) >= 0);
-            current_read_pos = insert_gap(get<1>(alignment), current_read_pos, cigar_count);
-            ++current_read_pos;
-            std::ranges::advance(current_ref_pos, cigar_count);
-        }
-        else if (('I'_cigar_operation == cigar_operation)) // Insert gaps into ref
-        {
-            assert(std::ranges::distance(current_ref_pos, std::ranges::end(get<0>(alignment))) >= 0);
-            current_ref_pos = insert_gap(get<0>(alignment), current_ref_pos, cigar_count);
-            ++current_ref_pos;
-            std::ranges::advance(current_read_pos, cigar_count);
-        }
-        else if (('P'_cigar_operation == cigar_operation)) // skip padding
-        {
-            current_ref_pos = insert_gap(get<0>(alignment), current_ref_pos, cigar_count);
-            ++current_ref_pos;
-
-            current_read_pos = insert_gap(get<1>(alignment), current_read_pos, cigar_count);
-            ++current_read_pos;
-        }
-    }
 }
 
 //!\brief A functor that always throws when calling `operator()` (needed for the alignment "dummy" sequence).

@@ -11,6 +11,7 @@
 #include <string>
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
+#include <seqan3/alignment/cigar_conversion/cigar_from_alignment.hpp>
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
@@ -261,9 +262,8 @@ TYPED_TEST_P(aligned_sequence, cigar_string)
         seqan3::insert_gap(ref, std::ranges::next(begin(ref), 7), 2);
         seqan3::insert_gap(read, std::ranges::next(begin(read), 4), 1);
 
-        std::string expected = "4M1D2M2I3M";
-
-        EXPECT_EQ(expected, seqan3::detail::get_cigar_string(std::make_pair(ref, read)));
+        auto cigar = seqan3::cigar_from_alignment(std::make_pair(ref, read));
+        EXPECT_EQ(seqan3::detail::get_cigar_string(cigar), "4M1D2M2I3M");
 
         TypeParam ref2;
         TypeParam read2;
@@ -276,9 +276,8 @@ TYPED_TEST_P(aligned_sequence, cigar_string)
         insert_gap(read2, std::ranges::next(begin(read2), 4), 1);
         insert_gap(read2, std::ranges::begin(read2), 1);
 
-        std::string expected2 = "1P2I2M1D4M2I1M2D2P";
-
-        EXPECT_EQ(expected2, seqan3::detail::get_cigar_string(std::make_pair(ref2, read2)));
+        auto cigar2 = seqan3::cigar_from_alignment(std::make_pair(ref2, read2));
+        EXPECT_EQ(seqan3::detail::get_cigar_string(cigar2), "1P2I2M1D4M2I1M2D2P");
     }
     {
         // with soft clipping
@@ -291,9 +290,8 @@ TYPED_TEST_P(aligned_sequence, cigar_string)
         insert_gap(ref, std::ranges::next(std::ranges::begin(ref), 7), 2);
         insert_gap(read, std::ranges::next(std::ranges::begin(read), 4), 1);
 
-        std::string expected = "5S4M1D2M2I3M60S";
-
-        EXPECT_EQ(expected, seqan3::detail::get_cigar_string(std::make_pair(ref, read), 5, 60));
+        auto cigar = seqan3::cigar_from_alignment(std::make_pair(ref, read), {.soft_front = 5, .soft_back = 60});
+        EXPECT_EQ(seqan3::detail::get_cigar_string(cigar), "5S4M1D2M2I3M60S");
 
         // gaps at the end
         TypeParam ref2;
@@ -307,9 +305,8 @@ TYPED_TEST_P(aligned_sequence, cigar_string)
         seqan3::insert_gap(read2, std::ranges::next(begin(read2), 4), 1);
         seqan3::insert_gap(read2, std::ranges::begin(read2), 1);
 
-        std::string expected2 = "3S1P2I2M1D4M2I1M2D2P5S";
-
-        EXPECT_EQ(expected2, seqan3::detail::get_cigar_string(std::make_pair(ref2, read2), 3, 5));
+        auto cigar2 = seqan3::cigar_from_alignment(std::make_pair(ref2, read2), {.soft_front = 3, .soft_back = 5});
+        EXPECT_EQ(seqan3::detail::get_cigar_string(cigar2), "3S1P2I2M1D4M2I1M2D2P5S");
     }
     {
         // no gaps at the end
@@ -322,11 +319,10 @@ TYPED_TEST_P(aligned_sequence, cigar_string)
         seqan3::insert_gap(ref, std::ranges::next(std::ranges::begin(ref), 7), 2);
         seqan3::insert_gap(read, std::ranges::next(std::ranges::begin(read), 4), 1);
 
-        std::string expected1 = "4=1D2X2I1=1X1=";
-        std::string expected2 = "5S4=1D2X2I1=1X1=60S";
-
-        EXPECT_EQ(expected1, seqan3::detail::get_cigar_string(std::make_pair(ref, read), 0, 0, true));
-        EXPECT_EQ(expected2, seqan3::detail::get_cigar_string(std::make_pair(ref, read), 5, 60, true));
+        auto cigar = seqan3::cigar_from_alignment(std::make_pair(ref, read), {}, true);
+        EXPECT_EQ(seqan3::detail::get_cigar_string(cigar), "4=1D2X2I1=1X1=");
+        auto cigar2 = seqan3::cigar_from_alignment(std::make_pair(ref, read), {.soft_front = 5, .soft_back = 60}, true);
+        EXPECT_EQ(seqan3::detail::get_cigar_string(cigar2), "5S4=1D2X2I1=1X1=60S");
     }
 }
 

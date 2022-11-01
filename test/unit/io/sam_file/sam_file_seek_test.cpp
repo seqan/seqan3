@@ -39,9 +39,6 @@ struct sam_file_seek_test : public ::testing::TestWithParam<sam_file_seek_test_f
         EXPECT_EQ(record.sequence_position(), expected_record.sequence_position());
         EXPECT_EQ(record.reference_id(), expected_record.reference_id());
         EXPECT_EQ(record.reference_position(), expected_record.reference_position());
-        // reference sequence is unknown to sam_file, so alignment can't be constructed
-        // EXPECT_RANGE_EQ(std::get<0>(record.alignment()), std::get<0>(expected_record.alignment()));
-        EXPECT_RANGE_EQ(std::get<1>(record.alignment()), std::get<1>(expected_record.alignment()));
         EXPECT_RANGE_EQ(record.cigar_sequence(), expected_record.cigar_sequence());
         EXPECT_EQ(record.flag(), expected_record.flag());
         EXPECT_EQ(record.mapping_quality(), expected_record.mapping_quality());

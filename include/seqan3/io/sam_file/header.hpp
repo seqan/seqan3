@@ -24,7 +24,7 @@
 namespace seqan3
 {
 
-/*!\brief Stores the header information of alignment files.
+/*!\brief Stores the header information of SAM/BAM files.
  * \ingroup io_sam_file
  *
  * \remark For a complete overview, take a look at \ref io_sam_file
@@ -168,7 +168,7 @@ public:
      *           primary assembly.
      * * **AN:** Alternative reference sequence names. A comma-separated list of alternative names that tools may use
      *           when referring to this reference sequence. These alternative names are not used elsewhere within the
-     *           SAM file; in  particular, they must not appear in alignment records’ RNAME or RNEXT fields. regular
+     *           SAM file; in  particular, they must not appear in SAM records’ RNAME or RNEXT fields. regular
      *           expression : name (, name )* where name is [0-9A-Za-z][0-9A-Za-z*+.@ \|-]*
      * * **AS:** Genome assembly identifier.
      * * **M5:** MD5 checksum of the sequence.  See Section 1.3.1

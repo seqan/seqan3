@@ -21,7 +21,6 @@
 #include <variant>
 #include <vector>
 
-#include <seqan3/alignment/decorator/gap_decorator.hpp>
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/cigar/cigar.hpp>
@@ -149,16 +148,6 @@ concept sam_file_input_traits =
         // field::evalue is fixed to double
         // field::bitscore is fixed to double
         // field::mate is fixed to std::tuple<ref_id_container<ref_id_alphabet>, ref_offset_type, int32_t>
-
-        // field::alignment
-        // the alignment type cannot be configured.
-        // Type of tuple entry 1 (reference) is set to
-        // 1) a std::ranges::subrange over std::ranges::range_value_t<typename t::ref_sequences> if reference information was given
-        // or 2) a "dummy" sequence type:
-        // views::repeat_n(sequence_alphabet{}, size_t{}) | std::views::transform(detail::access_restrictor_fn{})
-        // Type of tuple entry 2 (query) is set to
-        // 1) a std::ranges::subrange over std::ranges::range_value_t<typename t::ref_sequences> if reference information was given
-        // or 2) a "dummy" sequence type:
     };
 //!\endcond
 
@@ -222,7 +211,7 @@ struct sam_file_input_default_traits
 // sam_file_input
 // ---------------------------------------------------------------------------------------------------------------------
 
-/*!\brief A class for reading alignment files, e.g. SAM, BAM, BLAST ...
+/*!\brief A class for reading SAM files, both SAM and its binary representation BAM are supported.
  * \ingroup io_sam_file
  * \tparam traits_type          An auxiliary type that defines certain member types and constants, must model
  *                              seqan3::sam_file_input_traits.
@@ -243,7 +232,6 @@ template <sam_file_input_traits traits_type_ = sam_file_input_default_traits<>,
                                                                      field::offset,
                                                                      field::ref_id,
                                                                      field::ref_offset,
-                                                                     field::alignment,
                                                                      field::cigar,
                                                                      field::mapq,
                                                                      field::qual,
@@ -332,24 +320,12 @@ public:
     //!\brief The type of field::header_ptr (default: sam_file_header<typename traits_type::ref_ids>).
     using header_type = sam_file_header<typename traits_type::ref_ids>;
 
-private:
-    //!\brief The type of the aligned query sequence (second type of the pair of alignment_type).
-    using alignment_query_type = std::conditional_t<
-        selected_field_ids::contains(field::seq),
-        gap_decorator<decltype(std::declval<sequence_type &>() | views::slice(0, 0))>,
-        typename traits_type::template sequence_container<gapped<typename traits_type::sequence_alphabet>>>;
-
-public:
-    //!\brief The type of field::alignment (default: std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>>).
-    using alignment_type = std::tuple<gap_decorator<ref_sequence_type>, alignment_query_type>;
-
     //!\brief The previously defined types aggregated in a seqan3::type_list.
     using field_types = type_list<sequence_type,
                                   id_type,
                                   offset_type,
                                   ref_id_type,
                                   ref_offset_type,
-                                  alignment_type,
                                   std::vector<cigar>,
                                   mapq_type,
                                   quality_type,
@@ -360,20 +336,19 @@ public:
 
     /*!\brief The subset of seqan3::field tags valid for this file; order corresponds to the types in \ref field_types.
      *
-     * The SAM file abstraction supports reading 12 different fields:
+     * The SAM file abstraction supports reading 11 different fields:
      *
      *   1. seqan3::field::seq
      *   2. seqan3::field::id
      *   3. seqan3::field::offset
      *   4. seqan3::field::ref_id
      *   5. seqan3::field::ref_offset
-     *   6. seqan3::field::alignment
-     *   7. seqan3::field::cigar
-     *   8. seqan3::field::mapq
-     *   9. seqan3::field::qual
-     *   10. seqan3::field::flag
-     *   11. seqan3::field::mate
-     *   12. seqan3::field::tags
+     *   6. seqan3::field::cigar
+     *   7. seqan3::field::mapq
+     *   8. seqan3::field::qual
+     *   9. seqan3::field::flag
+     *   10. seqan3::field::mate
+     *   11. seqan3::field::tags
      *
      * There exists one more field for SAM files, the seqan3::field::header_ptr, but this field is mostly used
      * internally. Please see the seqan3::sam_file_output::header member function for details on how to access
@@ -384,7 +359,6 @@ public:
                              field::offset,
                              field::ref_id,
                              field::ref_offset,
-                             field::alignment,
                              field::cigar,
                              field::mapq,
                              field::qual,
@@ -393,14 +367,19 @@ public:
                              field::tags,
                              field::header_ptr>;
 
+    static_assert(!selected_field_ids::contains(field::alignment),
+                  "The field::alignment is deprecated and only field::cigar is supported. Please see "
+                  "seqan3::alignment_from_cigar on how to get an alignment from the cigar information.");
+
     static_assert(
-        []() constexpr {
+        []() constexpr
+        {
             for (field f : selected_field_ids::as_array)
                 if (!field_ids::contains(f))
                     return false;
             return true;
         }(),
-        "You selected a field that is not valid for alignment files, please refer to the documentation "
+        "You selected a field that is not valid for SAM files, please refer to the documentation "
         "of sam_file_input::field_ids for the accepted values.");
 
     //!\brief The type of the record, a specialisation of seqan3::record; acts as a tuple of the selected field types.
@@ -519,9 +498,14 @@ public:
      *
      * \details
      *
-     * The reference information given by the ids (names) and sequences will be used to construct a proper alignment
-     * when reading in SAM or BAM files. If you are not interested in the full alignment, call the constructor without
-     * the parameters.
+     * ### Reference information
+     *
+     * The reference information given by the IDs (names) and sequences will be used to keep the record entry
+     * `seqan3::sam_file_input::record_type::reference_id()` consistent with the order imposed by `ref_ids`.
+     * This way, you can use the value of `seqan3::sam_file_input::record_type::reference_id()` to access the lists
+     * `ref_ids` and `ref_sequences` to retrieve the correct information for the current record.
+     *
+     * ### Selecting custom fields
      *
      * In addition to the file name and reference information, you may specify a custom seqan3::fields object
      * (e.g. `seqan3::fields<seqan3::field::seq>{}`) which may be easier than
@@ -556,9 +540,14 @@ public:
      *
      * \details
      *
-     * The reference information given by the ids (names) and sequences will be used to construct a proper alignment
-     * when reading in SAM or BAM files. If you are not interested in the full alignment, you do not need to specify
-     * those information.
+     * ### Reference information
+     *
+     * The reference information given by the IDs (names) and sequences will be used to keep the record entry
+     * `seqan3::sam_file_input::record_type::reference_id()` consistent with the order imposed by `ref_ids`.
+     * This way, you can use the value of `seqan3::sam_file_input::record_type::reference_id()` to access the lists
+     * `ref_ids` and `ref_sequences` to retrieve the correct information for the current record.
+     *
+     * ### Selecting custom fields
      *
      * In addition to the stream, reference information and format, you may specify a custom seqan3::fields object
      * (e.g. `seqan3::fields<seqan3::field::seq>{}`) which may be easier than
@@ -805,11 +794,13 @@ protected:
      *
      * \details
      *
-     * The SAM format only provides semi-alignments because the reference sequence
-     * is not stored explicitly. In order to be able to read in full alignments,
-     * additional reference information can be given to the alignment file on construction.
+     * The reference information given by the IDs (`ref_ids`) and sequences (`ref_sequences`) will be used to keep the
+     * record entry `seqan3::sam_file_input::record_type::reference_id()` consistent with the order imposed by
+     * `ref_ids`. This way, you can use the value of `seqan3::sam_file_input::record_type::reference_id()` to access
+     * the lists `ref_ids` and `ref_sequences` to retrieve the correct information for the current record.
+     *
      * Note that the reference ids (names) must correspond to the exact spelling
-     * in the SAM/BAM file otherwise an exception will be thrown when reading.
+     * in the SAM/BAM file. Otherwise, an exception will be thrown when reading.
      */
     template <std::ranges::forward_range ref_sequences_t>
     void set_references(typename traits_type::ref_ids & ref_ids, ref_sequences_t && ref_sequences)
@@ -871,7 +862,6 @@ protected:
                                             detail::get_or_ignore<field::ref_seq>(record_buffer),
                                             detail::get_or_ignore<field::ref_id>(record_buffer),
                                             detail::get_or_ignore<field::ref_offset>(record_buffer),
-                                            detail::get_or_ignore<field::alignment>(record_buffer),
                                             detail::get_or_ignore<field::cigar>(record_buffer),
                                             detail::get_or_ignore<field::flag>(record_buffer),
                                             detail::get_or_ignore<field::mapq>(record_buffer),

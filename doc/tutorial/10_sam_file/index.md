@@ -58,19 +58,19 @@ differences in most use cases.
 
 To make things clearer, here is the table of SAM columns and the corresponding fields of a SAM file record:
 
-| #  | SAM Column ID |  FIELD name                                                                                          | seqan3::field                                    |
-|:--:|:--------------|:-----------------------------------------------------------------------------------------------------|:-------------------------------------------------|
-| 1  | QNAME         | seqan3::sam_record::id                                                                               | seqan3::field::id                                |
-| 2  | FLAG          | seqan3::sam_record::flag                                                                             | seqan3::field::flag                              |
-| 3  | RNAME         | seqan3::sam_record::reference_id                                                                     | seqan3::field::ref_id                            |
-| 4  | POS           | seqan3::sam_record::reference_position                                                               | seqan3::field::ref_offset                        |
-| 5  | MAPQ          | seqan3::sam_record::mapping_quality                                                                  | seqan3::field::mapq                              |
-| 6  | CIGAR         | implicitly stored in seqan3::sam_record::alignment <br> explicitly stored in seqan3::sam_record::cigar_sequence | seqan3::field::alignment <br> seqan3::field::cigar |
-| 7  | RNEXT         | seqan3::sam_record::mate_reference_id                                                                | seqan3::field::mate                              |
-| 8  | PNEXT         | seqan3::sam_record::mate_position                                                                    | seqan3::field::mate                              |
-| 9  | TLEN          | seqan3::sam_record::template_length                                                                  | seqan3::field::mate                              |
-| 10 | SEQ           | seqan3::sam_record::sequence                                                                         | seqan3::field::seq                               |
-| 11 | QUAL          | seqan3::sam_record::base_qualities                                                                   | seqan3::field::qual                              |
+| #  | SAM Column ID |  FIELD name                            | seqan3::field             |
+|:--:|:--------------|:---------------------------------------|:------------------------- |
+| 1  | QNAME         | seqan3::sam_record::id                 | seqan3::field::id         |
+| 2  | FLAG          | seqan3::sam_record::flag               | seqan3::field::flag       |
+| 3  | RNAME         | seqan3::sam_record::reference_id       | seqan3::field::ref_id     |
+| 4  | POS           | seqan3::sam_record::reference_position | seqan3::field::ref_offset |
+| 5  | MAPQ          | seqan3::sam_record::mapping_quality    | seqan3::field::mapq       |
+| 6  | CIGAR         | seqan3::sam_record::cigar_sequence     | seqan3::field::cigar      |
+| 7  | RNEXT         | seqan3::sam_record::mate_reference_id  | seqan3::field::mate       |
+| 8  | PNEXT         | seqan3::sam_record::mate_position      | seqan3::field::mate       |
+| 9  | TLEN          | seqan3::sam_record::template_length    | seqan3::field::mate       |
+| 10 | SEQ           | seqan3::sam_record::sequence           | seqan3::field::seq        |
+| 11 | QUAL          | seqan3::sam_record::base_qualities     | seqan3::field::qual       |
 
 SAM files provide following additional fields:
 * seqan3::sam_record::sequence_position (seqan3::field::offset)
@@ -138,14 +138,12 @@ Average: 27.4
 
 \endsolution
 
-# Alignment representation in the SAM format
-
-In SeqAn, we represent an alignment as a tuple of two `seqan3::aligned_sequence`s.
+# Alignment representation in SAM/BAM files
 
 The SAM format is the common output format of read mappers where you align short read sequences
 to one or more large reference sequences.
 In fact, the SAM format stores those alignment information only partially:
-It **does not store the reference sequence** but only the read sequence and a *CIGAR* string
+It **does not store the reference sequence** but only the query/read sequence and a *CIGAR* string
 representing the alignment based on the read.
 
 Take this SAM record as an example:
@@ -183,26 +181,17 @@ into a std::vector\<seqan3::cigar\>:
 
 \snippet doc/tutorial/10_sam_file/sam_file_read_cigar.cpp main
 
-## Reading the CIGAR information into an actual alignment
+## Transforming the CIGAR information into an alignment
 
-In SeqAn, the conversion from a CIGAR string to an alignment (two seqan3::aligned_sequence's) is done automatically for you.
-You can access it by accessing seqan3::sam_record::alignment from the record:
+In SeqAn, we represent an alignment as a tuple of two `seqan3::aligned_sequence`s.
 
-\snippet doc/tutorial/10_sam_file/sam_file_alignments_without_ref.cpp main
+The conversion from a CIGAR string to an alignment can be done with the function `seqan3::alignment_from_cigar`.
+You need to pass the reference sequence with the position the read was aligned to and the read sequence:
 
-In the example above, you can only safely access the aligned read.
-
-\attention The **unknown** aligned reference sequence at the first position in the alignment tuple cannot be accessed
-           (e.g. via the `operator[]`). It is represented by a dummy type that throws on access.
-
-Although the SAM format does not handle reference sequence information,
-you can provide these information to the seqan3::sam_file_input which automatically fills the alignment object.
-You can pass reference ids and reference sequences as additional constructor parameters:
-
-\snippet doc/tutorial/10_sam_file/sam_file_alignments_with_ref.cpp main
+\include snippet/alignment/cigar_conversion/alignment_from_cigar_io.cpp
 
 The code will print the following:
-\include doc/tutorial/10_sam_file/sam_file_sam_record.err
+\include snippet/alignment/cigar_conversion/alignment_from_cigar_io.err
 
 \assignment{Assignment 2: Combining sequence and alignment files}
 
@@ -218,13 +207,19 @@ Only use
 * seqan3::sam_record::id,
 * seqan3::sam_record::reference_id,
 * seqan3::sam_record::mapping_quality, and
-* seqan3::sam_record::alignment.
+* seqan3::sam_record::cigar.
 
 With that information do the following:
   * Filter the alignment records and only take those with a mapping quality >= 30.
     (Take a look at the tutorial \ref sequence_file_section_fun_with_ranges for a reminder about using views on files)
   * For the resulting alignments, print which read was mapped against which reference id and
     the number of `seqan3::gap`s in each sequence (aligned reference and read sequence).
+
+\hint
+Given your reference sequences, you need to know which reference sequence to use for the alignment.
+For this purpose, you can access `record.reference_id()` which gives you the position of the respective reference
+sequence.
+\endhint
 
 Your program should print the following:
 

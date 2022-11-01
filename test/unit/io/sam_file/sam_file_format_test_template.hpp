@@ -96,29 +96,6 @@ struct sam_file_data : public ::testing::Test
 
     std::vector<int32_t> ref_offsets{0, 1, 2};
 
-    std::vector<std::pair<std::vector<seqan3::gapped<seqan3::dna5>>, std::vector<seqan3::gapped<seqan3::dna5>>>>
-        alignments{
-            {ref_seq_gapped1, std::vector<seqan3::gapped<seqan3::dna5>>{'C'_dna5, seqan3::gap{}, 'G'_dna5, 'T'_dna5}},
-            {ref_seq_gapped2,
-             std::vector<seqan3::gapped<seqan3::dna5>>{'A'_dna5,
-                                                       'G'_dna5,
-                                                       'G'_dna5,
-                                                       'C'_dna5,
-                                                       'T'_dna5,
-                                                       'G'_dna5,
-                                                       'N'_dna5,
-                                                       seqan3::gap{},
-                                                       'A'_dna5}},
-            {ref_seq_gapped3,
-             std::vector<seqan3::gapped<seqan3::dna5>>{'G'_dna5,
-                                                       seqan3::gap{},
-                                                       'A'_dna5,
-                                                       'G'_dna5,
-                                                       'T'_dna5,
-                                                       'A'_dna5,
-                                                       seqan3::gap{},
-                                                       'T'_dna5}}};
-
     std::vector<seqan3::sam_flag> flags{seqan3::sam_flag{41u}, seqan3::sam_flag{42u}, seqan3::sam_flag{43u}};
 
     std::vector<uint8_t> mapqs{61u, 62u, 63u};
@@ -233,10 +210,9 @@ TYPED_TEST_P(sam_file_read, read_in_all_data)
         EXPECT_EQ(rec.id(), this->ids[i]);
         EXPECT_EQ(rec.base_qualities(), this->quals[i]);
         EXPECT_EQ(rec.sequence_position(), this->offsets[i]);
+        EXPECT_RANGE_EQ(rec.cigar_sequence(), this->cigars[i]);
         EXPECT_EQ(rec.reference_id(), 0);
         EXPECT_EQ(*rec.reference_position(), this->ref_offsets[i]);
-        EXPECT_RANGE_EQ(std::get<0>(rec.alignment()), std::get<0>(this->alignments[i]));
-        EXPECT_RANGE_EQ(std::get<1>(rec.alignment()), std::get<1>(this->alignments[i]));
         EXPECT_EQ(rec.flag(), this->flags[i]);
         EXPECT_EQ(rec.mapping_quality(), this->mapqs[i]);
         EXPECT_EQ(rec.mate_reference_id(), std::get<0>(this->mates[i]));
@@ -256,10 +232,9 @@ TYPED_TEST_P(sam_file_read, read_in_all_but_empty_data)
     EXPECT_TRUE((*fin.begin()).id().empty());
     EXPECT_TRUE((*fin.begin()).base_qualities().empty());
     EXPECT_EQ((*fin.begin()).sequence_position(), 0);
+    EXPECT_TRUE((*fin.begin()).cigar_sequence().empty());
     EXPECT_TRUE(!(*fin.begin()).reference_id().has_value());
     EXPECT_TRUE(!(*fin.begin()).reference_position().has_value());
-    EXPECT_TRUE(std::ranges::empty(std::get<0>((*fin.begin()).alignment())));
-    EXPECT_TRUE(std::ranges::empty(std::get<1>((*fin.begin()).alignment())));
     EXPECT_EQ((*fin.begin()).flag(), seqan3::sam_flag{0u});
     EXPECT_EQ((*fin.begin()).mapping_quality(), 0u);
     EXPECT_TRUE(!(*fin.begin()).mate_reference_id().has_value());
@@ -276,62 +251,6 @@ TYPED_TEST_P(sam_file_read, read_in_almost_nothing)
     size_t i{0};
     for (auto & [mapq] : fin)
         EXPECT_EQ(mapq, this->mapqs[i++]);
-}
-
-TYPED_TEST_P(sam_file_read, read_in_alignment_only_with_ref)
-{
-    {
-        typename TestFixture::stream_type istream{this->simple_three_reads_input};
-        seqan3::sam_file_input fin{istream,
-                                   this->ref_ids,
-                                   this->ref_sequences,
-                                   TypeParam{},
-                                   seqan3::fields<seqan3::field::alignment>{}};
-
-        size_t i{0};
-        for (auto & [alignment] : fin)
-        {
-            EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(this->alignments[i]));
-            EXPECT_RANGE_EQ(std::get<1>(alignment), std::get<1>(this->alignments[i]));
-            ++i;
-        }
-    }
-
-    { // empty cigar
-        typename TestFixture::stream_type istream{this->empty_cigar};
-        seqan3::sam_file_input fin{istream,
-                                   this->ref_ids,
-                                   this->ref_sequences,
-                                   TypeParam{},
-                                   seqan3::fields<seqan3::field::alignment>{}};
-
-        EXPECT_TRUE(std::ranges::empty(std::get<0>((*fin.begin()).alignment())));
-        EXPECT_TRUE(std::ranges::empty(std::get<1>((*fin.begin()).alignment())));
-    }
-}
-
-TYPED_TEST_P(sam_file_read, read_in_alignment_only_without_ref)
-{
-    {
-        typename TestFixture::stream_type istream{this->simple_three_reads_input};
-        seqan3::sam_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::alignment>{}};
-
-        size_t i{0};
-        for (auto & [alignment] : fin)
-        {
-            EXPECT_RANGE_EQ(std::get<1>(alignment), std::get<1>(this->alignments[i++]));
-            auto & ref_aln = std::get<0>(alignment);
-            EXPECT_THROW((ref_aln[0]), std::logic_error); // access on a dummy seq is not allowed
-        }
-    }
-
-    { // empty cigar
-        typename TestFixture::stream_type istream{this->empty_cigar};
-        seqan3::sam_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::alignment>{}};
-
-        EXPECT_TRUE(std::ranges::empty(std::get<0>((*fin.begin()).alignment())));
-        EXPECT_TRUE(std::ranges::empty(std::get<1>((*fin.begin()).alignment())));
-    }
 }
 
 TYPED_TEST_P(sam_file_read, read_mate_but_not_ref_id_with_ref)
@@ -411,17 +330,13 @@ TYPED_TEST_P(sam_file_read, issue2423)
 // sam_file_write
 // ----------------------------------------------------------------------------
 
-// Note that these differ from the sam_file_output default fields:
-// 1. They don't contain field::bit_score and field::evalue since these belong to the BLAST format.
-// 2. field::alignment and field::cigar are redundant. Since field::alignment is the more complex one it is chosen here.
-//    The behaviour if both are given is tested in a separate test.
 using sam_fields = seqan3::fields<seqan3::field::header_ptr,
                                   seqan3::field::id,
                                   seqan3::field::flag,
                                   seqan3::field::ref_id,
                                   seqan3::field::ref_offset,
                                   seqan3::field::mapq,
-                                  seqan3::field::alignment,
+                                  seqan3::field::cigar,
                                   seqan3::field::offset,
                                   seqan3::field::mate,
                                   seqan3::field::seq,
@@ -457,7 +372,6 @@ TYPED_TEST_P(sam_file_write, write_empty_members)
     {
         seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
-        using default_align_t = std::pair<std::span<seqan3::gapped<char>>, std::span<seqan3::gapped<char>>>;
         using default_mate_t = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
 
         fout.emplace_back(&(this->header),
@@ -466,7 +380,7 @@ TYPED_TEST_P(sam_file_write, write_empty_members)
                           std::string_view{},
                           -1,
                           0,
-                          default_align_t{},
+                          std::vector<seqan3::cigar>{},
                           0,
                           default_mate_t{},
                           std::string_view{},
@@ -491,7 +405,7 @@ TYPED_TEST_P(sam_file_write, default_options_all_members_specified)
                                               0 /*ref_id*/,
                                               this->ref_offsets[i],
                                               this->mapqs[i],
-                                              this->alignments[i],
+                                              this->cigars[i],
                                               this->offsets[i],
                                               this->mates[i],
                                               this->seqs[i],
@@ -501,7 +415,7 @@ TYPED_TEST_P(sam_file_write, default_options_all_members_specified)
     }
     this->ostream.flush();
 
-    EXPECT_EQ(this->ostream.str(), this->simple_three_reads_output);
+    EXPECT_EQ(this->ostream.str(), this->simple_three_reads_input);
 }
 
 TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
@@ -517,7 +431,7 @@ TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
                                           /*----------------------->*/ this->ref_id,
                                           this->ref_offsets[0],
                                           this->mapqs[0],
-                                          this->alignments[0],
+                                          this->cigars[0],
                                           this->offsets[0],
                                           this->mates[0],
                                           this->seqs[0],
@@ -531,7 +445,7 @@ TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
                                           /*----------------------->*/ std::string_view{this->ref_id},
                                           this->ref_offsets[1],
                                           this->mapqs[1],
-                                          this->alignments[1],
+                                          this->cigars[1],
                                           this->offsets[1],
                                           this->mates[1],
                                           this->seqs[1],
@@ -545,7 +459,7 @@ TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
                                           /*----------------------->*/ this->ref_id | std::views::take(20),
                                           this->ref_offsets[2],
                                           this->mapqs[2],
-                                          this->alignments[2],
+                                          this->cigars[2],
                                           this->offsets[2],
                                           this->mates[2],
                                           this->seqs[2],
@@ -555,7 +469,7 @@ TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
 
     this->ostream.flush();
 
-    EXPECT_EQ(this->ostream.str(), this->simple_three_reads_output);
+    EXPECT_EQ(this->ostream.str(), this->simple_three_reads_input);
 }
 
 TYPED_TEST_P(sam_file_write, with_header)
@@ -580,7 +494,7 @@ TYPED_TEST_P(sam_file_write, with_header)
                                               0 /*ref_id*/,
                                               this->ref_offsets[i],
                                               this->mapqs[i],
-                                              this->alignments[i],
+                                              this->cigars[i],
                                               this->offsets[i],
                                               this->mates[i],
                                               this->seqs[i],
@@ -597,7 +511,7 @@ TYPED_TEST_P(sam_file_write, with_header)
 TYPED_TEST_P(sam_file_write, cigar_vector)
 {
     {
-        seqan3::sam_file_output fout{this->ostream, TypeParam{}}; // default fields contain CIGAR and alignment
+        seqan3::sam_file_output fout{this->ostream, TypeParam{}};
         for (size_t i = 0ul; i < 3ul; ++i)
         {
             ASSERT_NO_THROW(fout.emplace_back(this->seqs[i],
@@ -605,7 +519,6 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
                                               this->offsets[i],
                                               0 /*ref_id*/,
                                               this->ref_offsets[i],
-                                              this->alignments[i],
                                               this->cigars[i],
                                               this->mapqs[i],
                                               this->quals[i],
@@ -633,7 +546,6 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
                                                     seqan3::field::ref_offset,
                                                     seqan3::field::mapq,
                                                     seqan3::field::cigar,
-                                                    // cigar instead of alignment
                                                     seqan3::field::offset,
                                                     seqan3::field::mate,
                                                     seqan3::field::seq,
@@ -679,7 +591,7 @@ TYPED_TEST_P(sam_file_write, special_cases)
                                           rid,
                                           this->ref_offsets[0],
                                           this->mapqs[0],
-                                          this->alignments[0],
+                                          this->cigars[0],
                                           this->offsets[0],
                                           mate,
                                           this->seqs[0],
@@ -705,7 +617,7 @@ TYPED_TEST_P(sam_file_write, special_cases)
                                           std::string(""),
                                           this->ref_offsets[0],
                                           this->mapqs[0],
-                                          this->alignments[0],
+                                          this->cigars[0],
                                           this->offsets[0],
                                           mate_str,
                                           this->seqs[0],
@@ -729,7 +641,7 @@ TYPED_TEST_P(sam_file_write, format_errors)
                                    std::string("ref_id_that_does_not_exist"),
                                    this->ref_offsets[0],
                                    this->mapqs[0],
-                                   this->alignments[0],
+                                   this->cigars[0],
                                    this->offsets[0],
                                    this->mates[0],
                                    this->seqs[0],
@@ -744,7 +656,7 @@ TYPED_TEST_P(sam_file_write, format_errors)
                                    this->ref_id,
                                    -3,
                                    this->mapqs[0],
-                                   this->alignments[0],
+                                   this->cigars[0],
                                    this->offsets[0],
                                    this->mates[0],
                                    this->seqs[0],
@@ -759,8 +671,6 @@ REGISTER_TYPED_TEST_SUITE_P(sam_file_read,
                             read_in_all_data,
                             read_in_all_but_empty_data,
                             read_in_almost_nothing,
-                            read_in_alignment_only_with_ref,
-                            read_in_alignment_only_without_ref,
                             read_mate_but_not_ref_id_with_ref,
                             read_mate_but_not_ref_id_without_ref,
                             cigar_vector,

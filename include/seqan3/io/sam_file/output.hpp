@@ -44,7 +44,7 @@ namespace seqan3
 // sam_file_output
 // ----------------------------------------------------------------------------
 
-/*!\brief A class for writing alignment files, e.g. SAM, BAL, BLAST, ...
+/*!\brief A class for writing SAM files, both SAM and its binary representation BAM are supported.
  * \ingroup io_sam_file
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of
  *                              fields IDs; only relevant if these can't be deduced.
@@ -62,7 +62,6 @@ template <detail::fields_specialisation selected_field_ids_ = fields<field::seq,
                                                                      field::offset,
                                                                      field::ref_id,
                                                                      field::ref_offset,
-                                                                     field::alignment,
                                                                      field::cigar,
                                                                      field::mapq,
                                                                      field::qual,
@@ -93,7 +92,6 @@ public:
                              field::offset,
                              field::ref_id,
                              field::ref_offset,
-                             field::alignment,
                              field::cigar,
                              field::mapq,
                              field::flag,
@@ -110,7 +108,7 @@ public:
                     return false;
             return true;
         }(),
-        "You selected a field that is not valid for alignment files, "
+        "You selected a field that is not valid for SAM files, "
         "please refer to the documentation of "
         "seqan3::sam_file_output::field_ids for the accepted values.");
 
@@ -413,7 +411,6 @@ public:
                      detail::get_or<field::ref_seq>(r, std::string_view{}),
                      detail::get_or<field::ref_id>(r, std::ignore),
                      detail::get_or<field::ref_offset>(r, std::optional<int32_t>{}),
-                     detail::get_or<field::alignment>(r, default_align_t{}),
                      detail::get_or<field::cigar>(r, std::vector<cigar>{}),
                      detail::get_or<field::flag>(r, sam_flag::none),
                      detail::get_or<field::mapq>(r, 0u),
@@ -460,7 +457,6 @@ public:
                      detail::get_or<selected_field_ids::index_of(field::ref_seq)>(t, std::string_view{}),
                      detail::get_or<selected_field_ids::index_of(field::ref_id)>(t, std::ignore),
                      detail::get_or<selected_field_ids::index_of(field::ref_offset)>(t, std::optional<int32_t>{}),
-                     detail::get_or<selected_field_ids::index_of(field::alignment)>(t, default_align_t{}),
                      detail::get_or<selected_field_ids::index_of(field::cigar)>(t, std::vector<cigar>{}),
                      detail::get_or<selected_field_ids::index_of(field::flag)>(t, sam_flag::none),
                      detail::get_or<selected_field_ids::index_of(field::mapq)>(t, 0u),
@@ -679,7 +675,7 @@ protected:
     template <typename record_header_ptr_t, typename... pack_type>
     void write_record(record_header_ptr_t && record_header_ptr, pack_type &&... remainder)
     {
-        static_assert((sizeof...(pack_type) == 15), "Wrong parameter list passed to write_record.");
+        static_assert((sizeof...(pack_type) == 14), "Wrong parameter list passed to write_record.");
 
         assert(!format.valueless_by_exception());
 

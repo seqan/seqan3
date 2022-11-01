@@ -228,7 +228,7 @@ TEST_F(sequence_file_input_f, record_reading)
         EXPECT_RANGE_EQ(rec.sequence(), seq_comp[counter]);
         EXPECT_TRUE(empty(rec.base_qualities()));
 
-        counter++;
+        ++counter;
     }
 
     EXPECT_EQ(counter, 3u);
@@ -246,7 +246,7 @@ TEST_F(sequence_file_input_f, record_reading_struct_bind)
         EXPECT_RANGE_EQ(id, id_comp[counter]);
         EXPECT_TRUE(empty(qual));
 
-        counter++;
+        ++counter;
     }
 
     EXPECT_EQ(counter, 3u);
@@ -290,7 +290,7 @@ TEST_F(sequence_file_input_f, file_view)
         EXPECT_RANGE_EQ(rec.sequence(), seq_comp[counter]);
         EXPECT_TRUE(empty(rec.base_qualities()));
 
-        counter++;
+        ++counter;
     }
 
     EXPECT_EQ(counter, 3u);
@@ -310,7 +310,7 @@ void decompression_impl(fixture_t & fix, input_file_t & fin)
         EXPECT_RANGE_EQ(rec.id(), fix.id_comp[counter]);
         EXPECT_TRUE(empty(rec.base_qualities()));
 
-        counter++;
+        ++counter;
     }
 
     EXPECT_EQ(counter, 3u);

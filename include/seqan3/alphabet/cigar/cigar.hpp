@@ -84,12 +84,10 @@ public:
      * Example usage:
      * \include test/snippet/alphabet/cigar/cigar_operation.cpp
      *
-     * \if DEV
      * \note Usually you do not want to manipulate cigar elements and vectors on
      *       your own but convert an alignment to a cigar and back. See
-     *       seqan3::detail::get_cigar_vector for how to convert two aligned sequences into
+     *       seqan3::cigar_from_alignment for how to convert two aligned sequences into
      *       a cigar_vector.
-     * \endif
      *
      * \sa https://samtools.github.io/hts-specs/SAMv1.pdf#page=8
      *

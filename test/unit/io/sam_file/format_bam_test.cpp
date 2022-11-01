@@ -308,72 +308,48 @@ struct sam_file_read<seqan3::format_bam> : public sam_file_data
         '\x02', '\x02', '\x03', '\x61', '\x61', '\x41', '\x63', '\x41', '\x53', '\x43', '\x02', '\x66', '\x66',
         '\x66', '\x66', '\x66', '\x46', '\x40', '\x7A', '\x7A', '\x5A', '\x73', '\x74', '\x72', '\x00', '\x0A'};
 
-    std::string simple_three_reads_output{
-        // no hard clipping in output
-        '\x42', '\x41', '\x4D', '\x01', '\x1C', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56', '\x4E',
-        '\x3A', '\x31', '\x2E', '\x36', '\x0A', '\x40', '\x53', '\x51', '\x09', '\x53', '\x4E', '\x3A', '\x72', '\x65',
-        '\x66', '\x09', '\x4C', '\x4E', '\x3A', '\x33', '\x34', '\x0A', '\x01', '\x00', '\x00', '\x00', '\x04', '\x00',
-        '\x00', '\x00', '\x72', '\x65', '\x66', '\x00', '\x22', '\x00', '\x00', '\x00', '\x48', '\x00', '\x00', '\x00',
-        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x3D', '\x49', '\x12', '\x05', '\x00',
-        '\x29', '\x00', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x09', '\x00', '\x00', '\x00',
-        '\x2C', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x31', '\x00', '\x14', '\x00', '\x00', '\x00',
-        '\x10', '\x00', '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00',
-        '\x00', '\x00', '\x12', '\x48', '\x00', '\x02', '\x02', '\x03', '\x41', '\x53', '\x43', '\x02', '\x4E', '\x4D',
-        '\x43', '\x07', '\x52', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x01', '\x00', '\x00', '\x00',
-        '\x06', '\x3E', '\x49', '\x12', '\x04', '\x00', '\x2A', '\x00', '\x09', '\x00', '\x00', '\x00', '\x00', '\x00',
-        '\x00', '\x00', '\x09', '\x00', '\x00', '\x00', '\x2C', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61', '\x64',
-        '\x32', '\x00', '\x70', '\x00', '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00',
-        '\x14', '\x00', '\x00', '\x00', '\x14', '\x42', '\x84', '\xF1', '\x40', '\x00', '\x02', '\x02', '\x03', '\x05',
-        '\x06', '\x07', '\x08', '\x09', '\x78', '\x79', '\x42', '\x53', '\x03', '\x00', '\x00', '\x00', '\x03', '\x00',
-        '\x04', '\x00', '\x05', '\x00', '\x5A', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x02', '\x00',
-        '\x00', '\x00', '\x06', '\x3F', '\x49', '\x12', '\x0A', '\x00', '\x2B', '\x00', '\x08', '\x00', '\x00', '\x00',
-        '\x00', '\x00', '\x00', '\x00', '\x09', '\x00', '\x00', '\x00', '\x2C', '\x01', '\x00', '\x00', '\x72', '\x65',
-        '\x61', '\x64', '\x33', '\x00', '\x14', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x16', '\x00',
-        '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00',
-        '\x11', '\x00', '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x14', '\x00',
-        '\x00', '\x00', '\x44', '\x14', '\x81', '\x81', '\x00', '\x00', '\x09', '\x0A', '\x0B', '\x0C', '\x0D', '\x0E'};
-
     std::string verbose_output{
-        '\x42', '\x41', '\x4D', '\x01', '\xA6', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56', '\x4E',
-        '\x3A', '\x31', '\x2E', '\x36', '\x09', '\x53', '\x4F', '\x3A', '\x75', '\x6E', '\x6B', '\x6E', '\x6F', '\x77',
-        '\x6E', '\x09', '\x47', '\x4F', '\x3A', '\x6E', '\x6F', '\x6E', '\x65', '\x0A', '\x40', '\x53', '\x51', '\x09',
-        '\x53', '\x4E', '\x3A', '\x72', '\x65', '\x66', '\x09', '\x4C', '\x4E', '\x3A', '\x33', '\x34', '\x09', '\x41',
-        '\x4E', '\x3A', '\x6F', '\x74', '\x68', '\x65', '\x72', '\x5F', '\x6E', '\x61', '\x6D', '\x65', '\x0A', '\x40',
-        '\x52', '\x47', '\x09', '\x49', '\x44', '\x3A', '\x67', '\x72', '\x6F', '\x75', '\x70', '\x31', '\x09', '\x44',
-        '\x53', '\x3A', '\x6D', '\x6F', '\x72', '\x65', '\x20', '\x69', '\x6E', '\x66', '\x6F', '\x0A', '\x40', '\x50',
-        '\x47', '\x09', '\x49', '\x44', '\x3A', '\x70', '\x72', '\x6F', '\x67', '\x31', '\x09', '\x50', '\x4E', '\x3A',
-        '\x63', '\x6F', '\x6F', '\x6C', '\x5F', '\x70', '\x72', '\x6F', '\x67', '\x72', '\x61', '\x6D', '\x09', '\x43',
-        '\x4C', '\x3A', '\x2E', '\x2F', '\x70', '\x72', '\x6F', '\x67', '\x31', '\x09', '\x50', '\x50', '\x3A', '\x61',
-        '\x09', '\x44', '\x53', '\x3A', '\x62', '\x09', '\x56', '\x4E', '\x3A', '\x63', '\x0A', '\x40', '\x43', '\x4F',
-        '\x09', '\x54', '\x68', '\x69', '\x73', '\x20', '\x69', '\x73', '\x20', '\x61', '\x20', '\x63', '\x6F', '\x6D',
-        '\x6D', '\x65', '\x6E', '\x74', '\x2E', '\x0A', '\x01', '\x00', '\x00', '\x00', '\x04', '\x00', '\x00', '\x00',
+        '\x42', '\x41', '\x4d', '\x01', '\xa6', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56', '\x4e',
+        '\x3a', '\x31', '\x2e', '\x36', '\x09', '\x53', '\x4f', '\x3a', '\x75', '\x6e', '\x6b', '\x6e', '\x6f', '\x77',
+        '\x6e', '\x09', '\x47', '\x4f', '\x3a', '\x6e', '\x6f', '\x6e', '\x65', '\x0a', '\x40', '\x53', '\x51', '\x09',
+        '\x53', '\x4e', '\x3a', '\x72', '\x65', '\x66', '\x09', '\x4c', '\x4e', '\x3a', '\x33', '\x34', '\x09', '\x41',
+        '\x4e', '\x3a', '\x6f', '\x74', '\x68', '\x65', '\x72', '\x5f', '\x6e', '\x61', '\x6d', '\x65', '\x0a', '\x40',
+        '\x52', '\x47', '\x09', '\x49', '\x44', '\x3a', '\x67', '\x72', '\x6f', '\x75', '\x70', '\x31', '\x09', '\x44',
+        '\x53', '\x3a', '\x6d', '\x6f', '\x72', '\x65', '\x20', '\x69', '\x6e', '\x66', '\x6f', '\x0a', '\x40', '\x50',
+        '\x47', '\x09', '\x49', '\x44', '\x3a', '\x70', '\x72', '\x6f', '\x67', '\x31', '\x09', '\x50', '\x4e', '\x3a',
+        '\x63', '\x6f', '\x6f', '\x6c', '\x5f', '\x70', '\x72', '\x6f', '\x67', '\x72', '\x61', '\x6d', '\x09', '\x43',
+        '\x4c', '\x3a', '\x2e', '\x2f', '\x70', '\x72', '\x6f', '\x67', '\x31', '\x09', '\x50', '\x50', '\x3a', '\x61',
+        '\x09', '\x44', '\x53', '\x3a', '\x62', '\x09', '\x56', '\x4e', '\x3a', '\x63', '\x0a', '\x40', '\x43', '\x4f',
+        '\x09', '\x54', '\x68', '\x69', '\x73', '\x20', '\x69', '\x73', '\x20', '\x61', '\x20', '\x63', '\x6f', '\x6d',
+        '\x6d', '\x65', '\x6e', '\x74', '\x2e', '\x0a', '\x01', '\x00', '\x00', '\x00', '\x04', '\x00', '\x00', '\x00',
         '\x72', '\x65', '\x66', '\x00', '\x22', '\x00', '\x00', '\x00', '\x64', '\x00', '\x00', '\x00', '\x00', '\x00',
-        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x3D', '\x49', '\x12', '\x05', '\x00', '\x29', '\x00',
-        '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x09', '\x00', '\x00', '\x00', '\x2C', '\x01',
+        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x3d', '\x49', '\x12', '\x05', '\x00', '\x29', '\x00',
+        '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x09', '\x00', '\x00', '\x00', '\x2c', '\x01',
         '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x31', '\x00', '\x14', '\x00', '\x00', '\x00', '\x10', '\x00',
         '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00',
-        '\x12', '\x48', '\x00', '\x02', '\x02', '\x03', '\x41', '\x53', '\x43', '\x02', '\x43', '\x43', '\x53', '\x2C',
-        '\x01', '\x4E', '\x4D', '\x63', '\xF9', '\x61', '\x61', '\x41', '\x63', '\x63', '\x63', '\x73', '\xD4', '\xFE',
-        '\x66', '\x66', '\x66', '\x66', '\x66', '\x46', '\x40', '\x7A', '\x7A', '\x5A', '\x73', '\x74', '\x72', '\x00',
-        '\xA7', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x01', '\x00', '\x00', '\x00', '\x06', '\x3E',
-        '\x49', '\x12', '\x04', '\x00', '\x2A', '\x00', '\x09', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
-        '\x09', '\x00', '\x00', '\x00', '\x2C', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x32', '\x00',
-        '\x70', '\x00', '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x14', '\x00',
-        '\x00', '\x00', '\x14', '\x42', '\x84', '\xF1', '\x40', '\x00', '\x02', '\x02', '\x03', '\x05', '\x06', '\x07',
-        '\x08', '\x09', '\x62', '\x43', '\x42', '\x43', '\x02', '\x00', '\x00', '\x00', '\x03', '\xC8', '\x62', '\x49',
-        '\x42', '\x49', '\x01', '\x00', '\x00', '\x00', '\x00', '\xD8', '\x94', '\x11', '\x62', '\x53', '\x42', '\x53',
-        '\x03', '\x00', '\x00', '\x00', '\x2C', '\x01', '\x28', '\x00', '\xF4', '\x01', '\x62', '\x63', '\x42', '\x63',
-        '\x01', '\x00', '\x00', '\x00', '\xFD', '\x62', '\x66', '\x42', '\x66', '\x03', '\x00', '\x00', '\x00', '\x00',
-        '\x00', '\x60', '\x40', '\xCD', '\xCC', '\xCC', '\x3D', '\x33', '\x33', '\x2F', '\x42', '\x62', '\x69', '\x42',
-        '\x69', '\x03', '\x00', '\x00', '\x00', '\xFD', '\xFF', '\xFF', '\xFF', '\xC8', '\x00', '\x00', '\x00', '\x30',
-        '\xFE', '\xFE', '\xFF', '\x62', '\x73', '\x42', '\x73', '\x03', '\x00', '\x00', '\x00', '\xFD', '\xFF', '\xC8',
-        '\x00', '\xD4', '\xFE', '\x5A', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x02', '\x00', '\x00',
-        '\x00', '\x06', '\x3F', '\x49', '\x12', '\x0A', '\x00', '\x2B', '\x00', '\x08', '\x00', '\x00', '\x00', '\x00',
-        '\x00', '\x00', '\x00', '\x09', '\x00', '\x00', '\x00', '\x2C', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61',
-        '\x64', '\x33', '\x00', '\x14', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x16', '\x00', '\x00',
-        '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11',
-        '\x00', '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x14', '\x00', '\x00',
-        '\x00', '\x44', '\x14', '\x81', '\x81', '\x00', '\x00', '\x09', '\x0A', '\x0B', '\x0C', '\x0D', '\x0E'};
+        '\x12', '\x48', '\x00', '\x02', '\x02', '\x03', '\x41', '\x53', '\x43', '\x02', '\x43', '\x43', '\x53', '\x2c',
+        '\x01', '\x4e', '\x4d', '\x63', '\xf9', '\x61', '\x61', '\x41', '\x63', '\x63', '\x63', '\x73', '\xd4', '\xfe',
+        '\x66', '\x66', '\x66', '\x66', '\x66', '\x46', '\x40', '\x7a', '\x7a', '\x5a', '\x73', '\x74', '\x72', '\x00',
+        '\xaf', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x01', '\x00', '\x00', '\x00', '\x06', '\x3e',
+        '\x49', '\x12', '\x06', '\x00', '\x2a', '\x00', '\x09', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
+        '\x09', '\x00', '\x00', '\x00', '\x2c', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x32', '\x00',
+        '\x15', '\x00', '\x00', '\x00', '\x70', '\x00', '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00',
+        '\x00', '\x00', '\x14', '\x00', '\x00', '\x00', '\x25', '\x00', '\x00', '\x00', '\x14', '\x42', '\x84', '\xf1',
+        '\x40', '\x00', '\x02', '\x02', '\x03', '\x05', '\x06', '\x07', '\x08', '\x09', '\x62', '\x43', '\x42', '\x43',
+        '\x02', '\x00', '\x00', '\x00', '\x03', '\xc8', '\x62', '\x49', '\x42', '\x49', '\x01', '\x00', '\x00', '\x00',
+        '\x00', '\xd8', '\x94', '\x11', '\x62', '\x53', '\x42', '\x53', '\x03', '\x00', '\x00', '\x00', '\x2c', '\x01',
+        '\x28', '\x00', '\xf4', '\x01', '\x62', '\x63', '\x42', '\x63', '\x01', '\x00', '\x00', '\x00', '\xfd', '\x62',
+        '\x66', '\x42', '\x66', '\x03', '\x00', '\x00', '\x00', '\x00', '\x00', '\x60', '\x40', '\xcd', '\xcc', '\xcc',
+        '\x3d', '\x33', '\x33', '\x2f', '\x42', '\x62', '\x69', '\x42', '\x69', '\x03', '\x00', '\x00', '\x00', '\xfd',
+        '\xff', '\xff', '\xff', '\xc8', '\x00', '\x00', '\x00', '\x30', '\xfe', '\xfe', '\xff', '\x62', '\x73', '\x42',
+        '\x73', '\x03', '\x00', '\x00', '\x00', '\xfd', '\xff', '\xc8', '\x00', '\xd4', '\xfe', '\x5a', '\x00', '\x00',
+        '\x00', '\x00', '\x00', '\x00', '\x00', '\x02', '\x00', '\x00', '\x00', '\x06', '\x3f', '\x49', '\x12', '\x0a',
+        '\x00', '\x2b', '\x00', '\x08', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x09', '\x00', '\x00',
+        '\x00', '\x2c', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x33', '\x00', '\x14', '\x00', '\x00',
+        '\x00', '\x10', '\x00', '\x00', '\x00', '\x16', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11',
+        '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00', '\x12', '\x00', '\x00',
+        '\x00', '\x10', '\x00', '\x00', '\x00', '\x14', '\x00', '\x00', '\x00', '\x44', '\x14', '\x81', '\x81', '\x00',
+        '\x00', '\x09', '\x0a', '\x0b', '\x0c', '\x0d', '\x0e'};
 
     std::string special_output{
         '\x42', '\x41', '\x4D', '\x01', '\x1C', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56', '\x4E',
@@ -568,15 +544,14 @@ TEST_F(bam_format, too_long_cigar_string_read)
 
         seqan3::sam_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
 
-        EXPECT_RANGE_EQ(std::get<0>((*fin.begin()).alignment()), std::get<0>(this->alignments[0]));
-        EXPECT_RANGE_EQ(std::get<1>((*fin.begin()).alignment()), std::get<1>(this->alignments[0]));
+        EXPECT_RANGE_EQ((*fin.begin()).cigar_sequence(), this->cigars[0]);
         EXPECT_EQ((*fin.begin()).tags().size(), 0u); // redundant CG tag is removed
     }
 
     { // error: sam_tag_dictionary is not read
         std::istringstream stream{sam_file_with_too_long_cigar_string};
 
-        seqan3::sam_file_input fin{stream, seqan3::format_bam{}, seqan3::fields<seqan3::field::alignment>{}};
+        seqan3::sam_file_input fin{stream, seqan3::format_bam{}, seqan3::fields<seqan3::field::cigar>{}};
         ASSERT_THROW(fin.begin(), seqan3::format_error);
     }
 
@@ -585,7 +560,7 @@ TEST_F(bam_format, too_long_cigar_string_read)
 
         seqan3::sam_file_input fin{stream,
                                    seqan3::format_bam{},
-                                   seqan3::fields<seqan3::field::alignment, seqan3::field::tags>{}};
+                                   seqan3::fields<seqan3::field::cigar, seqan3::field::tags>{}};
         ASSERT_THROW(fin.begin(), seqan3::format_error);
     }
 
@@ -611,25 +586,19 @@ TEST_F(bam_format, too_long_cigar_string_read)
 
 TEST_F(bam_format, too_long_cigar_string_write)
 {
-    // create an alignment resulting more than 65535 cigar elements
-    // -------------------------------------------------------------------------
     auto read = seqan3::views::repeat_n('T'_dna5, 70'000);
     auto ref = seqan3::views::repeat_n('A'_dna5, 2 * read.size() - 1);
 
-    auto gapped_ref = seqan3::gap_decorator{ref};
-
-    // a gap_decorator on a repeat_n view also works but is slow when inserting gaps.
-    std::vector<seqan3::gapped<seqan3::dna5>> gapped_read;
-    gapped_read.reserve(2 * read.size());
-    // create gap of length one every second character => T-T-T-T-T-T...
-    for (auto chr : read)
-        gapped_read.push_back(chr), gapped_read.push_back(seqan3::gap{});
-    gapped_read.pop_back(); // remove last seqan3::gap
-
-    auto alignment = std::tie(gapped_ref, gapped_read);
+    // create a cigar with more than 65535 cigar elements
+    std::vector<seqan3::cigar> too_long_cigar{};
+    for (size_t i = 0; i < 69'999; ++i)
+    {
+        too_long_cigar.push_back({1, 'M'_cigar_operation});
+        too_long_cigar.push_back({1, 'D'_cigar_operation});
+    }
+    too_long_cigar.push_back({1, 'M'_cigar_operation});
 
     // Expected output. ATTENTION this could not be validated by samtools as it does not support too long cigar strings
-    // -------------------------------------------------------------------------
     std::string expected =
         std::string /*the beginning*/
         {'\x42', '\x41', '\x4D', '\x01', '\x20', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56', '\x4E',
@@ -667,10 +636,10 @@ TEST_F(bam_format, too_long_cigar_string_write)
                                                     seqan3::field::seq,
                                                     seqan3::field::ref_id,
                                                     seqan3::field::ref_offset,
-                                                    seqan3::field::alignment,
+                                                    seqan3::field::cigar,
                                                     seqan3::field::mapq>{}};
 
-        fout.emplace_back(&header, std::string{"long_read"}, read, 0, 0, alignment, 255);
+        fout.emplace_back(&header, std::string{"long_read"}, read, 0, 0, too_long_cigar, 255);
     }
 
     os.flush();
@@ -696,9 +665,7 @@ TEST_F(bam_format, issue2417)
 
     std::istringstream stream{input};
 
-    seqan3::sam_file_input fin{stream,
-                               seqan3::format_bam{},
-                               seqan3::fields<seqan3::field::id, seqan3::field::alignment>{}};
+    seqan3::sam_file_input fin{stream, seqan3::format_bam{}, seqan3::fields<seqan3::field::id, seqan3::field::cigar>{}};
 
     std::vector<seqan3::gapped<seqan3::dna5>> const empty_sequence{};
 
@@ -707,12 +674,11 @@ TEST_F(bam_format, issue2417)
     // In 2417, the sequence was not consumed. Thus, wrong bytes were read for the following records.
     // With the chosen `input` this also means that there will be more than 1 record in the alignment file.
     // Hence, we need the for loop even though there is only 1 record.
-    for (auto && [id, alignment] : fin)
+    for (auto && [id, cigar] : fin)
     {
         ++num_records;
         EXPECT_RANGE_EQ(id, std::string{"read1"});
-        EXPECT_RANGE_EQ(std::get<0>(alignment), empty_sequence);
-        EXPECT_RANGE_EQ(std::get<1>(alignment), empty_sequence);
+        EXPECT_TRUE(cigar.empty());
     }
 
     EXPECT_EQ(num_records, 1u);
