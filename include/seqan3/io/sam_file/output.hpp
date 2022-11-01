@@ -102,6 +102,10 @@ public:
                   "The field::offset is deprecated. It is already stored in the field::cigar as soft clipping (S) "
                   "at the front and not needed otherwise.");
 
+    static_assert(!selected_field_ids::contains(field::alignment),
+                  "The field::alignment is deprecated and only field::cigar is supported. Please see "
+                  "seqan3::cigar_from_alignment on how to get a CIGAR string from an alignment.");
+
     static_assert(
         []() constexpr
         {
