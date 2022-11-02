@@ -242,9 +242,6 @@ public:
 
     /*!\brief Construct an uncompressed Interleaved Bloom Filter from a compressed one.
      * \param[in] ibf The compressed seqan3::interleaved_bloom_filter.
-     *
-     * \attention This constructor can only be used to construct **uncompressed** Interleaved Bloom Filters.
-     *
      * \details
      *
      * ### Example
