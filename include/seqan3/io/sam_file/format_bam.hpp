@@ -505,7 +505,7 @@ format_bam::read_alignment_record(stream_type & stream,
     // -------------------------------------------------------------------------------------------------------------
     if constexpr (!detail::decays_to_ignore_v<cigar_type>)
     {
-        int32_t sc_front = soft_clipping_at_front(cigar_vector);
+        int32_t const sc_front = soft_clipping_at_front(cigar_vector);
 
         // Check cigar, if it matches ‘kSmN’, where ‘k’ equals lseq, ‘m’ is the reference sequence length in the
         // alignment, and ‘S’ and ‘N’ are the soft-clipping and reference-clip, then the cigar string was larger
