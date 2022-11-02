@@ -400,7 +400,6 @@ public:
     void push_back(record_t && r)
         requires detail::record_like<record_t>
     {
-        using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
         using default_mate_t = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
 
         write_record(detail::get_or<field::header_ptr>(r, nullptr),
@@ -445,7 +444,6 @@ public:
     void push_back(tuple_t && t)
         requires tuple_like<tuple_t> && (!detail::record_like<tuple_t>)
     {
-        using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
         using default_mate_t = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
 
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
