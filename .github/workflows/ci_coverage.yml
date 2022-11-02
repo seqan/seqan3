@@ -135,5 +135,6 @@ jobs:
       - name: Submit coverage build
         uses: codecov/codecov-action@v3
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: ${{ github.workspace }}/seqan3-build/seqan3_coverage.xml
           root_dir: ${{ github.workspace }}/seqan3
