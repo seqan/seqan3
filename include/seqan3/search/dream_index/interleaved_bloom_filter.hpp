@@ -240,6 +240,23 @@ public:
         data = sdsl::bit_vector(technical_bins * bin_size_);
     }
 
+    /*!\brief Construct an uncompressed Interleaved Bloom Filter from a compressed one.
+     * \param[in] ibf The compressed seqan3::interleaved_bloom_filter.
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/search/dream_index/interleaved_bloom_filter_constructor_uncompress.cpp
+     */
+    interleaved_bloom_filter(interleaved_bloom_filter<data_layout::compressed> const & ibf)
+        requires (data_layout_mode == data_layout::uncompressed)
+    {
+        std::tie(bins, technical_bins, bin_size_, hash_shift, bin_words, hash_funs) =
+            std::tie(ibf.bins, ibf.technical_bins, ibf.bin_size_, ibf.hash_shift, ibf.bin_words, ibf.hash_funs);
+
+        data = sdsl::bit_vector{ibf.data.begin(), ibf.data.end()};
+    }
+
     /*!\brief Construct a compressed Interleaved Bloom Filter.
      * \param[in] ibf The uncompressed seqan3::interleaved_bloom_filter.
      *

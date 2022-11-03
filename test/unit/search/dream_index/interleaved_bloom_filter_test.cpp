@@ -358,3 +358,23 @@ TYPED_TEST(interleaved_bloom_filter_test, serialisation)
     TypeParam ibf{TestFixture::make_ibf(seqan3::bin_count{73u}, seqan3::bin_size{1024u})};
     seqan3::test::do_serialisation(ibf);
 }
+
+TEST(interleaved_bloom_filter_test, decompression)
+{
+    seqan3::interleaved_bloom_filter ibf{seqan3::bin_count{64u}, seqan3::bin_size{1024u}};
+
+    // Only use every other bin.
+    auto take_odd = [](auto number)
+    {
+        return number & 1;
+    };
+    for (size_t bin_idx : std::views::iota(0, 64) | std::views::filter(take_odd))
+        for (size_t hash : std::views::iota(0, 64))
+            ibf.emplace(hash, seqan3::bin_index{bin_idx});
+
+    seqan3::interleaved_bloom_filter<seqan3::data_layout::compressed> ibf_compressed{ibf};
+
+    seqan3::interleaved_bloom_filter ibf_decompressed{ibf_compressed};
+
+    EXPECT_TRUE(ibf == ibf_decompressed);
+}
