@@ -93,11 +93,9 @@ jobs:
           sed -i "s@{{ build }}@${{ matrix.build }}@" $FILE
           sed -i "s@{{ compiler }}@${{ matrix.compiler }}@" $FILE
           sed -i "s@{{ url }}@$URL@" $FILE
-          body=$(cat $FILE)
-          body="${body//'%'/'%25'}"
-          body="${body//$'\n'/'%0A'}"
-          body="${body//$'\r'/'%0D'}"
-          echo "body=$body" >> $GITHUB_OUTPUT
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          cat $FILE >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Reopen issue
         if: ${{ failure() }}
