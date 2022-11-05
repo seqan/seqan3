@@ -255,7 +255,7 @@ public:
     ~basic_iterator() = default;                                      //!< Defaulted.
 
     //!\brief Constructor that delegates to the CRTP layer.
-    constexpr basic_iterator(base_base_t const & it) noexcept(noexcept(base_t{it})) : base_t{std::move(it)}
+    constexpr basic_iterator(base_base_t it) noexcept(noexcept(base_t{it})) : base_t{std::move(it)}
     {}
 
     //!\brief Constructor that delegates to the CRTP layer and initialises the members.
