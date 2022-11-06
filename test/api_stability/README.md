@@ -9,6 +9,8 @@ adapt our changelog accordingly.
 ### Usage
 
 ```bash
+# Note that the build directory must not be a subdirectory of a git repository (a directory containing .git)
+# Otherwise, the patches cannot be applied correctly
 cd <build_dir> # e.g. seqan3-builds/api_stability/
 
 # we recommend to disable deprecation warnings in CI
@@ -51,7 +53,7 @@ user.
 There are two categories of API changes that are reflected in the patches (prefixes in the commit message):
 
 * `[API]` are patches that changed the public API in some way (regardless of whether this is `stable` or `experimental`
-  API), like the behaviour, the return type or the call convention. These patches should always have a `CHANGELOG.md` 
+  API), like the behaviour, the return type or the call convention. These patches should always have a `CHANGELOG.md`
   entry explaining what the change did. `[API]` changes are further divided into these subcategories:
   * `[API] [BREAKAGE]` An API that existed and has a completely different meaning now, such a change MUST have a really
     good reason and should be avoided or documented extremely well.
@@ -61,12 +63,12 @@ There are two categories of API changes that are reflected in the patches (prefi
     * CTAD changed (e.g., `some_class{0}` will now be of type `some_class<int>` instead of `some_class<double>`).
     * The return type changed / order within template parameters changed.
   * `[API] [WRONG-USAGE]` An API was misused in the test or tested some invalid scenarios.
-* `[NOAPI]` are patches that change internal (e.g., `seqan3::detail` or `private` member) or non-public API (e.g., 
+* `[NOAPI]` are patches that change internal (e.g., `seqan3::detail` or `private` member) or non-public API (e.g.,
   marked `\noapi`). These changes do not need an upgrade path. We differentiate between the following subcategories:
   * `[NOAPI] [INCLUDE]` Some header file was moved, or an unnecessary include was removed in some header,
     which caused a test to explicitly include that header. As there are tools like [Include What You
-    Use](https://github.com/include-what-you-use/include-what-you-use), we do not consider these changes as API 
-    stability issues. We will still try to add an upgrade path if possible (like when we split `/include/seqan3/core` 
+    Use](https://github.com/include-what-you-use/include-what-you-use), we do not consider these changes as API
+    stability issues. We will still try to add an upgrade path if possible (like when we split `/include/seqan3/core`
     and `/include/seqan3/utility`) and add `CHANGELOG.md` entries for every header change.
   * `[NOAPI] [DETAIL]` Some `seqan3::detail` code changed, like a rename, or template parameter change.
   * `[NOAPI] [DEPRECATED]` Some deprecated code was removed.
