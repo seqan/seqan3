@@ -78,9 +78,11 @@ protected:
         diagonal_score = (diagonal_score < vertical_score)
                            ? (best_trace = previous_cell.vertical_trace(), vertical_score)
                            : (best_trace |= previous_cell.vertical_trace(), diagonal_score);
-        diagonal_score = (diagonal_score < horizontal_score)
-                           ? (best_trace = previous_cell.horizontal_trace(), horizontal_score)
-                           : (best_trace |= previous_cell.horizontal_trace(), diagonal_score);
+        diagonal_score =
+            (diagonal_score < horizontal_score)
+                ? (best_trace = previous_cell.horizontal_trace() | (best_trace & trace_directions::carry_up_open),
+                   horizontal_score)
+                : (best_trace |= previous_cell.horizontal_trace(), diagonal_score);
 
         score_type tmp = diagonal_score + gap_open_score;
         vertical_score += gap_extension_score;

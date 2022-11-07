@@ -18,8 +18,8 @@ static constexpr seqan3::detail::trace_directions N = seqan3::detail::trace_dire
 static constexpr seqan3::detail::trace_directions D = seqan3::detail::trace_directions::diagonal;
 static constexpr seqan3::detail::trace_directions u = seqan3::detail::trace_directions::up;
 static constexpr seqan3::detail::trace_directions l = seqan3::detail::trace_directions::left;
-static constexpr seqan3::detail::trace_directions U = seqan3::detail::trace_directions::up_open;
-static constexpr seqan3::detail::trace_directions L = seqan3::detail::trace_directions::left_open;
+static constexpr seqan3::detail::trace_directions U = seqan3::detail::trace_directions::carry_up_open;
+static constexpr seqan3::detail::trace_directions L = seqan3::detail::trace_directions::carry_left_open;
 
 TEST(debug_stream_test, ascii)
 {

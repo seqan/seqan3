@@ -97,8 +97,10 @@ private:
         {
             tmp = (tmp < score_cell.up) ? (trace_cell.current = trace_cell.up, score_cell.up)
                                         : (trace_cell.current = trace_directions::diagonal | trace_cell.up, tmp);
-            tmp = (tmp < score_cell.r_left) ? (trace_cell.current = trace_cell.r_left, score_cell.r_left)
-                                            : (trace_cell.current |= trace_cell.r_left, tmp);
+            tmp = (tmp < score_cell.r_left)
+                    ? (trace_cell.current = trace_cell.r_left | (trace_cell.current & trace_directions::carry_up_open),
+                       score_cell.r_left)
+                    : (trace_cell.current |= trace_cell.r_left, tmp);
         }
         else
         {

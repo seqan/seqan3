@@ -743,14 +743,28 @@ private:
         if constexpr (traits_t::compute_sequence_alignment)
         {
             auto trace_matrix_it = trace_debug_matrix.begin() + offset;
-            std::ranges::copy(column
-                                  | std::views::transform(
-                                      [](auto const & tpl)
-                                      {
-                                          using std::get;
-                                          return get<1>(tpl).current;
-                                      }),
-                              trace_debug_matrix.begin() + offset);
+            std::ranges::copy(
+                column
+                    | std::views::transform(
+                        [](auto const & tpl)
+                        {
+                            using std::get;
+                            auto trace = get<1>(tpl).current;
+
+                            if (auto _up = (trace & trace_directions::up_open); _up == trace_directions::carry_up_open)
+                                trace = trace ^ trace_directions::carry_up_open; // remove silent up open signal
+                            else if (_up == trace_directions::up_open)
+                                trace = trace ^ trace_directions::up; // display up open only with single bit.
+
+                            if (auto _left = (trace & trace_directions::left_open);
+                                _left == trace_directions::carry_left_open)
+                                trace = trace ^ trace_directions::carry_left_open; // remove silent left open signal
+                            else if (_left == trace_directions::left_open)
+                                trace = trace ^ trace_directions::left; // display left open only with single bit.
+
+                            return trace;
+                        }),
+                trace_debug_matrix.begin() + offset);
         }
     }
 
