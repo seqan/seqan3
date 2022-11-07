@@ -361,8 +361,9 @@ public:
                              field::header_ptr>;
 
     static_assert(!selected_field_ids::contains(field::alignment),
-                  "The field::alignment is deprecated and only field::cigar is supported. Please see "
-                  "seqan3::alignment_from_cigar on how to get an alignment from the cigar information.");
+                  "The seqan3::field::alignment was removed from the allowed fields for seqan::sam_file_input. "
+                  "Only seqan3::field::cigar is supported. Please see seqan3::alignment_from_cigar on how to get an "
+                  "alignment from the cigar information.");
 
     static_assert(!selected_field_ids::contains(field::offset),
                   "The field::offset is deprecated. Please access field::cigar and retrieve the soft clipping (S) "
