@@ -59,7 +59,6 @@ namespace seqan3
  */
 template <detail::fields_specialisation selected_field_ids_ = fields<field::seq,
                                                                      field::id,
-                                                                     field::offset,
                                                                      field::ref_id,
                                                                      field::ref_offset,
                                                                      field::cigar,
@@ -89,7 +88,6 @@ public:
     //!\brief The subset of seqan3::field IDs that are valid for this file.
     using field_ids = fields<field::seq,
                              field::id,
-                             field::offset,
                              field::ref_id,
                              field::ref_offset,
                              field::cigar,
@@ -99,6 +97,10 @@ public:
                              field::mate,
                              field::tags,
                              field::header_ptr>;
+
+    static_assert(!selected_field_ids::contains(field::offset),
+                  "The field::offset is deprecated. It is already stored in the field::cigar as soft clipping (S) "
+                  "at the front and not needed otherwise.");
 
     static_assert(
         []() constexpr
@@ -406,7 +408,6 @@ public:
                      detail::get_or<field::seq>(r, std::string_view{}),
                      detail::get_or<field::qual>(r, std::string_view{}),
                      detail::get_or<field::id>(r, std::string_view{}),
-                     detail::get_or<field::offset>(r, 0u),
                      detail::get_or<field::ref_seq>(r, std::string_view{}),
                      detail::get_or<field::ref_id>(r, std::ignore),
                      detail::get_or<field::ref_offset>(r, std::optional<int32_t>{}),
@@ -451,7 +452,6 @@ public:
                      detail::get_or<selected_field_ids::index_of(field::seq)>(t, std::string_view{}),
                      detail::get_or<selected_field_ids::index_of(field::qual)>(t, std::string_view{}),
                      detail::get_or<selected_field_ids::index_of(field::id)>(t, std::string_view{}),
-                     detail::get_or<selected_field_ids::index_of(field::offset)>(t, 0u),
                      detail::get_or<selected_field_ids::index_of(field::ref_seq)>(t, std::string_view{}),
                      detail::get_or<selected_field_ids::index_of(field::ref_id)>(t, std::ignore),
                      detail::get_or<selected_field_ids::index_of(field::ref_offset)>(t, std::optional<int32_t>{}),
@@ -673,7 +673,7 @@ protected:
     template <typename record_header_ptr_t, typename... pack_type>
     void write_record(record_header_ptr_t && record_header_ptr, pack_type &&... remainder)
     {
-        static_assert((sizeof...(pack_type) == 14), "Wrong parameter list passed to write_record.");
+        static_assert((sizeof...(pack_type) == 13), "Wrong parameter list passed to write_record.");
 
         assert(!format.valueless_by_exception());
 

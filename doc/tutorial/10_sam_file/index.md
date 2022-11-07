@@ -73,7 +73,6 @@ To make things clearer, here is the table of SAM columns and the corresponding f
 | 11 | QUAL          | seqan3::sam_record::base_qualities     | seqan3::field::qual       |
 
 SAM files provide following additional fields:
-* seqan3::sam_record::sequence_position (seqan3::field::offset)
 * seqan3::sam_record::tags (seqan3::field::tags)
 * seqan3::sam_record::header_ptr (seqan3::field::header_ptr)
 

@@ -123,33 +123,34 @@ public:
         return get_impl(field_constant<seqan3::field::qual>{}, static_cast<tuple_base_t const &>(*this));
     }
 
-    /*!\brief Sequence (seqan3::sam_record::sequence) relative start position (0-based), unsigned value.
-     *        (SAM Column ID: POS)
-     * \returns seqan3::sam_file_input::offset_type per default
+    /*!\brief [DEPRECATED] Sequence (seqan3::sam_record::sequence) relative start position (0-based), unsigned value.
+     * \returns 0
      *
-     * \details
+     * \deprecated This member is deprecated please access the `seqan3::sam_record::cigar()` information directly and
+     *             check the value for soft clipping (S) at the front of the CIGAR string. It is synonym to the
+     *             offset. If not soft clipping is present at the front, the offset is zero.
      *
      * The position is the length of the soft-clipping at the start of the seqan3::sam_record::cigar_sequence if a
      * soft-clipping is present and `0` otherwise.
      */
-    decltype(auto) sequence_position() &&
+    SEQAN3_DEPRECATED_340 decltype(auto) sequence_position() &&
     {
-        return get_impl(field_constant<seqan3::field::offset>{}, static_cast<tuple_base_t &&>(*this));
+        return static_cast<int32_t>(0);
     }
     //!\copydoc seqan3::sam_record::sequence_position
-    decltype(auto) sequence_position() const &&
+    SEQAN3_DEPRECATED_340 decltype(auto) sequence_position() const &&
     {
-        return get_impl(field_constant<seqan3::field::offset>{}, static_cast<tuple_base_t const &&>(*this));
+        return static_cast<int32_t>(0);
     }
     //!\copydoc seqan3::sam_record::sequence_position
-    decltype(auto) sequence_position() &
+    SEQAN3_DEPRECATED_340 decltype(auto) sequence_position() &
     {
-        return get_impl(field_constant<seqan3::field::offset>{}, static_cast<tuple_base_t &>(*this));
+        return static_cast<int32_t>(0);
     }
     //!\copydoc seqan3::sam_record::sequence_position
-    decltype(auto) sequence_position() const &
+    SEQAN3_DEPRECATED_340 decltype(auto) sequence_position() const &
     {
-        return get_impl(field_constant<seqan3::field::offset>{}, static_cast<tuple_base_t const &>(*this));
+        return static_cast<int32_t>(0);
     }
 
     /*!\brief [DEPRECATED] The (pairwise) alignment stored in an object that models seqan3::detail::pairwise_alignment.

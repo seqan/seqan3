@@ -84,7 +84,6 @@ concept sam_file_input_format = requires (detail::sam_file_input_format_exposer<
                                           dna5_vector & seq,
                                           std::vector<phred42> & qual,
                                           std::string & id,
-                                          int32_t & offset,
                                           dna5_vector & ref_seq,
                                           std::optional<int32_t> & ref_id,
                                           std::optional<int32_t> & ref_offset,
@@ -107,7 +106,6 @@ concept sam_file_input_format = requires (detail::sam_file_input_format_exposer<
                                                                 seq,
                                                                 qual,
                                                                 id,
-                                                                offset,
                                                                 ref_seq,
                                                                 ref_id,
                                                                 ref_offset,
@@ -165,7 +163,6 @@ class sam_file_input_format
  *                                seq_type & seq,
  *                                qual_type & qual,
  *                                id_type & id,
- *                                offset_type & offset,
  *                                ref_seq_type & ref_seq,
  *                                ref_id_type & ref_id,
  *                                ref_offset_type & ref_offset,
@@ -183,7 +180,6 @@ class sam_file_input_format
  * \tparam seq_type           Type of the seqan3::field::seq input (see seqan3::sam_file_input_traits).
  * \tparam qual_type          Type of the seqan3::field::qual input (see seqan3::sam_file_input_traits).
  * \tparam id_type            Type of the seqan3::field::id input (see seqan3::sam_file_input_traits).
- * \tparam offset_type        Type of the seqan3::field::offset input (see seqan3::sam_file_input_traits).
  * \tparam ref_seq_type       Type of the seqan3::field::ref_seq input (see seqan3::sam_file_input_traits).
  * \tparam ref_id_type        Type of the seqan3::field::ref_id input (see seqan3::sam_file_input_traits).
  * \tparam ref_offset_type    Type of the seqan3::field::ref_offset input (see seqan3::sam_file_input_traits).
@@ -203,7 +199,6 @@ class sam_file_input_format
  * \param[out]    seq         The buffer for seqan3::field::seq input.
  * \param[out]    qual        The buffer for seqan3::field::qual input.
  * \param[out]    id          The buffer for seqan3::field::id input.
- * \param[out]    offset      The buffer for seqan3::field::offset input.
  * \param[out]    ref_seq     The buffer for seqan3::field::ref_seq input.
  * \param[out]    ref_id      The buffer for seqan3::field::ref_id input.
  * \param[out]    ref_offset  The buffer for seqan3::field::ref_offset input.

@@ -53,7 +53,6 @@ static std::string create_sam_file_string(size_t const n_queries)
 
         using sam_fields = seqan3::fields<seqan3::field::seq,
                                           seqan3::field::id,
-                                          seqan3::field::offset,
                                           seqan3::field::ref_id,
                                           seqan3::field::ref_offset,
                                           seqan3::field::cigar,
@@ -72,7 +71,6 @@ static std::string create_sam_file_string(size_t const n_queries)
 
             sam_out.emplace_back(query,                                                  // field::seq
                                  current_query_id,                                       // field::id
-                                 align_result.sequence2_begin_position(),                // field::offset
                                  reference_id,                                           // field::ref_id
                                  align_result.sequence1_begin_position(),                // field::ref_offset
                                  seqan3::cigar_from_alignment(align_result.alignment()), // field::cigar

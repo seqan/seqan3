@@ -102,7 +102,6 @@ TEST(general, default_template_args_and_deduction_guides)
 {
     using comp1 = seqan3::fields<seqan3::field::seq,
                                  seqan3::field::id,
-                                 seqan3::field::offset,
                                  seqan3::field::ref_id,
                                  seqan3::field::ref_offset,
                                  seqan3::field::cigar,

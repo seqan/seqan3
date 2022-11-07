@@ -36,7 +36,6 @@ struct sam_file_seek_test : public ::testing::TestWithParam<sam_file_seek_test_f
         EXPECT_EQ(record.sequence(), expected_record.sequence());
         EXPECT_EQ(record.id(), expected_record.id());
         EXPECT_EQ(record.base_qualities(), expected_record.base_qualities());
-        EXPECT_EQ(record.sequence_position(), expected_record.sequence_position());
         EXPECT_EQ(record.reference_id(), expected_record.reference_id());
         EXPECT_EQ(record.reference_position(), expected_record.reference_position());
         EXPECT_RANGE_EQ(record.cigar_sequence(), expected_record.cigar_sequence());

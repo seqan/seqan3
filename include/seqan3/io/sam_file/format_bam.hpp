@@ -73,7 +73,6 @@ protected:
               typename stream_pos_type,
               typename seq_type,
               typename id_type,
-              typename offset_type,
               typename ref_seq_type,
               typename ref_id_type,
               typename ref_offset_type,
@@ -93,7 +92,6 @@ protected:
                                seq_type & seq,
                                qual_type & qual,
                                id_type & id,
-                               offset_type & offset,
                                ref_seq_type & SEQAN3_DOXYGEN_ONLY(ref_seq),
                                ref_id_type & ref_id,
                                ref_offset_type & ref_offset,
@@ -121,7 +119,6 @@ protected:
                                 [[maybe_unused]] seq_type && seq,
                                 [[maybe_unused]] qual_type && qual,
                                 [[maybe_unused]] id_type && id,
-                                [[maybe_unused]] int32_t const offset,
                                 [[maybe_unused]] ref_seq_type && SEQAN3_DOXYGEN_ONLY(ref_seq),
                                 [[maybe_unused]] ref_id_type && ref_id,
                                 [[maybe_unused]] std::optional<int32_t> ref_offset,
@@ -247,7 +244,6 @@ template <typename stream_type, // constraints checked by file
           typename stream_pos_type,
           typename seq_type,
           typename id_type,
-          typename offset_type,
           typename ref_seq_type,
           typename ref_id_type,
           typename ref_offset_type,
@@ -268,7 +264,6 @@ format_bam::read_alignment_record(stream_type & stream,
                                   seq_type & seq,
                                   qual_type & qual,
                                   id_type & id,
-                                  offset_type & offset,
                                   ref_seq_type & SEQAN3_DOXYGEN_ONLY(ref_seq),
                                   ref_id_type & ref_id,
                                   ref_offset_type & ref_offset,
@@ -292,7 +287,6 @@ format_bam::read_alignment_record(stream_type & stream,
 
     auto stream_view = seqan3::detail::istreambuf(stream);
 
-    [[maybe_unused]] int32_t offset_tmp{}; // needed in case the cigar string was stored in the tag dictionary
     [[maybe_unused]] int32_t ref_length{}; // needed in case the cigar string was stored in the tag dictionary
 
     // Header
@@ -429,15 +423,11 @@ format_bam::read_alignment_record(stream_type & stream,
     {
         int32_t seq_length{};
         std::tie(cigar_vector, ref_length, seq_length) = parse_binary_cigar(stream_view, core.n_cigar_op);
-        int32_t soft_clipping_end{};
-        transfer_soft_clipping_to(cigar_vector, offset_tmp, soft_clipping_end);
     }
     else
     {
         detail::consume(stream_view | detail::take_exactly_or_throw(core.n_cigar_op * 4));
     }
-
-    offset = offset_tmp;
 
     // read sequence
     // -------------------------------------------------------------------------------------------------------------
@@ -515,16 +505,18 @@ format_bam::read_alignment_record(stream_type & stream,
     // -------------------------------------------------------------------------------------------------------------
     if constexpr (!detail::decays_to_ignore_v<cigar_type>)
     {
+        int32_t const sc_front = soft_clipping_at_front(cigar_vector);
+
         // Check cigar, if it matches ‘kSmN’, where ‘k’ equals lseq, ‘m’ is the reference sequence length in the
         // alignment, and ‘S’ and ‘N’ are the soft-clipping and reference-clip, then the cigar string was larger
         // than 65535 operations and is stored in the sam_tag_dictionary (tag GC).
-        if (core.l_seq != 0 && offset_tmp == core.l_seq)
+        if (core.l_seq != 0 && sc_front == core.l_seq)
         {
             if constexpr (detail::decays_to_ignore_v<tag_dict_type> | detail::decays_to_ignore_v<seq_type>)
             { // maybe only throw in debug mode and otherwise return an empty alignment?
                 throw format_error{
                     detail::to_string("The cigar string '",
-                                      offset_tmp,
+                                      sc_front,
                                       "S",
                                       ref_length,
                                       "N' suggests that the cigar string exceeded 65535 elements and was therefore ",
@@ -538,7 +530,7 @@ format_bam::read_alignment_record(stream_type & stream,
                 if (it == tag_dict.end())
                     throw format_error{detail::to_string(
                         "The cigar string '",
-                        offset_tmp,
+                        sc_front,
                         "S",
                         ref_length,
                         "N' suggests that the cigar string exceeded 65535 elements and was therefore ",
@@ -548,9 +540,6 @@ format_bam::read_alignment_record(stream_type & stream,
                 auto cigar_view = std::views::all(std::get<std::string>(it->second));
                 int32_t seq_length{};
                 std::tie(cigar_vector, ref_length, seq_length) = detail::parse_cigar(cigar_view);
-                offset_tmp = 0;
-                int32_t soft_clipping_end{};
-                transfer_soft_clipping_to(cigar_vector, offset_tmp, soft_clipping_end);
                 tag_dict.erase(it); // remove redundant information
             }
         }
@@ -574,7 +563,6 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type & st
                                                [[maybe_unused]] seq_type && seq,
                                                [[maybe_unused]] qual_type && qual,
                                                [[maybe_unused]] id_type && id,
-                                               [[maybe_unused]] int32_t const offset,
                                                [[maybe_unused]] ref_seq_type && SEQAN3_DOXYGEN_ONLY(ref_seq),
                                                [[maybe_unused]] ref_id_type && ref_id,
                                                [[maybe_unused]] std::optional<int32_t> ref_offset,

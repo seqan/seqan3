@@ -11,7 +11,6 @@ int main()
     // The default types; you can adjust this list if you don't want to read all this data.
     using default_fields = seqan3::fields<seqan3::field::seq,
                                           seqan3::field::id,
-                                          seqan3::field::offset,
                                           seqan3::field::ref_id,
                                           seqan3::field::ref_offset,
                                           seqan3::field::cigar,
