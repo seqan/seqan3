@@ -5,10 +5,9 @@
 This tutorial walks you through small SeqAn programs. It is intended to give you a short overview
 of what to expect in the other tutorials and how to use this documentation.
 
-\tutorial_head{Easy, 30 min, \ref setup, [Ranges](https://github.com/seqan/seqan3/wiki/Ranges)\,
-                                         [Concepts](https://en.cppreference.com/w/cpp/language/constraints)}
+\tutorial_head{Easy, 30 min, \ref setup, }
 
-*Every page in the tutorials begins with this section. It is recommended that you do the "prerequisite tutorials"
+*Every page in the tutorials begins with the above table. It is recommended that you do the "prerequisite tutorials"
 before the current one. You should also have a look at the links provided in "recommended reading" and maybe keep
 them open in separate tabs/windows as reference.*
 
@@ -32,13 +31,14 @@ Most of them are compilable as-is, but some are only valid in their context,
 e.g. they depend on other code snippets given before/after the current one or
 other statements implied by the text. You can **copy'n'paste** freely from these examples,
 this implies no copyright-obligations (however distributing SeqAn or an application
-using it does, see [Copyright](https://docs.seqan.de/seqan/3-master-user/about_copyright.html) and [Citing](https://docs.seqan.de/seqan/3-master-user/about_citing.html)).
+using it does, see [Copyright](https://docs.seqan.de/seqan/3-master-user/about_copyright.html) and
+[Citing](https://docs.seqan.de/seqan/3-master-user/about_citing.html)).
 
-You may ask, why we do not use std::cout or std::cerr for console output.
+You may ask why we do not use std::cout or std::cerr for console output.
 Actually, for the given text it does not make a difference since seqan3::debug_stream prints to std::cerr as well.
 However, the debug stream provides convenient output for SeqAn's types as well as widely used data structures
 (e.g. std::vector), which is especially helpful when you debug or develop your program
-(that's where the name originates).
+(that's where the name originates from).
 
 \assignment{Assignment 1: Debug stream}
 Write a program that creates a std::vector of type `int` and initialise the vector with a few values.
@@ -48,120 +48,88 @@ Then print the vector with seqan3::debug_stream. Does your program also work wit
 \snippet introduction_debug_stream.cpp debug
 \endsolution
 
-\note
-This is an assignment with solution. You will find assignments in the tutorials to practise the discussed contents.
-We believe that programming them will help you to memorise better and makes the tutorials more interesting and
+The above is an assignment with solution. You will find assignments in the tutorials to practise the discussed contents.
+We believe that programming them will help you to memorise better and that it makes the tutorials more interesting and
 interactive. The solutions provide the intended use; but often there are multiple ways to solve an assignment,
 so don't worry too much if your solution is different from ours.
 
-# Parse command line arguments
+# API documentation
 
-After we have seen the *Hello World!* program, we want to go a bit further and parse arguments from the command line.
-The following snippet shows you how this is done in SeqAn. Here the program expects a string argument in the
-program call and prints it to your terminal.
+While the tutorials provide you with a walkthrough of some of our modules, the
+[API documentation](https://docs.seqan.de/seqan/3-master-user/modules.html) will be the go-to reference when you start
+developing code with SeqAn.
 
-\snippet introduction_argument_parser.cpp argparse
+Some helpful tips when browsing our documentation:
 
-Implementing a program with seqan3::argument_parser requires three steps:
-1. Initialise the seqan3::argument_parser with your program's name and pass the `argc` and `argv` variables.
-2. Register (positional) options in the parser object. In this way, it knows which options to expect and
-   it can generate the help page for your program. You will learn more about the option types in the *Argument Parser
-   Tutorial*.
-3. Run the parser. As it throws exceptions on wrong user behaviour, it should be surrounded with a try-catch block.
+* You can search for seqan3 entities with the **search bar** in the top-right corner.
+  E.g., start typing `debug_str` and the pop-up will suggest the `debug_stream` for you.
+* If you don't have a specific entity you are searching for, the **landing pages** of each module are always a good
+  start. E.g., the [Alphabet landing page](https://docs.seqan.de/seqan/3-master-user/group__alphabet.html) first lists
+  all submodules (Adaptation, Aminoacid, ...) and general alphabet-related seqan3 entities, followed by a detailed
+  description of our alphabet module. Searching for keywords on this page might point you in the right direction.
+* If you know you've seen some code snippet somewhere but don't remember where, have a look at our
+  [cookbook](https://docs.seqan.de/seqan/3-master-user/cookbook.html). It is not structured and huge, but works
+  well if you do a key word search with `Ctrl+F`.
 
-You will see that the entered text is now in the buffer variable `input`. The argument parser provides way more
-functionality than we can show at this point, e.g. validation of arguments and different option types. We refer you
-to the respective tutorial if you want to know more.
+We recommend you to open the API documentation in separate browser tab s.t. you can easily switch back to the tutorial.
 
-\note
-You may have spotted that the blue coloured keywords link you directly to the respective **API documentation**.
-This is helpful if you need further information on a function, concept or class. We recommend you to open them
-in separate browser tabs such that you can easily switch back to the tutorial.
+If you have troubles or the documentation is missing some information, feel free to write to the developers
+of SeqAn on [Github](https://github.com/seqan/seqan3/issues/new/choose) and ask your questions directly.
 
-## Modules in SeqAn
+# Modules in SeqAn
 
-You have just been introduced to one of the **Modules** of SeqAn, the *Argument Parser*.
-Modules structure the SeqAn library into logical units, as there are for instance `alignment`, `alphabet`,
-`argument_parser`, `io`, `search` and some more. See the *API Reference (Modules)* section in the
-navigation column for a complete overview.
+Modules structure the SeqAn library into logical units. There are, for instance,
 
-Some modules consist of submodules and the module structure is represented by the file hierarchy in the `include`
-directory. Whenever you use functions of a module, make sure to `include` the correct header file.
+* [`alphabet`](https://docs.seqan.de/seqan/3-master-user/group__alphabet.html): `seqan3::dna4` etc.
+* [`io`](http://docs.seqan.de/seqan/3-master-user/group__io.html): read/write FASTA, SAM, ...
+* [`alignment`](http://docs.seqan.de/seqan/3-master-user/group__alignment.html): compute pairwise alignments etc.
+* [`search`](http://docs.seqan.de/seqan/3-master-user/group__search.html): search via an FM-Index etc.
+
+and some more.
+
+Some modules consist of submodules and the module structure is represented by the file hierarchy in the `include/`
+directory. Whenever you use functions of a module, make sure to `#include` the correct header file.
+
 Each directory in the SeqAn sources contains an `all.hpp` file which includes all the functionality
-of the respective (sub-) module.
+of the respective module.
 For small examples and quick prototyping, you can just include these `all.hpp`-headers.
 However, for larger projects, we recommend you include only the necessary headers, because this will reduce the
 compile time measurably.
 
-\note
-If you remember the name of a function or class, but don't know which (sub-)module it belongs to,
-you can enter it in the search bar (top-right).
-
-# Read sequence files
-
-Let's look at some functions of the IO module: SeqAn provides fast and easy access to biological file formats.
-The following code example demonstrates the interface of seqan3::sequence_file_input.
-
-\snippet introduction_file_input.cpp fileinput
-
-Can you imagine anything easier? After you have initialised the instance with a filename,
-you can simply step through the file in a for loop and retrieve the fields via
-[structured bindings](https://en.cppreference.com/w/cpp/language/structured_binding).
-The returned fields are `SEQ`, `ID` and `QUAL` to retrieve sequences, ids and qualities, respectively.
-The latter is empty unless you read FASTQ files. The appropriate file format is detected by SeqAn from
-your filename's suffix.
-
-Here is the content of `seq.fasta`, so you can try it out!
-
-~~~
->seq1
-ACGTGATG
->seq2
-AGTGATACT
-~~~
-
-\assignment{Assignment 2: Read a FASTA file}
-Combine the code from above to read a FASTA file and store its sequences in a std::vector of type seqan3::dna5_vector
-(which is a common DNA sequence type in SeqAn). Use the argument parser for obtaining the filename as command line
-argument to your program (e.g. call `./myprogram seq.fasta`).
+\assignment{Assignment 2: Modules and API documentation}
+In your program of assignment 1, initialise a vector of `seqan3::dna4` instead of `int`.
+The vector shall store the DNA string `ACTG`.
+Check the [API documentation](http://docs.seqan.de/seqan/3-master-user/modules.html) for which header you need to include.
+Additionally, browse the documentation for `seqan::dna4` on how to initialise a `seqan3::dna4` letter.
 \endassignment
 \solution
-\snippet introduction_read_fasta.cpp read
+\snippet introduction_dna4.cpp debug
 \endsolution
 
-Note that the same code can also read FASTQ files and the `qual` variable will not be empty then. If you like, try it!
+# Some general notes that might help to dive into SeqAn
 
-\note
-SeqAn3 uses `snake_case` for almost everything, also class names. Only C++ concepts are named using `CamelCase`.
+## SeqAn and the STL
 
-# Align two sequences
+In contrast to the former version of SeqAn (2.x.x releases), we try to be very close to the standard and all other
+data structures and algorithms should work on STL data structures as well.
 
-We have two sequences from the file above now – so let us align them.
-The pairwise sequence alignment is one of the core algorithms in SeqAn and used by several library components
-and apps. It is strongly optimised for speed and parallel execution while providing exact results and a
-generic interface.
+Analogous to the STL, SeqAn3 uses `snake_case` everywhere.
 
-\snippet introduction_align.cpp alignment
+## Modern C++
 
-The algorithm returns a range of result objects – which is the reason for the loop here (in this case the range
-has length 1). Instead of passing a single pair of sequences, we could give a vector of sequence pairs to the
-algorithm which then executes all alignments in parallel and stores the results in various seqan3::alignment_result
-objects. The second argument to seqan3::align_pairwise is the *configuration* which allows you to specify
-a lot of parameters for the alignment computation, for instance score functions, banded alignment and whether
-you wish to compute a traceback or not. The configurations have their own namespace seqan3::align_cfg and can
-be combined via the logical OR operator (`|`) for building combinations. Check out the alignment tutorial if you want
-to learn more.
-
-\note
-We encourage you to avoid declaring `using namespace seqan3;`. This has the additional benefit of easily distinguishing
-between library features and standard C++. The only exception are string literals, where we often use
-`using namespace seqan3::literals` for convenience.
-
-\note
-We use a lot of Modern C++ in SeqAn so some things might look alien at first,
+We use a lot of Modern C++ in SeqAn, so some things might look alien at first,
 e.g. type templates are used like ordinary types in many situations (no `<>`).
 We also always use `{}` to initialise objects and not `()` which is only used for function calls.
 In general, the style should be much easier for newcomers.
+
+## Avoid using namespace seqan3
+
+In concordance with the [C++ Core guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rs-using),
+we encourage you to avoid declaring `using namespace seqan3;`. This has the benefit of easily distinguishing
+between `seqan3` features and standard C++ (`std`). The only exception are string literals, where we often use
+`using namespace seqan3::literals;` for convenience.
+
+# The next tutorials
 
 Now that you reached the end of this first tutorial, you know how SeqAn code looks like and you are able
 to write some first code fragments. Let's go more into detail with the module-based tutorials!
