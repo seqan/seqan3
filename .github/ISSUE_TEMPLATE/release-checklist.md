@@ -9,6 +9,7 @@ assignees: ''
 
 - [ ] Create a release branch, e.g. `release-[VERSION]`, and enable branch protection in the repository settings.
 - [ ] Update copyright year.
+- [ ] Update cookbook. ([Instructions](#cookbook))
 - [ ] Create at least one pre-release s.t. our package maintainers can try out a new release of our library. ([Instructions](#prerelease))
 - [ ] Check that the [directory structure](https://github.com/seqan/seqan3/blob/master/doc/setup/quickstart_cmake/index.md) is valid.
 - [ ] Check for critical performance regressions (via [this tool](https://github.com/wvandertoorn/cmp_benchmarks)).
@@ -54,6 +55,13 @@ assignees: ''
 
 #### Instructions
 
+<a name="cookbook"></a>
+<details><summary>Update the cookbook</summary><br>
+
+Execute `path/to/seqan3/test/scripts/add_snippets_to_cookbook.sh path/to/seqan3/`.
+If there are any changes to the cookbook, push then in a PR.
+
+</details>
 <a name="prerelease"></a>
 <details><summary>Creating a pre-release</summary><br>
 
