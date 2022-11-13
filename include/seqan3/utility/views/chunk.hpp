@@ -250,11 +250,20 @@ private:
             return tmp;
         }
 
+// https://github.com/seqan/seqan3/pull/3102
+#if SEQAN3_COMPILER_IS_GCC && (__GNUC__ > 12)
+        //!\brief Compare to the sentinel type (same as sentinel type of the underlying range).
+        friend constexpr bool operator==(input_helper_iterator const & lhs, sentinel_t const &) noexcept
+        {
+            return lhs.outer_it->remaining == 0u || lhs.outer_it->urng_begin == lhs.outer_it->urng_end;
+        }
+#else
         //!\brief Compare to the sentinel type (same as sentinel type of the underlying range).
         bool operator==(sentinel_t const & /* rhs */) noexcept
         {
             return this->outer_it->remaining == 0u || this->outer_it->urng_begin == this->outer_it->urng_end;
         }
+#endif
 
         //!\brief Pointer to the outer iterator (basic_input_iterator).
         outer_it_type * outer_it{nullptr};
@@ -300,7 +309,7 @@ public:
     //!\brief Allow iterator on a const range to be constructible from an iterator over a non-const range.
     constexpr explicit basic_input_iterator(basic_input_iterator<!const_range> it) noexcept
         requires const_range
-    :
+        :
         chunk_size{std::move(it.chunk_size)},
         remaining{std::move(it.remaining)},
         urng_begin{std::move(it.urng_begin)},
@@ -453,7 +462,7 @@ public:
     //!\brief Allow iterator on a const range to be constructible from an iterator over a non-const range.
     constexpr basic_iterator(basic_iterator<!const_range> const & it) noexcept
         requires const_range
-    :
+        :
         chunk_size{std::move(it.chunk_size)},
         urng_begin{std::move(it.urng_begin)},
         urng_end{std::move(it.urng_end)},
