@@ -417,6 +417,76 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_both_empty = []()
     };
 }();
 
+// [ISSUE #3043] Wrong alignment score https://github.com/seqan/seqan3/issues/3043
+static auto issue_3043 = []()
+{
+    using seqan3::operator""_dna4;
+
+    auto make_scheme = [] ()
+    {
+        seqan3::nucleotide_scoring_scheme<int32_t> scheme{};
+        scheme.score('A'_dna4, 'A'_dna4) = 145;
+        scheme.score('A'_dna4, 'T'_dna4) = -144;
+        scheme.score('A'_dna4, 'G'_dna4) = -153;
+        scheme.score('A'_dna4, 'C'_dna4) = -152;
+
+        scheme.score('T'_dna4, 'A'_dna4) = -144;
+        scheme.score('T'_dna4, 'T'_dna4) = 144;
+        scheme.score('T'_dna4, 'G'_dna4) = -143;
+        scheme.score('T'_dna4, 'C'_dna4) = -140;
+
+        scheme.score('G'_dna4, 'A'_dna4) = -153;
+        scheme.score('G'_dna4, 'T'_dna4) = -143;
+        scheme.score('G'_dna4, 'G'_dna4) = 144;
+        scheme.score('G'_dna4, 'C'_dna4) = -145;
+
+        scheme.score('C'_dna4, 'A'_dna4) = -152;
+        scheme.score('C'_dna4, 'T'_dna4) = -140;
+        scheme.score('C'_dna4, 'G'_dna4) = -145;
+        scheme.score('C'_dna4, 'C'_dna4) = 144;
+
+        return scheme;
+    };
+
+    return alignment_fixture
+    {
+        "GGCAAGAA"_dna4,
+        "CGAAGC"_dna4,
+        seqan3::align_cfg::method_global{} | seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-52},
+                                                                                seqan3::align_cfg::extension_score{-58}}
+                                           | seqan3::align_cfg::scoring_scheme{make_scheme()},
+        74,
+        "GGCAAGAA--",
+        "--C--GAAGC",
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 8u,
+        /*.sequence2_end_position = */ 6u,
+        std::vector
+        {
+        //    e
+        /*e*/    0,-110,-168,-226,-284,-342,-400,-458,-516,
+              -110,-145,-255, -24,-134,-192,-250,-308,-366,
+              -168,  34,  -1,-111,-169,-227, -48,-158,-216,
+              -226, -76,-111,-153,  34, -24,-134,  97, -13,
+              -284,-134,-169,-250,  -8, 179,  69,  11, 242,
+              -342,-140,  10,-100,-118,  69, 323, 213, 155,
+              -400,-250,-100, 154,  44,  11, 213, 171,  74
+        },
+        std::vector
+        {
+        //    e,G  ,G  ,C  ,A  ,A  ,G  ,A  ,A  ,
+        /*e*/ N,L  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,
+        /*C*/ U,DUL,DUL,DUl,L  ,l  ,l  ,l  ,l  ,
+        /*G*/ u,DUL,DuL,L  ,l  ,l  ,DUl,L  ,l  ,
+        /*A*/ u,UL ,UL ,DuL,DUL,DUL,l  ,DUl,DUL,
+        /*A*/ u,uL ,uL ,uL ,DUl,DUL,L  ,DUl,DUl,
+        /*G*/ u,DuL,DuL,L  ,Ul ,Ul ,DUL,L  ,l  ,
+        /*C*/ u,uL ,UL ,DUL,L  ,ul ,Ul ,DUL,uL
+        }
+    };
+}();
+
 // ----------------------------------------------------------------------------
 // alignment fixtures using amino acid alphabet
 // ----------------------------------------------------------------------------

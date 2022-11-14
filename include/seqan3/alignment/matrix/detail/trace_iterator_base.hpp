@@ -159,14 +159,14 @@ public:
         {
             derived().go_up(matrix_iter);
             // Set new trace direction if last position was up_open.
-            if (static_cast<bool>(old_dir & trace_directions::up_open))
+            if (static_cast<bool>(old_dir & trace_directions::carry_up_open))
                 set_trace_direction(*matrix_iter);
         }
         else if (current_direction == trace_directions::left)
         {
             derived().go_left(matrix_iter);
             // Set new trace direction if last position was left_open.
-            if (static_cast<bool>(old_dir & trace_directions::left_open))
+            if (static_cast<bool>(old_dir & trace_directions::carry_left_open))
                 set_trace_direction(*matrix_iter);
         }
         else
@@ -259,12 +259,11 @@ private:
         {
             current_direction = trace_directions::diagonal;
         }
-        else if (static_cast<bool>(dir & trace_directions::up) || static_cast<bool>(dir & trace_directions::up_open))
+        else if (static_cast<bool>(dir & trace_directions::up))
         {
             current_direction = trace_directions::up;
         }
-        else if (static_cast<bool>(dir & trace_directions::left)
-                 || static_cast<bool>(dir & trace_directions::left_open))
+        else if (static_cast<bool>(dir & trace_directions::left))
         {
             current_direction = trace_directions::left;
         }

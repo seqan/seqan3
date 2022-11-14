@@ -28,7 +28,8 @@ using pairwise_global_affine_unbanded_testing_types = ::testing::Types<
     pairwise_alignment_fixture<
         &seqan3::test::alignment::fixture::global::affine::unbanded::dna4_match_4_mismatch_5_gap_1_open_10_seq2_empty>,
     pairwise_alignment_fixture<
-        &seqan3::test::alignment::fixture::global::affine::unbanded::dna4_match_4_mismatch_5_gap_1_open_10_both_empty>>;
+        &seqan3::test::alignment::fixture::global::affine::unbanded::dna4_match_4_mismatch_5_gap_1_open_10_both_empty>,
+    pairwise_alignment_fixture<&seqan3::test::alignment::fixture::global::affine::unbanded::issue_3043>>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_global_affine_unbanded,
                                pairwise_alignment_test,
