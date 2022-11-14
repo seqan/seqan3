@@ -21,8 +21,8 @@
       <tab type="user" visible="yes" title="Code of Conduct" url="\ref about_code_of_conduct" intro=""/>
       <tab type="user" visible="yes" title="Contributing" url="\ref about_contributing" intro=""/>
     </tab>
-    <tab type="modules" visible="yes" title="API Reference (Modules)" intro=""/>
-    <tab type="usergroup" visible="yes" title="API Reference (details)" intro="">
+    <tab type="modules" visible="yes" title="API Reference" intro=""/>
+    <tab type="usergroup" visible="${SEQAN3_SHOW_DEV_DOCS}" title="API Reference (details)" intro="">
       <tab type="namespaces" visible="yes" title="">
         <tab type="namespacelist" visible="yes" title="" intro=""/>
         <tab type="namespacemembers" visible="yes" title="" intro=""/>

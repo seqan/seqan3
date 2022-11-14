@@ -86,7 +86,7 @@ NUM_PROC_THREADS       = 1
 # Build related configuration options
 #---------------------------------------------------------------------------
 EXTRACT_ALL            = NO
-EXTRACT_PRIVATE        = ${SEQAN3_DOXYGEN_EXTRACT_PRIVATE}
+EXTRACT_PRIVATE        = ${SEQAN3_SHOW_DEV_DOCS}
 EXTRACT_PRIV_VIRTUAL   = NO
 EXTRACT_PACKAGE        = NO
 EXTRACT_STATIC         = NO
@@ -121,9 +121,9 @@ ENABLED_SECTIONS       = ${SEQAN3_DOXYGEN_ENABLED_SECTIONS}
 MAX_INITIALIZER_LINES  = 30
 SHOW_USED_FILES        = YES
 SHOW_FILES             = YES
-SHOW_NAMESPACES        = YES
+SHOW_NAMESPACES        = ${SEQAN3_SHOW_DEV_DOCS}
 FILE_VERSION_FILTER    =
-LAYOUT_FILE            = ${CMAKE_BINARY_DIR}/DoxygenLayout.xml
+LAYOUT_FILE            = ${SEQAN3_DOXYGEN_OUTPUT_DIR}/DoxygenLayout.xml
 CITE_BIB_FILES         =
 #---------------------------------------------------------------------------
 # Configuration options related to warning and progress messages

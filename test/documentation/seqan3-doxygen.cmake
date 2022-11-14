@@ -39,6 +39,8 @@ set (SEQAN3_DOXYGEN_DOT_NUM_THREADS "0")
 set (SEQAN3_DOXYGEN_SOURCE_DIR "${SEQAN3_CLONE_DIR}")
 set (SEQAN3_DOXYFILE_IN ${SEQAN3_DOXYGEN_INPUT_DIR}/seqan3_doxygen_cfg.in)
 set (SEQAN3_FOOTER_HTML_IN ${SEQAN3_DOXYGEN_INPUT_DIR}/seqan3_footer.html.in)
+# DoxygenLayout.xml.in is created by seqan3-doxygen-layout.cmake
+set (SEQAN3_LAYOUT_IN ${CMAKE_CURRENT_BINARY_DIR}/DoxygenLayout.xml.in)
 
 option (SEQAN3_USER_DOC "Create build target and test for user documentation." ON)
 option (SEQAN3_DEV_DOC "Create build target and test for developer documentation." ON)
