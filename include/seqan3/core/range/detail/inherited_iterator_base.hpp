@@ -269,7 +269,7 @@ public:
     //!\brief Non-member operator+ delegates to non-friend operator+.
     //!\cond
     // Make this function a function template. This means that constructible_from will be evaluated with the complete
-    // derived_t (which is instanciated in the second pass). If this wasn't a function template, the concept would have
+    // derived_t (which is instantiated in the second pass). If this wasn't a function template, the concept would have
     // to be evaluated in the first pass, where derived_t is incomplete.
     template <typename base_t_ = base_t>
     //!\endcond
