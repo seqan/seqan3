@@ -309,10 +309,11 @@ private:
 
             for (; (it != e) && ((!is_id)(*it)); ++it)
             {
-                if ((is_space || is_digit)(*it))
-                    continue;
-                else if (!is_legal_alph(*it))
+                if (!is_legal_alph(*it))
                 {
+                    if ((is_space || is_digit)(*it))
+                        continue;
+
                     throw parse_error{std::string{"Encountered an unexpected letter: "} + "char_is_valid_for<"
                                       + detail::type_name_as_string<seq_legal_alph_type>
                                       + "> evaluated to false on " + detail::make_printable(*it)};
