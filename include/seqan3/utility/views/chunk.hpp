@@ -253,7 +253,7 @@ private:
 // https://github.com/seqan/seqan3/pull/3102
 #if SEQAN3_COMPILER_IS_GCC && (__GNUC__ > 12)
         //!\brief Compare to the sentinel type (same as sentinel type of the underlying range).
-        friend constexpr bool operator==(input_helper_iterator const & lhs, sentinel_t const &) noexcept
+        friend constexpr bool operator==(input_helper_iterator const & lhs, sentinel_t) noexcept
         {
             return lhs.outer_it->remaining == 0u || lhs.outer_it->urng_begin == lhs.outer_it->urng_end;
         }
