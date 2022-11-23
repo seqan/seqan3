@@ -1,116 +1,388 @@
-PROJECT_NAME           = "SeqAn3"
+# Doxyfile 1.9.4
+
+#---------------------------------------------------------------------------
+# Project related configuration options
+#---------------------------------------------------------------------------
+DOXYFILE_ENCODING      = UTF-8
+PROJECT_NAME           = SeqAn3
+PROJECT_NUMBER         = ${SEQAN3_VERSION}
 PROJECT_BRIEF          = "The Modern C++ library for sequence analysis."
 PROJECT_LOGO           = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan_logo.png
-PROJECT_NUMBER         = ${SEQAN3_VERSION}
-LAYOUT_FILE            = ${CMAKE_BINARY_DIR}/DoxygenLayout.xml
-
 ## PATHS
 OUTPUT_DIRECTORY       = ${SEQAN3_DOXYGEN_OUTPUT_DIR}
-INCLUDE_PATH           = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
-INPUT                  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include               \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc                   \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/LICENSE.md            \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/CHANGELOG.md          \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/CODE_OF_CONDUCT.md    \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/CONTRIBUTING.md
-STRIP_FROM_PATH        = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
-STRIP_FROM_INC_PATH    = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
-EXAMPLE_PATH           = ${SEQAN3_DOXYGEN_SOURCE_DIR}
-IMAGE_PATH             = ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation
-
-## DOT SUPPORT
-HAVE_DOT               = ${SEQAN3_DOXYGEN_HAVE_DOT}
-DOT_NUM_THREADS        = ${SEQAN3_DOXYGEN_DOT_NUM_THREADS}
-DOT_IMAGE_FORMAT       = svg
-DOT_GRAPH_MAX_NODES    = 500
-INTERACTIVE_SVG        = ${SEQAN3_DOXYGEN_HAVE_DOT}
-
+CREATE_SUBDIRS         = NO
+CREATE_SUBDIRS_LEVEL   = 8
+ALLOW_UNICODE_NAMES    = NO
+OUTPUT_LANGUAGE        = English
+BRIEF_MEMBER_DESC      = YES
+REPEAT_BRIEF           = YES
+ABBREVIATE_BRIEF       = "The $name class" \
+                         "The $name widget" \
+                         "The $name file" \
+                         is \
+                         provides \
+                         specifies \
+                         contains \
+                         represents \
+                         a \
+                         an \
+                         the
+ALWAYS_DETAILED_SEC    = NO
+INLINE_INHERITED_MEMB  = NO
 ## MISC OPTIONS
 FULL_PATH_NAMES        = NO
-GENERATE_LATEX         = NO
-USE_MATHJAX            = ${SEQAN3_DOXYGEN_USE_MATHJAX}
-HTML_TIMESTAMP         = YES
-EXT_LINKS_IN_WINDOW    = YES
-RECURSIVE              = YES
-DISABLE_INDEX          = YES
+STRIP_FROM_PATH        = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
+STRIP_FROM_INC_PATH    = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
+SHORT_NAMES            = NO
+JAVADOC_AUTOBRIEF      = NO
+JAVADOC_BANNER         = NO
+QT_AUTOBRIEF           = NO
+MULTILINE_CPP_IS_BRIEF = NO
+PYTHON_DOCSTRING       = YES
+INHERIT_DOCS           = YES
+SEPARATE_MEMBER_PAGES  = NO
+TAB_SIZE               = 4
+## Custom doxygen commands
+ALIASES                = "tutorial_head{4}=<table><tr><th>Difficulty</th><td>\1</td></tr><tr><th>Duration</th><td>\2</td></tr><tr><th>Prerequisite tutorials</th><td>\3</td></tr><tr><th>Recommended reading</th><td>\4</td></tr></table>" \
+                         "assignment{1}=\htmlonly <div class=\"assignment\"><h4>\1</h4><div class=\"assignment_content\">\endhtmlonly" \
+                         endassignment=\htmlonly</div></div>\endhtmlonly \
+                         "solution=\htmlonly <div class=\"solution\"> <details><summary><b>Solution</b></summary> \endhtmlonly" \
+                         "endsolution=\htmlonly </details> </div> \endhtmlonly" \
+                         "hint=\htmlonly <div class=\"assignment\"> <details><summary><b>Hint</b></summary> \endhtmlonly" \
+                         "endhint=\htmlonly </details> </div> \endhtmlonly" \
+                         "strike{1}=\htmlonly<div style='color:red;text-decoration:line-through'>\1</div>\endhtmlonly" \
+                         "noapi{1}=\htmlonly<dl class=\"no-api\">This entity is not part of the SeqAn API. Do not rely on it in your applications. \1</dl>\endhtmlonly" \
+                         "noapi=\noapi{ }" \
+                         "experimentalapi{1}=\htmlonly<dl class=\"experimental-api\">This entity is experimental and subject to change in the future. \1</dl>\endhtmlonly" \
+                         "experimentalapi=\experimentalapi{ }" \
+                         "stableapi{1}=\htmlonly<dl class=\"stable-api\">This entity is stable. \1</dl>\endhtmlonly" \
+                         "stableapi=\stableapi{ }" \
+                         "startcollapsible{1}=\htmlonly<details class=\"seqan\"><summary class = \"seqan\">\1</summary>\endhtmlonly" \
+                         endcollapsible=\htmlonly</details>\endhtmlonly \
+                         "header_file{1}=\htmlonly<b>Header File</b><br><div style='text-indent:3em;'><code>#include\endhtmlonly <\1>\htmlonly</code></div>\endhtmlonly"
+OPTIMIZE_OUTPUT_FOR_C  = NO
+OPTIMIZE_OUTPUT_JAVA   = NO
+OPTIMIZE_FOR_FORTRAN   = NO
+OPTIMIZE_OUTPUT_VHDL   = NO
+OPTIMIZE_OUTPUT_SLICE  = NO
+## detect headers without extensions (in std module)
+EXTENSION_MAPPING      = .no_extension=C++
+MARKDOWN_SUPPORT       = YES
+TOC_INCLUDE_HEADINGS   = 2
+AUTOLINK_SUPPORT       = YES
+BUILTIN_STL_SUPPORT    = NO
+CPP_CLI_SUPPORT        = NO
+SIP_SUPPORT            = NO
+IDL_PROPERTY_SUPPORT   = YES
 DISTRIBUTE_GROUP_DOC   = YES
+GROUP_NESTED_COMPOUNDS = NO
+SUBGROUPING            = YES
+INLINE_GROUPED_CLASSES = NO
+INLINE_SIMPLE_STRUCTS  = NO
+TYPEDEF_HIDES_STRUCT   = NO
+LOOKUP_CACHE_SIZE      = 0
+NUM_PROC_THREADS       = 1
+#---------------------------------------------------------------------------
+# Build related configuration options
+#---------------------------------------------------------------------------
+EXTRACT_ALL            = NO
+EXTRACT_PRIVATE        = ${SEQAN3_SHOW_DEV_DOCS}
+EXTRACT_PRIV_VIRTUAL   = NO
+EXTRACT_PACKAGE        = NO
+EXTRACT_STATIC         = NO
+EXTRACT_LOCAL_CLASSES  = YES
+EXTRACT_LOCAL_METHODS  = NO
+EXTRACT_ANON_NSPACES   = NO
+RESOLVE_UNNAMED_PARAMS = YES
+HIDE_UNDOC_MEMBERS     = NO
+HIDE_UNDOC_CLASSES     = NO
+HIDE_FRIEND_COMPOUNDS  = NO
+HIDE_IN_BODY_DOCS      = NO
+INTERNAL_DOCS          = NO
+CASE_SENSE_NAMES       = YES
+HIDE_SCOPE_NAMES       = NO
+HIDE_COMPOUND_REFERENCE= NO
+SHOW_HEADERFILE        = YES
+SHOW_INCLUDE_FILES     = YES
+SHOW_GROUPED_MEMB_INC  = NO
+FORCE_LOCAL_INCLUDES   = NO
+INLINE_INFO            = YES
+SORT_MEMBER_DOCS       = YES
+SORT_BRIEF_DOCS        = YES
+SORT_MEMBERS_CTORS_1ST = NO
+SORT_GROUP_NAMES       = NO
+SORT_BY_SCOPE_NAME     = NO
+STRICT_PROTO_MATCHING  = NO
+GENERATE_TODOLIST      = YES
+GENERATE_TESTLIST      = YES
+GENERATE_BUGLIST       = YES
+GENERATE_DEPRECATEDLIST= YES
+ENABLED_SECTIONS       = ${SEQAN3_DOXYGEN_ENABLED_SECTIONS}
+MAX_INITIALIZER_LINES  = 30
+SHOW_USED_FILES        = YES
+SHOW_FILES             = YES
+SHOW_NAMESPACES        = ${SEQAN3_SHOW_DEV_DOCS}
+FILE_VERSION_FILTER    =
+LAYOUT_FILE            = ${SEQAN3_DOXYGEN_OUTPUT_DIR}/DoxygenLayout.xml
+CITE_BIB_FILES         =
+#---------------------------------------------------------------------------
+# Configuration options related to warning and progress messages
+#---------------------------------------------------------------------------
+QUIET                  = NO
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+WARN_IF_INCOMPLETE_DOC = YES
+WARN_NO_PARAMDOC       = NO
+WARN_AS_ERROR          = NO
+WARN_FORMAT            = "$file:$line: $text"
+WARN_LINE_FORMAT       = "at line $line of file $file"
+WARN_LOGFILE           =
+#---------------------------------------------------------------------------
+# Configuration options related to the input files
+#---------------------------------------------------------------------------
+INPUT                  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/LICENSE.md \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/CHANGELOG.md \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/CODE_OF_CONDUCT.md \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/CONTRIBUTING.md
+INPUT_ENCODING         = UTF-8
+FILE_PATTERNS          = *
+RECURSIVE              = YES
+EXCLUDE                =
+EXCLUDE_SYMLINKS       = NO
+EXCLUDE_PATTERNS       = */doc/*.cpp
+EXCLUDE_SYMBOLS        = seqan3::contrib \
+                         ${SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS}
+EXAMPLE_PATH           = ${SEQAN3_DOXYGEN_SOURCE_DIR}
+EXAMPLE_PATTERNS       = *
+EXAMPLE_RECURSIVE      = NO
+IMAGE_PATH             = ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation
+INPUT_FILTER           =
+FILTER_PATTERNS        =
+FILTER_SOURCE_FILES    = NO
+FILTER_SOURCE_PATTERNS =
+USE_MDFILE_AS_MAINPAGE =
+#---------------------------------------------------------------------------
+# Configuration options related to source browsing
+#---------------------------------------------------------------------------
+SOURCE_BROWSER         = NO
+INLINE_SOURCES         = NO
+STRIP_CODE_COMMENTS    = YES
+REFERENCED_BY_RELATION = NO
+REFERENCES_RELATION    = NO
+REFERENCES_LINK_SOURCE = YES
+SOURCE_TOOLTIPS        = YES
+USE_HTAGS              = NO
+VERBATIM_HEADERS       = YES
+#---------------------------------------------------------------------------
+# Configuration options related to the alphabetical class index
+#---------------------------------------------------------------------------
+ALPHABETICAL_INDEX     = YES
+IGNORE_PREFIX          =
+#---------------------------------------------------------------------------
+# Configuration options related to the HTML output
+#---------------------------------------------------------------------------
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_FILE_EXTENSION    = .html
+HTML_HEADER            =
+HTML_FOOTER            = ${SEQAN3_DOXYGEN_OUTPUT_DIR}/seqan3_footer.html
+HTML_STYLESHEET        =
+HTML_EXTRA_STYLESHEET  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3.css
+HTML_EXTRA_FILES       = ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc/tutorial/10_sam_file/example.sam \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/version.js \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/version.php \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/api-stability.js
+HTML_COLORSTYLE_HUE    = 220
+HTML_COLORSTYLE_SAT    = 100
+HTML_COLORSTYLE_GAMMA  = 80
+HTML_TIMESTAMP         = YES
+HTML_DYNAMIC_MENUS     = YES
+HTML_DYNAMIC_SECTIONS  = YES
+HTML_INDEX_NUM_ENTRIES = 100
+GENERATE_DOCSET        = NO
+DOCSET_FEEDNAME        = "Doxygen generated docs"
+DOCSET_FEEDURL         =
+DOCSET_BUNDLE_ID       = org.doxygen.Project
+DOCSET_PUBLISHER_ID    = org.doxygen.Publisher
+DOCSET_PUBLISHER_NAME  = Publisher
+GENERATE_HTMLHELP      = NO
+CHM_FILE               =
+HHC_LOCATION           =
+GENERATE_CHI           = NO
+CHM_INDEX_ENCODING     =
+BINARY_TOC             = NO
+TOC_EXPAND             = NO
+GENERATE_QHP           = NO
+QCH_FILE               =
+QHP_NAMESPACE          = org.doxygen.Project
+QHP_VIRTUAL_FOLDER     = doc
+QHP_CUST_FILTER_NAME   =
+QHP_CUST_FILTER_ATTRS  =
+QHP_SECT_FILTER_ATTRS  =
+QHG_LOCATION           =
+GENERATE_ECLIPSEHELP   = NO
+ECLIPSE_DOC_ID         = org.doxygen.Project
+DISABLE_INDEX          = YES
 GENERATE_TREEVIEW      = YES
-INLINE_INHERITED_MEMB  = NO
-COLLABORATION_GRAPH    = NO
-TEMPLATE_RELATIONS     = YES
+FULL_SIDEBAR           = NO
+ENUM_VALUES_PER_LINE   = 4
+TREEVIEW_WIDTH         = 250
+EXT_LINKS_IN_WINDOW    = YES
+OBFUSCATE_EMAILS       = YES
+HTML_FORMULA_FORMAT    = png
+FORMULA_FONTSIZE       = 14
+FORMULA_TRANSPARENT    = YES
+FORMULA_MACROFILE      =
+USE_MATHJAX            = ${SEQAN3_DOXYGEN_USE_MATHJAX}
+MATHJAX_VERSION        = MathJax_2
+MATHJAX_FORMAT         = HTML-CSS
+MATHJAX_RELPATH        =
+MATHJAX_EXTENSIONS     =
+MATHJAX_CODEFILE       =
+SEARCHENGINE           = YES
+SERVER_BASED_SEARCH    = NO
+EXTERNAL_SEARCH        = NO
+SEARCHENGINE_URL       =
+SEARCHDATA_FILE        = searchdata.xml
+EXTERNAL_SEARCH_ID     =
+EXTRA_SEARCH_MAPPINGS  =
+#---------------------------------------------------------------------------
+# Configuration options related to the LaTeX output
+#---------------------------------------------------------------------------
+GENERATE_LATEX         = NO
+LATEX_OUTPUT           = latex
+LATEX_CMD_NAME         =
+MAKEINDEX_CMD_NAME     = makeindex
+LATEX_MAKEINDEX_CMD    = makeindex
+COMPACT_LATEX          = NO
+PAPER_TYPE             = a4
+EXTRA_PACKAGES         = {amsfonts}
+LATEX_HEADER           =
+LATEX_FOOTER           =
+LATEX_EXTRA_STYLESHEET =
+LATEX_EXTRA_FILES      =
+PDF_HYPERLINKS         = YES
+USE_PDFLATEX           = YES
+LATEX_BATCHMODE        = NO
+LATEX_HIDE_INDICES     = NO
+LATEX_BIB_STYLE        = plain
+LATEX_TIMESTAMP        = NO
+LATEX_EMOJI_DIRECTORY  =
+#---------------------------------------------------------------------------
+# Configuration options related to the RTF output
+#---------------------------------------------------------------------------
+GENERATE_RTF           = NO
+RTF_OUTPUT             = rtf
+COMPACT_RTF            = NO
+RTF_HYPERLINKS         = NO
+RTF_STYLESHEET_FILE    =
+RTF_EXTENSIONS_FILE    =
+#---------------------------------------------------------------------------
+# Configuration options related to the man page output
+#---------------------------------------------------------------------------
+GENERATE_MAN           = NO
+MAN_OUTPUT             = man
+MAN_EXTENSION          = .3
+MAN_SUBDIR             =
+MAN_LINKS              = NO
+#---------------------------------------------------------------------------
+# Configuration options related to the XML output
+#---------------------------------------------------------------------------
+GENERATE_XML           = NO
+XML_OUTPUT             = xml
+XML_PROGRAMLISTING     = YES
+XML_NS_MEMB_FILE_SCOPE = NO
+#---------------------------------------------------------------------------
+# Configuration options related to the DOCBOOK output
+#---------------------------------------------------------------------------
+GENERATE_DOCBOOK       = NO
+DOCBOOK_OUTPUT         = docbook
+#---------------------------------------------------------------------------
+# Configuration options for the AutoGen Definitions output
+#---------------------------------------------------------------------------
+GENERATE_AUTOGEN_DEF   = NO
+#---------------------------------------------------------------------------
+# Configuration options related to the Perl module output
+#---------------------------------------------------------------------------
+GENERATE_PERLMOD       = NO
+PERLMOD_LATEX          = NO
+PERLMOD_PRETTY         = YES
+PERLMOD_MAKEVAR_PREFIX =
+#---------------------------------------------------------------------------
+# Configuration options related to the preprocessor
+#---------------------------------------------------------------------------
 ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
-SKIP_FUNCTION_MACROS   = NO
-SORT_BRIEF_DOCS        = YES
-TOC_INCLUDE_HEADINGS   = 2
-HTML_EXTRA_STYLESHEET  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3.css
-HTML_FOOTER            = ${SEQAN3_DOXYGEN_OUTPUT_DIR}/seqan3_footer.html
-INPUT_ENCODING         = UTF-8
-EXTRA_PACKAGES         = {amsfonts}
-
-PREDEFINED             = "CEREAL_SERIALIZE_FUNCTION_NAME=serialize" \
-                         "CEREAL_LOAD_FUNCTION_NAME=load" \
-                         "CEREAL_SAVE_FUNCTION_NAME=save" \
-                         "CEREAL_LOAD_MINIMAL_FUNCTION_NAME=load_minimal" \
-                         "CEREAL_SAVE_MINIMAL_FUNCTION_NAME=save_minimal" \
+SEARCH_INCLUDES        = YES
+INCLUDE_PATH           = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
+INCLUDE_FILE_PATTERNS  =
+PREDEFINED             = CEREAL_SERIALIZE_FUNCTION_NAME=serialize \
+                         CEREAL_LOAD_FUNCTION_NAME=load \
+                         CEREAL_SAVE_FUNCTION_NAME=save \
+                         CEREAL_LOAD_MINIMAL_FUNCTION_NAME=load_minimal \
+                         CEREAL_SAVE_MINIMAL_FUNCTION_NAME=save_minimal \
                          "SEQAN3_DOXYGEN_ONLY(x)= x" \
-                         "${SEQAN3_DOXYGEN_PREDEFINED_NDEBUG}" \
-                         "__cpp_lib_three_way_comparison=1" \
-                         "SEQAN3_WORKAROUND_LITERAL=constexpr"
-
-EXPAND_AS_DEFINED      = SEQAN3_CPO_OVERLOAD_BODY SEQAN3_CPO_OVERLOAD
-
-TAGFILES               += "${SEQAN3_DOXYGEN_STD_TAGFILE}=https://en.cppreference.com/w/"
-
-EXCLUDE_SYMBOLS        = seqan3::contrib
-
-FORMULA_FONTSIZE       = 14
-HTML_DYNAMIC_SECTIONS  = YES
-
-## detect headers without extensions (in std module)
-EXTENSION_MAPPING      = .no_extension=C++
-FILE_PATTERNS          = *
-EXCLUDE_PATTERNS       = */doc/*.cpp
-
-## Developer VS user mode
-EXTRACT_PRIVATE        = ${SEQAN3_DOXYGEN_EXTRACT_PRIVATE}
-ENABLED_SECTIONS       = ${SEQAN3_DOXYGEN_ENABLED_SECTIONS}
-EXCLUDE_SYMBOLS        += ${SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS}
-
-## Custom doxygen commands
-ALIASES += tutorial_head{4}="<table><tr><th>Difficulty</th><td>\1</td></tr><tr><th>Duration</th><td>\2</td></tr><tr><th>Prerequisite tutorials</th><td>\3</td></tr><tr><th>Recommended reading</th><td>\4</td></tr></table>"
-
-ALIASES += assignment{1}="\htmlonly <div class=\"assignment\"><h4>\1</h4><div class=\"assignment_content\">\endhtmlonly"
-ALIASES += endassignment="\htmlonly</div></div>\endhtmlonly"
-
-ALIASES += solution="\htmlonly <div class=\"solution\"> <details><summary><b>Solution</b></summary> \endhtmlonly"
-ALIASES += endsolution="\htmlonly </details> </div> \endhtmlonly"
-
-ALIASES += hint="\htmlonly <div class=\"assignment\"> <details><summary><b>Hint</b></summary> \endhtmlonly"
-ALIASES += endhint="\htmlonly </details> </div> \endhtmlonly"
-
-ALIASES += strike{1}="\htmlonly<div style='color:red;text-decoration:line-through'>\1</div>\endhtmlonly"
-
-ALIASES += noapi{1}="\htmlonly<dl class=\"no-api\">This entity is not part of the SeqAn API. Do not rely on it in your applications. \1</dl>\endhtmlonly"
-ALIASES += noapi="\noapi{ }"
-
-ALIASES += experimentalapi{1}="\htmlonly<dl class=\"experimental-api\">This entity is experimental and subject to change in the future. \1</dl>\endhtmlonly"
-ALIASES += experimentalapi="\experimentalapi{ }"
-
-ALIASES += stableapi{1}="\htmlonly<dl class=\"stable-api\">This entity is stable. \1</dl>\endhtmlonly"
-ALIASES += stableapi="\stableapi{ }"
-
-ALIASES += startcollapsible{1}="\htmlonly<details class=\"seqan\"><summary class = \"seqan\">\1</summary>\endhtmlonly"
-ALIASES += endcollapsible="\htmlonly</details>\endhtmlonly"
-
-ALIASES += header_file{1}="\htmlonly<b>Header File</b><br><div style='text-indent:3em;'><code>#include\endhtmlonly <\1>\htmlonly</code></div>\endhtmlonly"
-
-### Extra files that we can link to
-
-HTML_EXTRA_FILES       = ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc/tutorial/10_sam_file/example.sam
-HTML_EXTRA_FILES       += ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/version.js
-HTML_EXTRA_FILES       += ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/version.php
-HTML_EXTRA_FILES       += ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/api-stability.js
+                         ${SEQAN3_DOXYGEN_PREDEFINED_NDEBUG} \
+                         __cpp_lib_three_way_comparison=1 \
+                         SEQAN3_WORKAROUND_LITERAL=constexpr
+EXPAND_AS_DEFINED      = SEQAN3_CPO_OVERLOAD_BODY \
+                         SEQAN3_CPO_OVERLOAD
+SKIP_FUNCTION_MACROS   = NO
+#---------------------------------------------------------------------------
+# Configuration options related to external references
+#---------------------------------------------------------------------------
+TAGFILES               = ${SEQAN3_DOXYGEN_STD_TAGFILE}=https://en.cppreference.com/w/
+GENERATE_TAGFILE       =
+ALLEXTERNALS           = NO
+EXTERNAL_GROUPS        = YES
+EXTERNAL_PAGES         = YES
+#---------------------------------------------------------------------------
+# Configuration options related to the dot tool
+#---------------------------------------------------------------------------
+DIA_PATH               =
+HIDE_UNDOC_RELATIONS   = YES
+## DOT SUPPORT
+HAVE_DOT               = ${SEQAN3_DOXYGEN_HAVE_DOT}
+DOT_NUM_THREADS        = ${SEQAN3_DOXYGEN_DOT_NUM_THREADS}
+DOT_FONTNAME           = Helvetica
+DOT_FONTSIZE           = 10
+DOT_FONTPATH           =
+CLASS_GRAPH            = YES
+COLLABORATION_GRAPH    = NO
+GROUP_GRAPHS           = YES
+UML_LOOK               = NO
+UML_LIMIT_NUM_FIELDS   = 10
+DOT_UML_DETAILS        = NO
+DOT_WRAP_THRESHOLD     = 17
+TEMPLATE_RELATIONS     = YES
+INCLUDE_GRAPH          = YES
+INCLUDED_BY_GRAPH      = YES
+CALL_GRAPH             = NO
+CALLER_GRAPH           = NO
+GRAPHICAL_HIERARCHY    = YES
+DIRECTORY_GRAPH        = YES
+DIR_GRAPH_MAX_DEPTH    = 1
+DOT_IMAGE_FORMAT       = svg
+INTERACTIVE_SVG        = ${SEQAN3_DOXYGEN_HAVE_DOT}
+DOT_PATH               =
+DOTFILE_DIRS           =
+MSCFILE_DIRS           =
+DIAFILE_DIRS           =
+PLANTUML_JAR_PATH      =
+PLANTUML_CFG_FILE      =
+PLANTUML_INCLUDE_PATH  =
+DOT_GRAPH_MAX_NODES    = 500
+MAX_DOT_GRAPH_DEPTH    = 0
+DOT_TRANSPARENT        = NO
+DOT_MULTI_TARGETS      = NO
+GENERATE_LEGEND        = YES
+DOT_CLEANUP            = YES
+#---------------------------------------------------------------------------
+# Configuration options related to the deployment by Vercel
+#---------------------------------------------------------------------------
 ${SEQAN3_DOXYFILE_OPTION_POWERED_BY_VERCEL}
