@@ -300,7 +300,7 @@ public:
     //!\brief Allow iterator on a const range to be constructible from an iterator over a non-const range.
     constexpr explicit basic_input_iterator(basic_input_iterator<!const_range> it) noexcept
         requires const_range
-    :
+        :
         chunk_size{std::move(it.chunk_size)},
         remaining{std::move(it.remaining)},
         urng_begin{std::move(it.urng_begin)},
@@ -453,7 +453,7 @@ public:
     //!\brief Allow iterator on a const range to be constructible from an iterator over a non-const range.
     constexpr basic_iterator(basic_iterator<!const_range> const & it) noexcept
         requires const_range
-    :
+        :
         chunk_size{std::move(it.chunk_size)},
         urng_begin{std::move(it.urng_begin)},
         urng_end{std::move(it.urng_end)},
