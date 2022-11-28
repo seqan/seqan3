@@ -309,16 +309,21 @@ private:
 
             for (; (it != e) && ((!is_id)(*it)); ++it)
             {
-                if ((is_space || is_digit)(*it))
-                    continue;
-                else if (!is_legal_alph(*it))
+                if (is_legal_alph(*it))
                 {
+                    seq.push_back(assign_char_to(*it, std::ranges::range_value_t<seq_type>{}));
+                }
+                else if ((is_space || is_digit)(*it))
+                {
+                    continue;
+                }
+                else
+                {
+
                     throw parse_error{std::string{"Encountered an unexpected letter: "} + "char_is_valid_for<"
                                       + detail::type_name_as_string<seq_legal_alph_type>
                                       + "> evaluated to false on " + detail::make_printable(*it)};
                 }
-
-                seq.push_back(assign_char_to(*it, std::ranges::range_value_t<seq_type>{}));
             }
 
 #else  // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
