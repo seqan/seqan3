@@ -5,7 +5,10 @@
 This tutorial introduces "C++ Concepts", a feature of C++20 (and available to some extent in older GCC versions).
 You will learn the terminology used in the context of concepts and how to use SeqAn's concepts in your application.
 
-\tutorial_head{Moderate, 60 min, \ref setup\, \ref tutorial_argument_parser,}
+\tutorial_head{Moderate, 60 min,
+               \ref setup\,
+               \ref tutorial_argument_parser,
+               [Concepts (cppreference)](https://en.cppreference.com/w/cpp/language/constraints)}
 
 This tutorial teaches the very basics of working with concepts. For more background and information on how to implement
 your own concepts, we recommend:

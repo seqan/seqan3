@@ -11,7 +11,7 @@ If you have suggestions for how to improve the Cookbook and/or examples you woul
 please feel free to contact us.
 
 # Read sequence files
-\snippet doc/tutorial/01_introduction/introduction_file_input.cpp fileinput
+\snippet doc/cookbook/file_input.cpp fileinput
 
 # Write a custom validator {#cookbook_custom_validator}
 This recipe implements a validator that checks if a numeric argument is an integral square (i.e. 0, 1, 4, 9...).
