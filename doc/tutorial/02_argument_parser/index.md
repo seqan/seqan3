@@ -47,5 +47,3 @@ Done!
 
 **Now you can do the [basic tutorial of the Sharg parser](https://docs.seqan.de/sharg/main_user/tutorial_parser.html)
 to learn how to conveniently access command line arguments.**
-
-
