@@ -214,7 +214,7 @@ jobs:
             snippet) make -j${{ matrix.build_threads }} gtest_build;;
             performance) make -j${{ matrix.build_threads }} gbenchmark_build;;
             header) make -j${{ matrix.build_threads }} gtest_build gbenchmark_build;;
-            external_project) make -j${{ matrix.build_threads }} seqan3_test_prerequisite;;
+            external_project) make -j${{ matrix.build_threads }} seqan3_test_prerequisite sharg_test_prerequisite;;
             documentation) make -j${{ matrix.build_threads }} download-cppreference-doxygen-web-tag;;
           esac
 

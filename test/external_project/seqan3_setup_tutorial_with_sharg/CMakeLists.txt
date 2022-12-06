@@ -15,6 +15,8 @@ file (RENAME "${CMAKE_CURRENT_BINARY_DIR}/hello_world.cpp" "${CMAKE_CURRENT_BINA
 file (COPY "${CMAKE_SOURCE_DIR}/../src/hello_world.cpp" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 # In the tutorial, the CMAKE_CURRENT_SOURCE_DIR is a sibling directory of the seqan3 checkout
 set (CMAKE_CURRENT_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../../source")
+# Cannot replicate a Sharg checkout just like in the tutorial
+list (APPEND CMAKE_PREFIX_PATH "${SHARG_ROOT}/build_system")
 
 ## [adding_files]
 cmake_minimum_required (VERSION 3.4)

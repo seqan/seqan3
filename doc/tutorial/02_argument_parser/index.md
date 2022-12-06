@@ -38,7 +38,7 @@ If you have completed the \ref setup, do the following to also include the Sharg
 
 <!-- Parsing the snippet like this to avoid verbatim includes of the snippet identifiers if we used nested snippets. -->
 <!-- Snippet start -->
-\dontinclude test/external_project/seqan3_setup_with_sharg/CMakeLists.txt
+\dontinclude test/external_project/seqan3_setup_tutorial_with_sharg/CMakeLists.txt
 \skipline cmake_minimum_required
 \until target_link_libraries
 <!-- Snippet end -->
