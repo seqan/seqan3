@@ -24,17 +24,15 @@
 #
 # SeqAn has the following optional dependencies:
 #
-#   Sharg     -- Argument Parsing
 #   ZLIB      -- zlib compression library
 #   BZip2     -- libbz2 compression library
 #   Cereal    -- Serialisation library
 #
-# If you don't wish for these to be detected (and used), you may define SEQAN3_NO_SHARG, SEQAN3_NO_ZLIB,
+# If you don't wish for these to be detected (and used), you may define SEQAN3_NO_ZLIB,
 # SEQAN3_NO_BZIP2, and SEQAN3_NO_CEREAL respectively.
 #
 # If you wish to require the presence of ZLIB or BZip2, just check for the module before
 # finding SeqAn3, e.g. "find_package (ZLIB REQUIRED)" and "find_package (BZip2 REQUIRED)".
-# If you wish to require the presence of SHARG, you may define SEQAN3_SHARG.
 # If you wish to require the presence of CEREAL, you may define SEQAN3_CEREAL.
 #
 # Once the search has been performed, the following variables will be set.
@@ -166,25 +164,6 @@ set (CMAKE_REQUIRED_FLAGS ${CMAKE_CXX_FLAGS})
 # Force-deactivate optional dependencies
 # ----------------------------------------------------------------------------
 
-# Sharg is auto-detected by default, i.e. used if found, not used if not found.
-# You can optionally set a hard requirement so a build fails without Sharg,
-# or you can force-disable Sharg even if present on the system.
-option (SEQAN3_SHARG "Require Sharg and fail if not present." OFF)
-option (SEQAN3_NO_SHARG "Don't use Sharg, even if present." OFF)
-
-if (SEQAN3_SHARG AND SEQAN3_NO_SHARG)
-    # this is always a user error, therefore we always error-out, even if SeqAn is not required
-    message (FATAL_ERROR "You may not specify SEQAN3_SHARG and SEQAN3_NO_SHARG at the same time.\n\
-                          You can specify neither (use auto-detection), or specify either to force on/off.")
-    return ()
-endif ()
-
-if (SEQAN3_SHARG)
-    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_WITH_SHARG=1")
-elseif (SEQAN3_NO_SHARG)
-    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_WITH_SHARG=0")
-endif ()
-
 # Cereal is auto-detected by default, i.e. used if found, not used if not found.
 # You can optionally set a hard requirement so a build fails without cereal,
 # or you can force-disable cereal even if present on the system.
@@ -298,28 +277,6 @@ if (_SEQAN3_HAVE_SDSL)
 else ()
     seqan3_config_error (
         "The SDSL library is required, but wasn't found. Get it from https://github.com/xxsds/sdsl-lite")
-endif ()
-
-# ----------------------------------------------------------------------------
-# Sharg dependency is optional, but may set as required
-# ----------------------------------------------------------------------------
-
-if (NOT SEQAN3_NO_SHARG)
-    check_include_file_cxx (sharg/version.hpp _SEQAN3_HAVE_SHARG)
-
-    if (_SEQAN3_HAVE_SHARG)
-        if (SEQAN3_SHARG)
-            seqan3_config_print ("Required dependency:        Sharg found.")
-        else ()
-            seqan3_config_print ("Optional dependency:        Sharg found.")
-        endif ()
-    else ()
-        if (SEQAN3_SHARG)
-            seqan3_config_error ("The (optional) Sharg library was marked as required, but wasn't found.")
-        else ()
-            seqan3_config_print ("Optional dependency:        Sharg not found.")
-        endif ()
-    endif ()
 endif ()
 
 # ----------------------------------------------------------------------------
