@@ -48,7 +48,7 @@ namespace seqan3
  *
  * \include test/snippet/argument_parser/validators_2.cpp
  *
- * You can learn more about SeqAn validators in our tutorial \ref section_validation.
+ * You can learn more about SeqAn validators in our tutorial.
  *
  * To implement your own validator please refer to the detailed concept description below.
  *
@@ -560,7 +560,7 @@ public:
      */
     explicit input_file_validator(std::vector<std::string> extensions)
         requires std::same_as<file_t, void>
-    : file_validator_base{}
+        : file_validator_base{}
     {
         file_validator_base::extensions = std::move(extensions);
     }
