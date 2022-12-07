@@ -135,10 +135,6 @@ namespace seqan3
  * which means that applications ship with less bugs.
  * For privacy implications, please see: https://github.com/seqan/seqan3/wiki/Update-Notifications.
  *
- * Developers that wish to disable this feature permanently can pass an extra constructor argument:
- *
- * \include doc/tutorial/02_argument_parser/disable_version_check.cpp
- *
  * Users of applications that have this feature activated can opt-out, by either:
  *
  *  * disabling it for a specific application simply by setting the option `--version-check false/0` or
