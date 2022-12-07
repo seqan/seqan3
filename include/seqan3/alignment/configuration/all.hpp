@@ -23,7 +23,10 @@
 /*!\defgroup alignment_configuration Configuration
  * \ingroup alignment
  * \brief Provides configuration elements for the pairwise alignment configuration.
- * \see alignment
+ *
+ * See the detailed \ref alignment_pairwise documentation for more details.
+ *
+ * \see alignment_pairwise
  */
 
 #pragma once
