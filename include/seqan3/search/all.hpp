@@ -36,7 +36,7 @@
  * \todo Add a description of the DREAM index here.
  * \endif
  *
- * # Search algorithm
+ * # Search algorithm: seqan3::search
  *
  * The Search module offers a unified search interface seqan3::search.
  * The function chooses the best search method based on the provided **index** and an optional **configuration**.
@@ -69,15 +69,15 @@
  * (\ref search_available_indices). The documentation of the respective index will lead you to a more detailed
  * description on how to use our search algorithm.
  *
- * # Available Indices \anchor search_available_indices
+ * ## Available Indices for the seqan3::search \anchor search_available_indices
  *
- * ## seqan3::fm_index
+ * ### seqan3::fm_index
  *
  * The seqan3::fm_index implements a original [FM Index](https://en.wikipedia.org/wiki/FM-index) with a trivial
  * backtracking approach. It is recommended for searches with no errors (exact searches). For eaxact searches, the
  * original FM index is slightly faster than the bidirectional FM Index and in general it is only half the size.
  *
- * ## seqan3::bi_fm_index
+ * ### seqan3::bi_fm_index
  *
  * The seqan3::bi_fm_index is a bidirectional FM index [1]. It improves the original FM index by allowing to extend the
  * query to the right and the left.  This make the bidirectional FM index more efficient than its predecessor when
@@ -112,6 +112,17 @@
  *
  * \endif
  *
+ * # Membership queries (lookups)
+ *
+ * If you are not interested in the exact match of your query, but simply whether your query can be found or not
+ * (allso called membership query or lookup), SeqAn offers efficient data structures for this purpose.
+ * Of course you could also use a simple hash map (e.g. `std::unordered_map`) but depending on your data
+ * this can quickly become infeasable in terms of mamory consumption and runtime.
+ *
+ * Take a look at the seqan3::interleaved_bloom_filter. The following example shows how to use it in order to
+ * simultaniously query all regions of a genome for the occurence of a specific query:
+ *
+ * \include test/snippet/search/dream_index/example_query_genome_region.cpp
  */
 
 #pragma once
