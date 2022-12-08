@@ -13,12 +13,6 @@ please feel free to contact us.
 # Read sequence files
 \snippet doc/cookbook/file_input.cpp fileinput
 
-# Write a custom validator {#cookbook_custom_validator}
-This recipe implements a validator that checks if a numeric argument is an integral square (i.e. 0, 1, 4, 9...).
-Invalid values throw a seqan3::validation_error.
-
-\snippet doc/tutorial/03_concepts/custom_validator_solution2.cpp validator
-
 # Construction and assignment of alphabet symbols
 
 \snippet doc/tutorial/04_alphabet/alphabet_main.cpp create

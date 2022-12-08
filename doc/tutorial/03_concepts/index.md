@@ -1,6 +1,6 @@
 # C++ Concepts {#tutorial_concepts}
 
-[TOC]
+***Learning Objective:***
 
 This tutorial introduces "C++ Concepts", a feature of C++20 (and available to some extent in older GCC versions).
 You will learn the terminology used in the context of concepts and how to use SeqAn's concepts in your application.
@@ -14,6 +14,8 @@ This tutorial teaches the very basics of working with concepts. For more backgro
 your own concepts, we recommend:
   * A well-readable [paper](https://www.stroustrup.com/good_concepts.pdf) with motivation and historical background.
   * The (rather dense) [documentation on cppreference](https://en.cppreference.com/w/cpp/language/constraints).
+
+[TOC]
 
 # Constraints
 
@@ -222,94 +224,89 @@ to check the "return type" of the transformation trait.
 
 # Concepts in SeqAn and this documentation
 
-SeqAn uses concepts extensively, for specialisation/overloading, but also to prevent misuse of templates and to clearly
-specify all public interfaces.
-We prefer the intermediate syntax and additionally use the verbose expressions if necessary.
+SeqAn uses concepts extensively, for template specialisation/overloading, to avoid misuse and improve error messages.
 Unfortunately, doxygen, the system used to generate this documentation, does not handle C++ concepts very well, yet.
+That's why it's important to read the detailed documentation section of the constrained type, where we try to document
+the requirements manually.
 In some parts of the documentation concepts are called "interfaces", please don't let this confuse you.
-And the "verbose syntax" introduced above is not visible at all in the automatically generated documentation.
-That's why it's important to read the detailed documentation section where all requirements are documented.
 
-Have a look at the documentation of seqan3::argument_parser::add_positional_option().
-It has two template parameters, one seems unconstrained (`typename` in the signature) and one is constrained
-(`validator` in the signature).
-But in fact both are constrained as the detailed documentation reveals.
+<!-- To prevent misuse of templates and to clearly specify all public interfaces we use the concepts within
+`static_assert`s in order to provoke more readable error messages. The thereby enforced requirements are also manually
+documented with the respective instances. WE DO NOT ACTUALLY DO THIS... -->
 
-Now, follow the link to seqan3::validator. We will check in the next section whether you understand the
-documentation for the concept.
+## Example: seqan3::bitpacked_sequence
 
-# How to make your own type model a concept
+The class `seqan3::bitpacked_sequence<alphabet_type>` behaves just like `std::vector<alphabet_type>` but has an internal representation where multiple
+values are packed into a single byte/word to save space. Also analog to `std::vector`, not every `alphabet_type` can
+be used. To avoid misuse and weird error messages, the type is constrained.
 
-## seqan3::validator
-
-Remember the tutorial on \ref tutorial_argument_parser ? Let's implement our own validator that checks
-if a numeric argument is an integral square (i.e. the user shall only be allowed to enter 0, 1, 4, 9...).
-
-### Understanding the requirements
-
-You analysed seqan3::validator in the previous section.
-Do you understand the requirements formulated on that page?
+Have a look at the documentation of [`seqan3::bitpacked_sequence`](http://docs.seqan.de/seqan/3-master-user/classseqan3_1_1bitpacked__sequence.html).
+It has one constrained template parameter.
+Do you understand the requirements imposed on `alphabet_type` when using the
+[`seqan3::bitpacked_sequence`](http://docs.seqan.de/seqan/3-master-user/classseqan3_1_1bitpacked__sequence.html)?
 
 \hint
-In order to model the seqan3::validator, your custom validator must provide the following:
+In order to use the `seqan3::bitpacked_sequence` the  `alphabet_type` must model the following:
 
-  1. It needs to expose a `value_type` type member which identifies the type of variable the validator works on.
-     Currently, the SeqAn validators either have value_type `double` or `std::string`.
-     Since the validator works on every type that has a common reference type to `value_type`, it enables a validator
-     with `value_type = double` to work on all arithmetic values.
-     \attention In order to be chainable, the validators need to share the same value_type!
-  2. It has to be a [functor](https://stackoverflow.com/questions/356950/what-are-c-functors-and-their-uses), which
-     basically means it must provide `operator()`.
-  3. It has to have a member function `std::string get_help_page_message() const` that returns a string that can be
-     displayed on the help page.
+  1. It needs to model [`std::regular`](https://en.cppreference.com/w/cpp/concepts/regular), a stl concept.
+     This only enforcing two other concepts: `std::semiregular<T> && std::equality_comparable<T>`.
+     * `std::semiregular<T>` makes sure that your type is default initialisable (e.g. `int i{};`).
+     * `std::equality_comparable<T>` makes sure you can compare your type with `==` (e.g. `i == j`).
+
+     It makes sense that in order to save a range of letters (of type `alphabet_type`), you need them to be
+     default initialisable, for example s.t. you can easily resize your container.
+     Additionally, `seqan3::bitpacked_sequence` needs the `alphabet_type` to be comparable, in order be equality
+     comparable itself (e.g. you can do `bit_seq_1 == bit_seq_2`).
+
+  2. It needs to model [`seqan3::writable_semialphabet`], a seqan3 concept.
+     This again enforces two things:
+     * `seqan3::assign_rank_to` needs to be defined for objects of this type.
+     * the type shall model `seqan3::semialphabet`,
+       which in summary enforces that your type is ordered (comparable via `<`), shall be efficiently copyable and
+       you should be able to call `seqan3::alphabet_size(c)` and `seqan3::to_rank(c)` (assuming `c` is of type `alphabet_type`).
 
 \endhint
 
-### Formally satisfying the requirements
+Of course, all seqan3 alphabets model the requirements and can be used with the `seqan3::bitpacked_sequence`.
 
-As we have noted previously, you can check if your type models seqan3::validator in the following way:
+But what happens if a type you would like to use does not model `seqan3::writable_semialphabet` (because obviously
+this concept is very SeqAn specific)?
 
-```cpp
-struct custom_validator
-{
-    // ...
-};
+You can learn how to make your own alphabet model the SeqAn requirements in \ref howto_write_an_alphabet
 
-static_assert(seqan3::validator<custom_validator>);
-```
+In order to understand what "make a type model a concept" means in practical terms, let's look at an easier
+example in the next section.
 
-To formally satisfy the requirements, your functions don't need the correct behaviour, yet.
-Only the signatures need to be fully specified.
+# Satisfying a concept
 
-\assignment{Assignment 3: Custom validator I}
-Implement enough of the above mentioned `struct custom_validator` for it to model seqan3::validator and pass
-the check. You can use an empty `main()`-function for now.
-\endassignment
-\solution
-\include doc/tutorial/03_concepts/custom_validator_solution1.cpp
-\endsolution
+Let's say you have the following concept called `fooger`:
 
-### Implementing the functionality
+\snippet doc/tutorial/03_concepts/model_a_concept.cpp concept
 
-The above implementation is of course not yet useful.
-It should be usable with this main function:
+Do you understand the requirements?
 
-\snippet doc/tutorial/03_concepts/custom_validator_solution2.cpp main
+\hint
+  1. The type `T` needs to model `has_foo<T>`
+     Which again has two requirements:
+     requirement 1: The type `T` has to have a *type member* called `FOO`
+     requirement 2: The type `T` has to have a *member variable* calles `foo`
+  2. `std::same_as` is a concept that checks whether two types are exaclty the same.
+     Thus, `fooger` requires, that the *type member* `T::FOO` is `int`.
+\endhint
 
-Try to think of the correct behaviour of this program.
+\assignment{Assignment 4: Make a type model a concept}
 
-It should print "Yeah!" for the arguments `-i 0`, `-i 4`, or `-i 144`; and/or `-j 0` or `-j 4`.
+Copy over the concept into a new `.cpp` file.
 
-It should fail for the arguments `-i 3`; and/or `-j 144` or `-j 3`.
+Add a type `my_type` that models the requirements, s.t.
 
-\assignment{Assignment 4: Custom validator II}
-Implement your validator fully, i.e. make it throw seqan3::validation_error if the number provided is not a
-square.
-Also, give a nice description for the help page.
+\snippet doc/tutorial/03_concepts/model_a_concept.cpp main
+
+prints `1`.
+
+Hint: Don't forget to include the `seqan3::debug_stream` via `#include <seqan3/core/debug_stream.hpp>`.
 
 \endassignment
 \solution
-\snippet doc/tutorial/03_concepts/custom_validator_solution2.cpp validator
+\include doc/tutorial/03_concepts/model_a_concept.cpp
 \endsolution
-
-You have now written your own type that is compatible with our constrained interfaces!
