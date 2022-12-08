@@ -69,7 +69,7 @@
  * (\ref search_available_indices). The documentation of the respective index will lead you to a more detailed
  * description on how to use our search algorithm.
  *
- * ## Available Indices for the seqan3::search \anchor search_available_indices
+ * \subsection search_available_indices Available Indices for the seqan3::search
  *
  * ### seqan3::fm_index
  *
