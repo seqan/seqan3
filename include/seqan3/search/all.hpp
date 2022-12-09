@@ -48,8 +48,8 @@
  * The `seqan3::search` algorithm can be configured in multiple ways. You simply pass a respective `config` object to
  * the algorithm:
  *
- * The search configuration is independent of the index you use. It specifies for example how many errors are allowed
- * in the your search to still consider it successful.
+ * The search configuration is independent of the index you use. It specifies for example how many mismatches and
+ * indels are allowed to consider your search successful.
  *
  * See detailed documentation on \ref search_configuration for details.
  *
@@ -74,16 +74,16 @@
  * ### seqan3::fm_index
  *
  * The seqan3::fm_index implements a original [FM Index](https://en.wikipedia.org/wiki/FM-index) with a trivial
- * backtracking approach. It is recommended for searches with no errors (exact searches). For eaxact searches, the
+ * backtracking approach. It is recommended for searches with no errors (exact searches). For exact searches, the
  * original FM index is slightly faster than the bidirectional FM Index and in general it is only half the size.
  *
  * ### seqan3::bi_fm_index
  *
  * The seqan3::bi_fm_index is a bidirectional FM index [1]. It improves the original FM index by allowing to extend the
- * query to the right and the left.  This make the bidirectional FM index more efficient than its predecessor when
+ * query to the right and the left.  This makes the bidirectional FM index more efficient than its predecessor when
  * searching with errors (approximate search).
  * The performance gain is enabled by using (optimum) *search schemes*.
- * Currently, using *search schemes* is only supported for searches with up to three errors.
+ * Currently, using *search schemes* is only supported for searches with up to three errors and falls back to a trivial backtracking approach for higher errors.
  * In the future we plan to improve the search schemes to handle higher error counts.
  *
  * **Reference:**
@@ -115,12 +115,12 @@
  * # Membership queries (lookups)
  *
  * If you are not interested in the exact match of your query, but simply whether your query can be found or not
- * (allso called membership query or lookup), SeqAn offers efficient data structures for this purpose.
+ * (also called membership query or lookup), SeqAn offers efficient data structures for this purpose.
  * Of course you could also use a simple hash map (e.g. `std::unordered_map`) but depending on your data
- * this can quickly become infeasable in terms of mamory consumption and runtime.
+ * this can quickly become infeasible in terms of memory consumption and runtime.
  *
  * Take a look at the seqan3::interleaved_bloom_filter. The following example shows how to use it in order to
- * simultaniously query all regions of a genome for the occurence of a specific query:
+ * simultaneously query all regions of a genome for the occurrence of a specific query:
  *
  * \include test/snippet/search/dream_index/example_query_genome_region.cpp
  */

@@ -84,7 +84,7 @@ namespace seqan3
  * The search algorithm strongly depends on the **index** that is used.
  * Please see \ref search_available_indices for an overview of our indices.
  *
- * For more details on how to configure the search, please see the respective docuemntation: \ref search_configuration.
+ * For more details on how to configure the search, please see the respective documentation: \ref search_configuration.
  *
  * ### Complexity
  *
