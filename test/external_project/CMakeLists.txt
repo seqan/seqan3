@@ -131,7 +131,7 @@ ExternalProject_Add (
     SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_setup_tutorial_with_sharg"
     CMAKE_COMMAND "${SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND}"
     CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
-               "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
+               "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}" #
                "-DSHARG_ROOT=${SHARG_ROOT}")
 add_dependencies (seqan3_setup_tutorial_with_sharg sharg_test_prerequisite)
 
