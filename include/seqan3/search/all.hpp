@@ -73,9 +73,9 @@
  *
  * ### seqan3::fm_index
  *
- * The seqan3::fm_index implements a original [FM Index](https://en.wikipedia.org/wiki/FM-index) with a trivial
+ * The seqan3::fm_index implements an original [FM Index](https://en.wikipedia.org/wiki/FM-index) with a trivial
  * backtracking approach. It is recommended for searches with no errors (exact searches). For exact searches, the
- * original FM index is slightly faster than the bidirectional FM Index and in general it is only half the size.
+ * original FM index is slightly faster than the bidirectional FM Index, and in general, it is only half the size.
  *
  * ### seqan3::bi_fm_index
  *
@@ -84,7 +84,7 @@
  * searching with errors (approximate search).
  * The performance gain is enabled by using (optimum) *search schemes*.
  * Currently, using *search schemes* is only supported for searches with up to three errors and falls back to a trivial backtracking approach for higher errors.
- * In the future we plan to improve the search schemes to handle higher error counts.
+ * In the future, we plan to improve the search schemes to handle higher error counts.
  *
  * **Reference:**
  *
@@ -116,10 +116,10 @@
  *
  * If you are not interested in the exact match of your query, but simply whether your query can be found or not
  * (also called membership query or lookup), SeqAn offers efficient data structures for this purpose.
- * Of course you could also use a simple hash map (e.g. `std::unordered_map`) but depending on your data
+ * Of course you could also use a simple hash map (e.g., `std::unordered_map`) but depending on your data
  * this can quickly become infeasible in terms of memory consumption and runtime.
  *
- * Take a look at the seqan3::interleaved_bloom_filter. The following example shows how to use it in order to
+ * Take a look at the seqan3::interleaved_bloom_filter. The following example shows how to use it to
  * simultaneously query all regions of a genome for the occurrence of a specific query:
  *
  * \include test/snippet/search/dream_index/example_query_genome_region.cpp
