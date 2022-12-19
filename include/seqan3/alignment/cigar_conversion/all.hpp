@@ -22,13 +22,13 @@
  *
  * # Creating an alignment from a CIGAR String
  *
- * To create an alignment from a CIGAR String you can do the following:
+ * To create an alignment from a CIGAR String, you can do the following:
  *
  * \include test/snippet/alignment/cigar_conversion/alignment_from_cigar_io.cpp
  *
  * # Creating a CIGAR string from an alignment
  *
- * To create a CIGAR String from an alignnment you can do the following:
+ * To create a CIGAR String from an alignment, you can do the following:
  *
  * \include test/snippet/alignment/cigar_conversion/cigar_from_alignment_with_clipping.cpp
  *
