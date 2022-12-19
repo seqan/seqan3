@@ -25,7 +25,7 @@
     The picture, or alternative text, should link to `[2]`.
 -->
 
-[1]: https://img.shields.io/github/workflow/status/seqan/seqan3/SeqAn3%20CI%20on%20Linux/master?style=flat&logo=github&label=SeqAn3%20CI "Open GitHub actions page"
+[1]: https://img.shields.io/github/actions/workflow/status/seqan/seqan3/ci_linux.yml?branch=master&style=flat&logo=github&label=SeqAn3%20CI "Open GitHub actions page"
 [2]: https://github.com/seqan/seqan3/actions?query=branch%3Amaster
 [3]: https://codecov.io/gh/seqan/seqan3/branch/master/graph/badge.svg?token=BH1FQiBBle "Open Codecov page"
 [4]: https://codecov.io/gh/seqan/seqan3
