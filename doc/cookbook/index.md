@@ -533,6 +533,7 @@ Search for keywords with `Strg + F`.
 \include test/snippet/search/dream_index/counting_agent.cpp
 \include test/snippet/search/dream_index/counting_agent_construction.cpp
 \include test/snippet/search/dream_index/counting_vector.cpp
+\include test/snippet/search/dream_index/example_query_genome_region.cpp
 \include test/snippet/search/dream_index/interleaved_bloom_filter_clear.cpp
 \include test/snippet/search/dream_index/interleaved_bloom_filter_constructor.cpp
 \include test/snippet/search/dream_index/interleaved_bloom_filter_constructor_compressed.cpp
