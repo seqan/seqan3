@@ -13,7 +13,11 @@
 /*!\defgroup alignment_decorator Decorator
  * \brief The decorator submodule contains special SeqAn decorators.
  * \ingroup alignment
+ *
+ * This submodule contains SeqAn decorators that can be used in an alignment context.
+ *
  * \see alignment
+ * \see alignment_pairwise
  */
 
 #pragma once

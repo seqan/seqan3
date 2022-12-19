@@ -10,7 +10,7 @@
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
-/*!\defgroup alignment_pairwise Pairwise
+/*!\defgroup alignment_pairwise Pairwise Alignments
  * \ingroup alignment
  * \brief Provides the algorithmic components for the computation of pairwise alignments.
  *
