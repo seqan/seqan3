@@ -21,7 +21,10 @@ int main()
                                                                            seqan3::debug_stream << result << '\n';
                                                                        }};
 
-    seqan3::search(queries, index, config); // Does not return anything but calls the lambda from above instead.
+    // The following does not return anything but calls the lambda from above instead:
+    //![search_with_config]
+    seqan3::search(queries, index, config);
+    //![search_with_config]
 
     // This results in:
     // <query_id:0, reference_id:0, reference_pos:1>

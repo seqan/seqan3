@@ -66,7 +66,7 @@ namespace seqan3
 {
 /*!\brief Search a query or a range of queries in an index.
  * \ingroup search
- * \tparam index_t    Type of the index.
+ * \tparam index_t    Type of the index. See \ref search_available_indices for an overview of our indices.
  * \tparam queries_t  Must model std::ranges::random_access_range over the index's alphabet and std::ranges::sized_range.
  *                    A range of queries must additionally model std::ranges::forward_range and std::ranges::sized_range.
  * \param[in] queries A single query or a range of queries.
@@ -80,6 +80,11 @@ namespace seqan3
  * \details
  *
  * \header_file{seqan3/search/search.hpp}
+ *
+ * The search algorithm strongly depends on the **index** that is used.
+ * Please see \ref search_available_indices for an overview of our indices.
+ *
+ * For more details on how to configure the search, please see the respective documentation: \ref search_configuration.
  *
  * ### Complexity
  *

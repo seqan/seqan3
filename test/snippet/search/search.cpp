@@ -21,8 +21,10 @@ int main()
     //! [Performing search]
 
     // search for the queries "GCT" and "ACCC"
+    //! [search_result_loop]
     for (auto && result : results)
         seqan3::debug_stream << result << '\n';
+    //! [search_result_loop]
     // This should result in:
     // <query_id:0, reference_id:0, reference_pos:1>
     // <query_id:0, reference_id:1, reference_pos:9>
