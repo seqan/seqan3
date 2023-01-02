@@ -77,6 +77,7 @@ div.contents {
 #projectlogo {
     padding: 10px;
     width: 150px;
+    filter: drop-shadow(0 0 0.1rem rgb(251,227,0));
 }
 
 hr.footer {
@@ -263,6 +264,7 @@ div.solution {
 #nav-tree .label a[class="hierarchy.html"],
 #nav-tree .label a[class="index.html"],
 #nav-tree .label a[class="files.html"],
+#nav-tree .label a[class="concepts.html"],
 #nav-tree .label a[class="cookbook.html"] {
     color: #3D578C;
     font-weight: bolder;
@@ -280,6 +282,17 @@ div.solution {
 /* add Concept and Class suffix */
 #nav-tree .label a[class^="interface"][class$="html"]::after {
     content: " Concept";
+    color: grey;
+}
+
+#nav-tree .label a[class^="concept"][class$="html"]::after {
+    content: " Concept";
+    color: grey;
+}
+
+/* Remove suffix from Concept List */
+#nav-tree .label a[class^="concepts.html"]::after {
+    content: "" !important;
     color: grey;
 }
 
