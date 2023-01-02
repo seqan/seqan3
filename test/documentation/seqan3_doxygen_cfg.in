@@ -7,7 +7,7 @@ DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = SeqAn3
 PROJECT_NUMBER         = ${SEQAN3_VERSION}
 PROJECT_BRIEF          = "The Modern C++ library for sequence analysis."
-PROJECT_LOGO           = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan_logo.png
+PROJECT_LOGO           = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan_logo.svg
 ## PATHS
 OUTPUT_DIRECTORY       = ${SEQAN3_DOXYGEN_OUTPUT_DIR}
 CREATE_SUBDIRS         = NO
