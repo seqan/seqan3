@@ -1,4 +1,4 @@
-# Doxyfile 1.9.4
+# Doxyfile 1.9.6
 
 #---------------------------------------------------------------------------
 # Project related configuration options
@@ -7,7 +7,7 @@ DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = SeqAn3
 PROJECT_NUMBER         = ${SEQAN3_VERSION}
 PROJECT_BRIEF          = "The Modern C++ library for sequence analysis."
-PROJECT_LOGO           = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan_logo.png
+PROJECT_LOGO           = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan_logo.svg
 ## PATHS
 OUTPUT_DIRECTORY       = ${SEQAN3_DOXYGEN_OUTPUT_DIR}
 CREATE_SUBDIRS         = NO
@@ -134,6 +134,7 @@ WARN_IF_UNDOCUMENTED   = YES
 WARN_IF_DOC_ERROR      = YES
 WARN_IF_INCOMPLETE_DOC = YES
 WARN_NO_PARAMDOC       = NO
+WARN_IF_UNDOC_ENUM_VAL = NO
 WARN_AS_ERROR          = NO
 WARN_FORMAT            = "$file:$line: $text"
 WARN_LINE_FORMAT       = "at line $line of file $file"
@@ -148,6 +149,7 @@ INPUT                  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/CODE_OF_CONDUCT.md \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/CONTRIBUTING.md
 INPUT_ENCODING         = UTF-8
+INPUT_FILE_ENCODING    =
 FILE_PATTERNS          = *
 RECURSIVE              = YES
 EXCLUDE                =
@@ -165,6 +167,7 @@ FILTER_PATTERNS        =
 FILTER_SOURCE_FILES    = NO
 FILTER_SOURCE_PATTERNS =
 USE_MDFILE_AS_MAINPAGE =
+FORTRAN_COMMENT_AFTER  = 72
 #---------------------------------------------------------------------------
 # Configuration options related to source browsing
 #---------------------------------------------------------------------------
@@ -191,11 +194,13 @@ HTML_FILE_EXTENSION    = .html
 HTML_HEADER            =
 HTML_FOOTER            = ${SEQAN3_DOXYGEN_OUTPUT_DIR}/seqan3_footer.html
 HTML_STYLESHEET        =
-HTML_EXTRA_STYLESHEET  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3.css
+HTML_EXTRA_STYLESHEET  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3.css \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3_dark.css
 HTML_EXTRA_FILES       = ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc/tutorial/10_sam_file/example.sam \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/version.js \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/version.php \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/api-stability.js
+HTML_COLORSTYLE        = AUTO_LIGHT
 HTML_COLORSTYLE_HUE    = 220
 HTML_COLORSTYLE_SAT    = 100
 HTML_COLORSTYLE_GAMMA  = 80
@@ -235,7 +240,6 @@ EXT_LINKS_IN_WINDOW    = YES
 OBFUSCATE_EMAILS       = YES
 HTML_FORMULA_FORMAT    = png
 FORMULA_FONTSIZE       = 14
-FORMULA_TRANSPARENT    = YES
 FORMULA_MACROFILE      =
 USE_MATHJAX            = ${SEQAN3_DOXYGEN_USE_MATHJAX}
 MATHJAX_VERSION        = MathJax_2
@@ -349,8 +353,9 @@ HIDE_UNDOC_RELATIONS   = YES
 ## DOT SUPPORT
 HAVE_DOT               = ${SEQAN3_DOXYGEN_HAVE_DOT}
 DOT_NUM_THREADS        = ${SEQAN3_DOXYGEN_DOT_NUM_THREADS}
-DOT_FONTNAME           = Helvetica
-DOT_FONTSIZE           = 10
+DOT_COMMON_ATTR        = "fontname=Helvetica,fontsize=10"
+DOT_EDGE_ATTR          = "labelfontname=Helvetica,labelfontsize=10"
+DOT_NODE_ATTR          = "shape=box,height=0.2,width=0.4"
 DOT_FONTPATH           =
 CLASS_GRAPH            = YES
 COLLABORATION_GRAPH    = NO
@@ -378,7 +383,6 @@ PLANTUML_CFG_FILE      =
 PLANTUML_INCLUDE_PATH  =
 DOT_GRAPH_MAX_NODES    = 500
 MAX_DOT_GRAPH_DEPTH    = 0
-DOT_TRANSPARENT        = NO
 DOT_MULTI_TARGETS      = NO
 GENERATE_LEGEND        = YES
 DOT_CLEANUP            = YES

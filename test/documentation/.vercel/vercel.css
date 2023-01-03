@@ -1,0 +1,39 @@
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: black;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --background-color: rgb(230, 230, 230);
+    }
+}
+
+body {
+    background-color: var(--background-color);
+    text-align: center;
+}
+
+h1 {
+    color: rgb(135,135,135);
+}
+
+a.selection {
+    height: 2em;
+    display: inline-block;
+    border-radius: 4px;
+    background: #090D16;
+    color: #C9D1D9;
+    line-height: 2em;
+    padding: 5px;
+    width: 50%;
+    font-size: 1.5em;
+    text-decoration: none;
+    margin: 5px;
+}
+
+a.selection:hover {
+    background-color: #776700;
+    text-decoration: underline;
+}
