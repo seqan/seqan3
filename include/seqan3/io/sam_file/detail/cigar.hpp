@@ -78,46 +78,39 @@ inline void update_alignment_lengths(int32_t & ref_length,
 
 /*!\brief Parses a cigar string into a vector of operation-count pairs (e.g. (M, 3)).
  * \ingroup io_sam_file
- * \tparam cigar_input_type The type of a single pass input view over the cigar string; must model
- *                          std::ranges::input_range.
- * \param[in]  cigar_input  The single pass input view over the cigar string to parse.
+ * \param[in]  cigar_str  The cigar string to parse.
  *
- * \returns A tuple of size three containing (1) std::vector over seqan3::cigar, that describes
- *          the alignment, (2) the aligned reference length, (3) the aligned query sequence length.
+ * \returns A std::vector over seqan3::cigar, that describes the alignment.
  *
  * \details
  *
  * For example, the view over the cigar string "1H4M1D2M2S" will return
  * `{[(H,1), (M,4), (D,1), (M,2), (S,2)], 7, 6}`.
  */
-template <typename cigar_input_type>
-SEQAN3_WORKAROUND_LITERAL std::tuple<std::vector<cigar>, int32_t, int32_t> parse_cigar(cigar_input_type && cigar_input)
+SEQAN3_WORKAROUND_LITERAL std::vector<cigar> parse_cigar(std::string_view const cigar_str)
 {
-    std::vector<cigar> operations{};
-    std::array<char, 20> buffer{}; // buffer to parse numbers with from_chars. Biggest number should fit in uint64_t
-    char cigar_operation{};
+    std::vector<seqan3::cigar> cigar_vector{};
+
+    if (cigar_str == "*")
+        return cigar_vector;
+
     uint32_t cigar_count{};
-    int32_t ref_length{}, seq_length{}; // length of aligned part for ref and query
+    char const * ptr = cigar_str.data();
+    char const * const end = ptr + cigar_str.size();
 
-    // transform input into a single input view if it isn't already
-    auto cigar_view = cigar_input | views::single_pass_input;
-
-    // parse the rest of the cigar
-    // -------------------------------------------------------------------------------------------------------------
-    while (std::ranges::begin(cigar_view) != std::ranges::end(cigar_view)) // until stream is not empty
+    while (ptr < end)
     {
-        auto buff_end = (std::ranges::copy(cigar_view | detail::take_until_or_throw(!is_digit), buffer.data())).out;
-        cigar_operation = *std::ranges::begin(cigar_view);
-        ++std::ranges::begin(cigar_view);
+        auto const res = std::from_chars(ptr, end, cigar_count); // reads number up to next character
 
-        if (std::from_chars(buffer.begin(), buff_end, cigar_count).ec != std::errc{})
-            throw format_error{"Corrupted cigar string encountered"};
+        if (res.ec != std::errc{})
+            throw format_error{"Corrupted cigar string."};
 
-        update_alignment_lengths(ref_length, seq_length, cigar_operation, cigar_count);
-        operations.emplace_back(cigar_count, cigar::operation{}.assign_char(cigar_operation));
+        ptr = res.ptr + 1; // skip cigar operation character
+
+        cigar_vector.emplace_back(cigar_count, seqan3::assign_char_strictly_to(*res.ptr, seqan3::cigar::operation{}));
     }
 
-    return {operations, ref_length, seq_length};
+    return cigar_vector;
 }
 
 /*!\brief Transforms a vector of cigar elements into a string representation.

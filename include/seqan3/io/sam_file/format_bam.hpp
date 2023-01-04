@@ -13,6 +13,7 @@
 #pragma once
 
 #include <bit>
+#include <cstring>
 #include <iterator>
 #include <ranges>
 #include <string>
@@ -158,6 +159,8 @@ private:
         int32_t tlen;             //!< The template length of the read and its mate.
     };
 
+    static_assert(sizeof(alignment_record_core) == 36);
+
     // clang-format off
     //!\brief Converts a cigar op character to the rank according to the official BAM specifications.
     static constexpr std::array<uint8_t, 256> char_to_sam_rank
@@ -211,6 +214,13 @@ private:
         std::ranges::copy_n(std::ranges::begin(stream_view), sizeof(target), reinterpret_cast<char *>(&target));
     }
 
+    //!\overload
+    template <std::integral number_type>
+    void read_integral_byte_field(std::string_view const str, number_type & target)
+    {
+        std::memcpy(&target, str.data(), sizeof(target));
+    }
+
     /*!\brief Reads a float field from binary stream by directly reinterpreting the bits.
      * \tparam stream_view_type  The type of the stream as a view.
      * \param[in, out] stream_view  The stream view to read from.
@@ -222,16 +232,14 @@ private:
         std::ranges::copy_n(std::ranges::begin(stream_view), sizeof(int32_t), reinterpret_cast<char *>(&target));
     }
 
-    template <typename stream_view_type, typename value_type>
-    void read_sam_dict_vector(seqan3::detail::sam_tag_variant & variant,
-                              stream_view_type && stream_view,
-                              value_type const & SEQAN3_DOXYGEN_ONLY(value));
+    template <typename value_type>
+    int32_t read_sam_dict_vector(seqan3::detail::sam_tag_variant & variant,
+                                 std::string_view const str,
+                                 value_type const & SEQAN3_DOXYGEN_ONLY(value));
 
-    template <typename stream_view_type>
-    void read_sam_dict_field(stream_view_type && stream_view, sam_tag_dictionary & target);
+    void read_sam_dict(std::string_view const tag_str, sam_tag_dictionary & target);
 
-    template <typename cigar_input_type>
-    auto parse_binary_cigar(cigar_input_type && cigar_input, uint16_t n_cigar_op) const;
+    std::vector<cigar> parse_binary_cigar(std::string_view const cigar_str) const;
 
     static std::string get_tag_dict_str(sam_tag_dictionary const & tag_dict);
 };
@@ -286,8 +294,6 @@ format_bam::read_alignment_record(stream_type & stream,
                   "The type of field::flag must be seqan3::sam_flag.");
 
     auto stream_view = seqan3::detail::istreambuf(stream);
-
-    [[maybe_unused]] int32_t ref_length{}; // needed in case the cigar string was stored in the tag dictionary
 
     // Header
     // -------------------------------------------------------------------------------------------------------------
@@ -374,8 +380,12 @@ format_bam::read_alignment_record(stream_type & stream,
     // read alignment record into buffer
     // -------------------------------------------------------------------------------------------------------------
     position_buffer = stream.tellg();
+
+    auto stream_it = detail::fast_istreambuf_iterator{*stream.rdbuf()};
+
     alignment_record_core core;
-    std::ranges::copy(stream_view | detail::take_exactly_or_throw(sizeof(core)), reinterpret_cast<char *>(&core));
+    std::string_view const core_str = stream_it.cache_bytes(sizeof(core));
+    std::ranges::copy(core_str, reinterpret_cast<char *>(&core));
 
     if (core.refID >= static_cast<int32_t>(header.ref_ids().size()) || core.refID < -1) // [[unlikely]]
     {
@@ -410,96 +420,65 @@ format_bam::read_alignment_record(stream_type & stream,
 
     // read id
     // -------------------------------------------------------------------------------------------------------------
-    auto id_view = stream_view | detail::take_exactly_or_throw(core.l_read_name - 1);
+    std::string_view record_str = stream_it.cache_bytes(core.block_size - (sizeof(alignment_record_core) - 4));
+    size_t considered_bytes{0};
+
     if constexpr (!detail::decays_to_ignore_v<id_type>)
-        read_forward_range_field(id_view, id); // field::id
-    else
-        detail::consume(id_view);
-    ++std::ranges::begin(stream_view); // skip '\0'
+        read_forward_range_field(record_str.substr(0, core.l_read_name - 1), id);
+
+    considered_bytes += core.l_read_name;
 
     // read cigar string
     // -------------------------------------------------------------------------------------------------------------
     if constexpr (!detail::decays_to_ignore_v<cigar_type>)
-    {
-        int32_t seq_length{};
-        std::tie(cigar_vector, ref_length, seq_length) = parse_binary_cigar(stream_view, core.n_cigar_op);
-    }
-    else
-    {
-        detail::consume(stream_view | detail::take_exactly_or_throw(core.n_cigar_op * 4));
-    }
+        cigar_vector = parse_binary_cigar(record_str.substr(considered_bytes, core.n_cigar_op * 4));
+
+    considered_bytes += core.n_cigar_op * 4;
 
     // read sequence
     // -------------------------------------------------------------------------------------------------------------
-    if (core.l_seq > 0) // sequence information is given
+    if constexpr (!detail::decays_to_ignore_v<seq_type>)
     {
-        auto seq_stream = stream_view | detail::take_exactly_or_throw(core.l_seq / 2) // one too short if uneven
-                        | std::views::transform(
-                              [](char c) -> std::pair<dna16sam, dna16sam>
-                              {
-                                  return {dna16sam{}.assign_rank(std::min(15, static_cast<uint8_t>(c) >> 4)),
-                                          dna16sam{}.assign_rank(std::min(15, static_cast<uint8_t>(c) & 0x0f))};
-                              });
+        size_t const number_of_bytes = (core.l_seq + 1) / 2;
+        std::string_view const seq_str = record_str.substr(considered_bytes, number_of_bytes);
 
-        if constexpr (detail::decays_to_ignore_v<seq_type>)
+        seq.resize(
+            core.l_seq
+            + 1 /* reserve one more in case size is uneven. will be corrected */); // TODO: .resize() is not generic
+
+        using alph_t = std::ranges::range_value_t<decltype(seq)>;
+        constexpr auto from_dna16 = detail::convert_through_char_representation<dna16sam, alph_t>;
+
+        // 1 byte encodes two sequence characters
+        for (size_t i = 0, j = 0; i < number_of_bytes; ++i, j += 2)
         {
-            auto skip_sequence_bytes = [&]()
-            {
-                detail::consume(seq_stream);
-                if (core.l_seq & 1)
-                    ++std::ranges::begin(stream_view);
-            };
-
-            skip_sequence_bytes();
+            seq[j] = from_dna16[to_rank(dna16sam{}.assign_rank(std::min(15, static_cast<uint8_t>(seq_str[i]) >> 4)))];
+            seq[j + 1] =
+                from_dna16[to_rank(dna16sam{}.assign_rank(std::min(15, static_cast<uint8_t>(seq_str[i]) & 0x0f)))];
         }
-        else
-        {
-            using alph_t = std::ranges::range_value_t<decltype(seq)>;
-            constexpr auto from_dna16 = detail::convert_through_char_representation<dna16sam, alph_t>;
 
-            for (auto [d1, d2] : seq_stream)
-            {
-                seq.push_back(from_dna16[to_rank(d1)]);
-                seq.push_back(from_dna16[to_rank(d2)]);
-            }
-
-            if (core.l_seq & 1)
-            {
-                dna16sam d =
-                    dna16sam{}.assign_rank(std::min(15, static_cast<uint8_t>(*std::ranges::begin(stream_view)) >> 4));
-                seq.push_back(from_dna16[to_rank(d)]);
-                ++std::ranges::begin(stream_view);
-            }
-        }
+        seq.resize(core.l_seq); // remove extra letter
     }
+
+    considered_bytes += (core.l_seq + 1) / 2;
 
     // read qual string
     // -------------------------------------------------------------------------------------------------------------
-    auto qual_view = stream_view | detail::take_exactly_or_throw(core.l_seq)
-                   | std::views::transform(
-                         [](char chr)
-                         {
-                             return static_cast<char>(chr + 33);
-                         });
     if constexpr (!detail::decays_to_ignore_v<qual_type>)
-        read_forward_range_field(qual_view, qual);
-    else
-        detail::consume(qual_view);
+    {
+        std::string_view const qual_str = record_str.substr(considered_bytes, core.l_seq);
+        qual.resize(core.l_seq); // TODO: this is not generic
+
+        for (int32_t i = 0; i < core.l_seq; ++i)
+            qual[i] = assign_char_to(static_cast<char>(qual_str[i] + 33), std::ranges::range_value_t<qual_type>{});
+    }
+
+    considered_bytes += core.l_seq;
 
     // All remaining optional fields if any: SAM tags dictionary
     // -------------------------------------------------------------------------------------------------------------
-    int32_t remaining_bytes = core.block_size - (sizeof(alignment_record_core) - 4 /*block_size excluded*/)
-                            - core.l_read_name - core.n_cigar_op * 4 - (core.l_seq + 1) / 2 - core.l_seq;
-    assert(remaining_bytes >= 0);
-    auto tags_view = stream_view | detail::take_exactly_or_throw(remaining_bytes);
-
-    while (tags_view.size() > 0)
-    {
-        if constexpr (!detail::decays_to_ignore_v<tag_dict_type>)
-            read_sam_dict_field(tags_view, tag_dict);
-        else
-            detail::consume(tags_view);
-    }
+    if constexpr (!detail::decays_to_ignore_v<tag_dict_type>)
+        read_sam_dict(record_str.substr(considered_bytes), tag_dict);
 
     // DONE READING - wrap up
     // -------------------------------------------------------------------------------------------------------------
@@ -516,10 +495,8 @@ format_bam::read_alignment_record(stream_type & stream,
             { // maybe only throw in debug mode and otherwise return an empty alignment?
                 throw format_error{
                     detail::to_string("The cigar string '",
-                                      sc_front,
-                                      "S",
-                                      ref_length,
-                                      "N' suggests that the cigar string exceeded 65535 elements and was therefore ",
+                                      detail::get_cigar_string(cigar_vector),
+                                      "' suggests that the cigar string exceeded 65535 elements and was therefore ",
                                       "stored in the optional field CG. You need to read in the field::tags and "
                                       "field::seq in order to access this information.")};
             }
@@ -528,18 +505,14 @@ format_bam::read_alignment_record(stream_type & stream,
                 auto it = tag_dict.find("CG"_tag);
 
                 if (it == tag_dict.end())
-                    throw format_error{detail::to_string(
-                        "The cigar string '",
-                        sc_front,
-                        "S",
-                        ref_length,
-                        "N' suggests that the cigar string exceeded 65535 elements and was therefore ",
-                        "stored in the optional field CG but this tag is not present in the given ",
-                        "record.")};
+                    throw format_error{
+                        detail::to_string("The cigar string '",
+                                          detail::get_cigar_string(cigar_vector),
+                                          "' suggests that the cigar string exceeded 65535 elements and was therefore ",
+                                          "stored in the optional field CG but this tag is not present in the given ",
+                                          "record.")};
 
-                auto cigar_view = std::views::all(std::get<std::string>(it->second));
-                int32_t seq_length{};
-                std::tie(cigar_vector, ref_length, seq_length) = detail::parse_cigar(cigar_view);
+                cigar_vector = detail::parse_cigar(std::get<std::string>(it->second));
                 tag_dict.erase(it); // remove redundant information
             }
         }
@@ -876,43 +849,68 @@ inline void format_bam::write_header(stream_t & stream, sam_file_output_options 
     }
 }
 
-//!\copydoc seqan3::format_sam::read_sam_dict_vector
-template <typename stream_view_type, typename value_type>
-inline void format_bam::read_sam_dict_vector(seqan3::detail::sam_tag_variant & variant,
-                                             stream_view_type && stream_view,
-                                             value_type const & SEQAN3_DOXYGEN_ONLY(value))
+/*!\brief Reads a list of values separated by comma as it is the case for SAM tag arrays.
+ * \tparam value_type       The type of values to be stored in the tag array.
+ *
+ * \param[in, out] variant      A std::variant object to store the tag arrays.
+ * \param[in, out] str          The string_view to parse.
+ * \param[in]      value        A temporary value that determines the underlying type of the tag array.
+ *
+ * \returns The length of the vector processed.
+ *
+ * \details
+ *
+ * Reading the tags is done according to the official
+ * [SAM format specifications](https://samtools.github.io/hts-specs/SAMv1.pdf).
+ *
+ * The function throws a seqan3::format_error if any unknown tag type was encountered. It will also fail if the
+ * format is not in a correct state (e.g. required fields are not given), but throwing might occur downstream of
+ * the actual error.
+ */
+template <typename value_type>
+inline int32_t format_bam::read_sam_dict_vector(seqan3::detail::sam_tag_variant & variant,
+                                                std::string_view const str,
+                                                value_type const & SEQAN3_DOXYGEN_ONLY(value))
 {
-    int32_t count;
-    read_integral_byte_field(stream_view, count); // read length of vector
-    std::vector<value_type> tmp_vector;
-    tmp_vector.reserve(count);
+    auto it = str.begin();
 
-    while (count > 0)
+    // Read vector size from string_view and advance `it`.
+    int32_t const vector_size = [&]()
     {
-        value_type tmp{};
+        int32_t size{};
+        read_integral_byte_field(std::string_view{it, str.end()}, size);
+        it += sizeof(size);
+        return size;
+    }();
+
+    int32_t bytes_left{vector_size};
+
+    std::vector<value_type> tmp_vector;
+    tmp_vector.reserve(vector_size);
+
+    value_type tmp{};
+
+    while (bytes_left > 0)
+    {
         if constexpr (std::integral<value_type>)
-        {
-            read_integral_byte_field(stream_view, tmp);
-        }
+            read_integral_byte_field(std::string_view{it, str.end()}, tmp);
         else if constexpr (std::same_as<value_type, float>)
-        {
-            read_float_byte_field(stream_view, tmp);
-        }
+            read_float_byte_field(std::string_view{it, str.end()}, tmp);
         else
-        {
-            constexpr bool always_false = std::is_same_v<value_type, void>;
-            static_assert(always_false, "format_bam::read_sam_dict_vector: unsupported value_type");
-        }
+            static_assert(std::is_same_v<value_type, void>, "format_bam::read_sam_dict_vector: unsupported value_type");
+
+        it += sizeof(tmp);
         tmp_vector.push_back(std::move(tmp));
-        --count;
+        --bytes_left;
     }
+
     variant = std::move(tmp_vector);
+
+    return vector_size;
 }
 
 /*!\brief Reads the optional tag fields into the seqan3::sam_tag_dictionary.
- * \tparam stream_view_type   The type of the stream as a view.
- *
- * \param[in, out] stream_view  The stream view to iterate over.
+ * \param[in, out] tag_str      The string_view to parse.
  * \param[out]     target       The seqan3::sam_tag_dictionary to store the tag information.
  *
  * \throws seqan3::format_error if any unexpected character or format is encountered.
@@ -926,205 +924,213 @@ inline void format_bam::read_sam_dict_vector(seqan3::detail::sam_tag_variant & v
  * format is not in a correct state (e.g. required fields are not given), but throwing might occur downstream of
  * the actual error.
  */
-template <typename stream_view_type>
-inline void format_bam::read_sam_dict_field(stream_view_type && stream_view, sam_tag_dictionary & target)
+inline void format_bam::read_sam_dict(std::string_view const tag_str, sam_tag_dictionary & target)
 {
-    /* Every BA< tag has the format "[TAG][TYPE_ID][VALUE]", where TAG is a two letter
+    /* Every BAM tag has the format "[TAG][TYPE_ID][VALUE]", where TAG is a two letter
        name tag which is converted to a unique integer identifier and TYPE_ID is one character in [A,i,Z,H,B,f]
        describing the type for the upcoming VALUES. If TYPE_ID=='B' it signals an array of
        VALUE's and the inner value type is identified by the next character, one of [cCsSiIf], followed
        by the length (int32_t) of the array, followed by the values.
     */
-    auto it = std::ranges::begin(stream_view);
-    uint16_t tag = static_cast<uint16_t>(*it) << 8;
-    ++it; // skip char read before
+    auto it = tag_str.begin();
 
-    tag += static_cast<uint16_t>(*it);
-    ++it; // skip char read before
+    // Deduces int_t from passed argument.
+    auto parse_integer_into_target = [&]<std::integral int_t>(uint16_t const tag, int_t)
+    {
+        int_t tmp{};
+        read_integral_byte_field(std::string_view{it, tag_str.end()}, tmp);
+        target[tag] = static_cast<int32_t>(tmp); // readable sam format only allows int32_t
+        it += sizeof(tmp);
+    };
 
-    char type_id = *it;
-    ++it; // skip char read before
+    // Deduces array_value_t from passed argument.
+    auto parse_array_into_target = [&]<arithmetic array_value_t>(uint16_t const tag, array_value_t)
+    {
+        int32_t const count = read_sam_dict_vector(target[tag], std::string_view{it, tag_str.end()}, array_value_t{});
+        it += sizeof(int32_t) /*length is stored within the vector*/ + sizeof(array_value_t) * count;
+    };
 
-    switch (type_id)
+    // Read uint16_t from string_view and advance `it`.
+    auto parse_tag = [&]()
     {
-    case 'A': // char
-    {
-        target[tag] = *it;
-        ++it; // skip char that has been read
-        break;
-    }
-    // all integer sizes are possible
-    case 'c': // int8_t
-    {
-        int8_t tmp;
-        read_integral_byte_field(stream_view, tmp);
-        target[tag] = static_cast<int32_t>(tmp); // readable sam format only allows int32_t
-        break;
-    }
-    case 'C': // uint8_t
-    {
-        uint8_t tmp;
-        read_integral_byte_field(stream_view, tmp);
-        target[tag] = static_cast<int32_t>(tmp); // readable sam format only allows int32_t
-        break;
-    }
-    case 's': // int16_t
-    {
-        int16_t tmp;
-        read_integral_byte_field(stream_view, tmp);
-        target[tag] = static_cast<int32_t>(tmp); // readable sam format only allows int32_t
-        break;
-    }
-    case 'S': // uint16_t
-    {
-        uint16_t tmp;
-        read_integral_byte_field(stream_view, tmp);
-        target[tag] = static_cast<int32_t>(tmp); // readable sam format only allows int32_t
-        break;
-    }
-    case 'i': // int32_t
-    {
-        int32_t tmp;
-        read_integral_byte_field(stream_view, tmp);
-        target[tag] = std::move(tmp); // readable sam format only allows int32_t
-        break;
-    }
-    case 'I': // uint32_t
-    {
-        uint32_t tmp;
-        read_integral_byte_field(stream_view, tmp);
-        target[tag] = static_cast<int32_t>(tmp); // readable sam format only allows int32_t
-        break;
-    }
-    case 'f': // float
-    {
-        float tmp;
-        read_float_byte_field(stream_view, tmp);
-        target[tag] = tmp;
-        break;
-    }
-    case 'Z': // string
-    {
-        string_buffer.clear();
-        while (!is_char<'\0'>(*it))
-        {
-            string_buffer.push_back(*it);
-            ++it;
-        }
-        ++it; // skip \0
-        target[tag] = string_buffer;
-        break;
-    }
-    case 'H': // byte array, represented as null-terminated string; specification requires even number of bytes
-    {
-        std::vector<std::byte> byte_array;
-        std::byte value;
-        while (!is_char<'\0'>(*it))
-        {
-            string_buffer.clear();
-            string_buffer.push_back(*it);
-            ++it;
+        uint16_t tag = static_cast<uint16_t>(*it) << 8;
+        ++it; // skip char read before
+        tag |= static_cast<uint16_t>(*it);
+        ++it; // skip char read before
+        return tag;
+    };
 
-            if (*it == '\0')
-                throw format_error{"Hexadecimal tag has an uneven number of digits!"};
-
-            string_buffer.push_back(*it);
-            ++it;
-            read_byte_field(string_buffer, value);
-            byte_array.push_back(value);
-        }
-        ++it; // skip \0
-        target[tag] = byte_array;
-        break;
-    }
-    case 'B': // Array. Value type depends on second char [cCsSiIf]
+    while (it != tag_str.end())
     {
-        char array_value_type_id = *it;
+        uint16_t const tag = parse_tag();
+
+        char const type_id{*it};
         ++it; // skip char read before
 
-        switch (array_value_type_id)
+        switch (type_id)
         {
+        case 'A': // char
+        {
+            target[tag] = *it;
+            ++it; // skip char that has been read
+            break;
+        }
+        // all integer sizes are possible
         case 'c': // int8_t
-            read_sam_dict_vector(target[tag], stream_view, int8_t{});
+        {
+            parse_integer_into_target(tag, int8_t{});
             break;
+        }
         case 'C': // uint8_t
-            read_sam_dict_vector(target[tag], stream_view, uint8_t{});
+        {
+            parse_integer_into_target(tag, uint8_t{});
             break;
+        }
         case 's': // int16_t
-            read_sam_dict_vector(target[tag], stream_view, int16_t{});
+        {
+            parse_integer_into_target(tag, int16_t{});
             break;
+        }
         case 'S': // uint16_t
-            read_sam_dict_vector(target[tag], stream_view, uint16_t{});
+        {
+            parse_integer_into_target(tag, uint16_t{});
             break;
+        }
         case 'i': // int32_t
-            read_sam_dict_vector(target[tag], stream_view, int32_t{});
+        {
+            parse_integer_into_target(tag, int32_t{});
             break;
+        }
         case 'I': // uint32_t
-            read_sam_dict_vector(target[tag], stream_view, uint32_t{});
+        {
+            parse_integer_into_target(tag, uint32_t{});
             break;
+        }
         case 'f': // float
-            read_sam_dict_vector(target[tag], stream_view, float{});
+        {
+            float tmp{};
+            read_float_byte_field(std::string_view{it, tag_str.end()}, tmp);
+            target[tag] = tmp;
+            it += sizeof(float);
             break;
+        }
+        case 'Z': // string
+        {
+            std::string const v{static_cast<char const *>(it)}; // parses until '\0'
+            it += v.size() + 1;
+            target[tag] = std::move(v);
+            break;
+        }
+        case 'H': // byte array, represented as null-terminated string; specification requires even number of bytes
+        {
+            std::string_view const str{static_cast<char const *>(it)}; // parses until '\0'
+
+            std::vector<std::byte> tmp_vector{};
+            // std::from_chars cannot directly parse into a std::byte
+            uint8_t dummy_byte{};
+
+            if (str.size() % 2 != 0)
+                throw format_error{"[CORRUPTED BAM FILE]  Hexadecimal tag must have even number of digits."};
+
+            // H encodes bytes in a hexadecimal format. Two hex values are stored for each byte as characters.
+            // E.g., '1' and 'A' need one byte each and are read as `\x1A`, which is 27 in decimal.
+            for (auto hex_begin = str.begin(), hex_end = str.begin() + 2; hex_begin != str.end();
+                 hex_begin += 2, hex_end += 2)
+            {
+                auto res = std::from_chars(hex_begin, hex_end, dummy_byte, 16);
+
+                if (res.ec == std::errc::invalid_argument)
+                    throw format_error{std::string("[CORRUPTED BAM FILE] The string '")
+                                       + std::string(hex_begin, hex_end) + "' could not be cast into type uint8_t."};
+
+                if (res.ec == std::errc::result_out_of_range)
+                    throw format_error{std::string("[CORRUPTED BAM FILE] Casting '") + std::string(str)
+                                       + "' into type uint8_t would cause an overflow."};
+
+                tmp_vector.push_back(std::byte{dummy_byte});
+            }
+
+            target[tag] = std::move(tmp_vector);
+
+            it += str.size() + 1;
+
+            break;
+        }
+        case 'B': // Array. Value type depends on second char [cCsSiIf]
+        {
+            char array_value_type_id = *it;
+            ++it; // skip char read before
+
+            switch (array_value_type_id)
+            {
+            case 'c': // int8_t
+                parse_array_into_target(tag, int8_t{});
+                break;
+            case 'C': // uint8_t
+                parse_array_into_target(tag, uint8_t{});
+                break;
+            case 's': // int16_t
+                parse_array_into_target(tag, int16_t{});
+                break;
+            case 'S': // uint16_t
+                parse_array_into_target(tag, uint16_t{});
+                break;
+            case 'i': // int32_t
+                parse_array_into_target(tag, int32_t{});
+                break;
+            case 'I': // uint32_t
+                parse_array_into_target(tag, uint32_t{});
+                break;
+            case 'f': // float
+                parse_array_into_target(tag, float{});
+                break;
+            default:
+                throw format_error{detail::to_string("The first character in the numerical id of a SAM tag ",
+                                                     "must be one of [cCsSiIf] but '",
+                                                     array_value_type_id,
+                                                     "' was given.")};
+            }
+            break;
+        }
         default:
-            throw format_error{detail::to_string("The first character in the numerical id of a SAM tag ",
-                                                 "must be one of [cCsSiIf] but '",
-                                                 array_value_type_id,
+            throw format_error{detail::to_string("The second character in the numerical id of a "
+                                                 "SAM tag must be one of [A,i,Z,H,B,f] but '",
+                                                 type_id,
                                                  "' was given.")};
         }
-        break;
-    }
-    default:
-        throw format_error{detail::to_string("The second character in the numerical id of a "
-                                             "SAM tag must be one of [A,i,Z,H,B,f] but '",
-                                             type_id,
-                                             "' was given.")};
     }
 }
 
 /*!\brief Parses a cigar string into a vector of operation-count pairs (e.g. (M, 3)).
- * \tparam cigar_input_type The type of a single pass input view over the cigar string; must model
- *                          std::ranges::input_range.
- * \param[in] cigar_input The single pass input view over the cigar string to parse.
- * \param[in] n_cigar_op  The number of cigar elements to read from the cigar_input.
+ * \param[in] cigar_str A std::string_view that points to the information of the CIGAR string in the BAM file.
  *
- * \returns A tuple of size three containing (1) std::vector over seqan3::cigar, that describes
- *          the alignment, (2) the aligned reference length, (3) the aligned query sequence length.
- *
- * \details
- *
- * For example, the view over the cigar string "1H4M1D2M2S" will return
- * `{[(H,1), (M,4), (D,1), (M,2), (S,2)], 7, 6}`.
+ * \returns A std::vector over seqan3::cigar, that describes the alignment.
  */
-template <typename cigar_input_type>
-inline auto format_bam::parse_binary_cigar(cigar_input_type && cigar_input, uint16_t n_cigar_op) const
+inline std::vector<cigar> format_bam::parse_binary_cigar(std::string_view const cigar_str) const
 {
-    std::vector<cigar> operations{};
+    // The cigar operation is encoded in 4 bits.
+    constexpr std::array<char, 16>
+        cigar_operation_mapping{'M', 'I', 'D', 'N', 'S', 'H', 'P', '=', 'X', '*', '*', '*', '*', '*', '*', '*'};
+    // The rightmost 4 bits encode the operation, the other bits encode the count.
+    constexpr uint32_t cigar_operation_mask = 0x0f; // rightmost 4 bits are set to one
+
+    std::vector<cigar> cigar_vector{};
     char operation{'\0'};
     uint32_t count{};
-    int32_t ref_length{}, seq_length{};
-    uint32_t operation_and_count{}; // in BAM operation and count values are stored within one 32 bit integer
-    constexpr char const * cigar_mapping = "MIDNSHP=X*******";
-    constexpr uint32_t cigar_mask = 0x0f; // 0000000000001111
+    uint32_t operation_and_count{}; // In BAM, operation and count values are stored within one 32 bit integer.
 
-    if (n_cigar_op == 0) // [[unlikely]]
-        return std::tuple{operations, ref_length, seq_length};
+    assert(cigar_str.size() % 4 == 0); // One cigar letter is stored in 4 bytes (uint32_t).
 
-    // parse the rest of the cigar
-    // -------------------------------------------------------------------------------------------------------------
-    while (n_cigar_op > 0) // until stream is not empty
+    for (auto it = cigar_str.begin(); it != cigar_str.end(); it += sizeof(operation_and_count))
     {
-        std::ranges::copy_n(std::ranges::begin(cigar_input),
-                            sizeof(operation_and_count),
-                            reinterpret_cast<char *>(&operation_and_count));
-        operation = cigar_mapping[operation_and_count & cigar_mask];
+        std::memcpy(&operation_and_count, it, sizeof(operation_and_count));
+        operation = cigar_operation_mapping[operation_and_count & cigar_operation_mask];
         count = operation_and_count >> 4;
 
-        detail::update_alignment_lengths(ref_length, seq_length, operation, count);
-        operations.emplace_back(count, cigar::operation{}.assign_char(operation));
-        --n_cigar_op;
+        cigar_vector.emplace_back(count, seqan3::assign_char_strictly_to(operation, cigar::operation{}));
     }
 
-    return std::tuple{operations, ref_length, seq_length};
+    return cigar_vector;
 }
 
 /*!\brief Writes the optional fields of the seqan3::sam_tag_dictionary.

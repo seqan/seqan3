@@ -227,6 +227,9 @@ private:
     //!\brief Tracks whether reference information (\@SR tag) were found in the SAM header
     bool ref_info_present_in_header{false};
 
+    //!\brief A buffer to store a raw record pointing into the stream buffer of the input.
+    std::array<std::string_view, 11> raw_record{};
+
     //!brief Returns a reference to dummy if passed a std::ignore.
     std::string_view const & default_or(detail::ignore_t) const noexcept
     {
@@ -240,15 +243,12 @@ private:
         return std::forward<t>(v);
     }
 
-    template <typename stream_view_type, arithmetic value_type>
-    void
-    read_sam_dict_vector(seqan3::detail::sam_tag_variant & variant, stream_view_type && stream_view, value_type value);
+    template <arithmetic value_type>
+    void read_sam_dict_vector(seqan3::detail::sam_tag_variant & variant, std::string_view const str, value_type value);
 
-    template <typename stream_view_type>
-    void read_sam_byte_vector(seqan3::detail::sam_tag_variant & variant, stream_view_type && stream_view);
+    void read_sam_byte_vector(seqan3::detail::sam_tag_variant & variant, std::string_view const str);
 
-    template <typename stream_view_type>
-    void read_sam_dict_field(stream_view_type && stream_view, sam_tag_dictionary & target);
+    void read_sam_dict(std::string_view const tag_str, sam_tag_dictionary & target);
 
     template <typename stream_it_t, std::ranges::forward_range field_type>
     void write_range_or_asterisk(stream_it_t & stream_it, field_type && field_value);
@@ -384,15 +384,16 @@ format_sam::read_alignment_record(stream_type & stream,
                       || detail::is_type_specialisation_of_v<ref_offset_type, std::optional>,
                   "The ref_offset must be a specialisation of std::optional.");
 
+    auto stream_it = detail::fast_istreambuf_iterator{*stream.rdbuf()};
+
     auto stream_view = detail::istreambuf(stream);
-    auto field_view = stream_view | detail::take_until_or_throw_and_consume(is_char<'\t'>);
 
     int32_t ref_offset_tmp{}; // needed to read the ref_offset (int) beofre storing it in std::optional<uint32_t>
     std::ranges::range_value_t<decltype(header.ref_ids())> ref_id_tmp{}; // in case mate is requested but ref_offset not
 
     // Header
     // -------------------------------------------------------------------------------------------------------------
-    if (is_char<'@'>(*std::ranges::begin(stream_view))) // we always read the header if present
+    if (is_char<'@'>(*stream_it)) // we always read the header if present
     {
         read_header(stream_view, header, ref_seqs);
 
@@ -403,21 +404,24 @@ format_sam::read_alignment_record(stream_type & stream,
     // Store the current file position in the buffer.
     position_buffer = stream.tellg();
 
+    // We don't know wether we have 11 or 12 fields, since the tags are optional.
+    // The last field will thus contain either the quality sequence
+    // or the quality sequence AND tags. This will be handled at the respective fields below.
+    stream_it.cache_record_into('\n', '\t', raw_record);
+
     // Fields 1-5: ID FLAG REF_ID REF_OFFSET MAPQ
     // -------------------------------------------------------------------------------------------------------------
     if constexpr (!detail::decays_to_ignore_v<id_type>)
-        read_forward_range_field(field_view, id);
-    else
-        detail::consume(field_view);
+        read_forward_range_field(raw_record[0], id);
 
     uint16_t flag_integral{};
-    read_arithmetic_field(field_view, flag_integral);
+    read_arithmetic_field(raw_record[1], flag_integral);
     flag = sam_flag{flag_integral};
 
-    read_forward_range_field(field_view, ref_id_tmp);
+    read_forward_range_field(raw_record[2], ref_id_tmp);
     check_and_assign_ref_id(ref_id, ref_id_tmp, header, ref_seqs);
 
-    read_arithmetic_field(field_view, ref_offset_tmp);
+    read_arithmetic_field(raw_record[3], ref_offset_tmp);
     --ref_offset_tmp; // SAM format is 1-based but SeqAn operates 0-based
 
     if (ref_offset_tmp == -1)
@@ -428,35 +432,19 @@ format_sam::read_alignment_record(stream_type & stream,
         throw format_error{"No negative values are allowed for field::ref_offset."};
 
     if constexpr (!detail::decays_to_ignore_v<mapq_type>)
-        read_arithmetic_field(field_view, mapq);
-    else
-        detail::consume(field_view);
+        read_arithmetic_field(raw_record[4], mapq);
 
     // Field 6: CIGAR
     // -------------------------------------------------------------------------------------------------------------
     if constexpr (!detail::decays_to_ignore_v<cigar_type>)
-    {
-        if (!is_char<'*'>(*std::ranges::begin(stream_view))) // no cigar information given
-        {
-            int32_t ref_length{}, seq_length{}; // length of aligned part for ref and query
-            std::tie(cigar_vector, ref_length, seq_length) = detail::parse_cigar(field_view);
-        }
-        else
-        {
-            ++std::ranges::begin(field_view); // skip '*'
-        }
-    }
-    else
-    {
-        detail::consume(field_view);
-    }
+        cigar_vector = detail::parse_cigar(raw_record[5]);
 
     // Field 7-9: (RNEXT PNEXT TLEN) = MATE
     // -------------------------------------------------------------------------------------------------------------
     if constexpr (!detail::decays_to_ignore_v<mate_type>)
     {
         std::ranges::range_value_t<decltype(header.ref_ids())> tmp_mate_ref_id{};
-        read_forward_range_field(field_view, tmp_mate_ref_id); // RNEXT
+        read_forward_range_field(raw_record[6], tmp_mate_ref_id); // RNEXT
 
         if (tmp_mate_ref_id == "=") // indicates "same as ref id"
         {
@@ -471,7 +459,7 @@ format_sam::read_alignment_record(stream_type & stream,
         }
 
         int32_t tmp_pnext{};
-        read_arithmetic_field(field_view, tmp_pnext); // PNEXT
+        read_arithmetic_field(raw_record[7], tmp_pnext); // PNEXT
 
         if (tmp_pnext > 0)
             get<1>(mate) = --tmp_pnext; // SAM format is 1-based but SeqAn operates 0-based.
@@ -479,55 +467,44 @@ format_sam::read_alignment_record(stream_type & stream,
             throw format_error{"No negative values are allowed at the mate mapping position."};
         // tmp_pnext == 0 indicates an unmapped mate -> do not fill std::optional get<1>(mate)
 
-        read_arithmetic_field(field_view, get<2>(mate)); // TLEN
-    }
-    else
-    {
-        for (size_t i = 0; i < 3u; ++i)
-        {
-            detail::consume(field_view);
-        }
+        read_arithmetic_field(raw_record[8], get<2>(mate)); // TLEN
     }
 
     // Field 10: Sequence
     // -------------------------------------------------------------------------------------------------------------
-    if (!is_char<'*'>(*std::ranges::begin(stream_view))) // sequence information is given
+    if constexpr (!detail::decays_to_ignore_v<seq_type>)
     {
-        constexpr auto is_legal_alph = char_is_valid_for<seq_legal_alph_type>;
-        auto seq_stream =
-            field_view
-            | std::views::transform(
-                [is_legal_alph](char const c) // enforce legal alphabet
-                {
-                    if (!is_legal_alph(c))
-                        throw parse_error{std::string{"Encountered an unexpected letter: "} + "char_is_valid_for<"
-                                          + detail::type_name_as_string<seq_legal_alph_type>
-                                          + "> evaluated to false on " + detail::make_printable(c)};
-                    return c;
-                });
+        std::string_view const seq_str = raw_record[9];
 
-        if constexpr (detail::decays_to_ignore_v<seq_type>)
+        if (!seq_str.starts_with('*')) // * indicates missing sequence information
         {
-            detail::consume(seq_stream);
+            seq.resize(seq_str.size());
+            constexpr auto is_legal_alph = char_is_valid_for<seq_legal_alph_type>;
+
+            for (size_t i = 0; i < seq_str.size(); ++i)
+            {
+                if (!is_legal_alph(seq_str[i]))
+                    throw parse_error{std::string{"Encountered an unexpected letter: "} + "char_is_valid_for<"
+                                      + detail::type_name_as_string<seq_legal_alph_type>
+                                      + "> evaluated to false on " + detail::make_printable(seq_str[i])};
+
+                seq[i] = assign_char_to(seq_str[i], std::ranges::range_value_t<seq_type>{});
+            }
         }
-        else
-        {
-            read_forward_range_field(seq_stream, seq);
-        }
-    }
-    else
-    {
-        ++std::ranges::begin(field_view); // skip '*'
     }
 
     // Field 11:  Quality
     // -------------------------------------------------------------------------------------------------------------
-    auto const tab_or_end = is_char<'\t'> || is_char<'\r'> || is_char<'\n'>;
-    auto qual_view = stream_view | detail::take_until_or_throw(tab_or_end);
+    // We don't know wether we have 11 or 12 fields, since the tags are optional.
+    // The last field will thus contain either the quality sequence
+    // or the quality sequence AND tags.
+    size_t tag_begin_pos = raw_record[10].find('\t');
+
+    std::string_view qualities =
+        (tag_begin_pos == std::string_view::npos) ? raw_record[10] : raw_record[10].substr(0, tag_begin_pos);
+
     if constexpr (!detail::decays_to_ignore_v<qual_type>)
-        read_forward_range_field(qual_view, qual);
-    else
-        detail::consume(qual_view);
+        read_forward_range_field(qualities, qual);
 
     if constexpr (!detail::decays_to_ignore_v<seq_type> && !detail::decays_to_ignore_v<qual_type>)
     {
@@ -544,17 +521,25 @@ format_sam::read_alignment_record(stream_type & stream,
 
     // All remaining optional fields if any: SAM tags dictionary
     // -------------------------------------------------------------------------------------------------------------
-    while (is_char<'\t'>(*std::ranges::begin(stream_view))) // read all tags if present
+    if constexpr (!detail::decays_to_ignore_v<tag_dict_type>)
     {
-        ++std::ranges::begin(stream_view); // skip tab
-        auto stream_until_tab_or_end = stream_view | detail::take_until_or_throw(tab_or_end);
-        if constexpr (!detail::decays_to_ignore_v<tag_dict_type>)
-            read_sam_dict_field(stream_until_tab_or_end, tag_dict);
-        else
-            detail::consume(stream_until_tab_or_end);
+        while (tag_begin_pos != std::string_view::npos) // read all tags if present
+        {
+            ++tag_begin_pos; // skip '\t'
+            size_t const tag_end_pos = raw_record[10].find('\t', tag_begin_pos);
+
+            char const * tag_begin = raw_record[10].begin() + tag_begin_pos;
+            char const * tag_end =
+                (tag_end_pos == std::string_view::npos) ? raw_record[10].end() : raw_record[10].begin() + tag_end_pos;
+
+            read_sam_dict(std::string_view{tag_begin, tag_end}, tag_dict);
+
+            tag_begin_pos = tag_end_pos;
+        }
     }
 
-    detail::consume(stream_view | detail::take_until(!(is_char<'\r'> || is_char<'\n'>))); // consume new line
+    assert(stream_it == std::default_sentinel_t{} || *stream_it == '\n');
+    ++stream_it; // Move from end of record to the beginning of the next or to the end of the stream.
 }
 
 //!\copydoc sam_file_output_format::write_alignment_record
@@ -809,11 +794,10 @@ inline void format_sam::write_alignment_record(stream_type & stream,
 }
 
 /*!\brief Reads a list of values separated by comma as it is the case for SAM tag arrays.
- * \tparam stream_view_type The type of the stream as a view.
  * \tparam value_type       The type of values to be stored in the tag array.
  *
  * \param[in, out] variant      A std::variant object to store the tag arrays.
- * \param[in, out] stream_view  The stream view to iterate over.
+ * \param[in, out] str          The string_view to parse.
  * \param[in]      value        A temporary value that determines the underlying type of the tag array.
  *
  * \details
@@ -825,28 +809,30 @@ inline void format_sam::write_alignment_record(stream_type & stream,
  * format is not in a correct state (e.g. required fields are not given), but throwing might occur downstream of
  * the actual error.
  */
-template <typename stream_view_type, arithmetic value_type>
+template <arithmetic value_type>
 inline void format_sam::read_sam_dict_vector(seqan3::detail::sam_tag_variant & variant,
-                                             stream_view_type && stream_view,
+                                             std::string_view const str,
                                              value_type value)
 {
-    std::vector<value_type> tmp_vector;
-    while (std::ranges::begin(stream_view) != std::ranges::end(stream_view)) // not fully consumed yet
+    std::vector<value_type> tmp_vector{};
+    size_t start_pos{0};
+    size_t end_pos{0};
+
+    while (start_pos != std::string_view::npos)
     {
-        read_arithmetic_field(stream_view | detail::take_until(is_char<','>), value);
+        end_pos = str.find(',', start_pos);
+        auto end = (end_pos == std::string_view::npos) ? str.end() : str.begin() + end_pos;
+        read_arithmetic_field(std::string_view{str.begin() + start_pos, end}, value);
         tmp_vector.push_back(value);
 
-        if (is_char<','>(*std::ranges::begin(stream_view)))
-            ++std::ranges::begin(stream_view); // skip ','
+        start_pos = (end_pos == std::string_view::npos) ? end_pos : end_pos + 1;
     }
     variant = std::move(tmp_vector);
 }
 
 /*!\brief Reads a list of byte pairs as it is the case for SAM tag byte arrays.
- * \tparam stream_view_type The type of the stream as a view.
- *
  * \param[in, out] variant      A std::variant object to store the tag arrays.
- * \param[in, out] stream_view  The stream view to iterate over.
+ * \param[in, out] str          The string_view to parse.
  *
  * \details
  *
@@ -855,33 +841,37 @@ inline void format_sam::read_sam_dict_vector(seqan3::detail::sam_tag_variant & v
  *
  * The function throws a seqan3::format_error if there was an uneven number of bytes.
  */
-template <typename stream_view_type>
-inline void format_sam::read_sam_byte_vector(seqan3::detail::sam_tag_variant & variant, stream_view_type && stream_view)
+inline void format_sam::read_sam_byte_vector(seqan3::detail::sam_tag_variant & variant, std::string_view const str)
 {
-    std::vector<std::byte> tmp_vector;
-    std::byte value;
+    std::vector<std::byte> tmp_vector{};
+    // std::from_chars cannot directly parse into a std::byte
+    uint8_t dummy_byte{};
 
-    while (std::ranges::begin(stream_view) != std::ranges::end(stream_view)) // not fully consumed yet
+    if (str.size() % 2 != 0)
+        throw format_error{"[CORRUPTED SAM FILE]  Hexadecimal tag must have even number of digits."};
+
+    // H encodes bytes in a hexadecimal format. Two hex values are stored for each byte as characters.
+    // E.g., '1' and 'A' need one byte each and are read as `\x1A`, which is 27 in decimal.
+    for (auto hex_begin = str.begin(), hex_end = str.begin() + 2; hex_begin != str.end(); hex_begin += 2, hex_end += 2)
     {
-        try
-        {
-            read_byte_field(stream_view | detail::take_exactly_or_throw(2), value);
-        }
-        catch (std::exception const & e)
-        {
-            throw format_error{"Hexadecimal tag has an uneven number of digits!"};
-        }
+        auto res = std::from_chars(hex_begin, hex_end, dummy_byte, 16);
 
-        tmp_vector.push_back(value);
+        if (res.ec == std::errc::invalid_argument)
+            throw format_error{std::string("[CORRUPTED BAM FILE] The string '") + std::string(hex_begin, hex_end)
+                               + "' could not be cast into type uint8_t."};
+
+        if (res.ec == std::errc::result_out_of_range)
+            throw format_error{std::string("[CORRUPTED BAM FILE] Casting '") + std::string(str)
+                               + "' into type uint8_t would cause an overflow."};
+
+        tmp_vector.push_back(std::byte{dummy_byte});
     }
 
     variant = std::move(tmp_vector);
 }
 
 /*!\brief Reads the optional tag fields into the seqan3::sam_tag_dictionary.
- * \tparam stream_view_type   The type of the stream as a view.
- *
- * \param[in, out] stream_view  The stream view to iterate over.
+ * \param[in, out] tag_str      The string_view to parse for the sam_tag_dictionary entries.
  * \param[in, out] target       The seqan3::sam_tag_dictionary to store the tag information.
  *
  * \throws seqan3::format_error if any unexpected character or format is encountered.
@@ -895,83 +885,79 @@ inline void format_sam::read_sam_byte_vector(seqan3::detail::sam_tag_variant & v
  * format is not in a correct state (e.g. required fields are not given), but throwing might occur downstream of
  * the actual error.
  */
-template <typename stream_view_type>
-inline void format_sam::read_sam_dict_field(stream_view_type && stream_view, sam_tag_dictionary & target)
+inline void format_sam::read_sam_dict(std::string_view const tag_str, sam_tag_dictionary & target)
 {
     /* Every SAM tag has the format "[TAG]:[TYPE_ID]:[VALUE]", where TAG is a two letter
        name tag which is converted to a unique integer identifier and TYPE_ID is one character in [A,i,Z,H,B,f]
        describing the type for the upcoming VALUES. If TYPE_ID=='B' it signals an array of comma separated
        VALUE's and the inner value type is identified by the character following ':', one of [cCsSiIf].
     */
-    uint16_t tag = static_cast<uint16_t>(*std::ranges::begin(stream_view)) << 8;
-    ++std::ranges::begin(stream_view); // skip char read before
-    tag += static_cast<uint16_t>(*std::ranges::begin(stream_view));
-    ++std::ranges::begin(stream_view); // skip char read before
-    ++std::ranges::begin(stream_view); // skip ':'
-    char type_id = *std::ranges::begin(stream_view);
-    ++std::ranges::begin(stream_view); // skip char read before
-    ++std::ranges::begin(stream_view); // skip ':'
+    assert(tag_str.size() > 5);
+
+    uint16_t tag = static_cast<uint16_t>(tag_str[0]) << 8;
+    tag += static_cast<uint16_t>(tag_str[1]);
+
+    char type_id = tag_str[3];
 
     switch (type_id)
     {
     case 'A': // char
     {
-        target[tag] = static_cast<char>(*std::ranges::begin(stream_view));
-        ++std::ranges::begin(stream_view); // skip char that has been read
+        assert(tag_str.size() == 6);
+        target[tag] = tag_str[5];
         break;
     }
     case 'i': // int32_t
     {
         int32_t tmp;
-        read_arithmetic_field(stream_view, tmp);
+        read_arithmetic_field(tag_str.substr(5), tmp);
         target[tag] = tmp;
         break;
     }
     case 'f': // float
     {
         float tmp;
-        read_arithmetic_field(stream_view, tmp);
+        read_arithmetic_field(tag_str.substr(5), tmp);
         target[tag] = tmp;
         break;
     }
     case 'Z': // string
     {
-        target[tag] = stream_view | ranges::to<std::string>();
+        target[tag] = std::string{tag_str.substr(5)};
         break;
     }
     case 'H':
     {
-        read_sam_byte_vector(target[tag], stream_view);
+        read_sam_byte_vector(target[tag], tag_str.substr(5));
         break;
     }
     case 'B': // Array. Value type depends on second char [cCsSiIf]
     {
-        char array_value_type_id = *std::ranges::begin(stream_view);
-        ++std::ranges::begin(stream_view); // skip char read before
-        ++std::ranges::begin(stream_view); // skip first ','
+        assert(tag_str.size() > 6);
+        char array_value_type_id = tag_str[5];
 
         switch (array_value_type_id)
         {
         case 'c': // int8_t
-            read_sam_dict_vector(target[tag], stream_view, int8_t{});
+            read_sam_dict_vector(target[tag], tag_str.substr(7), int8_t{});
             break;
         case 'C': // uint8_t
-            read_sam_dict_vector(target[tag], stream_view, uint8_t{});
+            read_sam_dict_vector(target[tag], tag_str.substr(7), uint8_t{});
             break;
         case 's': // int16_t
-            read_sam_dict_vector(target[tag], stream_view, int16_t{});
+            read_sam_dict_vector(target[tag], tag_str.substr(7), int16_t{});
             break;
         case 'S': // uint16_t
-            read_sam_dict_vector(target[tag], stream_view, uint16_t{});
+            read_sam_dict_vector(target[tag], tag_str.substr(7), uint16_t{});
             break;
         case 'i': // int32_t
-            read_sam_dict_vector(target[tag], stream_view, int32_t{});
+            read_sam_dict_vector(target[tag], tag_str.substr(7), int32_t{});
             break;
         case 'I': // uint32_t
-            read_sam_dict_vector(target[tag], stream_view, uint32_t{});
+            read_sam_dict_vector(target[tag], tag_str.substr(7), uint32_t{});
             break;
         case 'f': // float
-            read_sam_dict_vector(target[tag], stream_view, float{});
+            read_sam_dict_vector(target[tag], tag_str.substr(7), float{});
             break;
         default:
             throw format_error{std::string("The first character in the numerical ")
@@ -982,7 +968,7 @@ inline void format_sam::read_sam_dict_field(stream_view_type && stream_view, sam
     }
     default:
         throw format_error{std::string("The second character in the numerical id of a "
-                                       "SAM tag must be one of [A,i,Z,H,B,f] but '")
+                                       "SAM tag ([TAG]:[TYPE_ID]:[VALUE]) must be one of [A,i,Z,H,B,f] but '")
                            + type_id + "' was given."};
     }
 }

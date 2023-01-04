@@ -21,7 +21,7 @@ namespace seqan3::test
 
 SEQAN3_WORKAROUND_LITERAL std::vector<cigar> operator""_cigar(char const * s, std::size_t n)
 {
-    return std::get<0>(seqan3::detail::parse_cigar(std::string_view{s, n}));
+    return seqan3::detail::parse_cigar(std::string_view{s, n});
 }
 
 } // namespace seqan3::test

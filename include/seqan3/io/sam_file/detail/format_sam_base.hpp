@@ -76,14 +76,14 @@ protected:
 
     int32_t soft_clipping_at_front(std::vector<cigar> const & cigar_vector) const;
 
-    template <typename stream_view_t>
-    void read_byte_field(stream_view_t && stream_view, std::byte & byte_target);
-
     template <typename stream_view_type, std::ranges::forward_range target_range_type>
     void read_forward_range_field(stream_view_type && stream_view, target_range_type & target);
 
-    template <typename stream_view_t, arithmetic arithmetic_target_type>
-    void read_arithmetic_field(stream_view_t && stream_view, arithmetic_target_type & arithmetic_target);
+    template <std::ranges::forward_range target_range_type>
+    void read_forward_range_field(std::string_view const str, target_range_type & target);
+
+    template <arithmetic arithmetic_target_type>
+    void read_arithmetic_field(std::string_view const & str, arithmetic_target_type & arithmetic_target);
 
     template <typename stream_view_type, typename ref_ids_type, typename ref_seqs_type>
     void read_header(stream_view_type && stream_view,
@@ -179,36 +179,6 @@ inline int32_t format_sam_base::soft_clipping_at_front(std::vector<cigar> const 
     return sc_front;
 }
 
-/*!\brief Reads std::byte fields using std::from_chars.
- * \tparam stream_view_t The type of the stream as a view.
- *
- * \param[in, out] stream_view  The stream view to iterate over.
- * \param[out] byte_target The std::byte object to store the parsed value.
- *
- * \throws seqan3::format_error if the character sequence in stream_view cannot be successfully converted to a value
- *         of type std::byte.
- */
-template <typename stream_view_t>
-inline void format_sam_base::read_byte_field(stream_view_t && stream_view, std::byte & byte_target)
-{
-    // unfortunately std::from_chars only accepts char const * so we need a buffer.
-    auto [ignore, end] = std::ranges::copy(stream_view, arithmetic_buffer.data());
-    (void)ignore;
-
-    uint8_t byte{};
-    // std::from_chars cannot directly parse into a std::byte
-    std::from_chars_result res = std::from_chars(arithmetic_buffer.begin(), end, byte, 16);
-
-    if (res.ec == std::errc::invalid_argument || res.ptr != end)
-        throw format_error{std::string("[CORRUPTED SAM FILE] The string '")
-                           + std::string(arithmetic_buffer.begin(), end) + "' could not be cast into type uint8_t."};
-
-    if (res.ec == std::errc::result_out_of_range)
-        throw format_error{std::string("[CORRUPTED SAM FILE] Casting '") + std::string(arithmetic_buffer.begin(), end)
-                           + "' into type uint8_t would cause an overflow."};
-    byte_target = std::byte{byte};
-}
-
 /*!\brief Reads a range by copying from stream_view to target, converting values with seqan3::views::char_to.
  * \tparam stream_view_type  The type of the stream as a view.
  * \tparam target_range_type The type of range to parse from input; must model std::ranges::forward_range.
@@ -238,32 +208,51 @@ inline void format_sam_base::read_forward_range_field(stream_view_type && stream
     }
 }
 
+/*!\brief Reads from `str` to `target`, converting values with seqan3::views::char_to.
+ * \tparam target_range_type The type of range to parse from input; must model std::ranges::forward_range.
+ *
+ * \param[in, out] str          The string_view to parse.
+ * \param[out]     target       The range to store the parsed sequence.
+ */
+template <std::ranges::forward_range target_range_type>
+inline void format_sam_base::read_forward_range_field(std::string_view const str, target_range_type & target)
+{
+    if (str.size() == 1 && str[0] == '*') // '*' denotes empty field
+        return;
+
+    if constexpr (std::assignable_from<target_range_type, std::string_view>)
+    {
+        target = str;
+    }
+    else
+    {
+        target.resize(str.size());
+        for (size_t i = 0; i < str.size(); ++i)
+            target[i] = assign_char_to(str[i], std::ranges::range_value_t<target_range_type>{});
+    }
+}
+
 /*!\brief Reads arithmetic fields using std::from_chars.
- * \tparam stream_view_t The type of the stream as a view.
  * \tparam arithmetic_target_type      The type of value to parse from input; must model seqan3::arithmetic.
  *
- * \param[in, out] stream_view  The stream view to iterate over.
+ * \param[in, out] str  The string_view to parse.
  * \param[out] arithmetic_target The arithmetic value object to store the parsed value.
  *
- * \throws seqan3::format_error if the character sequence in stream_view cannot be successfully converted to a value
+ * \throws seqan3::format_error if the character sequence in str cannot be successfully converted to a value
  *         of type arithmetic_target_type.
  */
-template <typename stream_view_t, arithmetic arithmetic_target_type>
-inline void format_sam_base::read_arithmetic_field(stream_view_t && stream_view,
+template <arithmetic arithmetic_target_type>
+inline void format_sam_base::read_arithmetic_field(std::string_view const & str,
                                                    arithmetic_target_type & arithmetic_target)
 {
-    // unfortunately std::from_chars only accepts char const * so we need a buffer.
-    auto [ignore, end] = std::ranges::copy(stream_view, arithmetic_buffer.data());
-    (void)ignore;
-    std::from_chars_result res = std::from_chars(arithmetic_buffer.begin(), end, arithmetic_target);
+    std::from_chars_result res = std::from_chars(str.begin(), str.end(), arithmetic_target);
 
-    if (res.ec == std::errc::invalid_argument || res.ptr != end)
-        throw format_error{std::string("[CORRUPTED SAM FILE] The string '")
-                           + std::string(arithmetic_buffer.begin(), end) + "' could not be cast into type "
-                           + detail::type_name_as_string<arithmetic_target_type>};
+    if (res.ec == std::errc::invalid_argument || res.ptr != str.end())
+        throw format_error{std::string("[CORRUPTED SAM FILE] The string '") + std::string(str.begin(), str.end())
+                           + "' could not be cast into type " + detail::type_name_as_string<arithmetic_target_type>};
 
     if (res.ec == std::errc::result_out_of_range)
-        throw format_error{std::string("[CORRUPTED SAM FILE] Casting '") + std::string(arithmetic_buffer.begin(), end)
+        throw format_error{std::string("[CORRUPTED SAM FILE] Casting '") + std::string(str.begin(), str.end())
                            + "' into type " + detail::type_name_as_string<arithmetic_target_type>
                            + " would cause an overflow."};
 }
@@ -291,7 +280,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
 {
     auto it = std::ranges::begin(stream_view);
     auto end = std::ranges::end(stream_view);
-    std::vector<char> string_buffer{};
+    std::string string_buffer{};
 
     auto make_tag = [](uint8_t char1, uint8_t char2) constexpr
     {

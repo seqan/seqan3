@@ -105,7 +105,9 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
 
     // unget all read chars.
     for (size_t i = 0; i < read_chars; ++i)
-        primary_stream.unget();
+        primary_stream.unget(); // If you unget() more characters than are present in the get area, badbit is set.
+
+    assert(primary_stream.good() && "`unget()` was called too many times on primary_stream.");
 
     std::string extension{};
     if (filename.has_extension())
