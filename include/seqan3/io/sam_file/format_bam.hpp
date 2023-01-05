@@ -158,6 +158,8 @@ private:
         int32_t tlen;             //!< The template length of the read and its mate.
     };
 
+    static_assert(sizeof(alignment_record_core) == 36);
+
     // clang-format off
     //!\brief Converts a cigar op character to the rank according to the official BAM specifications.
     static constexpr std::array<uint8_t, 256> char_to_sam_rank
