@@ -366,7 +366,7 @@ struct sam_file_read<seqan3::format_bam> : public sam_file_data
         '\x42', '\x41', '\x4D', '\x01', '\x12', '\x00', '\x00', '\x00', '\x40', '\x53', '\x51', '\x09', '\x53', '\x4E',
         '\x3A', '\x72', '\x65', '\x66', '\x09', '\x4C', '\x4E', '\x3A', '\x31', '\x35', '\x30', '\x0A', '\x01', '\x00',
         '\x00', '\x00', '\x04', '\x00', '\x00', '\x00', '\x72', '\x65', '\x66', '\x00', '\x96', '\x00', '\x00', '\x00',
-        '\x4A', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x3D',
+        '\x49', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x3D',
         '\x49', '\x12', '\x05', '\x00', '\x29', '\x00', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
         '\x09', '\x00', '\x00', '\x00', '\x2C', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x31', '\x00',
         '\x14', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00',
@@ -519,7 +519,7 @@ TEST_F(bam_format, invalid_cigar_op)
 
         std::istringstream stream{wrong_char_in_tag};
         seqan3::sam_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
-        EXPECT_THROW(fin.begin(), seqan3::format_error);
+        EXPECT_THROW(fin.begin(), seqan3::invalid_char_assignment);
     }
 }
 

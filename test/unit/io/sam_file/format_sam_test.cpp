@@ -319,7 +319,7 @@ TEST_F(sam_format, format_error_invalid_cigar)
     std::istringstream istream(std::string("*\t0\t*\t0\t0\t5Z\t*\t0\t0\t*\t*\n"));
     {
         seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
-        EXPECT_THROW(fin.begin(), seqan3::format_error);
+        EXPECT_THROW(fin.begin(), seqan3::invalid_char_assignment);
     }
     // negative number as operation count
     {
