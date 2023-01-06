@@ -21,6 +21,7 @@
 #include <seqan3/io/sam_file/output_format_concept.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/pretty_printing.hpp>
+#include <seqan3/test/streambuf.hpp>
 
 using seqan3::operator""_cigar_operation;
 using seqan3::operator""_dna5;
@@ -63,32 +64,29 @@ struct sam_file_data : public ::testing::Test
     std::vector<seqan3::gapped<seqan3::dna5>> ref_seq_gapped3 =
         {'T'_dna5, seqan3::gap{}, 'G'_dna5, seqan3::gap{}, 'A'_dna5, seqan3::gap{}, 'T'_dna5, 'C'_dna5};
 
-    std::vector<std::vector<seqan3::cigar>> cigars
-    {
-        {{1, 'S'_cigar_operation}, // 1S1M1D1M1I
-         {1, 'M'_cigar_operation},
-         {1, 'D'_cigar_operation},
-         {1, 'M'_cigar_operation},
-         {1, 'I'_cigar_operation}},
+    std::vector<std::vector<seqan3::cigar>> cigars{{{1, 'S'_cigar_operation}, // 1S1M1D1M1I
+                                                    {1, 'M'_cigar_operation},
+                                                    {1, 'D'_cigar_operation},
+                                                    {1, 'M'_cigar_operation},
+                                                    {1, 'I'_cigar_operation}},
 
-        {{1, 'H'_cigar_operation}, // 1H7M1D1M1S2H
-         {7, 'M'_cigar_operation},
-         {1, 'D'_cigar_operation},
-         {1, 'M'_cigar_operation},
-         {1, 'S'_cigar_operation},
-         {2, 'H'_cigar_operation}},
+                                                   {{1, 'H'_cigar_operation}, // 1H7M1D1M1S2H
+                                                    {7, 'M'_cigar_operation},
+                                                    {1, 'D'_cigar_operation},
+                                                    {1, 'M'_cigar_operation},
+                                                    {1, 'S'_cigar_operation},
+                                                    {2, 'H'_cigar_operation}},
 
-        {{1, 'S'_cigar_operation}, //1S1M1P1M1I1M1I1D1M1S
-         {1, 'M'_cigar_operation},
-         {1, 'P'_cigar_operation},
-         {1, 'M'_cigar_operation},
-         {1, 'I'_cigar_operation},
-         {1, 'M'_cigar_operation},
-         {1, 'I'_cigar_operation},
-         {1, 'D'_cigar_operation},
-         {1, 'M'_cigar_operation},
-         {1, 'S'_cigar_operation}}
-    };
+                                                   {{1, 'S'_cigar_operation}, //1S1M1P1M1I1M1I1D1M1S
+                                                    {1, 'M'_cigar_operation},
+                                                    {1, 'P'_cigar_operation},
+                                                    {1, 'M'_cigar_operation},
+                                                    {1, 'I'_cigar_operation},
+                                                    {1, 'M'_cigar_operation},
+                                                    {1, 'I'_cigar_operation},
+                                                    {1, 'D'_cigar_operation},
+                                                    {1, 'M'_cigar_operation},
+                                                    {1, 'S'_cigar_operation}}};
 
     std::string ref_id = "ref";
 
@@ -102,18 +100,18 @@ struct sam_file_data : public ::testing::Test
                                                                                            {0, 9, 300},
                                                                                            {0, 9, 300}};
 
-    std::vector<seqan3::sam_tag_dictionary> tag_dicts = [] ()
+    std::vector<seqan3::sam_tag_dictionary> tag_dicts = []()
     {
-        std::vector<seqan3::sam_tag_dictionary> td{{},{},{}};
+        std::vector<seqan3::sam_tag_dictionary> td{{}, {}, {}};
         td[0]["NM"_tag] = 7;
         td[0]["AS"_tag] = 2;
         td[1]["xy"_tag] = std::vector<uint16_t>{3, 4, 5};
         return td;
     }();
 
-    std::vector<seqan3::sam_tag_dictionary> full_tag_dicts = [] ()
+    std::vector<seqan3::sam_tag_dictionary> full_tag_dicts = []()
     {
-        std::vector<seqan3::sam_tag_dictionary> td{{},{},{}};
+        std::vector<seqan3::sam_tag_dictionary> td{{}, {}, {}};
         td[0]["NM"_tag] = -7;
         td[0]["AS"_tag] = 2;
         td[0]["CC"_tag] = 300;
@@ -198,6 +196,38 @@ TYPED_TEST_P(sam_file_read, read_in_all_data)
 {
     typename TestFixture::stream_type istream{this->verbose_reads_input};
     seqan3::sam_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
+
+    this->full_tag_dicts[1]["bH"_tag] = std::vector<std::byte>{std::byte{0x1A}, std::byte{0xE3}, std::byte{0x01}};
+
+    size_t i{0};
+    for (auto & rec : fin)
+    {
+        EXPECT_EQ(rec.sequence(), this->seqs[i]);
+        EXPECT_EQ(rec.id(), this->ids[i]);
+        EXPECT_EQ(rec.base_qualities(), this->quals[i]);
+        EXPECT_RANGE_EQ(rec.cigar_sequence(), this->cigars[i]);
+        EXPECT_EQ(rec.reference_id(), 0);
+        EXPECT_EQ(*rec.reference_position(), this->ref_offsets[i]);
+        EXPECT_EQ(rec.flag(), this->flags[i]);
+        EXPECT_EQ(rec.mapping_quality(), this->mapqs[i]);
+        EXPECT_EQ(rec.mate_reference_id(), std::get<0>(this->mates[i]));
+        EXPECT_EQ(rec.mate_position(), std::get<1>(this->mates[i]));
+        EXPECT_EQ(rec.template_length(), std::get<2>(this->mates[i]));
+        EXPECT_EQ(rec.tags(), this->full_tag_dicts[i]);
+        ++i;
+    }
+}
+
+
+TYPED_TEST_P(sam_file_read, read_in_all_data_with_small_stream_buffer)
+{
+    typename TestFixture::stream_type istream{this->verbose_reads_input};
+    std::istream & in{istream};
+    std::streambuf * orig = in.rdbuf();
+    seqan3::test::streambuf_with_custom_buffer_size<20> buf(orig);
+    in.rdbuf(&buf);
+
+    seqan3::sam_file_input fin{in, this->ref_ids, this->ref_sequences, TypeParam{}};
 
     this->full_tag_dicts[1]["bH"_tag] = std::vector<std::byte>{std::byte{0x1A}, std::byte{0xE3}, std::byte{0x01}};
 
@@ -354,7 +384,12 @@ TYPED_TEST_P(sam_file_write, output_concept)
 TYPED_TEST_P(sam_file_write, no_records)
 {
     {
-        auto ref_lengths = this->ref_sequences | std::views::transform([] (auto const & v) { return v.size(); });
+        auto ref_lengths = this->ref_sequences
+                         | std::views::transform(
+                               [](auto const & v)
+                               {
+                                   return v.size();
+                               });
         seqan3::sam_file_output fout{this->ostream, this->ref_ids, ref_lengths, TypeParam{}, sam_fields{}};
     }
 
@@ -615,7 +650,12 @@ TYPED_TEST_P(sam_file_write, special_cases)
 
 TYPED_TEST_P(sam_file_write, format_errors)
 {
-    auto ref_lengths = this->ref_sequences | std::views::transform([] (auto const & v) { return v.size(); });
+    auto ref_lengths = this->ref_sequences
+                     | std::views::transform(
+                           [](auto const & v)
+                           {
+                               return v.size();
+                           });
     seqan3::sam_file_output fout{this->ostream, this->ref_ids, ref_lengths, TypeParam{}, sam_fields{}};
 
     // ensure that only a ref_id that is listed in the header is allowed
@@ -632,7 +672,7 @@ TYPED_TEST_P(sam_file_write, format_errors)
                                    this->tag_dicts[0]),
                  seqan3::format_error);
 
-    // no negative values except -1 are allowed fot the ref offset
+    // no negative values except -1 are allowed for the ref offset
     EXPECT_THROW(fout.emplace_back(&(this->header),
                                    this->ids[0],
                                    this->flags[0],
@@ -651,6 +691,7 @@ REGISTER_TYPED_TEST_SUITE_P(sam_file_read,
                             input_concept,
                             header_sucess,
                             read_in_all_data,
+                            read_in_all_data_with_small_stream_buffer,
                             read_in_all_but_empty_data,
                             read_in_almost_nothing,
                             read_mate_but_not_ref_id_with_ref,

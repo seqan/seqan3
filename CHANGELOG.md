@@ -51,6 +51,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 #### I/O
 * Empty SAM/BAM files must at least write a header to ensure a valid file
   ([\#3081](https://github.com/seqan/seqan3/pull/3081)).
+* Reading SAM/BAM files is 2x faster than before
+  ([\#3106](https://github.com/seqan/seqan3/pull/3106)).
 
 ## API changes
 
