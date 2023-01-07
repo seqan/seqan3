@@ -22,7 +22,7 @@ addons:
       - sourceline: 'ppa:ubuntu-toolchain-r/test'
       - sourceline: 'ppa:ubuntu-toolchain-r/ppa'
     packages:
-      - g++-12
+      - gcc-12
 
 arch:
   - arm64
