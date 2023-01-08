@@ -1,0 +1,1905 @@
+From bbbdd26e0aab2f2d5447d75f80b8aa0a064631ff Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Mon, 9 Jan 2023 15:16:55 +0100
+Subject: [PATCH 3/3] [API][BREAKAGE] Remove field::{alignment,offset} and
+ improve performance
+
+---
+ .../sam_file_alignments_with_ref.cpp          |  30 --
+ .../sam_file_alignments_with_ref.err          |   5 -
+ .../sam_file_alignments_without_ref.cpp       |  25 --
+ .../sam_file_alignments_without_ref.err       |   5 -
+ .../10_sam_file/sam_file_solution2.cpp        |  10 +-
+ doc/tutorial/10_sam_file/sam_file_writing.cpp |  22 +-
+ .../11_read_mapper/read_mapper_step4.cpp      |   7 +-
+ .../simple_three_verbose_reads_fixture.hpp    |   5 -
+ .../seqan3/test/literal/cigar_literal.hpp     |   2 +-
+ test/snippet/io/sam_file/get_cigar_vector.cpp |  42 ---
+ test/snippet/io/sam_file/get_cigar_vector.err |   1 -
+ ...ction_without_automatic_type_deduction.cpp |   2 -
+ .../aligned_sequence_test_template.hpp        |  30 +-
+ test/unit/io/sam_file/format_bam_test.cpp     | 224 ++++++-------
+ test/unit/io/sam_file/format_sam_test.cpp     |  42 +--
+ .../sam_file_format_test_template.hpp         | 307 +++++-------------
+ test/unit/io/sam_file/sam_file_input_test.cpp | 155 ++-------
+ .../unit/io/sam_file/sam_file_output_test.cpp |   7 +-
+ .../unit/io/sam_file/sam_file_record_test.cpp |  60 +---
+ test/unit/io/sam_file/sam_file_seek_test.cpp  |   4 -
+ .../sequence_file_input_test.cpp              |   8 +-
+ 21 files changed, 257 insertions(+), 736 deletions(-)
+ delete mode 100644 doc/tutorial/10_sam_file/sam_file_alignments_with_ref.cpp
+ delete mode 100644 doc/tutorial/10_sam_file/sam_file_alignments_with_ref.err
+ delete mode 100644 doc/tutorial/10_sam_file/sam_file_alignments_without_ref.cpp
+ delete mode 100644 doc/tutorial/10_sam_file/sam_file_alignments_without_ref.err
+ delete mode 100644 test/snippet/io/sam_file/get_cigar_vector.cpp
+ delete mode 100644 test/snippet/io/sam_file/get_cigar_vector.err
+
+diff --git a/doc/tutorial/10_sam_file/sam_file_alignments_with_ref.cpp b/doc/tutorial/10_sam_file/sam_file_alignments_with_ref.cpp
+deleted file mode 100644
+index 3cee4dcdc..000000000
+--- a/doc/tutorial/10_sam_file/sam_file_alignments_with_ref.cpp
++++ /dev/null
+@@ -1,30 +0,0 @@
+-#include <seqan3/test/snippet/create_temporary_snippet_file.hpp>
+-seqan3::test::create_temporary_snippet_file example_sam{"example.sam",
+-                                                        R"//![sam_file](
+-@HD	VN:1.6	SO:coordinate
+-@SQ	SN:ref	LN:45
+-r001	99	ref	7	30	8M2I4M1D3M	=	37	39	TTAGATAAAGGATACTG	*
+-r003	0	ref	9	30	5S6M	*	0	0	GCCTAAGCTAA	*
+-r004	0	ref	16	30	6M14N5M	*	0	0	ATAGCTTCAGC	*
+-r003	2064	ref	29	17	5M	*	0	0	TAGGC	*
+-r001	147	ref	37	30	9M	=	7	-39	CAGCGGCAT	*	NM:i:1
+-)//![sam_file]"}; // std::filesystem::current_path() / "example.sam" will be deleted after the execution
+-
+-//![main]
+-#include <seqan3/io/sam_file/all.hpp>
+-
+-int main()
+-{
+-    using namespace seqan3::literals;
+-
+-    auto filename = std::filesystem::current_path() / "example.sam";
+-
+-    std::vector<std::string> ref_ids{"ref"}; // list of one reference name
+-    std::vector<seqan3::dna5_vector> ref_sequences{"AGAGTTCGAGATCGAGGACTAGCGACGAGGCAGCGAGCGATCGAT"_dna5};
+-
+-    seqan3::sam_file_input fin{filename, ref_ids, ref_sequences};
+-
+-    for (auto & record : fin)
+-        seqan3::debug_stream << record.alignment() << '\n'; // Now you can print the whole alignment!
+-}
+-//![main]
+diff --git a/doc/tutorial/10_sam_file/sam_file_alignments_with_ref.err b/doc/tutorial/10_sam_file/sam_file_alignments_with_ref.err
+deleted file mode 100644
+index 7079da138..000000000
+--- a/doc/tutorial/10_sam_file/sam_file_alignments_with_ref.err
++++ /dev/null
+@@ -1,5 +0,0 @@
+-(CGAGATCG--AGGACTAG,TTAGATAAAGGATA-CTG)
+-(AGATCG,AGCTAA)
+-(GGACTAGCGACGAGGCAGCGAGCGA,ATAGCT--------------TCAGC)
+-(GGCAG,TAGGC)
+-(GCGATCGAT,CAGCGGCAT)
+diff --git a/doc/tutorial/10_sam_file/sam_file_alignments_without_ref.cpp b/doc/tutorial/10_sam_file/sam_file_alignments_without_ref.cpp
+deleted file mode 100644
+index bab3e97c4..000000000
+--- a/doc/tutorial/10_sam_file/sam_file_alignments_without_ref.cpp
++++ /dev/null
+@@ -1,25 +0,0 @@
+-#include <seqan3/test/snippet/create_temporary_snippet_file.hpp>
+-seqan3::test::create_temporary_snippet_file example_sam{"example.sam",
+-                                                        R"//![sam_file](
+-@HD	VN:1.6	SO:coordinate
+-@SQ	SN:ref	LN:45
+-r001	99	ref	7	30	8M2I4M1D3M	=	37	39	TTAGATAAAGGATACTG	*
+-r003	0	ref	9	30	5S6M	*	0	0	GCCTAAGCTAA	*
+-r004	0	ref	16	30	6M14N5M	*	0	0	ATAGCTTCAGC	*
+-r003	2064	ref	29	17	5M	*	0	0	TAGGC	*
+-r001	147	ref	37	30	9M	=	7	-39	CAGCGGCAT	*	NM:i:1
+-)//![sam_file]"}; // std::filesystem::current_path() / "example.sam" will be deleted after the execution
+-
+-//![main]
+-#include <seqan3/io/sam_file/all.hpp>
+-
+-int main()
+-{
+-    auto filename = std::filesystem::current_path() / "example.sam";
+-
+-    seqan3::sam_file_input fin{filename};
+-
+-    for (auto & record : fin)
+-        seqan3::debug_stream << record.id() << ": " << std::get<1>(record.alignment()) << '\n';
+-}
+-//![main]
+diff --git a/doc/tutorial/10_sam_file/sam_file_alignments_without_ref.err b/doc/tutorial/10_sam_file/sam_file_alignments_without_ref.err
+deleted file mode 100644
+index 1861652a3..000000000
+--- a/doc/tutorial/10_sam_file/sam_file_alignments_without_ref.err
++++ /dev/null
+@@ -1,5 +0,0 @@
+-r001: TTAGATAAAGGATA-CTG
+-r003: AGCTAA
+-r004: ATAGCT--------------TCAGC
+-r003: TAGGC
+-r001: CAGCGGCAT
+diff --git a/doc/tutorial/10_sam_file/sam_file_solution2.cpp b/doc/tutorial/10_sam_file/sam_file_solution2.cpp
+index 5144fe1ca..851f23bae 100644
+--- a/doc/tutorial/10_sam_file/sam_file_solution2.cpp
++++ b/doc/tutorial/10_sam_file/sam_file_solution2.cpp
+@@ -25,6 +25,7 @@ r003	2064	chr2	18	10	5M	*	0	0	TAGGC	*
+ #include <string>
+ #include <vector>
+ 
++#include <seqan3/alignment/cigar_conversion/alignment_from_cigar.hpp>
+ #include <seqan3/alphabet/gap/gap.hpp>
+ #include <seqan3/alphabet/nucleotide/dna5.hpp>
+ #include <seqan3/core/debug_stream.hpp>
+@@ -59,14 +60,19 @@ int main()
+ 
+     for (auto & record : mapping_file | mapq_filter)
+     {
++        auto alignment = seqan3::alignment_from_cigar(record.cigar_sequence(),
++                                                      reference_sequences[record.reference_id().value()],
++                                                      record.reference_position().value(),
++                                                      record.sequence());
++
+         // as loop
+         size_t sum_reference{};
+-        for (auto const & char_reference : std::get<0>(record.alignment()))
++        for (auto const & char_reference : std::get<0>(alignment))
+             if (char_reference == seqan3::gap{})
+                 ++sum_reference;
+ 
+         // or via std::ranges::count
+-        size_t sum_read = std::ranges::count(std::get<1>(record.alignment()), seqan3::gap{});
++        size_t sum_read = std::ranges::count(std::get<1>(alignment), seqan3::gap{});
+ 
+         // The reference_id is ZERO based and an optional. -1 is represented by std::nullopt (= reference not known).
+         std::optional reference_id = record.reference_id();
+diff --git a/doc/tutorial/10_sam_file/sam_file_writing.cpp b/doc/tutorial/10_sam_file/sam_file_writing.cpp
+index c2af9ceec..591538d5d 100644
+--- a/doc/tutorial/10_sam_file/sam_file_writing.cpp
++++ b/doc/tutorial/10_sam_file/sam_file_writing.cpp
+@@ -5,12 +5,6 @@ seqan3::test::create_temporary_snippet_file example_sam{"out.sam", ""};
+ //![main]
+ #include <seqan3/io/sam_file/all.hpp>
+ 
+-using aligned_sequence_type = std::vector<seqan3::gapped<seqan3::dna5>>;
+-using alignment_type = std::pair<aligned_sequence_type, aligned_sequence_type>;
+-
+-using types = seqan3::type_list<std::vector<seqan3::dna5>, std::string, alignment_type>;
+-using fields = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::alignment>;
+-
+ int main()
+ {
+     using namespace seqan3::literals;
+@@ -18,6 +12,9 @@ int main()
+     auto filename = std::filesystem::current_path() / "out.sam";
+ 
+     seqan3::sam_file_output fout{filename};
++
++    using types = seqan3::type_list<std::vector<seqan3::dna5>, std::string, std::vector<seqan3::cigar>>;
++    using fields = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::cigar>;
+     using sam_record_type = seqan3::sam_record<types, fields>;
+ 
+     // write the following to the file
+@@ -25,15 +22,10 @@ int main()
+     sam_record_type record{};
+     record.id() = "r001";
+     record.sequence() = "ACGTACGT"_dna5;
+-    auto & [reference_sequence, read_sequence] = record.alignment();
+-
+-    // ACGT--GTTT
+-    seqan3::assign_unaligned(reference_sequence, "ACGTGTTT"_dna5);
+-    seqan3::insert_gap(reference_sequence, reference_sequence.begin() + 4, 2);
+-
+-    // ACGTACGT--
+-    seqan3::assign_unaligned(read_sequence, record.sequence());
+-    seqan3::insert_gap(read_sequence, read_sequence.end(), 2);
++    record.cigar_sequence() = {{4, 'M'_cigar_operation},
++                               {2, 'I'_cigar_operation},
++                               {2, 'M'_cigar_operation},
++                               {2, 'D'_cigar_operation}};
+ 
+     fout.push_back(record);
+ }
+diff --git a/doc/tutorial/11_read_mapper/read_mapper_step4.cpp b/doc/tutorial/11_read_mapper/read_mapper_step4.cpp
+index 449ebd614..432605fff 100644
+--- a/doc/tutorial/11_read_mapper/read_mapper_step4.cpp
++++ b/doc/tutorial/11_read_mapper/read_mapper_step4.cpp
+@@ -4,6 +4,7 @@
+ #    include <fstream>
+ #    include <span>
+ 
++#    include <seqan3/alignment/cigar_conversion/cigar_from_alignment.hpp>
+ #    include <seqan3/alignment/configuration/all.hpp>
+ #    include <seqan3/alignment/pairwise/align_pairwise.hpp>
+ #    include <seqan3/argument_parser/all.hpp>
+@@ -53,7 +54,7 @@ void map_reads(std::filesystem::path const & query_path,
+                                                    seqan3::field::id,
+                                                    seqan3::field::ref_id,
+                                                    seqan3::field::ref_offset,
+-                                                   seqan3::field::alignment,
++                                                   seqan3::field::cigar,
+                                                    seqan3::field::qual,
+                                                    seqan3::field::mapq>{}};
+     //! [sam_file_output]
+@@ -80,7 +81,7 @@ void map_reads(std::filesystem::path const & query_path,
+ 
+             for (auto && alignment : seqan3::align_pairwise(std::tie(text_view, query), align_config))
+             {
+-                auto aligned_seq = alignment.alignment();
++                auto cigar = seqan3::cigar_from_alignment(alignment.alignment());
+                 size_t ref_offset = alignment.sequence1_begin_position() + 2 + start;
+                 size_t map_qual = 60u + alignment.score();
+ 
+@@ -88,7 +89,7 @@ void map_reads(std::filesystem::path const & query_path,
+                                      record.id(),
+                                      storage.ids[result.reference_id()],
+                                      ref_offset,
+-                                     aligned_seq,
++                                     cigar,
+                                      record.base_qualities(),
+                                      map_qual);
+             }
+diff --git a/test/include/seqan3/test/fixture/io/sam_file/simple_three_verbose_reads_fixture.hpp b/test/include/seqan3/test/fixture/io/sam_file/simple_three_verbose_reads_fixture.hpp
+index 028aa31f8..206cb768a 100644
+--- a/test/include/seqan3/test/fixture/io/sam_file/simple_three_verbose_reads_fixture.hpp
++++ b/test/include/seqan3/test/fixture/io/sam_file/simple_three_verbose_reads_fixture.hpp
+@@ -35,7 +35,6 @@ struct simple_three_verbose_reads_fixture
+     using types = seqan3::type_list<std::string,                  // seqan3::field::id,
+                                     seqan3::dna5_vector,          // seqan3::field::seq,
+                                     std::vector<seqan3::phred42>, // seqan3::field::qual,
+-                                    int32_t,                      // seqan3::field::offset,
+                                     alignment_t,                  // seqan3::field::alignment,
+                                     std::optional<int32_t>,       // seqan3::field::ref_id,
+                                     std::optional<int32_t>,       // seqan3::field::ref_offset,
+@@ -49,7 +48,6 @@ struct simple_three_verbose_reads_fixture
+     using types_as_ids = seqan3::fields<seqan3::field::id,
+                                         seqan3::field::seq,
+                                         seqan3::field::qual,
+-                                        seqan3::field::offset,
+                                         seqan3::field::alignment,
+                                         seqan3::field::ref_id,
+                                         seqan3::field::ref_offset,
+@@ -77,7 +75,6 @@ struct simple_three_verbose_reads_fixture
+     record_type record1{/*.id =*/"read1",
+                         /*.sequence =*/"ACGT"_dna5,
+                         /*.base_qualities =*/"!##$"_phred42,
+-                        /*.sequence_position =*/1,
+                         /*.alignment =*/alignment_t{"ACT-"_gapped_dna5, "C-GT"_gapped_dna5},
+                         /*.reference_id =*/0, // "ref"
+                         /*.reference_position =*/0,
+@@ -104,7 +101,6 @@ struct simple_three_verbose_reads_fixture
+         /*.id =*/"read2",
+         /*.sequence =*/"AGGCTGNAG"_dna5,
+         /*.base_qualities =*/"!##$&'()*"_phred42,
+-        /*.sequence_position =*/0,
+         /*.alignment =*/alignment_t{"CTGATCGAG"_gapped_dna5, "AGGCTGN-A"_gapped_dna5},
+         /*.reference_id =*/0, // "ref"
+         /*.reference_position =*/1,
+@@ -132,7 +128,6 @@ struct simple_three_verbose_reads_fixture
+     record_type record3{/*.id =*/"read3",
+                         /*.sequence =*/"GGAGTATA"_dna5,
+                         /*.base_qualities =*/"!!*+,-./"_phred42,
+-                        /*.sequence_position =*/1,
+                         /*.alignment =*/alignment_t{"T-G-A-TC"_gapped_dna5, "G-AGTA-T"_gapped_dna5},
+                         /*.reference_id =*/0, // "ref"
+                         /*.reference_position =*/2,
+diff --git a/test/include/seqan3/test/literal/cigar_literal.hpp b/test/include/seqan3/test/literal/cigar_literal.hpp
+index 0a2c50aa3..d58958c60 100644
+--- a/test/include/seqan3/test/literal/cigar_literal.hpp
++++ b/test/include/seqan3/test/literal/cigar_literal.hpp
+@@ -21,7 +21,7 @@ namespace seqan3::test
+ 
+ inline std::vector<cigar> operator""_cigar(char const * s, std::size_t n)
+ {
+-    return std::get<0>(seqan3::detail::parse_cigar(std::string_view{s, n}));
++    return seqan3::detail::parse_cigar(std::string_view{s, n});
+ }
+ 
+ } // namespace seqan3::test
+diff --git a/test/snippet/io/sam_file/get_cigar_vector.cpp b/test/snippet/io/sam_file/get_cigar_vector.cpp
+deleted file mode 100644
+index 97cf5d0fc..000000000
+--- a/test/snippet/io/sam_file/get_cigar_vector.cpp
++++ /dev/null
+@@ -1,42 +0,0 @@
+-#include <seqan3/alphabet/gap/gapped.hpp>
+-#include <seqan3/alphabet/nucleotide/dna4.hpp>
+-#include <seqan3/core/debug_stream.hpp>
+-#include <seqan3/io/sam_file/detail/cigar.hpp>
+-
+-int main()
+-{
+-    using aligned_t = std::vector<seqan3::gapped<seqan3::dna4>>;
+-    using namespace seqan3::literals;
+-
+-    aligned_t ref{'A'_dna4,
+-                  'T'_dna4,
+-                  'G'_dna4,
+-                  'G'_dna4,
+-                  seqan3::gap{},
+-                  seqan3::gap{},
+-                  'C'_dna4,
+-                  'G'_dna4,
+-                  'T'_dna4,
+-                  'A'_dna4,
+-                  'G'_dna4,
+-                  'A'_dna4,
+-                  'G'_dna4,
+-                  'C'_dna4};
+-
+-    aligned_t query{'A'_dna4,
+-                    'T'_dna4,
+-                    'G'_dna4,
+-                    'C'_dna4,
+-                    'C'_dna4,
+-                    'C'_dna4,
+-                    'C'_dna4,
+-                    'G'_dna4,
+-                    'T'_dna4,
+-                    'T'_dna4,
+-                    'G'_dna4,
+-                    seqan3::gap{},
+-                    seqan3::gap{},
+-                    'C'_dna4};
+-
+-    seqan3::debug_stream << seqan3::detail::get_cigar_vector(std::tie(ref, query)) << '\n';
+-}
+diff --git a/test/snippet/io/sam_file/get_cigar_vector.err b/test/snippet/io/sam_file/get_cigar_vector.err
+deleted file mode 100644
+index 025916398..000000000
+--- a/test/snippet/io/sam_file/get_cigar_vector.err
++++ /dev/null
+@@ -1 +0,0 @@
+-[4M,2I,5M,2D,1M]
+diff --git a/test/snippet/io/sam_file/sam_file_input_construction_without_automatic_type_deduction.cpp b/test/snippet/io/sam_file/sam_file_input_construction_without_automatic_type_deduction.cpp
+index c380da65f..27debf8a2 100644
+--- a/test/snippet/io/sam_file/sam_file_input_construction_without_automatic_type_deduction.cpp
++++ b/test/snippet/io/sam_file/sam_file_input_construction_without_automatic_type_deduction.cpp
+@@ -11,10 +11,8 @@ int main()
+     // The default types; you can adjust this list if you don't want to read all this data.
+     using default_fields = seqan3::fields<seqan3::field::seq,
+                                           seqan3::field::id,
+-                                          seqan3::field::offset,
+                                           seqan3::field::ref_id,
+                                           seqan3::field::ref_offset,
+-                                          seqan3::field::alignment,
+                                           seqan3::field::cigar,
+                                           seqan3::field::mapq,
+                                           seqan3::field::qual,
+diff --git a/test/unit/alignment/aligned_sequence_test_template.hpp b/test/unit/alignment/aligned_sequence_test_template.hpp
+index b86b0350a..d5170a88e 100644
+--- a/test/unit/alignment/aligned_sequence_test_template.hpp
++++ b/test/unit/alignment/aligned_sequence_test_template.hpp
+@@ -11,6 +11,7 @@
+ #include <string>
+ 
+ #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
++#include <seqan3/alignment/cigar_conversion/cigar_from_alignment.hpp>
+ #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
+ #include <seqan3/core/debug_stream/detail/to_string.hpp>
+@@ -261,9 +262,8 @@ TYPED_TEST_P(aligned_sequence, cigar_string)
+         seqan3::insert_gap(ref, std::ranges::next(begin(ref), 7), 2);
+         seqan3::insert_gap(read, std::ranges::next(begin(read), 4), 1);
+ 
+-        std::string expected = "4M1D2M2I3M";
+-
+-        EXPECT_EQ(expected, seqan3::detail::get_cigar_string(std::make_pair(ref, read)));
++        auto cigar = seqan3::cigar_from_alignment(std::make_pair(ref, read));
++        EXPECT_EQ(seqan3::detail::get_cigar_string(cigar), "4M1D2M2I3M");
+ 
+         TypeParam ref2;
+         TypeParam read2;
+@@ -276,9 +276,8 @@ TYPED_TEST_P(aligned_sequence, cigar_string)
+         insert_gap(read2, std::ranges::next(begin(read2), 4), 1);
+         insert_gap(read2, std::ranges::begin(read2), 1);
+ 
+-        std::string expected2 = "1P2I2M1D4M2I1M2D2P";
+-
+-        EXPECT_EQ(expected2, seqan3::detail::get_cigar_string(std::make_pair(ref2, read2)));
++        auto cigar2 = seqan3::cigar_from_alignment(std::make_pair(ref2, read2));
++        EXPECT_EQ(seqan3::detail::get_cigar_string(cigar2), "1P2I2M1D4M2I1M2D2P");
+     }
+     {
+         // with soft clipping
+@@ -291,9 +290,8 @@ TYPED_TEST_P(aligned_sequence, cigar_string)
+         insert_gap(ref, std::ranges::next(std::ranges::begin(ref), 7), 2);
+         insert_gap(read, std::ranges::next(std::ranges::begin(read), 4), 1);
+ 
+-        std::string expected = "5S4M1D2M2I3M60S";
+-
+-        EXPECT_EQ(expected, seqan3::detail::get_cigar_string(std::make_pair(ref, read), 5, 60));
++        auto cigar = seqan3::cigar_from_alignment(std::make_pair(ref, read), {.soft_front = 5, .soft_back = 60});
++        EXPECT_EQ(seqan3::detail::get_cigar_string(cigar), "5S4M1D2M2I3M60S");
+ 
+         // gaps at the end
+         TypeParam ref2;
+@@ -307,9 +305,8 @@ TYPED_TEST_P(aligned_sequence, cigar_string)
+         seqan3::insert_gap(read2, std::ranges::next(begin(read2), 4), 1);
+         seqan3::insert_gap(read2, std::ranges::begin(read2), 1);
+ 
+-        std::string expected2 = "3S1P2I2M1D4M2I1M2D2P5S";
+-
+-        EXPECT_EQ(expected2, seqan3::detail::get_cigar_string(std::make_pair(ref2, read2), 3, 5));
++        auto cigar2 = seqan3::cigar_from_alignment(std::make_pair(ref2, read2), {.soft_front = 3, .soft_back = 5});
++        EXPECT_EQ(seqan3::detail::get_cigar_string(cigar2), "3S1P2I2M1D4M2I1M2D2P5S");
+     }
+     {
+         // no gaps at the end
+@@ -322,11 +319,10 @@ TYPED_TEST_P(aligned_sequence, cigar_string)
+         seqan3::insert_gap(ref, std::ranges::next(std::ranges::begin(ref), 7), 2);
+         seqan3::insert_gap(read, std::ranges::next(std::ranges::begin(read), 4), 1);
+ 
+-        std::string expected1 = "4=1D2X2I1=1X1=";
+-        std::string expected2 = "5S4=1D2X2I1=1X1=60S";
+-
+-        EXPECT_EQ(expected1, seqan3::detail::get_cigar_string(std::make_pair(ref, read), 0, 0, true));
+-        EXPECT_EQ(expected2, seqan3::detail::get_cigar_string(std::make_pair(ref, read), 5, 60, true));
++        auto cigar = seqan3::cigar_from_alignment(std::make_pair(ref, read), {}, true);
++        EXPECT_EQ(seqan3::detail::get_cigar_string(cigar), "4=1D2X2I1=1X1=");
++        auto cigar2 = seqan3::cigar_from_alignment(std::make_pair(ref, read), {.soft_front = 5, .soft_back = 60}, true);
++        EXPECT_EQ(seqan3::detail::get_cigar_string(cigar2), "5S4=1D2X2I1=1X1=60S");
+     }
+ }
+ 
+diff --git a/test/unit/io/sam_file/format_bam_test.cpp b/test/unit/io/sam_file/format_bam_test.cpp
+index 40570d71c..0f5f17cf0 100644
+--- a/test/unit/io/sam_file/format_bam_test.cpp
++++ b/test/unit/io/sam_file/format_bam_test.cpp
+@@ -90,47 +90,43 @@ struct sam_file_read<seqan3::format_bam> : public sam_file_data
+         '\x00', '\x00', '\x09', '\x0A', '\x0B', '\x0C', '\x0D', '\x0E'};
+ 
+     std::string verbose_reads_input{
+-        '\x42', '\x41', '\x4D', '\x01', '\xA6', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56', '\x4E',
+-        '\x3A', '\x31', '\x2E', '\x36', '\x09', '\x53', '\x4F', '\x3A', '\x75', '\x6E', '\x6B', '\x6E', '\x6F', '\x77',
+-        '\x6E', '\x09', '\x47', '\x4F', '\x3A', '\x6E', '\x6F', '\x6E', '\x65', '\x0A', '\x40', '\x53', '\x51', '\x09',
+-        '\x53', '\x4E', '\x3A', '\x72', '\x65', '\x66', '\x09', '\x4C', '\x4E', '\x3A', '\x33', '\x34', '\x09', '\x41',
+-        '\x4E', '\x3A', '\x6F', '\x74', '\x68', '\x65', '\x72', '\x5F', '\x6E', '\x61', '\x6D', '\x65', '\x0A', '\x40',
+-        '\x52', '\x47', '\x09', '\x49', '\x44', '\x3A', '\x67', '\x72', '\x6F', '\x75', '\x70', '\x31', '\x09', '\x44',
+-        '\x53', '\x3A', '\x6D', '\x6F', '\x72', '\x65', '\x20', '\x69', '\x6E', '\x66', '\x6F', '\x0A', '\x40', '\x50',
+-        '\x47', '\x09', '\x49', '\x44', '\x3A', '\x70', '\x72', '\x6F', '\x67', '\x31', '\x09', '\x50', '\x4E', '\x3A',
+-        '\x63', '\x6F', '\x6F', '\x6C', '\x5F', '\x70', '\x72', '\x6F', '\x67', '\x72', '\x61', '\x6D', '\x09', '\x43',
+-        '\x4C', '\x3A', '\x2E', '\x2F', '\x70', '\x72', '\x6F', '\x67', '\x31', '\x09', '\x50', '\x50', '\x3A', '\x61',
+-        '\x09', '\x44', '\x53', '\x3A', '\x62', '\x09', '\x56', '\x4E', '\x3A', '\x63', '\x0A', '\x40', '\x43', '\x4F',
+-        '\x09', '\x54', '\x68', '\x69', '\x73', '\x20', '\x69', '\x73', '\x20', '\x61', '\x20', '\x63', '\x6F', '\x6D',
+-        '\x6D', '\x65', '\x6E', '\x74', '\x2E', '\x0A', '\x01', '\x00', '\x00', '\x00', '\x04', '\x00', '\x00', '\x00',
+-        '\x72', '\x65', '\x66', '\x00', '\x22', '\x00', '\x00', '\x00', '\x64', '\x00', '\x00', '\x00', '\x00', '\x00',
+-        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x3D', '\x49', '\x12', '\x05', '\x00', '\x29', '\x00',
+-        '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x09', '\x00', '\x00', '\x00', '\x2C', '\x01',
+-        '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x31', '\x00', '\x14', '\x00', '\x00', '\x00', '\x10', '\x00',
+-        '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00',
+-        '\x12', '\x48', '\x00', '\x02', '\x02', '\x03', '\x41', '\x53', '\x43', '\x02', '\x43', '\x43', '\x53', '\x2C',
+-        '\x01', '\x4E', '\x4D', '\x63', '\xF9', '\x61', '\x61', '\x41', '\x63', '\x63', '\x63', '\x73', '\xD4', '\xFE',
+-        '\x66', '\x66', '\x66', '\x66', '\x66', '\x46', '\x40', '\x7A', '\x7A', '\x5A', '\x73', '\x74', '\x72', '\x00',
+-        '\xB1', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x01', '\x00', '\x00', '\x00', '\x06', '\x3E',
+-        '\x49', '\x12', '\x04', '\x00', '\x2A', '\x00', '\x09', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
+-        '\x09', '\x00', '\x00', '\x00', '\x2C', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x32', '\x00',
+-        '\x70', '\x00', '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x14', '\x00',
+-        '\x00', '\x00', '\x14', '\x42', '\x84', '\xF1', '\x40', '\x00', '\x02', '\x02', '\x03', '\x05', '\x06', '\x07',
+-        '\x08', '\x09', '\x62', '\x43', '\x42', '\x43', '\x02', '\x00', '\x00', '\x00', '\x03', '\xC8', '\x62', '\x49',
+-        '\x42', '\x49', '\x01', '\x00', '\x00', '\x00', '\x00', '\xD8', '\x94', '\x11', '\x62', '\x53', '\x42', '\x53',
+-        '\x03', '\x00', '\x00', '\x00', '\x2C', '\x01', '\x28', '\x00', '\xF4', '\x01', '\x62', '\x63', '\x42', '\x63',
+-        '\x01', '\x00', '\x00', '\x00', '\xFD', '\x62', '\x66', '\x42', '\x66', '\x03', '\x00', '\x00', '\x00', '\x00',
+-        '\x00', '\x60', '\x40', '\xCD', '\xCC', '\xCC', '\x3D', '\x33', '\x33', '\x2F', '\x42', '\x62', '\x69', '\x42',
+-        '\x69', '\x03', '\x00', '\x00', '\x00', '\xFD', '\xFF', '\xFF', '\xFF', '\xC8', '\x00', '\x00', '\x00', '\x30',
+-        '\xFE', '\xFE', '\xFF', '\x62', '\x73', '\x42', '\x73', '\x03', '\x00', '\x00', '\x00', '\xFD', '\xFF', '\xC8',
+-        '\x00', '\xD4', '\xFE', '\x62', '\x48', '\x48', '\x31', '\x41', '\x45', '\x33', '\x30', '\x31', '\x00', '\x5A',
+-        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x02', '\x00', '\x00', '\x00', '\x06', '\x3F', '\x49',
+-        '\x12', '\x0A', '\x00', '\x2B', '\x00', '\x08', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x09',
+-        '\x00', '\x00', '\x00', '\x2C', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x33', '\x00', '\x14',
+-        '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x16', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00',
+-        '\x00', '\x11', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00', '\x12',
+-        '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x14', '\x00', '\x00', '\x00', '\x44', '\x14', '\x81',
+-        '\x81', '\x00', '\x00', '\x09', '\x0A', '\x0B', '\x0C', '\x0D', '\x0E'};
++        '\x42', '\x41', '\x4d', '\x01', '\x5e', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56', '\x4e',
++        '\x3a', '\x31', '\x2e', '\x36', '\x0a', '\x40', '\x53', '\x51', '\x09', '\x53', '\x4e', '\x3a', '\x72', '\x65',
++        '\x66', '\x09', '\x4c', '\x4e', '\x3a', '\x33', '\x34', '\x0a', '\x40', '\x50', '\x47', '\x09', '\x49', '\x44',
++        '\x3a', '\x73', '\x61', '\x6d', '\x74', '\x6f', '\x6f', '\x6c', '\x73', '\x09', '\x50', '\x4e', '\x3a', '\x73',
++        '\x61', '\x6d', '\x74', '\x6f', '\x6f', '\x6c', '\x73', '\x09', '\x56', '\x4e', '\x3a', '\x31', '\x2e', '\x31',
++        '\x30', '\x09', '\x43', '\x4c', '\x3a', '\x73', '\x61', '\x6d', '\x74', '\x6f', '\x6f', '\x6c', '\x73', '\x20',
++        '\x76', '\x69', '\x65', '\x77', '\x20', '\x2d', '\x62', '\x20', '\x74', '\x65', '\x73', '\x74', '\x32', '\x2e',
++        '\x73', '\x61', '\x6d', '\x0a', '\x01', '\x00', '\x00', '\x00', '\x04', '\x00', '\x00', '\x00', '\x72', '\x65',
++        '\x66', '\x00', '\x22', '\x00', '\x00', '\x00', '\x64', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
++        '\x00', '\x00', '\x00', '\x00', '\x06', '\x3d', '\x49', '\x12', '\x05', '\x00', '\x29', '\x00', '\x04', '\x00',
++        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x09', '\x00', '\x00', '\x00', '\x2c', '\x01', '\x00', '\x00',
++        '\x72', '\x65', '\x61', '\x64', '\x31', '\x00', '\x14', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00',
++        '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00', '\x12', '\x48',
++        '\x00', '\x02', '\x02', '\x03', '\x61', '\x61', '\x41', '\x63', '\x4e', '\x4d', '\x63', '\xf9', '\x41', '\x53',
++        '\x43', '\x02', '\x66', '\x66', '\x66', '\x66', '\x66', '\x46', '\x40', '\x7a', '\x7a', '\x5a', '\x73', '\x74',
++        '\x72', '\x00', '\x43', '\x43', '\x53', '\x2c', '\x01', '\x63', '\x63', '\x73', '\xd4', '\xfe', '\xb9', '\x00',
++        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x01', '\x00', '\x00', '\x00', '\x06', '\x3e', '\x49', '\x12',
++        '\x06', '\x00', '\x2a', '\x00', '\x09', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x09', '\x00',
++        '\x00', '\x00', '\x2c', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x32', '\x00', '\x15', '\x00',
++        '\x00', '\x00', '\x70', '\x00', '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00',
++        '\x14', '\x00', '\x00', '\x00', '\x25', '\x00', '\x00', '\x00', '\x14', '\x42', '\x84', '\xf1', '\x40', '\x00',
++        '\x02', '\x02', '\x03', '\x05', '\x06', '\x07', '\x08', '\x09', '\x62', '\x63', '\x42', '\x63', '\x01', '\x00',
++        '\x00', '\x00', '\xfd', '\x62', '\x43', '\x42', '\x43', '\x02', '\x00', '\x00', '\x00', '\x03', '\xc8', '\x62',
++        '\x73', '\x42', '\x73', '\x03', '\x00', '\x00', '\x00', '\xfd', '\xff', '\xc8', '\x00', '\xd4', '\xfe', '\x62',
++        '\x53', '\x42', '\x53', '\x03', '\x00', '\x00', '\x00', '\x2c', '\x01', '\x28', '\x00', '\xf4', '\x01', '\x62',
++        '\x69', '\x42', '\x69', '\x03', '\x00', '\x00', '\x00', '\xfd', '\xff', '\xff', '\xff', '\xc8', '\x00', '\x00',
++        '\x00', '\x30', '\xfe', '\xfe', '\xff', '\x62', '\x49', '\x42', '\x49', '\x01', '\x00', '\x00', '\x00', '\x00',
++        '\xd8', '\x94', '\x11', '\x62', '\x66', '\x42', '\x66', '\x03', '\x00', '\x00', '\x00', '\x00', '\x00', '\x60',
++        '\x40', '\xcd', '\xcc', '\xcc', '\x3d', '\x33', '\x33', '\x2f', '\x42', '\x62', '\x48', '\x48', '\x31', '\x41',
++        '\x45', '\x33', '\x30', '\x31', '\x00', '\x5a', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x02',
++        '\x00', '\x00', '\x00', '\x06', '\x3f', '\x49', '\x12', '\x0a', '\x00', '\x2b', '\x00', '\x08', '\x00', '\x00',
++        '\x00', '\x00', '\x00', '\x00', '\x00', '\x09', '\x00', '\x00', '\x00', '\x2c', '\x01', '\x00', '\x00', '\x72',
++        '\x65', '\x61', '\x64', '\x33', '\x00', '\x14', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x16',
++        '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00',
++        '\x00', '\x11', '\x00', '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x14',
++        '\x00', '\x00', '\x00', '\x44', '\x14', '\x81', '\x81', '\x00', '\x00', '\x09', '\x0a', '\x0b', '\x0c', '\x0d',
++        '\x0e'};
+ 
+     std::string empty_input{
+         '\x42', '\x41', '\x4D', '\x01', '\x1C', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56',
+@@ -300,72 +296,48 @@ struct sam_file_read<seqan3::format_bam> : public sam_file_data
+         '\x02', '\x02', '\x03', '\x61', '\x61', '\x41', '\x63', '\x41', '\x53', '\x43', '\x02', '\x66', '\x66',
+         '\x66', '\x66', '\x66', '\x46', '\x40', '\x7A', '\x7A', '\x5A', '\x73', '\x74', '\x72', '\x00', '\x0A'};
+ 
+-    std::string simple_three_reads_output{
+-        // no hard clipping in output
+-        '\x42', '\x41', '\x4D', '\x01', '\x1C', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56', '\x4E',
+-        '\x3A', '\x31', '\x2E', '\x36', '\x0A', '\x40', '\x53', '\x51', '\x09', '\x53', '\x4E', '\x3A', '\x72', '\x65',
+-        '\x66', '\x09', '\x4C', '\x4E', '\x3A', '\x33', '\x34', '\x0A', '\x01', '\x00', '\x00', '\x00', '\x04', '\x00',
+-        '\x00', '\x00', '\x72', '\x65', '\x66', '\x00', '\x22', '\x00', '\x00', '\x00', '\x48', '\x00', '\x00', '\x00',
+-        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x3D', '\x49', '\x12', '\x05', '\x00',
+-        '\x29', '\x00', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x09', '\x00', '\x00', '\x00',
+-        '\x2C', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x31', '\x00', '\x14', '\x00', '\x00', '\x00',
+-        '\x10', '\x00', '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00',
+-        '\x00', '\x00', '\x12', '\x48', '\x00', '\x02', '\x02', '\x03', '\x41', '\x53', '\x43', '\x02', '\x4E', '\x4D',
+-        '\x43', '\x07', '\x52', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x01', '\x00', '\x00', '\x00',
+-        '\x06', '\x3E', '\x49', '\x12', '\x04', '\x00', '\x2A', '\x00', '\x09', '\x00', '\x00', '\x00', '\x00', '\x00',
+-        '\x00', '\x00', '\x09', '\x00', '\x00', '\x00', '\x2C', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61', '\x64',
+-        '\x32', '\x00', '\x70', '\x00', '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00',
+-        '\x14', '\x00', '\x00', '\x00', '\x14', '\x42', '\x84', '\xF1', '\x40', '\x00', '\x02', '\x02', '\x03', '\x05',
+-        '\x06', '\x07', '\x08', '\x09', '\x78', '\x79', '\x42', '\x53', '\x03', '\x00', '\x00', '\x00', '\x03', '\x00',
+-        '\x04', '\x00', '\x05', '\x00', '\x5A', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x02', '\x00',
+-        '\x00', '\x00', '\x06', '\x3F', '\x49', '\x12', '\x0A', '\x00', '\x2B', '\x00', '\x08', '\x00', '\x00', '\x00',
+-        '\x00', '\x00', '\x00', '\x00', '\x09', '\x00', '\x00', '\x00', '\x2C', '\x01', '\x00', '\x00', '\x72', '\x65',
+-        '\x61', '\x64', '\x33', '\x00', '\x14', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x16', '\x00',
+-        '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00',
+-        '\x11', '\x00', '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x14', '\x00',
+-        '\x00', '\x00', '\x44', '\x14', '\x81', '\x81', '\x00', '\x00', '\x09', '\x0A', '\x0B', '\x0C', '\x0D', '\x0E'};
+-
+     std::string verbose_output{
+-        '\x42', '\x41', '\x4D', '\x01', '\xA6', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56', '\x4E',
+-        '\x3A', '\x31', '\x2E', '\x36', '\x09', '\x53', '\x4F', '\x3A', '\x75', '\x6E', '\x6B', '\x6E', '\x6F', '\x77',
+-        '\x6E', '\x09', '\x47', '\x4F', '\x3A', '\x6E', '\x6F', '\x6E', '\x65', '\x0A', '\x40', '\x53', '\x51', '\x09',
+-        '\x53', '\x4E', '\x3A', '\x72', '\x65', '\x66', '\x09', '\x4C', '\x4E', '\x3A', '\x33', '\x34', '\x09', '\x41',
+-        '\x4E', '\x3A', '\x6F', '\x74', '\x68', '\x65', '\x72', '\x5F', '\x6E', '\x61', '\x6D', '\x65', '\x0A', '\x40',
+-        '\x52', '\x47', '\x09', '\x49', '\x44', '\x3A', '\x67', '\x72', '\x6F', '\x75', '\x70', '\x31', '\x09', '\x44',
+-        '\x53', '\x3A', '\x6D', '\x6F', '\x72', '\x65', '\x20', '\x69', '\x6E', '\x66', '\x6F', '\x0A', '\x40', '\x50',
+-        '\x47', '\x09', '\x49', '\x44', '\x3A', '\x70', '\x72', '\x6F', '\x67', '\x31', '\x09', '\x50', '\x4E', '\x3A',
+-        '\x63', '\x6F', '\x6F', '\x6C', '\x5F', '\x70', '\x72', '\x6F', '\x67', '\x72', '\x61', '\x6D', '\x09', '\x43',
+-        '\x4C', '\x3A', '\x2E', '\x2F', '\x70', '\x72', '\x6F', '\x67', '\x31', '\x09', '\x50', '\x50', '\x3A', '\x61',
+-        '\x09', '\x44', '\x53', '\x3A', '\x62', '\x09', '\x56', '\x4E', '\x3A', '\x63', '\x0A', '\x40', '\x43', '\x4F',
+-        '\x09', '\x54', '\x68', '\x69', '\x73', '\x20', '\x69', '\x73', '\x20', '\x61', '\x20', '\x63', '\x6F', '\x6D',
+-        '\x6D', '\x65', '\x6E', '\x74', '\x2E', '\x0A', '\x01', '\x00', '\x00', '\x00', '\x04', '\x00', '\x00', '\x00',
++        '\x42', '\x41', '\x4d', '\x01', '\xa6', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56', '\x4e',
++        '\x3a', '\x31', '\x2e', '\x36', '\x09', '\x53', '\x4f', '\x3a', '\x75', '\x6e', '\x6b', '\x6e', '\x6f', '\x77',
++        '\x6e', '\x09', '\x47', '\x4f', '\x3a', '\x6e', '\x6f', '\x6e', '\x65', '\x0a', '\x40', '\x53', '\x51', '\x09',
++        '\x53', '\x4e', '\x3a', '\x72', '\x65', '\x66', '\x09', '\x4c', '\x4e', '\x3a', '\x33', '\x34', '\x09', '\x41',
++        '\x4e', '\x3a', '\x6f', '\x74', '\x68', '\x65', '\x72', '\x5f', '\x6e', '\x61', '\x6d', '\x65', '\x0a', '\x40',
++        '\x52', '\x47', '\x09', '\x49', '\x44', '\x3a', '\x67', '\x72', '\x6f', '\x75', '\x70', '\x31', '\x09', '\x44',
++        '\x53', '\x3a', '\x6d', '\x6f', '\x72', '\x65', '\x20', '\x69', '\x6e', '\x66', '\x6f', '\x0a', '\x40', '\x50',
++        '\x47', '\x09', '\x49', '\x44', '\x3a', '\x70', '\x72', '\x6f', '\x67', '\x31', '\x09', '\x50', '\x4e', '\x3a',
++        '\x63', '\x6f', '\x6f', '\x6c', '\x5f', '\x70', '\x72', '\x6f', '\x67', '\x72', '\x61', '\x6d', '\x09', '\x43',
++        '\x4c', '\x3a', '\x2e', '\x2f', '\x70', '\x72', '\x6f', '\x67', '\x31', '\x09', '\x50', '\x50', '\x3a', '\x61',
++        '\x09', '\x44', '\x53', '\x3a', '\x62', '\x09', '\x56', '\x4e', '\x3a', '\x63', '\x0a', '\x40', '\x43', '\x4f',
++        '\x09', '\x54', '\x68', '\x69', '\x73', '\x20', '\x69', '\x73', '\x20', '\x61', '\x20', '\x63', '\x6f', '\x6d',
++        '\x6d', '\x65', '\x6e', '\x74', '\x2e', '\x0a', '\x01', '\x00', '\x00', '\x00', '\x04', '\x00', '\x00', '\x00',
+         '\x72', '\x65', '\x66', '\x00', '\x22', '\x00', '\x00', '\x00', '\x64', '\x00', '\x00', '\x00', '\x00', '\x00',
+-        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x3D', '\x49', '\x12', '\x05', '\x00', '\x29', '\x00',
+-        '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x09', '\x00', '\x00', '\x00', '\x2C', '\x01',
++        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x3d', '\x49', '\x12', '\x05', '\x00', '\x29', '\x00',
++        '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x09', '\x00', '\x00', '\x00', '\x2c', '\x01',
+         '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x31', '\x00', '\x14', '\x00', '\x00', '\x00', '\x10', '\x00',
+         '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00',
+-        '\x12', '\x48', '\x00', '\x02', '\x02', '\x03', '\x41', '\x53', '\x43', '\x02', '\x43', '\x43', '\x53', '\x2C',
+-        '\x01', '\x4E', '\x4D', '\x63', '\xF9', '\x61', '\x61', '\x41', '\x63', '\x63', '\x63', '\x73', '\xD4', '\xFE',
+-        '\x66', '\x66', '\x66', '\x66', '\x66', '\x46', '\x40', '\x7A', '\x7A', '\x5A', '\x73', '\x74', '\x72', '\x00',
+-        '\xA7', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x01', '\x00', '\x00', '\x00', '\x06', '\x3E',
+-        '\x49', '\x12', '\x04', '\x00', '\x2A', '\x00', '\x09', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
+-        '\x09', '\x00', '\x00', '\x00', '\x2C', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x32', '\x00',
+-        '\x70', '\x00', '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x14', '\x00',
+-        '\x00', '\x00', '\x14', '\x42', '\x84', '\xF1', '\x40', '\x00', '\x02', '\x02', '\x03', '\x05', '\x06', '\x07',
+-        '\x08', '\x09', '\x62', '\x43', '\x42', '\x43', '\x02', '\x00', '\x00', '\x00', '\x03', '\xC8', '\x62', '\x49',
+-        '\x42', '\x49', '\x01', '\x00', '\x00', '\x00', '\x00', '\xD8', '\x94', '\x11', '\x62', '\x53', '\x42', '\x53',
+-        '\x03', '\x00', '\x00', '\x00', '\x2C', '\x01', '\x28', '\x00', '\xF4', '\x01', '\x62', '\x63', '\x42', '\x63',
+-        '\x01', '\x00', '\x00', '\x00', '\xFD', '\x62', '\x66', '\x42', '\x66', '\x03', '\x00', '\x00', '\x00', '\x00',
+-        '\x00', '\x60', '\x40', '\xCD', '\xCC', '\xCC', '\x3D', '\x33', '\x33', '\x2F', '\x42', '\x62', '\x69', '\x42',
+-        '\x69', '\x03', '\x00', '\x00', '\x00', '\xFD', '\xFF', '\xFF', '\xFF', '\xC8', '\x00', '\x00', '\x00', '\x30',
+-        '\xFE', '\xFE', '\xFF', '\x62', '\x73', '\x42', '\x73', '\x03', '\x00', '\x00', '\x00', '\xFD', '\xFF', '\xC8',
+-        '\x00', '\xD4', '\xFE', '\x5A', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x02', '\x00', '\x00',
+-        '\x00', '\x06', '\x3F', '\x49', '\x12', '\x0A', '\x00', '\x2B', '\x00', '\x08', '\x00', '\x00', '\x00', '\x00',
+-        '\x00', '\x00', '\x00', '\x09', '\x00', '\x00', '\x00', '\x2C', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61',
+-        '\x64', '\x33', '\x00', '\x14', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x16', '\x00', '\x00',
+-        '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11',
+-        '\x00', '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x14', '\x00', '\x00',
+-        '\x00', '\x44', '\x14', '\x81', '\x81', '\x00', '\x00', '\x09', '\x0A', '\x0B', '\x0C', '\x0D', '\x0E'};
++        '\x12', '\x48', '\x00', '\x02', '\x02', '\x03', '\x41', '\x53', '\x43', '\x02', '\x43', '\x43', '\x53', '\x2c',
++        '\x01', '\x4e', '\x4d', '\x63', '\xf9', '\x61', '\x61', '\x41', '\x63', '\x63', '\x63', '\x73', '\xd4', '\xfe',
++        '\x66', '\x66', '\x66', '\x66', '\x66', '\x46', '\x40', '\x7a', '\x7a', '\x5a', '\x73', '\x74', '\x72', '\x00',
++        '\xaf', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x01', '\x00', '\x00', '\x00', '\x06', '\x3e',
++        '\x49', '\x12', '\x06', '\x00', '\x2a', '\x00', '\x09', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
++        '\x09', '\x00', '\x00', '\x00', '\x2c', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x32', '\x00',
++        '\x15', '\x00', '\x00', '\x00', '\x70', '\x00', '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00',
++        '\x00', '\x00', '\x14', '\x00', '\x00', '\x00', '\x25', '\x00', '\x00', '\x00', '\x14', '\x42', '\x84', '\xf1',
++        '\x40', '\x00', '\x02', '\x02', '\x03', '\x05', '\x06', '\x07', '\x08', '\x09', '\x62', '\x43', '\x42', '\x43',
++        '\x02', '\x00', '\x00', '\x00', '\x03', '\xc8', '\x62', '\x49', '\x42', '\x49', '\x01', '\x00', '\x00', '\x00',
++        '\x00', '\xd8', '\x94', '\x11', '\x62', '\x53', '\x42', '\x53', '\x03', '\x00', '\x00', '\x00', '\x2c', '\x01',
++        '\x28', '\x00', '\xf4', '\x01', '\x62', '\x63', '\x42', '\x63', '\x01', '\x00', '\x00', '\x00', '\xfd', '\x62',
++        '\x66', '\x42', '\x66', '\x03', '\x00', '\x00', '\x00', '\x00', '\x00', '\x60', '\x40', '\xcd', '\xcc', '\xcc',
++        '\x3d', '\x33', '\x33', '\x2f', '\x42', '\x62', '\x69', '\x42', '\x69', '\x03', '\x00', '\x00', '\x00', '\xfd',
++        '\xff', '\xff', '\xff', '\xc8', '\x00', '\x00', '\x00', '\x30', '\xfe', '\xfe', '\xff', '\x62', '\x73', '\x42',
++        '\x73', '\x03', '\x00', '\x00', '\x00', '\xfd', '\xff', '\xc8', '\x00', '\xd4', '\xfe', '\x5a', '\x00', '\x00',
++        '\x00', '\x00', '\x00', '\x00', '\x00', '\x02', '\x00', '\x00', '\x00', '\x06', '\x3f', '\x49', '\x12', '\x0a',
++        '\x00', '\x2b', '\x00', '\x08', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x09', '\x00', '\x00',
++        '\x00', '\x2c', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x33', '\x00', '\x14', '\x00', '\x00',
++        '\x00', '\x10', '\x00', '\x00', '\x00', '\x16', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11',
++        '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00', '\x12', '\x00', '\x00',
++        '\x00', '\x10', '\x00', '\x00', '\x00', '\x14', '\x00', '\x00', '\x00', '\x44', '\x14', '\x81', '\x81', '\x00',
++        '\x00', '\x09', '\x0a', '\x0b', '\x0c', '\x0d', '\x0e'};
+ 
+     std::string special_output{
+         '\x42', '\x41', '\x4D', '\x01', '\x1C', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56', '\x4E',
+@@ -382,7 +354,7 @@ struct sam_file_read<seqan3::format_bam> : public sam_file_data
+         '\x42', '\x41', '\x4D', '\x01', '\x12', '\x00', '\x00', '\x00', '\x40', '\x53', '\x51', '\x09', '\x53', '\x4E',
+         '\x3A', '\x72', '\x65', '\x66', '\x09', '\x4C', '\x4E', '\x3A', '\x31', '\x35', '\x30', '\x0A', '\x01', '\x00',
+         '\x00', '\x00', '\x04', '\x00', '\x00', '\x00', '\x72', '\x65', '\x66', '\x00', '\x96', '\x00', '\x00', '\x00',
+-        '\x4A', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x3D',
++        '\x49', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x3D',
+         '\x49', '\x12', '\x05', '\x00', '\x29', '\x00', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
+         '\x09', '\x00', '\x00', '\x00', '\x2C', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x31', '\x00',
+         '\x14', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00',
+@@ -535,7 +507,7 @@ TEST_F(bam_format, invalid_cigar_op)
+ 
+         std::istringstream stream{wrong_char_in_tag};
+         seqan3::sam_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
+-        EXPECT_THROW(fin.begin(), seqan3::format_error);
++        EXPECT_THROW(fin.begin(), seqan3::invalid_char_assignment);
+     }
+ }
+ 
+@@ -560,15 +532,14 @@ TEST_F(bam_format, too_long_cigar_string_read)
+ 
+         seqan3::sam_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
+ 
+-        EXPECT_RANGE_EQ(std::get<0>((*fin.begin()).alignment()), std::get<0>(this->alignments[0]));
+-        EXPECT_RANGE_EQ(std::get<1>((*fin.begin()).alignment()), std::get<1>(this->alignments[0]));
++        EXPECT_RANGE_EQ((*fin.begin()).cigar_sequence(), this->cigars[0]);
+         EXPECT_EQ((*fin.begin()).tags().size(), 0u); // redundant CG tag is removed
+     }
+ 
+     { // error: sam_tag_dictionary is not read
+         std::istringstream stream{sam_file_with_too_long_cigar_string};
+ 
+-        seqan3::sam_file_input fin{stream, seqan3::format_bam{}, seqan3::fields<seqan3::field::alignment>{}};
++        seqan3::sam_file_input fin{stream, seqan3::format_bam{}, seqan3::fields<seqan3::field::cigar>{}};
+         ASSERT_THROW(fin.begin(), seqan3::format_error);
+     }
+ 
+@@ -577,7 +548,7 @@ TEST_F(bam_format, too_long_cigar_string_read)
+ 
+         seqan3::sam_file_input fin{stream,
+                                    seqan3::format_bam{},
+-                                   seqan3::fields<seqan3::field::alignment, seqan3::field::tags>{}};
++                                   seqan3::fields<seqan3::field::cigar, seqan3::field::tags>{}};
+         ASSERT_THROW(fin.begin(), seqan3::format_error);
+     }
+ 
+@@ -603,25 +574,19 @@ TEST_F(bam_format, too_long_cigar_string_read)
+ 
+ TEST_F(bam_format, too_long_cigar_string_write)
+ {
+-    // create an alignment resulting more than 65535 cigar elements
+-    // -------------------------------------------------------------------------
+     auto read = seqan3::views::repeat_n('T'_dna5, 70'000);
+     auto ref = seqan3::views::repeat_n('A'_dna5, 2 * read.size() - 1);
+ 
+-    auto gapped_ref = seqan3::gap_decorator{ref};
+-
+-    // a gap_decorator on a repeat_n view also works but is slow when inserting gaps.
+-    std::vector<seqan3::gapped<seqan3::dna5>> gapped_read;
+-    gapped_read.reserve(2 * read.size());
+-    // create gap of length one every second character => T-T-T-T-T-T...
+-    for (auto chr : read)
+-        gapped_read.push_back(chr), gapped_read.push_back(seqan3::gap{});
+-    gapped_read.pop_back(); // remove last seqan3::gap
+-
+-    auto alignment = std::tie(gapped_ref, gapped_read);
++    // create a cigar with more than 65535 cigar elements
++    std::vector<seqan3::cigar> too_long_cigar{};
++    for (size_t i = 0; i < 69'999; ++i)
++    {
++        too_long_cigar.push_back({1, 'M'_cigar_operation});
++        too_long_cigar.push_back({1, 'D'_cigar_operation});
++    }
++    too_long_cigar.push_back({1, 'M'_cigar_operation});
+ 
+     // Expected output. ATTENTION this could not be validated by samtools as it does not support too long cigar strings
+-    // -------------------------------------------------------------------------
+     std::string expected =
+         std::string /*the beginning*/
+         {'\x42', '\x41', '\x4D', '\x01', '\x20', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56', '\x4E',
+@@ -659,10 +624,10 @@ TEST_F(bam_format, too_long_cigar_string_write)
+                                                     seqan3::field::seq,
+                                                     seqan3::field::ref_id,
+                                                     seqan3::field::ref_offset,
+-                                                    seqan3::field::alignment,
++                                                    seqan3::field::cigar,
+                                                     seqan3::field::mapq>{}};
+ 
+-        fout.emplace_back(&header, std::string{"long_read"}, read, 0, 0, alignment, 255);
++        fout.emplace_back(&header, std::string{"long_read"}, read, 0, 0, too_long_cigar, 255);
+     }
+ 
+     os.flush();
+@@ -688,9 +653,7 @@ TEST_F(bam_format, issue2417)
+ 
+     std::istringstream stream{input};
+ 
+-    seqan3::sam_file_input fin{stream,
+-                               seqan3::format_bam{},
+-                               seqan3::fields<seqan3::field::id, seqan3::field::alignment>{}};
++    seqan3::sam_file_input fin{stream, seqan3::format_bam{}, seqan3::fields<seqan3::field::id, seqan3::field::cigar>{}};
+ 
+     std::vector<seqan3::gapped<seqan3::dna5>> const empty_sequence{};
+ 
+@@ -699,12 +662,11 @@ TEST_F(bam_format, issue2417)
+     // In 2417, the sequence was not consumed. Thus, wrong bytes were read for the following records.
+     // With the chosen `input` this also means that there will be more than 1 record in the alignment file.
+     // Hence, we need the for loop even though there is only 1 record.
+-    for (auto && [id, alignment] : fin)
++    for (auto && [id, cigar] : fin)
+     {
+         ++num_records;
+         EXPECT_RANGE_EQ(id, std::string{"read1"});
+-        EXPECT_RANGE_EQ(std::get<0>(alignment), empty_sequence);
+-        EXPECT_RANGE_EQ(std::get<1>(alignment), empty_sequence);
++        EXPECT_TRUE(cigar.empty());
+     }
+ 
+     EXPECT_EQ(num_records, 1u);
+diff --git a/test/unit/io/sam_file/format_sam_test.cpp b/test/unit/io/sam_file/format_sam_test.cpp
+index 289a05ccb..58fd2837e 100644
+--- a/test/unit/io/sam_file/format_sam_test.cpp
++++ b/test/unit/io/sam_file/format_sam_test.cpp
+@@ -7,8 +7,6 @@
+ 
+ #include <gtest/gtest.h>
+ 
+-#include <seqan3/test/expect_range_eq.hpp>
+-
+ #include "sam_file_format_test_template.hpp"
+ 
+ template <>
+@@ -46,7 +44,7 @@ read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
+                                     "\tzz:Z:str"
+                                     "\tCC:i:300"
+                                     "\tcc:i:-300\n"
+-                                    "read2\t42\tref\t2\t62\t1H7M1D1M1S\tref\t10\t300\tAGGCTGNAG\t!##$&'()*\tbc:B:c,-3"
++                                    "read2\t42\tref\t2\t62\t1H7M1D1M1S2H\tref\t10\t300\tAGGCTGNAG\t!##$&'()*\tbc:B:c,-3"
+                                     "\tbC:B:C,3,200"
+                                     "\tbs:B:s,-3,200,-300"
+                                     "\tbS:B:S,300,40,500"
+@@ -77,14 +75,6 @@ read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
+     // formatted output
+     // -----------------------------------------------------------------------------------------------------------------
+ 
+-    std::string simple_three_reads_output{// compared to simple_three_reads_input this has no hard clipping
+-                                          R"(@HD	VN:1.6
+-@SQ	SN:ref	LN:34
+-read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	NM:i:7
+-read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
+-read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
+-)"};
+-
+     std::string verbose_output{
+         R"(@HD	VN:1.6	SO:unknown	GO:none
+ @SQ	SN:ref	LN:34	AN:other_name
+@@ -92,7 +82,7 @@ read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
+ @PG	ID:prog1	PN:cool_program	CL:./prog1	PP:a	DS:b	VN:c
+ @CO	This is a comment.
+ read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	CC:i:300	NM:i:-7	aa:A:c	cc:i:-300	ff:f:3.1	zz:Z:str
+-read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	bC:B:C,3,200	bI:B:I,294967296	bS:B:S,300,40,500	bc:B:c,-3	bf:B:f,3.5,0.1,43.8	bi:B:i,-3,200,-66000	bs:B:s,-3,200,-300
++read2	42	ref	2	62	1H7M1D1M1S2H	ref	10	300	AGGCTGNAG	!##$&'()*	bC:B:C,3,200	bI:B:I,294967296	bS:B:S,300,40,500	bc:B:c,-3	bf:B:f,3.5,0.1,43.8	bi:B:i,-3,200,-66000	bs:B:s,-3,200,-300
+ read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
+ )"};
+ 
+@@ -323,7 +313,7 @@ TEST_F(sam_format, format_error_invalid_cigar)
+     std::istringstream istream(std::string("*\t0\t*\t0\t0\t5Z\t*\t0\t0\t*\t*\n"));
+     {
+         seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
+-        EXPECT_THROW(fin.begin(), seqan3::format_error);
++        EXPECT_THROW(fin.begin(), seqan3::invalid_char_assignment);
+     }
+     // negative number as operation count
+     {
+@@ -355,32 +345,6 @@ TEST_F(sam_format, format_error_invalid_sam_tag_format)
+     }
+ }
+ 
+-TEST_F(sam_format, short_cigar_string_with_softclipping)
+-{
+-    using seqan3::operator""_dna5;
+-
+-    // The member function transfer_soft_clipping_to needs to work on 2 element cigar strings
+-    {
+-        std::istringstream istream("id	16	ref	0	255	10M5S	*	0	0	AGAGGGGGATAACCA	*\n");
+-        seqan3::sam_file_input fin{istream,
+-                                   ref_ids,
+-                                   ref_sequences,
+-                                   seqan3::format_sam{},
+-                                   seqan3::fields<seqan3::field::alignment>{}};
+-        EXPECT_RANGE_EQ(std::get<1>(std::get<0>(*fin.begin())), "AGAGGGGGAT"_dna5);
+-    }
+-
+-    {
+-        std::istringstream istream("id	16	ref	0	255	5S10M	*	0	0	AGAGGGGGATAACCA	*\n");
+-        seqan3::sam_file_input fin{istream,
+-                                   ref_ids,
+-                                   ref_sequences,
+-                                   seqan3::format_sam{},
+-                                   seqan3::fields<seqan3::field::alignment>{}};
+-        EXPECT_RANGE_EQ(std::get<1>(std::get<0>(*fin.begin())), "GGGATAACCA"_dna5);
+-    }
+-}
+-
+ TEST_F(sam_format, write_different_header)
+ {
+     std::ostringstream ostream;
+diff --git a/test/unit/io/sam_file/sam_file_format_test_template.hpp b/test/unit/io/sam_file/sam_file_format_test_template.hpp
+index 52a6e29bb..24007d138 100644
+--- a/test/unit/io/sam_file/sam_file_format_test_template.hpp
++++ b/test/unit/io/sam_file/sam_file_format_test_template.hpp
+@@ -42,6 +42,9 @@ struct sam_file_data : public ::testing::Test
+         header.ref_dict[header.ref_ids()[0]] = 0; // set up header which is otherwise done on file level
+     }
+ 
++    // expected data for 3 reads
++    // -------------------------------------------------------------------------
++
+     std::vector<seqan3::dna5_vector> seqs{"ACGT"_dna5, "AGGCTGNAG"_dna5, "GGAGTATA"_dna5};
+ 
+     std::vector<std::string> ids{"read1", "read2", "read3"};
+@@ -52,8 +55,6 @@ struct sam_file_data : public ::testing::Test
+         {"!!*+,-./"_phred42},
+     };
+ 
+-    std::vector<int32_t> offsets{1, 0, 1};
+-
+     seqan3::dna5_vector ref_seq = "ACTGATCGAGAGGATCTAGAGGAGATCGTAGGAC"_dna5;
+ 
+     std::vector<seqan3::gapped<seqan3::dna5>> ref_seq_gapped1 = {'A'_dna5, 'C'_dna5, 'T'_dna5, seqan3::gap{}};
+@@ -62,33 +63,34 @@ struct sam_file_data : public ::testing::Test
+     std::vector<seqan3::gapped<seqan3::dna5>> ref_seq_gapped3 =
+         {'T'_dna5, seqan3::gap{}, 'G'_dna5, seqan3::gap{}, 'A'_dna5, seqan3::gap{}, 'T'_dna5, 'C'_dna5};
+ 
++    std::vector<std::vector<seqan3::cigar>> cigars{{{1, 'S'_cigar_operation}, // 1S1M1D1M1I
++                                                    {1, 'M'_cigar_operation},
++                                                    {1, 'D'_cigar_operation},
++                                                    {1, 'M'_cigar_operation},
++                                                    {1, 'I'_cigar_operation}},
++
++                                                   {{1, 'H'_cigar_operation}, // 1H7M1D1M1S2H
++                                                    {7, 'M'_cigar_operation},
++                                                    {1, 'D'_cigar_operation},
++                                                    {1, 'M'_cigar_operation},
++                                                    {1, 'S'_cigar_operation},
++                                                    {2, 'H'_cigar_operation}},
++
++                                                   {{1, 'S'_cigar_operation}, //1S1M1P1M1I1M1I1D1M1S
++                                                    {1, 'M'_cigar_operation},
++                                                    {1, 'P'_cigar_operation},
++                                                    {1, 'M'_cigar_operation},
++                                                    {1, 'I'_cigar_operation},
++                                                    {1, 'M'_cigar_operation},
++                                                    {1, 'I'_cigar_operation},
++                                                    {1, 'D'_cigar_operation},
++                                                    {1, 'M'_cigar_operation},
++                                                    {1, 'S'_cigar_operation}}};
++
+     std::string ref_id = "ref";
+ 
+     std::vector<int32_t> ref_offsets{0, 1, 2};
+ 
+-    std::vector<std::pair<std::vector<seqan3::gapped<seqan3::dna5>>, std::vector<seqan3::gapped<seqan3::dna5>>>>
+-        alignments{
+-            {ref_seq_gapped1, std::vector<seqan3::gapped<seqan3::dna5>>{'C'_dna5, seqan3::gap{}, 'G'_dna5, 'T'_dna5}},
+-            {ref_seq_gapped2,
+-             std::vector<seqan3::gapped<seqan3::dna5>>{'A'_dna5,
+-                                                       'G'_dna5,
+-                                                       'G'_dna5,
+-                                                       'C'_dna5,
+-                                                       'T'_dna5,
+-                                                       'G'_dna5,
+-                                                       'N'_dna5,
+-                                                       seqan3::gap{},
+-                                                       'A'_dna5}},
+-            {ref_seq_gapped3,
+-             std::vector<seqan3::gapped<seqan3::dna5>>{'G'_dna5,
+-                                                       seqan3::gap{},
+-                                                       'A'_dna5,
+-                                                       'G'_dna5,
+-                                                       'T'_dna5,
+-                                                       'A'_dna5,
+-                                                       seqan3::gap{},
+-                                                       'T'_dna5}}};
+-
+     std::vector<seqan3::sam_flag> flags{seqan3::sam_flag{41u}, seqan3::sam_flag{42u}, seqan3::sam_flag{43u}};
+ 
+     std::vector<uint8_t> mapqs{61u, 62u, 63u};
+@@ -97,9 +99,34 @@ struct sam_file_data : public ::testing::Test
+                                                                                            {0, 9, 300},
+                                                                                            {0, 9, 300}};
+ 
+-    std::vector<seqan3::sam_tag_dictionary> tag_dicts{seqan3::sam_tag_dictionary{},
+-                                                      seqan3::sam_tag_dictionary{},
+-                                                      seqan3::sam_tag_dictionary{}};
++    std::vector<seqan3::sam_tag_dictionary> tag_dicts = []()
++    {
++        std::vector<seqan3::sam_tag_dictionary> td{{}, {}, {}};
++        td[0]["NM"_tag] = 7;
++        td[0]["AS"_tag] = 2;
++        td[1]["xy"_tag] = std::vector<uint16_t>{3, 4, 5};
++        return td;
++    }();
++
++    std::vector<seqan3::sam_tag_dictionary> full_tag_dicts = []()
++    {
++        std::vector<seqan3::sam_tag_dictionary> td{{}, {}, {}};
++        td[0]["NM"_tag] = -7;
++        td[0]["AS"_tag] = 2;
++        td[0]["CC"_tag] = 300;
++        td[0]["cc"_tag] = -300;
++        td[0]["aa"_tag] = 'c';
++        td[0]["ff"_tag] = 3.1f;
++        td[0]["zz"_tag] = "str";
++        td[1]["bc"_tag] = std::vector<int8_t>{-3};
++        td[1]["bC"_tag] = std::vector<uint8_t>{3u, 200u};
++        td[1]["bs"_tag] = std::vector<int16_t>{-3, 200, -300};
++        td[1]["bS"_tag] = std::vector<uint16_t>{300u, 40u, 500u};
++        td[1]["bi"_tag] = std::vector<int32_t>{-3, 200, -66000};
++        td[1]["bI"_tag] = std::vector<uint32_t>{294967296u};
++        td[1]["bf"_tag] = std::vector<float>{3.5f, 0.1f, 43.8f};
++        return td;
++    }();
+ 
+     std::vector<seqan3::dna5_vector> ref_sequences{};
+     std::vector<std::string> ref_ids{};
+@@ -169,21 +196,7 @@ TYPED_TEST_P(sam_file_read, read_in_all_data)
+     typename TestFixture::stream_type istream{this->verbose_reads_input};
+     seqan3::sam_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
+ 
+-    this->tag_dicts[0]["NM"_tag] = -7;
+-    this->tag_dicts[0]["AS"_tag] = 2;
+-    this->tag_dicts[0]["CC"_tag] = 300;
+-    this->tag_dicts[0]["cc"_tag] = -300;
+-    this->tag_dicts[0]["aa"_tag] = 'c';
+-    this->tag_dicts[0]["ff"_tag] = 3.1f;
+-    this->tag_dicts[0]["zz"_tag] = "str";
+-    this->tag_dicts[1]["bc"_tag] = std::vector<int8_t>{-3};
+-    this->tag_dicts[1]["bC"_tag] = std::vector<uint8_t>{3u, 200u};
+-    this->tag_dicts[1]["bs"_tag] = std::vector<int16_t>{-3, 200, -300};
+-    this->tag_dicts[1]["bS"_tag] = std::vector<uint16_t>{300u, 40u, 500u};
+-    this->tag_dicts[1]["bi"_tag] = std::vector<int32_t>{-3, 200, -66000};
+-    this->tag_dicts[1]["bI"_tag] = std::vector<uint32_t>{294967296u};
+-    this->tag_dicts[1]["bf"_tag] = std::vector<float>{3.5f, 0.1f, 43.8f};
+-    this->tag_dicts[1]["bH"_tag] = std::vector<std::byte>{std::byte{0x1A}, std::byte{0xE3}, std::byte{0x01}};
++    this->full_tag_dicts[1]["bH"_tag] = std::vector<std::byte>{std::byte{0x1A}, std::byte{0xE3}, std::byte{0x01}};
+ 
+     size_t i{0};
+     for (auto & rec : fin)
+@@ -191,17 +204,15 @@ TYPED_TEST_P(sam_file_read, read_in_all_data)
+         EXPECT_EQ(rec.sequence(), this->seqs[i]);
+         EXPECT_EQ(rec.id(), this->ids[i]);
+         EXPECT_EQ(rec.base_qualities(), this->quals[i]);
+-        EXPECT_EQ(rec.sequence_position(), this->offsets[i]);
++        EXPECT_RANGE_EQ(rec.cigar_sequence(), this->cigars[i]);
+         EXPECT_EQ(rec.reference_id(), 0);
+         EXPECT_EQ(*rec.reference_position(), this->ref_offsets[i]);
+-        EXPECT_RANGE_EQ(std::get<0>(rec.alignment()), std::get<0>(this->alignments[i]));
+-        EXPECT_RANGE_EQ(std::get<1>(rec.alignment()), std::get<1>(this->alignments[i]));
+         EXPECT_EQ(rec.flag(), this->flags[i]);
+         EXPECT_EQ(rec.mapping_quality(), this->mapqs[i]);
+         EXPECT_EQ(rec.mate_reference_id(), std::get<0>(this->mates[i]));
+         EXPECT_EQ(rec.mate_position(), std::get<1>(this->mates[i]));
+         EXPECT_EQ(rec.template_length(), std::get<2>(this->mates[i]));
+-        EXPECT_EQ(rec.tags(), this->tag_dicts[i]);
++        EXPECT_EQ(rec.tags(), this->full_tag_dicts[i]);
+         ++i;
+     }
+ }
+@@ -214,11 +225,9 @@ TYPED_TEST_P(sam_file_read, read_in_all_but_empty_data)
+     EXPECT_TRUE((*fin.begin()).sequence().empty());
+     EXPECT_TRUE((*fin.begin()).id().empty());
+     EXPECT_TRUE((*fin.begin()).base_qualities().empty());
+-    EXPECT_EQ((*fin.begin()).sequence_position(), 0);
++    EXPECT_TRUE((*fin.begin()).cigar_sequence().empty());
+     EXPECT_TRUE(!(*fin.begin()).reference_id().has_value());
+     EXPECT_TRUE(!(*fin.begin()).reference_position().has_value());
+-    EXPECT_TRUE(std::ranges::empty(std::get<0>((*fin.begin()).alignment())));
+-    EXPECT_TRUE(std::ranges::empty(std::get<1>((*fin.begin()).alignment())));
+     EXPECT_EQ((*fin.begin()).flag(), seqan3::sam_flag{0u});
+     EXPECT_EQ((*fin.begin()).mapping_quality(), 0u);
+     EXPECT_TRUE(!(*fin.begin()).mate_reference_id().has_value());
+@@ -237,62 +246,6 @@ TYPED_TEST_P(sam_file_read, read_in_almost_nothing)
+         EXPECT_EQ(mapq, this->mapqs[i++]);
+ }
+ 
+-TYPED_TEST_P(sam_file_read, read_in_alignment_only_with_ref)
+-{
+-    {
+-        typename TestFixture::stream_type istream{this->simple_three_reads_input};
+-        seqan3::sam_file_input fin{istream,
+-                                   this->ref_ids,
+-                                   this->ref_sequences,
+-                                   TypeParam{},
+-                                   seqan3::fields<seqan3::field::alignment>{}};
+-
+-        size_t i{0};
+-        for (auto & [alignment] : fin)
+-        {
+-            EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(this->alignments[i]));
+-            EXPECT_RANGE_EQ(std::get<1>(alignment), std::get<1>(this->alignments[i]));
+-            ++i;
+-        }
+-    }
+-
+-    { // empty cigar
+-        typename TestFixture::stream_type istream{this->empty_cigar};
+-        seqan3::sam_file_input fin{istream,
+-                                   this->ref_ids,
+-                                   this->ref_sequences,
+-                                   TypeParam{},
+-                                   seqan3::fields<seqan3::field::alignment>{}};
+-
+-        EXPECT_TRUE(std::ranges::empty(std::get<0>((*fin.begin()).alignment())));
+-        EXPECT_TRUE(std::ranges::empty(std::get<1>((*fin.begin()).alignment())));
+-    }
+-}
+-
+-TYPED_TEST_P(sam_file_read, read_in_alignment_only_without_ref)
+-{
+-    {
+-        typename TestFixture::stream_type istream{this->simple_three_reads_input};
+-        seqan3::sam_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::alignment>{}};
+-
+-        size_t i{0};
+-        for (auto & [alignment] : fin)
+-        {
+-            EXPECT_RANGE_EQ(std::get<1>(alignment), std::get<1>(this->alignments[i++]));
+-            auto & ref_aln = std::get<0>(alignment);
+-            EXPECT_THROW((ref_aln[0]), std::logic_error); // access on a dummy seq is not allowed
+-        }
+-    }
+-
+-    { // empty cigar
+-        typename TestFixture::stream_type istream{this->empty_cigar};
+-        seqan3::sam_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::alignment>{}};
+-
+-        EXPECT_TRUE(std::ranges::empty(std::get<0>((*fin.begin()).alignment())));
+-        EXPECT_TRUE(std::ranges::empty(std::get<1>((*fin.begin()).alignment())));
+-    }
+-}
+-
+ TYPED_TEST_P(sam_file_read, read_mate_but_not_ref_id_with_ref)
+ {
+     { /*with reference information*/
+@@ -325,34 +278,12 @@ TYPED_TEST_P(sam_file_read, read_mate_but_not_ref_id_without_ref)
+ 
+ TYPED_TEST_P(sam_file_read, cigar_vector)
+ {
+-    std::vector<std::vector<seqan3::cigar>> expected{{{1, 'S'_cigar_operation},
+-                                                      {1, 'M'_cigar_operation},
+-                                                      {1, 'D'_cigar_operation},
+-                                                      {1, 'M'_cigar_operation},
+-                                                      {1, 'I'_cigar_operation}},
+-                                                     {{1, 'H'_cigar_operation},
+-                                                      {7, 'M'_cigar_operation},
+-                                                      {1, 'D'_cigar_operation},
+-                                                      {1, 'M'_cigar_operation},
+-                                                      {1, 'S'_cigar_operation},
+-                                                      {2, 'H'_cigar_operation}},
+-                                                     {{1, 'S'_cigar_operation},
+-                                                      {1, 'M'_cigar_operation},
+-                                                      {1, 'P'_cigar_operation},
+-                                                      {1, 'M'_cigar_operation},
+-                                                      {1, 'I'_cigar_operation},
+-                                                      {1, 'M'_cigar_operation},
+-                                                      {1, 'I'_cigar_operation},
+-                                                      {1, 'D'_cigar_operation},
+-                                                      {1, 'M'_cigar_operation},
+-                                                      {1, 'S'_cigar_operation}}};
+-
+     typename TestFixture::stream_type istream{this->simple_three_reads_input};
+     seqan3::sam_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::cigar>{}};
+ 
+     size_t i{0};
+     for (auto & [cigar_v] : fin)
+-        EXPECT_EQ(cigar_v, expected[i++]);
++        EXPECT_EQ(cigar_v, this->cigars[i++]);
+ }
+ 
+ TYPED_TEST_P(sam_file_read, format_error_ref_id_not_in_reference_information)
+@@ -392,18 +323,13 @@ TYPED_TEST_P(sam_file_read, issue2423)
+ // sam_file_write
+ // ----------------------------------------------------------------------------
+ 
+-// Note that these differ from the sam_file_output default fields:
+-// 1. They don't contain field::bit_score and field::evalue since these belong to the BLAST format.
+-// 2. field::alignment and field::cigar are redundant. Since field::alignment is the more complex one it is chosen here.
+-//    The behaviour if both are given is tested in a separate test.
+ using sam_fields = seqan3::fields<seqan3::field::header_ptr,
+                                   seqan3::field::id,
+                                   seqan3::field::flag,
+                                   seqan3::field::ref_id,
+                                   seqan3::field::ref_offset,
+                                   seqan3::field::mapq,
+-                                  seqan3::field::alignment,
+-                                  seqan3::field::offset,
++                                  seqan3::field::cigar,
+                                   seqan3::field::mate,
+                                   seqan3::field::seq,
+                                   seqan3::field::qual,
+@@ -427,7 +353,6 @@ TYPED_TEST_P(sam_file_write, write_empty_members)
+     {
+         seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+ 
+-        using default_align_t = std::pair<std::span<seqan3::gapped<char>>, std::span<seqan3::gapped<char>>>;
+         using default_mate_t = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
+ 
+         fout.emplace_back(&(this->header),
+@@ -436,8 +361,7 @@ TYPED_TEST_P(sam_file_write, write_empty_members)
+                           std::string_view{},
+                           -1,
+                           0,
+-                          default_align_t{},
+-                          0,
++                          std::vector<seqan3::cigar>{},
+                           default_mate_t{},
+                           std::string_view{},
+                           std::string_view{},
+@@ -450,10 +374,6 @@ TYPED_TEST_P(sam_file_write, write_empty_members)
+ 
+ TYPED_TEST_P(sam_file_write, default_options_all_members_specified)
+ {
+-    this->tag_dicts[0]["NM"_tag] = 7;
+-    this->tag_dicts[0]["AS"_tag] = 2;
+-    this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3, 4, 5};
+-
+     {
+         seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+ 
+@@ -465,8 +385,7 @@ TYPED_TEST_P(sam_file_write, default_options_all_members_specified)
+                                               0 /*ref_id*/,
+                                               this->ref_offsets[i],
+                                               this->mapqs[i],
+-                                              this->alignments[i],
+-                                              this->offsets[i],
++                                              this->cigars[i],
+                                               this->mates[i],
+                                               this->seqs[i],
+                                               this->quals[i],
+@@ -475,15 +394,11 @@ TYPED_TEST_P(sam_file_write, default_options_all_members_specified)
+     }
+     this->ostream.flush();
+ 
+-    EXPECT_EQ(this->ostream.str(), this->simple_three_reads_output);
++    EXPECT_EQ(this->ostream.str(), this->simple_three_reads_input);
+ }
+ 
+ TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
+ {
+-    this->tag_dicts[0]["NM"_tag] = 7;
+-    this->tag_dicts[0]["AS"_tag] = 2;
+-    this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3, 4, 5};
+-
+     {
+         // header ref_id_type is std::string
+         seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+@@ -495,8 +410,7 @@ TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
+                                           /*----------------------->*/ this->ref_id,
+                                           this->ref_offsets[0],
+                                           this->mapqs[0],
+-                                          this->alignments[0],
+-                                          this->offsets[0],
++                                          this->cigars[0],
+                                           this->mates[0],
+                                           this->seqs[0],
+                                           this->quals[0],
+@@ -509,8 +423,7 @@ TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
+                                           /*----------------------->*/ std::string_view{this->ref_id},
+                                           this->ref_offsets[1],
+                                           this->mapqs[1],
+-                                          this->alignments[1],
+-                                          this->offsets[1],
++                                          this->cigars[1],
+                                           this->mates[1],
+                                           this->seqs[1],
+                                           this->quals[1],
+@@ -523,8 +436,7 @@ TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
+                                           /*----------------------->*/ this->ref_id | std::views::take(20),
+                                           this->ref_offsets[2],
+                                           this->mapqs[2],
+-                                          this->alignments[2],
+-                                          this->offsets[2],
++                                          this->cigars[2],
+                                           this->mates[2],
+                                           this->seqs[2],
+                                           this->quals[2],
+@@ -533,7 +445,7 @@ TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
+ 
+     this->ostream.flush();
+ 
+-    EXPECT_EQ(this->ostream.str(), this->simple_three_reads_output);
++    EXPECT_EQ(this->ostream.str(), this->simple_three_reads_input);
+ }
+ 
+ TYPED_TEST_P(sam_file_write, with_header)
+@@ -547,21 +459,6 @@ TYPED_TEST_P(sam_file_write, with_header)
+     header.read_groups.emplace_back("group1", "DS:more info");
+     header.comments.push_back("This is a comment.");
+ 
+-    this->tag_dicts[0]["NM"_tag] = -7;
+-    this->tag_dicts[0]["AS"_tag] = 2;
+-    this->tag_dicts[0]["CC"_tag] = 300;
+-    this->tag_dicts[0]["cc"_tag] = -300;
+-    this->tag_dicts[0]["aa"_tag] = 'c';
+-    this->tag_dicts[0]["ff"_tag] = 3.1f;
+-    this->tag_dicts[0]["zz"_tag] = "str";
+-    this->tag_dicts[1]["bc"_tag] = std::vector<int8_t>{-3};
+-    this->tag_dicts[1]["bC"_tag] = std::vector<uint8_t>{3u, 200u};
+-    this->tag_dicts[1]["bs"_tag] = std::vector<int16_t>{-3, 200, -300};
+-    this->tag_dicts[1]["bS"_tag] = std::vector<uint16_t>{300u, 40u, 500u};
+-    this->tag_dicts[1]["bi"_tag] = std::vector<int32_t>{-3, 200, -66000};
+-    this->tag_dicts[1]["bI"_tag] = std::vector<uint32_t>{294967296u};
+-    this->tag_dicts[1]["bf"_tag] = std::vector<float>{3.5f, 0.1f, 43.8f};
+-
+     {
+         seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+ 
+@@ -573,12 +470,11 @@ TYPED_TEST_P(sam_file_write, with_header)
+                                               0 /*ref_id*/,
+                                               this->ref_offsets[i],
+                                               this->mapqs[i],
+-                                              this->alignments[i],
+-                                              this->offsets[i],
++                                              this->cigars[i],
+                                               this->mates[i],
+                                               this->seqs[i],
+                                               this->quals[i],
+-                                              this->tag_dicts[i]));
++                                              this->full_tag_dicts[i]));
+         }
+     }
+ 
+@@ -589,43 +485,15 @@ TYPED_TEST_P(sam_file_write, with_header)
+ 
+ TYPED_TEST_P(sam_file_write, cigar_vector)
+ {
+-    std::vector<std::vector<seqan3::cigar>> cigar_v{{{1, 'S'_cigar_operation},
+-                                                     {1, 'M'_cigar_operation},
+-                                                     {1, 'D'_cigar_operation},
+-                                                     {1, 'M'_cigar_operation},
+-                                                     {1, 'I'_cigar_operation}},
+-                                                    {{1, 'H'_cigar_operation},
+-                                                     {7, 'M'_cigar_operation},
+-                                                     {1, 'D'_cigar_operation},
+-                                                     {1, 'M'_cigar_operation},
+-                                                     {1, 'S'_cigar_operation},
+-                                                     {2, 'H'_cigar_operation}},
+-                                                    {{1, 'S'_cigar_operation},
+-                                                     {1, 'M'_cigar_operation},
+-                                                     {1, 'P'_cigar_operation},
+-                                                     {1, 'M'_cigar_operation},
+-                                                     {1, 'I'_cigar_operation},
+-                                                     {1, 'M'_cigar_operation},
+-                                                     {1, 'I'_cigar_operation},
+-                                                     {1, 'D'_cigar_operation},
+-                                                     {1, 'M'_cigar_operation},
+-                                                     {1, 'S'_cigar_operation}}};
+-
+-    this->tag_dicts[0]["NM"_tag] = 7;
+-    this->tag_dicts[0]["AS"_tag] = 2;
+-    this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3, 4, 5};
+-
+     {
+-        seqan3::sam_file_output fout{this->ostream, TypeParam{}}; // default fields contain CIGAR and alignment
++        seqan3::sam_file_output fout{this->ostream, TypeParam{}};
+         for (size_t i = 0ul; i < 3ul; ++i)
+         {
+             ASSERT_NO_THROW(fout.emplace_back(this->seqs[i],
+                                               this->ids[i],
+-                                              this->offsets[i],
+                                               0 /*ref_id*/,
+                                               this->ref_offsets[i],
+-                                              this->alignments[i],
+-                                              cigar_v[i],
++                                              this->cigars[i],
+                                               this->mapqs[i],
+                                               this->quals[i],
+                                               this->flags[i],
+@@ -652,8 +520,6 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
+                                                     seqan3::field::ref_offset,
+                                                     seqan3::field::mapq,
+                                                     seqan3::field::cigar,
+-                                                    // cigar instead of alignment
+-                                                    seqan3::field::offset,
+                                                     seqan3::field::mate,
+                                                     seqan3::field::seq,
+                                                     seqan3::field::qual,
+@@ -667,8 +533,7 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
+                                               0 /*ref_id*/,
+                                               this->ref_offsets[i],
+                                               this->mapqs[i],
+-                                              cigar_v[i],
+-                                              this->offsets[i],
++                                              this->cigars[i],
+                                               this->mates[i],
+                                               this->seqs[i],
+                                               this->quals[i],
+@@ -698,12 +563,11 @@ TYPED_TEST_P(sam_file_write, special_cases)
+                                           rid,
+                                           this->ref_offsets[0],
+                                           this->mapqs[0],
+-                                          this->alignments[0],
+-                                          this->offsets[0],
++                                          this->cigars[0],
+                                           mate,
+                                           this->seqs[0],
+                                           this->quals[0],
+-                                          this->tag_dicts[0]));
++                                          seqan3::sam_tag_dictionary{}));
+     }
+ 
+     this->ostream.flush();
+@@ -724,12 +588,11 @@ TYPED_TEST_P(sam_file_write, special_cases)
+                                           std::string(""),
+                                           this->ref_offsets[0],
+                                           this->mapqs[0],
+-                                          this->alignments[0],
+-                                          this->offsets[0],
++                                          this->cigars[0],
+                                           mate_str,
+                                           this->seqs[0],
+                                           this->quals[0],
+-                                          this->tag_dicts[0]));
++                                          seqan3::sam_tag_dictionary{}));
+     }
+ 
+     this->ostream.flush();
+@@ -738,7 +601,13 @@ TYPED_TEST_P(sam_file_write, special_cases)
+ 
+ TYPED_TEST_P(sam_file_write, format_errors)
+ {
+-    seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
++    auto ref_lengths = this->ref_sequences
++                     | std::views::transform(
++                           [](auto const & v)
++                           {
++                               return v.size();
++                           });
++    seqan3::sam_file_output fout{this->ostream, this->ref_ids, ref_lengths, TypeParam{}, sam_fields{}};
+ 
+     // ensure that only a ref_id that is listed in the header is allowed
+     EXPECT_THROW(fout.emplace_back(&(this->header),
+@@ -747,8 +616,7 @@ TYPED_TEST_P(sam_file_write, format_errors)
+                                    std::string("ref_id_that_does_not_exist"),
+                                    this->ref_offsets[0],
+                                    this->mapqs[0],
+-                                   this->alignments[0],
+-                                   this->offsets[0],
++                                   this->cigars[0],
+                                    this->mates[0],
+                                    this->seqs[0],
+                                    this->quals[0],
+@@ -762,8 +630,7 @@ TYPED_TEST_P(sam_file_write, format_errors)
+                                    this->ref_id,
+                                    -3,
+                                    this->mapqs[0],
+-                                   this->alignments[0],
+-                                   this->offsets[0],
++                                   this->cigars[0],
+                                    this->mates[0],
+                                    this->seqs[0],
+                                    this->quals[0],
+@@ -777,8 +644,6 @@ REGISTER_TYPED_TEST_SUITE_P(sam_file_read,
+                             read_in_all_data,
+                             read_in_all_but_empty_data,
+                             read_in_almost_nothing,
+-                            read_in_alignment_only_with_ref,
+-                            read_in_alignment_only_without_ref,
+                             read_mate_but_not_ref_id_with_ref,
+                             read_mate_but_not_ref_id_without_ref,
+                             cigar_vector,
+diff --git a/test/unit/io/sam_file/sam_file_input_test.cpp b/test/unit/io/sam_file/sam_file_input_test.cpp
+index d6a2ee00b..717aff58a 100644
+--- a/test/unit/io/sam_file/sam_file_input_test.cpp
++++ b/test/unit/io/sam_file/sam_file_input_test.cpp
+@@ -139,10 +139,8 @@ TEST_F(sam_file_input_f, default_template_args_and_deduction_guides)
+     using comp0 = seqan3::sam_file_input_default_traits<>;
+     using comp1 = seqan3::fields<seqan3::field::seq,
+                                  seqan3::field::id,
+-                                 seqan3::field::offset,
+                                  seqan3::field::ref_id,
+                                  seqan3::field::ref_offset,
+-                                 seqan3::field::alignment,
+                                  seqan3::field::cigar,
+                                  seqan3::field::mapq,
+                                  seqan3::field::qual,
+@@ -249,7 +247,7 @@ TEST_F(sam_file_input_f, record_reading)
+         EXPECT_RANGE_EQ(rec.id(), id_comp[counter]);
+         EXPECT_RANGE_EQ(rec.base_qualities(), qual_comp[counter]);
+ 
+-        counter++;
++        ++counter;
+     }
+ 
+     EXPECT_EQ(counter, 3u);
+@@ -268,7 +266,7 @@ TEST_F(sam_file_input_f, record_reading_custom_fields)
+         EXPECT_RANGE_EQ(seq, seq_comp[counter]);
+         EXPECT_RANGE_EQ(id, id_comp[counter]);
+ 
+-        counter++;
++        ++counter;
+     }
+ 
+     EXPECT_EQ(counter, 3u);
+@@ -291,7 +289,7 @@ TEST_F(sam_file_input_f, file_view)
+         EXPECT_RANGE_EQ(rec.id(), id_comp[counter]);
+         EXPECT_RANGE_EQ(rec.base_qualities(), qual_comp[counter]);
+ 
+-        counter++;
++        ++counter;
+     }
+ 
+     EXPECT_EQ(counter, 3u);
+@@ -311,7 +309,7 @@ void decompression_impl(fixture_t & fix, input_file_t & fin)
+         EXPECT_RANGE_EQ(rec.id(), fix.id_comp[counter]);
+         EXPECT_RANGE_EQ(rec.base_qualities(), fix.qual_comp[counter]);
+ 
+-        counter++;
++        ++counter;
+     }
+ 
+     EXPECT_EQ(counter, 3u);
+@@ -482,121 +480,14 @@ TEST_F(sam_file_input_f, read_empty_bz2_file)
+ #endif
+ 
+ // ----------------------------------------------------------------------------
+-// SAM format specificities
++// BAM format specificities
+ // ----------------------------------------------------------------------------
+ 
+-struct sam_file_input_sam_format_f : public sam_file_input_f
++struct sam_file_input_bam_format_f : public sam_file_input_f
+ {
+     std::vector<seqan3::dna4_vector> const ref_seqs = {"ACTGATCGAGAGGATCTAGAGGAGATCGTAGGAC"_dna4};
+     std::vector<std::string> const ref_ids = {"ref"};
+ 
+-    std::vector<seqan3::gapped<seqan3::dna4>> ref_seq_gapped1 = {'A'_dna4, 'C'_dna4, 'T'_dna4, 'G'_dna4};
+-    std::vector<seqan3::gapped<seqan3::dna4>> ref_seq_gapped2 =
+-        {'C'_dna4, 'T'_dna4, 'G'_dna4, 'A'_dna4, 'T'_dna4, 'C'_dna4, 'G'_dna4, 'A'_dna4, 'G'_dna4};
+-    std::vector<seqan3::gapped<seqan3::dna4>> ref_seq_gapped3 = {
+-        'T'_dna4,
+-        'G'_dna4,
+-        'A'_dna4,
+-        'T'_dna4,
+-        'C'_dna4,
+-        'G'_dna4,
+-        'A'_dna4,
+-        'G'_dna4,
+-    };
+-
+-    std::vector<std::pair<std::vector<seqan3::gapped<seqan3::dna4>>, std::vector<seqan3::gapped<seqan3::dna5>>>>
+-        alignments_expected{
+-            {ref_seq_gapped1, std::vector<seqan3::gapped<seqan3::dna5>>{'C'_dna5, seqan3::gap{}, 'G'_dna5, 'T'_dna5}},
+-            {ref_seq_gapped2,
+-             std::vector<seqan3::gapped<seqan3::dna5>>{'A'_dna5,
+-                                                       'G'_dna5,
+-                                                       'G'_dna5,
+-                                                       'C'_dna5,
+-                                                       'T'_dna5,
+-                                                       'G'_dna5,
+-                                                       'N'_dna5,
+-                                                       seqan3::gap{},
+-                                                       'A'_dna5}},
+-            {ref_seq_gapped3,
+-             std::vector<seqan3::gapped<seqan3::dna5>>{'G'_dna5,
+-                                                       seqan3::gap{},
+-                                                       'A'_dna5,
+-                                                       'G'_dna5,
+-                                                       'T'_dna5,
+-                                                       'A'_dna5,
+-                                                       seqan3::gap{},
+-                                                       'T'_dna5}}};
+-};
+-
+-TEST_F(sam_file_input_sam_format_f, construct_by_filename_and_read_alignments)
+-{
+-    seqan3::test::tmp_filename filename{"sam_file_input_constructor.sam"};
+-    {
+-        std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+-        filecreator << input;
+-    }
+-
+-    seqan3::sam_file_input fin{filename.get_path(), ref_ids, ref_seqs, seqan3::fields<seqan3::field::alignment>{}};
+-
+-    EXPECT_EQ(fin.header().ref_ids(), ref_ids);
+-
+-    size_t counter = 0;
+-    for (auto & [alignment] : fin)
+-    {
+-        EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(alignments_expected[counter]));
+-        EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(alignments_expected[counter]));
+-
+-        counter++;
+-    }
+-
+-    EXPECT_EQ(counter, 3u);
+-}
+-
+-TEST_F(sam_file_input_sam_format_f, construct_from_stream_and_read_alignments)
+-{
+-    seqan3::sam_file_input fin{std::istringstream{input},
+-                               ref_ids,
+-                               ref_seqs,
+-                               seqan3::format_sam{},
+-                               seqan3::fields<seqan3::field::alignment>{}};
+-
+-    EXPECT_EQ(fin.header().ref_ids(), ref_ids);
+-
+-    size_t counter = 0;
+-    for (auto & [alignment] : fin)
+-    {
+-        EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(alignments_expected[counter]));
+-        EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(alignments_expected[counter]));
+-
+-        counter++;
+-    }
+-
+-    EXPECT_EQ(counter, 3u);
+-}
+-
+-TEST_F(sam_file_input_sam_format_f, construct_from_stream_and_read_alignment_with_dummy)
+-{
+-    seqan3::sam_file_input fin{std::istringstream{input},
+-                               seqan3::format_sam{},
+-                               seqan3::fields<seqan3::field::alignment>{}};
+-
+-    size_t counter = 0;
+-    for (auto & [alignment] : fin)
+-    {
+-        EXPECT_EQ(std::get<1>(alignment), std::get<1>(alignments_expected[counter]));
+-
+-        counter++;
+-    }
+-
+-    EXPECT_EQ(counter, 3u);
+-}
+-
+-// ----------------------------------------------------------------------------
+-// BAM format specificities
+-// ----------------------------------------------------------------------------
+-
+-struct sam_file_input_bam_format_f : public sam_file_input_sam_format_f
+-{
+     std::string binary_input{
+         // corresponds to 'input' from sam_file_input_f fixture
+         '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42', '\x43',
+@@ -634,26 +525,22 @@ TEST_F(sam_file_input_bam_format_f, construct_by_filename)
+         filecreator << binary_input;
+     }
+ 
+-    seqan3::sam_file_input fin{
+-        filename.get_path(),
+-        ref_ids,
+-        ref_seqs,
+-        seqan3::fields<seqan3::field::id, seqan3::field::seq, seqan3::field::qual, seqan3::field::alignment>{}};
++    seqan3::sam_file_input fin{filename.get_path(),
++                               ref_ids,
++                               ref_seqs,
++                               seqan3::fields<seqan3::field::id, seqan3::field::seq, seqan3::field::qual>{}};
+ 
+     EXPECT_EQ(fin.header().ref_ids(), ref_ids);
+     EXPECT_EQ(fin.header().comments[0], std::string{"This is a comment."});
+ 
+     size_t counter = 0;
+-    for (auto & [id, seq, qual, alignment] : fin)
++    for (auto & [id, seq, qual] : fin)
+     {
+         EXPECT_EQ(id, id_comp[counter]);
+         EXPECT_EQ(seq, seq_comp[counter]);
+         EXPECT_EQ(qual, qual_comp[counter]);
+ 
+-        EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(alignments_expected[counter]));
+-        EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(alignments_expected[counter]));
+-
+-        counter++;
++        ++counter;
+     }
+ 
+     EXPECT_EQ(counter, 3u);
+@@ -663,27 +550,23 @@ TEST_F(sam_file_input_bam_format_f, construct_by_stream)
+ {
+     std::istringstream stream{binary_input};
+ 
+-    seqan3::sam_file_input fin{
+-        stream,
+-        ref_ids,
+-        ref_seqs,
+-        seqan3::format_bam{},
+-        seqan3::fields<seqan3::field::id, seqan3::field::seq, seqan3::field::qual, seqan3::field::alignment>{}};
++    seqan3::sam_file_input fin{stream,
++                               ref_ids,
++                               ref_seqs,
++                               seqan3::format_bam{},
++                               seqan3::fields<seqan3::field::id, seqan3::field::seq, seqan3::field::qual>{}};
+ 
+     EXPECT_EQ(fin.header().ref_ids(), ref_ids);
+     EXPECT_EQ(fin.header().comments[0], std::string{"This is a comment."});
+ 
+     size_t counter = 0;
+-    for (auto & [id, seq, qual, alignment] : fin)
++    for (auto & [id, seq, qual] : fin)
+     {
+         EXPECT_EQ(id, id_comp[counter]);
+         EXPECT_EQ(seq, seq_comp[counter]);
+         EXPECT_EQ(qual, qual_comp[counter]);
+ 
+-        EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(alignments_expected[counter]));
+-        EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(alignments_expected[counter]));
+-
+-        counter++;
++        ++counter;
+     }
+ 
+     EXPECT_EQ(counter, 3u);
+diff --git a/test/unit/io/sam_file/sam_file_output_test.cpp b/test/unit/io/sam_file/sam_file_output_test.cpp
+index fdf436265..635a6e495 100644
+--- a/test/unit/io/sam_file/sam_file_output_test.cpp
++++ b/test/unit/io/sam_file/sam_file_output_test.cpp
+@@ -98,10 +98,8 @@ TEST(general, default_template_args_and_deduction_guides)
+ {
+     using comp1 = seqan3::fields<seqan3::field::seq,
+                                  seqan3::field::id,
+-                                 seqan3::field::offset,
+                                  seqan3::field::ref_id,
+                                  seqan3::field::ref_offset,
+-                                 seqan3::field::alignment,
+                                  seqan3::field::cigar,
+                                  seqan3::field::mapq,
+                                  seqan3::field::qual,
+@@ -136,11 +134,10 @@ TEST(general, default_template_args_and_deduction_guides)
+     {
+         seqan3::test::tmp_filename filename{"sam_file_output_constructor.sam"};
+ 
+-        seqan3::sam_file_output fout{filename.get_path(), seqan3::fields<seqan3::field::alignment>{}};
++        seqan3::sam_file_output fout{filename.get_path(), seqan3::fields<seqan3::field::cigar>{}};
+ 
+         using t = decltype(fout);
+-        EXPECT_TRUE(
+-            (std::is_same_v<typename t::selected_field_ids, seqan3::fields<seqan3::field::alignment>>)); // changed
++        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, seqan3::fields<seqan3::field::cigar>>)); // changed
+         EXPECT_TRUE((std::is_same_v<typename t::valid_formats, comp2>));
+         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type, comp3>));
+     }
+diff --git a/test/unit/io/sam_file/sam_file_record_test.cpp b/test/unit/io/sam_file/sam_file_record_test.cpp
+index a56dea58e..aa0437414 100644
+--- a/test/unit/io/sam_file/sam_file_record_test.cpp
++++ b/test/unit/io/sam_file/sam_file_record_test.cpp
+@@ -37,15 +37,11 @@ using seqan3::test::operator""_cigar;
+ 
+ struct sam_record : public ::testing::Test
+ {
+-    using alignment_t = std::pair<std::vector<seqan3::gapped<seqan3::dna5>>, std::vector<seqan3::gapped<seqan3::dna5>>>;
+-
+     using mate_t = std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t>;
+ 
+     using types = seqan3::type_list<std::string,                  // seqan3::field::id,
+                                     seqan3::dna5_vector,          // seqan3::field::seq,
+                                     std::vector<seqan3::phred42>, // seqan3::field::qual,
+-                                    int32_t,                      // seqan3::field::offset,
+-                                    alignment_t,                  // seqan3::field::alignment,
+                                     std::optional<int32_t>,       // seqan3::field::ref_id,
+                                     std::optional<int32_t>,       // seqan3::field::ref_offset,
+                                     // seqan3::field::header_ptr,
+@@ -59,8 +55,6 @@ struct sam_record : public ::testing::Test
+     using types_as_ids = seqan3::fields<seqan3::field::id,
+                                         seqan3::field::seq,
+                                         seqan3::field::qual,
+-                                        seqan3::field::offset,
+-                                        seqan3::field::alignment,
+                                         seqan3::field::ref_id,
+                                         seqan3::field::ref_offset,
+                                         seqan3::field::header_ptr,
+@@ -77,8 +71,6 @@ struct sam_record : public ::testing::Test
+         return {/*.id =*/"MY ID",
+                 /*.sequence =*/"ACGT"_dna5,
+                 /*.base_qualities =*/"!##$"_phred42,
+-                /*.sequence_position =*/1,
+-                /*.alignment =*/alignment_t{},
+                 /*.reference_id =*/0, // "ref"
+                 /*.reference_position =*/0,
+                 /*.header_ptr =*/nullptr,
+@@ -100,8 +92,6 @@ TEST_F(sam_record, definition_tuple_traits)
+     EXPECT_SAME_TYPE((std::tuple<std::string,
+                                  seqan3::dna5_vector,
+                                  std::vector<seqan3::phred42>,
+-                                 int32_t,
+-                                 alignment_t,
+                                  std::optional<int32_t>,
+                                  std::optional<int32_t>,
+                                  seqan3::sam_file_header<std::vector<std::string>> *,
+@@ -115,18 +105,16 @@ TEST_F(sam_record, definition_tuple_traits)
+     EXPECT_SAME_TYPE(std::string, (std::tuple_element_t<0, record_type>));
+     EXPECT_SAME_TYPE(seqan3::dna5_vector, (std::tuple_element_t<1, record_type>));
+     EXPECT_SAME_TYPE(std::vector<seqan3::phred42>, (std::tuple_element_t<2, record_type>));
+-    EXPECT_SAME_TYPE(int32_t, (std::tuple_element_t<3, record_type>));
+-    EXPECT_SAME_TYPE(alignment_t, (std::tuple_element_t<4, record_type>));
+-    EXPECT_SAME_TYPE(std::optional<int32_t>, (std::tuple_element_t<5, record_type>));
+-    EXPECT_SAME_TYPE(std::optional<int32_t>, (std::tuple_element_t<6, record_type>));
+-    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> *, (std::tuple_element_t<7, record_type>));
+-    EXPECT_SAME_TYPE(seqan3::sam_flag, (std::tuple_element_t<8, record_type>));
+-    EXPECT_SAME_TYPE(mate_t, (std::tuple_element_t<9, record_type>));
+-    EXPECT_SAME_TYPE(uint8_t, (std::tuple_element_t<10, record_type>));
+-    EXPECT_SAME_TYPE(std::vector<seqan3::cigar>, (std::tuple_element_t<11, record_type>));
+-    EXPECT_SAME_TYPE(seqan3::sam_tag_dictionary, (std::tuple_element_t<12, record_type>));
++    EXPECT_SAME_TYPE(std::optional<int32_t>, (std::tuple_element_t<3, record_type>));
++    EXPECT_SAME_TYPE(std::optional<int32_t>, (std::tuple_element_t<4, record_type>));
++    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> *, (std::tuple_element_t<5, record_type>));
++    EXPECT_SAME_TYPE(seqan3::sam_flag, (std::tuple_element_t<6, record_type>));
++    EXPECT_SAME_TYPE(mate_t, (std::tuple_element_t<7, record_type>));
++    EXPECT_SAME_TYPE(uint8_t, (std::tuple_element_t<8, record_type>));
++    EXPECT_SAME_TYPE(std::vector<seqan3::cigar>, (std::tuple_element_t<9, record_type>));
++    EXPECT_SAME_TYPE(seqan3::sam_tag_dictionary, (std::tuple_element_t<10, record_type>));
+ 
+-    EXPECT_EQ(std::tuple_size_v<record_type>, 13ul);
++    EXPECT_EQ(std::tuple_size_v<record_type>, 11ul);
+ 
+     EXPECT_TRUE(seqan3::tuple_like<record_type>);
+ }
+@@ -143,16 +131,14 @@ TEST_F(sam_record, get_by_index)
+     EXPECT_EQ(std::get<0>(r), "MY ID");
+     EXPECT_RANGE_EQ(std::get<1>(r), "ACGT"_dna5);
+     EXPECT_RANGE_EQ(std::get<2>(r), "!##$"_phred42);
+-    EXPECT_DOUBLE_EQ(std::get<3>(r), 1);
+-    EXPECT_EQ(std::get<4>(r), alignment_t{});
+-    EXPECT_EQ(std::get<5>(r), 0); // "ref"
+-    EXPECT_EQ(std::get<6>(r), 0);
+-    EXPECT_EQ(std::get<7>(r), nullptr);
+-    EXPECT_EQ(std::get<8>(r), seqan3::sam_flag{41u});
+-    EXPECT_EQ(std::get<9>(r), (mate_t{0, 9, 300}));
+-    EXPECT_EQ(std::get<10>(r), 61u);
+-    EXPECT_RANGE_EQ(std::get<11>(r), "1S1M1D1M1I"_cigar);
+-    EXPECT_EQ(std::get<12>(r), seqan3::sam_tag_dictionary{});
++    EXPECT_EQ(std::get<3>(r), 0); // "ref"
++    EXPECT_EQ(std::get<4>(r), 0);
++    EXPECT_EQ(std::get<5>(r), nullptr);
++    EXPECT_EQ(std::get<6>(r), seqan3::sam_flag{41u});
++    EXPECT_EQ(std::get<7>(r), (mate_t{0, 9, 300}));
++    EXPECT_EQ(std::get<8>(r), 61u);
++    EXPECT_RANGE_EQ(std::get<9>(r), "1S1M1D1M1I"_cigar);
++    EXPECT_EQ(std::get<10>(r), seqan3::sam_tag_dictionary{});
+ }
+ 
+ TEST_F(sam_record, get_by_type)
+@@ -162,8 +148,6 @@ TEST_F(sam_record, get_by_type)
+     EXPECT_EQ(std::get<std::string>(r), "MY ID");
+     EXPECT_RANGE_EQ(std::get<seqan3::dna5_vector>(r), "ACGT"_dna5);
+     EXPECT_RANGE_EQ(std::get<std::vector<seqan3::phred42>>(r), "!##$"_phred42);
+-    EXPECT_DOUBLE_EQ(std::get<int32_t>(r), 1);
+-    EXPECT_EQ(std::get<alignment_t>(r), alignment_t{});
+     // EXPECT_EQ(std::get<std::optional<int32_t>>(r), 0); // "ref" // ambiguous
+     // EXPECT_EQ(std::get<std::optional<int32_t>>(r), 0); // ambiguous
+     EXPECT_EQ(std::get<seqan3::sam_file_header<std::vector<std::string>> *>(r), nullptr);
+@@ -181,8 +165,6 @@ TEST_F(sam_record, get_by_member)
+     EXPECT_EQ(r.id(), "MY ID");
+     EXPECT_RANGE_EQ(r.sequence(), "ACGT"_dna5);
+     EXPECT_RANGE_EQ(r.base_qualities(), "!##$"_phred42);
+-    EXPECT_DOUBLE_EQ(r.sequence_position(), 1);
+-    EXPECT_EQ(r.alignment(), alignment_t{});
+     EXPECT_EQ(r.reference_id(), 0); // "ref"
+     EXPECT_EQ(r.reference_position(), 0);
+     EXPECT_EQ(r.header_ptr(), nullptr);
+@@ -202,8 +184,6 @@ TEST_F(sam_record, member_types)
+     EXPECT_SAME_TYPE(std::string &, decltype(r.id()));
+     EXPECT_SAME_TYPE(seqan3::dna5_vector &, decltype(r.sequence()));
+     EXPECT_SAME_TYPE(std::vector<seqan3::phred42> &, decltype(r.base_qualities()));
+-    EXPECT_SAME_TYPE(int32_t &, decltype(r.sequence_position()));
+-    EXPECT_SAME_TYPE(alignment_t &, decltype(r.alignment()));
+     EXPECT_SAME_TYPE(std::optional<int32_t> &, decltype(r.reference_id()));
+     EXPECT_SAME_TYPE(std::optional<int32_t> &, decltype(r.reference_position()));
+     EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> *&, decltype(r.header_ptr()));
+@@ -218,8 +198,6 @@ TEST_F(sam_record, member_types)
+     EXPECT_SAME_TYPE(std::string const &, decltype(std::as_const(r.id())));
+     EXPECT_SAME_TYPE(seqan3::dna5_vector const &, decltype(std::as_const(r.sequence())));
+     EXPECT_SAME_TYPE(std::vector<seqan3::phred42> const &, decltype(std::as_const(r.base_qualities())));
+-    EXPECT_SAME_TYPE(int32_t const &, decltype(std::as_const(r.sequence_position())));
+-    EXPECT_SAME_TYPE(alignment_t const &, decltype(std::as_const(r.alignment())));
+     EXPECT_SAME_TYPE(std::optional<int32_t> const &, decltype(std::as_const(r.reference_id())));
+     EXPECT_SAME_TYPE(std::optional<int32_t> const &, decltype(std::as_const(r.reference_position())));
+     EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * const &,
+@@ -235,8 +213,6 @@ TEST_F(sam_record, member_types)
+     EXPECT_SAME_TYPE(std::string &&, decltype(std::move(r.id())));
+     EXPECT_SAME_TYPE(seqan3::dna5_vector &&, decltype(std::move(r.sequence())));
+     EXPECT_SAME_TYPE(std::vector<seqan3::phred42> &&, decltype(std::move(r.base_qualities())));
+-    EXPECT_SAME_TYPE(int32_t &&, decltype(std::move(r.sequence_position())));
+-    EXPECT_SAME_TYPE(alignment_t &&, decltype(std::move(r.alignment())));
+     EXPECT_SAME_TYPE(std::optional<int32_t> &&, decltype(std::move(r.reference_id())));
+     EXPECT_SAME_TYPE(std::optional<int32_t> &&, decltype(std::move(r.reference_position())));
+     EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * &&, decltype(std::move(r.header_ptr())));
+@@ -251,8 +227,6 @@ TEST_F(sam_record, member_types)
+     EXPECT_SAME_TYPE(std::string const &&, decltype(std::move(std::as_const(r.id()))));
+     EXPECT_SAME_TYPE(seqan3::dna5_vector const &&, decltype(std::move(std::as_const(r.sequence()))));
+     EXPECT_SAME_TYPE(std::vector<seqan3::phred42> const &&, decltype(std::move(std::as_const(r.base_qualities()))));
+-    EXPECT_SAME_TYPE(int32_t const &&, decltype(std::move(std::as_const(r.sequence_position()))));
+-    EXPECT_SAME_TYPE(alignment_t const &&, decltype(std::move(std::as_const(r.alignment()))));
+     EXPECT_SAME_TYPE(std::optional<int32_t> const &&, decltype(std::move(std::as_const(r.reference_id()))));
+     EXPECT_SAME_TYPE(std::optional<int32_t> const &&, decltype(std::move(std::as_const(r.reference_position()))));
+     EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * const &&,
+diff --git a/test/unit/io/sam_file/sam_file_seek_test.cpp b/test/unit/io/sam_file/sam_file_seek_test.cpp
+index dd7e4dbcf..07f48b516 100644
+--- a/test/unit/io/sam_file/sam_file_seek_test.cpp
++++ b/test/unit/io/sam_file/sam_file_seek_test.cpp
+@@ -36,12 +36,8 @@ struct sam_file_seek_test : public ::testing::TestWithParam<sam_file_seek_test_f
+         EXPECT_EQ(record.sequence(), expected_record.sequence());
+         EXPECT_EQ(record.id(), expected_record.id());
+         EXPECT_EQ(record.base_qualities(), expected_record.base_qualities());
+-        EXPECT_EQ(record.sequence_position(), expected_record.sequence_position());
+         EXPECT_EQ(record.reference_id(), expected_record.reference_id());
+         EXPECT_EQ(record.reference_position(), expected_record.reference_position());
+-        // reference sequence is unknown to sam_file, so alignment can't be constructed
+-        // EXPECT_RANGE_EQ(std::get<0>(record.alignment()), std::get<0>(expected_record.alignment()));
+-        EXPECT_RANGE_EQ(std::get<1>(record.alignment()), std::get<1>(expected_record.alignment()));
+         EXPECT_RANGE_EQ(record.cigar_sequence(), expected_record.cigar_sequence());
+         EXPECT_EQ(record.flag(), expected_record.flag());
+         EXPECT_EQ(record.mapping_quality(), expected_record.mapping_quality());
+diff --git a/test/unit/io/sequence_file/sequence_file_input_test.cpp b/test/unit/io/sequence_file/sequence_file_input_test.cpp
+index 29dae8568..715888254 100644
+--- a/test/unit/io/sequence_file/sequence_file_input_test.cpp
++++ b/test/unit/io/sequence_file/sequence_file_input_test.cpp
+@@ -221,7 +221,7 @@ TEST_F(sequence_file_input_f, record_reading)
+         EXPECT_RANGE_EQ(rec.sequence(), seq_comp[counter]);
+         EXPECT_TRUE(empty(rec.base_qualities()));
+ 
+-        counter++;
++        ++counter;
+     }
+ 
+     EXPECT_EQ(counter, 3u);
+@@ -239,7 +239,7 @@ TEST_F(sequence_file_input_f, record_reading_struct_bind)
+         EXPECT_RANGE_EQ(id, id_comp[counter]);
+         EXPECT_TRUE(empty(qual));
+ 
+-        counter++;
++        ++counter;
+     }
+ 
+     EXPECT_EQ(counter, 3u);
+@@ -283,7 +283,7 @@ TEST_F(sequence_file_input_f, file_view)
+         EXPECT_RANGE_EQ(rec.sequence(), seq_comp[counter]);
+         EXPECT_TRUE(empty(rec.base_qualities()));
+ 
+-        counter++;
++        ++counter;
+     }
+ 
+     EXPECT_EQ(counter, 3u);
+@@ -303,7 +303,7 @@ void decompression_impl(fixture_t & fix, input_file_t & fin)
+         EXPECT_RANGE_EQ(rec.id(), fix.id_comp[counter]);
+         EXPECT_TRUE(empty(rec.base_qualities()));
+ 
+-        counter++;
++        ++counter;
+     }
+ 
+     EXPECT_EQ(counter, 3u);
+-- 
+2.39.0
+

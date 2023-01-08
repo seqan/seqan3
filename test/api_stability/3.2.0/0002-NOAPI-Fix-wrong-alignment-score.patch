@@ -1,0 +1,43 @@
+From 96ff359cf3b9fec51a4802ef025c4a4a5fb49bfc Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Mon, 9 Jan 2023 15:16:43 +0100
+Subject: [PATCH 2/3] [NOAPI] Fix wrong alignment score
+
+---
+ .../matrix/detail/debug_stream_trace_directions_test.cpp      | 4 ++--
+ test/unit/alignment/pairwise/fixture/alignment_fixture.hpp    | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/test/unit/alignment/matrix/detail/debug_stream_trace_directions_test.cpp b/test/unit/alignment/matrix/detail/debug_stream_trace_directions_test.cpp
+index a238c792d..98c8cf4a8 100644
+--- a/test/unit/alignment/matrix/detail/debug_stream_trace_directions_test.cpp
++++ b/test/unit/alignment/matrix/detail/debug_stream_trace_directions_test.cpp
+@@ -18,8 +18,8 @@ static constexpr seqan3::detail::trace_directions N = seqan3::detail::trace_dire
+ static constexpr seqan3::detail::trace_directions D = seqan3::detail::trace_directions::diagonal;
+ static constexpr seqan3::detail::trace_directions u = seqan3::detail::trace_directions::up;
+ static constexpr seqan3::detail::trace_directions l = seqan3::detail::trace_directions::left;
+-static constexpr seqan3::detail::trace_directions U = seqan3::detail::trace_directions::up_open;
+-static constexpr seqan3::detail::trace_directions L = seqan3::detail::trace_directions::left_open;
++static constexpr seqan3::detail::trace_directions U = seqan3::detail::trace_directions::carry_up_open;
++static constexpr seqan3::detail::trace_directions L = seqan3::detail::trace_directions::carry_left_open;
+ 
+ TEST(debug_stream_test, ascii)
+ {
+diff --git a/test/unit/alignment/pairwise/fixture/alignment_fixture.hpp b/test/unit/alignment/pairwise/fixture/alignment_fixture.hpp
+index 830572184..e5d2bd799 100644
+--- a/test/unit/alignment/pairwise/fixture/alignment_fixture.hpp
++++ b/test/unit/alignment/pairwise/fixture/alignment_fixture.hpp
+@@ -19,8 +19,8 @@ static constexpr auto N = seqan3::detail::trace_directions::none;
+ static constexpr auto D = seqan3::detail::trace_directions::diagonal;
+ static constexpr auto u = seqan3::detail::trace_directions::up;
+ static constexpr auto l = seqan3::detail::trace_directions::left;
+-static constexpr auto U = seqan3::detail::trace_directions::up_open;
+-static constexpr auto L = seqan3::detail::trace_directions::left_open;
++static constexpr auto U = seqan3::detail::trace_directions::carry_up_open;
++static constexpr auto L = seqan3::detail::trace_directions::carry_left_open;
+ static constexpr auto DU = D | U;
+ static constexpr auto UL = U | L;
+ static constexpr auto DL = D | L;
+-- 
+2.39.0
+
