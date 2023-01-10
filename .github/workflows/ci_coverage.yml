@@ -85,7 +85,7 @@ jobs:
             CC: ${{ matrix.cc }}
         run: |
           sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/${CC/gcc/gcov} 100
-          pip install gcovr==5.0
+          pip install gcovr==5.2
 
       - name: Load ccache
         uses: actions/cache@v3

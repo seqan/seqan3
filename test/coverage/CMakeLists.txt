@@ -27,37 +27,52 @@ set (SEQAN3_COVERAGE_PARALLEL_LEVEL
      "1"
      CACHE STRING "Number of threads to use for coverage report generation.")
 
+set (SEQAN3_GCOVR_ARGUMENTS "")
+
+macro (seqan3_append_gcovr_args)
+    set (key ${ARGV0})
+    if (${ARGC} EQUAL 1)
+        list (APPEND SEQAN3_GCOVR_ARGUMENTS ${key})
+    else ()
+        STRING (REPLACE "'^" "\\''^" value "${ARGV1}")
+        STRING (REPLACE "$'" "$$'\\'" value "${value}")
+        STRING (REPLACE ";" "\\\\\\;" value "${value}")
+        list (APPEND SEQAN3_GCOVR_ARGUMENTS ${key} ${value})
+    endif ()
+endmacro ()
+
 # Arguments for gcovr.
-# Each line is an argument, ';' will end up being a whitespace due to expansion by CMake.
-# Special characters like '"', '\', ')' need to be escaped by a number of '\', depending how often they are evaluated.
+# Certain chracters will be escaped by seqan3_append_gcovr_args.
+# Special CMake characters such as "\" must be escaped manually with "\\".
+# We can prevent one level of CMake's string evaluation by using bracket arguments, which are similar to raw strings:
+# (https://cmake.org/cmake/help/latest/manual/cmake-language.7.html#bracket-argument)
 # gcovr uses python regex expressions.
 # See https://gcovr.com/en/5.0/guide.html#the-gcovr-command for an overview of parameters.
 # See https://gcovr.com/en/5.0/faq.html#why-does-c-code-have-so-many-uncovered-branches for an explanation on branches.
-set (SEQAN3_GCOVR_ARGUMENTS "")
+
 # The directory of the CMakeLists.txt used for invoking cmake.
-list (APPEND SEQAN3_GCOVR_ARGUMENTS "--root;${CMAKE_CURRENT_LIST_DIR}")
+seqan3_append_gcovr_args ("--root" "${CMAKE_CURRENT_LIST_DIR}")
 # The build directory.
-list (APPEND SEQAN3_GCOVR_ARGUMENTS "${PROJECT_BINARY_DIR}")
+seqan3_append_gcovr_args ("${PROJECT_BINARY_DIR}")
 # Include all files whose path match '${SEQAN3_CLONE_DIR}/include/seqan3/.*'.
-list (APPEND SEQAN3_GCOVR_ARGUMENTS "--filter;\'${SEQAN3_CLONE_DIR}/include/seqan3/.*\'")
+seqan3_append_gcovr_args ("--filter" "${SEQAN3_CLONE_DIR}/include/seqan3")
 # Include all files whose path match '${SEQAN3_CLONE_DIR}/test/include/seqan3/test/.*'.
-list (APPEND SEQAN3_GCOVR_ARGUMENTS "--filter;\'${SEQAN3_CLONE_DIR}/test/include/seqan3/test/.*\'")
+seqan3_append_gcovr_args ("--filter" "${SEQAN3_CLONE_DIR}/test/include/seqan3/test")
 # Remove all files whose path match '${SEQAN3_CLONE_DIR}/include/seqan3/contrib/.*'.
-list (APPEND SEQAN3_GCOVR_ARGUMENTS "--exclude;\'${SEQAN3_CLONE_DIR}/include/seqan3/contrib/.*\'")
+seqan3_append_gcovr_args ("--exclude" "${SEQAN3_CLONE_DIR}/include/seqan3/contrib")
 # Remove all files whose path match '${SEQAN3_CLONE_DIR}/include/seqan3/std/.*'.
-list (APPEND SEQAN3_GCOVR_ARGUMENTS "--exclude;\'${SEQAN3_CLONE_DIR}/include/seqan3/std/.*\'")
+seqan3_append_gcovr_args ("--exclude" "${SEQAN3_CLONE_DIR}/include/seqan3/std")
 # Remove line coverage for all lines that match '^\s*$', i.e. empty lines.
-list (APPEND SEQAN3_GCOVR_ARGUMENTS "--exclude-lines-by-pattern;\\\'^\\\\s*$$\\\'")
-# Remove line coverage for all lines that match "^\s*[\{\}]\s*\;*\s*(//.*)?$", i.e. lines with a single '{' or '}' which
-# might be followed by a semicolon or a comment '//'.
-list (APPEND SEQAN3_GCOVR_ARGUMENTS
-      "--exclude-lines-by-pattern;\\\'^\\\\s*[\\{\\}]\\\\s*\\\\\\;*\\\\s*\\(//.*\\)?$$\\\'")
+seqan3_append_gcovr_args ("--exclude-lines-by-pattern" [['^\\s*$']])
+# Remove line coverage for all lines that match "^\s*[{}]{0,2}\s*;*\s*(//.*)?$", i.e. lines with a single '{' or '}'
+# or a combination of those (max 2) which might be followed by a semicolon or a comment '//'.
+seqan3_append_gcovr_args ("--exclude-lines-by-pattern" [['^\\s*[{}]{0,2}\\s*;*\\s*(//.*)?$']])
 # Will exclude branches that are unreachable.
-list (APPEND SEQAN3_GCOVR_ARGUMENTS "--exclude-unreachable-branches")
+seqan3_append_gcovr_args ("--exclude-unreachable-branches")
 # Will exclude branches that are only generated for exception handling.
-list (APPEND SEQAN3_GCOVR_ARGUMENTS "--exclude-throw-branches")
+seqan3_append_gcovr_args ("--exclude-throw-branches")
 # Run up to this many gcov instances in parallel.
-list (APPEND SEQAN3_GCOVR_ARGUMENTS "-j;${SEQAN3_COVERAGE_PARALLEL_LEVEL}")
+seqan3_append_gcovr_args ("-j" "${SEQAN3_COVERAGE_PARALLEL_LEVEL}")
 
 add_custom_command (OUTPUT ${PROJECT_BINARY_DIR}/seqan3_coverage.xml
                     # Run tests.
