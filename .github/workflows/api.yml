@@ -98,7 +98,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Reopen issue
-        if: ${{ failure() }} && github.repository_owner == 'seqan'
+        if: ${{ failure() }}
         uses: octokit/request-action@v2.x
         with:
           route: PATCH /repos/{owner}/{repo}/issues/{issue_number}
@@ -110,7 +110,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create comment
-        if: ${{ failure() }} && github.repository_owner == 'seqan'
+        if: ${{ failure() }}
         uses: peter-evans/create-or-update-comment@v2
         with:
           issue-number: ${{ env.ISSUE }}
