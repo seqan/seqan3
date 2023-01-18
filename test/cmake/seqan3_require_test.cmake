@@ -12,8 +12,8 @@ cmake_minimum_required (VERSION 3.16)
 macro (seqan3_require_test)
     enable_testing ()
 
-    set (gtest_version "1.12.1")
-    set (gtest_git_tag "release-${gtest_version}")
+    set (gtest_version "1.13.0")
+    set (gtest_git_tag "v${gtest_version}")
 
     find_package (GTest ${gtest_version} EXACT QUIET)
 
