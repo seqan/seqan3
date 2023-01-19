@@ -10,7 +10,7 @@ yum --assumeyes --quiet install wget cmake3 flex bison xz graphviz
 
 # Download doxygen.
 mkdir -p ${CACHE_DIR}/doxygen-download
-wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=${CACHE_DIR}/doxygen-download/ https://sourceforge.net/projects/doxygen/files/rel-${DOXYGEN_VERSION}/doxygen-${DOXYGEN_VERSION}.src.tar.gz
+wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=${CACHE_DIR}/doxygen-download/ https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_VERSION//./_}/doxygen-${DOXYGEN_VERSION}.src.tar.gz
 tar -C ${CACHE_DIR}/doxygen-download -zxf ${CACHE_DIR}/doxygen-download/doxygen-${DOXYGEN_VERSION}.src.tar.gz
 
 # Configure doxygen.
