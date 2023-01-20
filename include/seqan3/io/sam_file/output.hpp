@@ -300,7 +300,7 @@ public:
         sam_file_output{filename, selected_field_ids{}}
 
     {
-        initialise_header_information(ref_ids, ref_lengths);
+        initialise_header_information(std::forward<ref_ids_type>(ref_ids), std::forward<ref_lengths_type>(ref_lengths));
     }
 
     /*!\brief Construct from an existing stream and with specified format.
@@ -336,7 +336,7 @@ public:
                     selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         sam_file_output{std::forward<stream_type>(stream), file_format{}, selected_field_ids{}}
     {
-        initialise_header_information(ref_ids, ref_lengths);
+        initialise_header_information(std::forward<ref_ids_type>(ref_ids), std::forward<ref_lengths_type>(ref_lengths));
     }
     //!\}
 
