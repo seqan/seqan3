@@ -370,8 +370,8 @@ TEST(row, print_header_in_file)
     EXPECT_EQ(reinterpret_cast<std::ostringstream &>(fout.get_stream()).str(), expected_out);
 }
 
-// https://github.com/seqan/seqan3/pull/3125
-TEST(row, issue3125)
+// https://github.com/seqan/seqan3/issues/3124
+TEST(row, issue3124)
 {
     seqan3::sam_file_output fout{std::ostringstream{},
                                  std::vector<std::string>{"ref1", "ref2"},
