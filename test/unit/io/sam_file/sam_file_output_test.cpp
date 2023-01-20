@@ -370,6 +370,29 @@ TEST(row, print_header_in_file)
     EXPECT_EQ(reinterpret_cast<std::ostringstream &>(fout.get_stream()).str(), expected_out);
 }
 
+// https://github.com/seqan/seqan3/pull/3125
+TEST(row, issue3125)
+{
+    seqan3::sam_file_output fout{std::ostringstream{},
+                                 std::vector<std::string>{"ref1", "ref2"},
+                                 std::vector<int32_t>{234511, 243243},
+                                 seqan3::format_sam{},
+                                 seqan3::fields<seqan3::field::id>{}};
+
+    fout.emplace_back(std::string("read1"));
+
+    fout.get_stream().flush();
+
+    std::string const expected_out{
+        "@HD\tVN:1.6\n"
+        "@SQ\tSN:ref1\tLN:234511\n"
+        "@SQ\tSN:ref2\tLN:243243\n"
+        "read1\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\n" // empty read
+    };
+
+    EXPECT_EQ(reinterpret_cast<std::ostringstream &>(fout.get_stream()).str(), expected_out);
+}
+
 TEST(row, print_header_in_record)
 {
     std::vector<std::string> const ref_ids{"ref1", "ref2"};

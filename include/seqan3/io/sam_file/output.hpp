@@ -658,7 +658,7 @@ protected:
 
         header_ptr = std::make_unique<sam_file_header<ref_ids_type>>(std::forward<ref_ids_type_>(ref_ids));
 
-        for (int32_t idx = 0; idx < std::ranges::distance(ref_ids); ++idx)
+        for (int32_t idx = 0; idx < std::ranges::distance(header_ptr->ref_ids()); ++idx)
         {
             header_ptr->ref_id_info.emplace_back(ref_lengths[idx], "");
 
