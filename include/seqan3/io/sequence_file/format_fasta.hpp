@@ -309,13 +309,13 @@ private:
 
             for (; (it != e) && ((!is_id)(*it)); ++it)
             {
-                if (is_legal_alph(*it))
-                {
-                    seq.push_back(assign_char_to(*it, std::ranges::range_value_t<seq_type>{}));
-                }
-                else if ((is_space || is_digit)(*it))
+                if ((is_space || is_digit)(*it))
                 {
                     continue;
+                }
+                else if (is_legal_alph(*it))
+                {
+                    seq.push_back(assign_char_to(*it, std::ranges::range_value_t<seq_type>{}));
                 }
                 else
                 {
