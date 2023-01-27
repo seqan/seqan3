@@ -116,6 +116,36 @@ TEST_F(read, whitespace_in_seq)
     do_read_test(input);
 }
 
+struct char_traits : public seqan3::sequence_file_input_default_traits_dna
+{
+    using sequence_alphabet = char;
+    using sequence_legal_alphabet = char;
+};
+using sequence_file_type = seqan3::sequence_file_input<char_traits,
+                                                       seqan3::fields<seqan3::field::id, seqan3::field::seq>,
+                                                       seqan3::type_list<seqan3::format_fasta>>;
+
+TEST_F(read, whitespace_in_seq_char_alphabet)
+{
+    std::string input{">ID1\n"
+                      "ACGTTTT\n\nTTTTTTTTTTT\n"
+                      "\n"
+                      ">ID2\n"
+                      "ACGTTTT\t\tTTTTTTTTTTT\t\nTTTTTTTTTTT\vTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\rTTTTTTTTTTTTTTTTT\n"
+                      ">ID3 lala\n"
+                      "ACGT\fTTA\n"};
+    std::stringstream istream{input};
+
+    sequence_file_type fin{istream, seqan3::format_fasta{}};
+
+    auto it = fin.begin();
+    for (unsigned i = 0; i < 3; ++i, ++it)
+    {
+        EXPECT_EQ((*it).id(), ids[i]);
+        EXPECT_RANGE_EQ((*it).sequence(), seqs[i] | seqan3::views::to_char);
+    }
+}
+
 TEST_F(read, digits_in_seq)
 {
     std::string input{">ID1\n"
