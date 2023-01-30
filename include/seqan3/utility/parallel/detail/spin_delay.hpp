@@ -14,16 +14,18 @@
 
 #include <thread>
 
+#include <seqan3/core/platform.hpp>
+
 //!\cond
 #ifndef SEQAN3_HAS_MM_PAUSE
 #    if defined(__SSE2__) && __has_include(<xmmintrin.h>)
 #        include <xmmintrin.h> // _mm_pause()
 #        define SEQAN3_HAS_MM_PAUSE 1
+#    else
+#        define SEQAN3_HAS_MM_PAUSE 0
 #    endif // defined(__SSE2__) && __has_include(<xmmintrin.h>)
 #endif     // SEQAN3_HAS_MM_PAUSE
 //!\endcond
-
-#include <seqan3/core/platform.hpp>
 
 namespace seqan3::detail
 {
@@ -80,20 +82,19 @@ private:
     {
 #if SEQAN3_HAS_MM_PAUSE // AMD and Intel
         _mm_pause();
-#elif defined(__armel__)                                                                                               \
-    || defined(__ARMEL__) // arm, but broken? ; repeat of default case as armel also defines __arm__
+#elif defined(__armel__) || defined(__ARMEL__) // ARM, but broken? repeat of default case as ARMEL also defines __arm__
         asm volatile("nop" ::: "memory"); // default operation - does nothing => Might lead to passive spinning.
-#elif defined(__arm__) || defined(__aarch64__)                                           // arm big endian / arm64
+#elif defined(__arm__) || defined(__aarch64__) // ARM big endian / ARM64
         __asm__ __volatile__("yield" ::: "memory");
-#elif defined(__ia64__)                                                                  // IA64
+#elif defined(__ia64__)                        // IA64
         __asm__ __volatile__("hint @pause");
 #elif defined(__powerpc__) || defined(__ppc__) || defined(__PPC__) || defined(__ppc64__) // PowerPC
-#    ifdef __APPLE__
+#    if defined(__APPLE__)
         __asm__ volatile("or r27,r27,r27" ::: "memory");
 #    else
         __asm__ __volatile__("or 27,27,27" ::: "memory");
 #    endif
-#else // everything else.
+#else // everything else
         asm volatile("nop" ::: "memory"); // default operation - does nothing => Might lead to passive spinning.
 #endif
     }
