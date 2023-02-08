@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-set -x
-set -e
+set -Eeuo pipefail
 
-echo 'APT::Acquire::Retries "5";' | sudo tee -a /etc/apt/apt.conf.d/80-retries > /dev/null
+# Replace Microsofts repository with some other mirror, because azure is sometimes down.
+sudo sed -i 's@azure.archive.ubuntu.com@mirror.enzu.com@' /etc/apt/sources.list
 sudo add-apt-repository --no-update --yes ppa:ubuntu-toolchain-r/ppa
 sudo add-apt-repository --no-update --yes ppa:ubuntu-toolchain-r/test
 sudo apt-get update
