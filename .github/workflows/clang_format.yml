@@ -8,7 +8,7 @@ env:
 
 defaults:
   run:
-    shell: bash -exo pipefail {0}
+    shell: bash -euxo pipefail {0}
 
 jobs:
   # Cancel other workflows that are dependent on this workflow by adding jobs that have the same concurrency group.
@@ -63,91 +63,40 @@ jobs:
             PR_URL: ${{ github.event.pull_request.html_url }}
         run: gh pr edit $PR_URL --add-label "clang-format"
 
-      # How many commits need to be fetched such that the branch point of the PR branch is visible when fetching the
-      # upstream?
-      - name: Get fetch depth
-        id: fetch_depth
-        env:
-          GITHUB_TOKEN: ${{ secrets.SEQAN_ACTIONS_PAT }}
-          COMMIT_RANGE: ${{ github.event.pull_request.base.ref }}...${{ github.event.pull_request.base.sha }}
-        run: |
-          QUERY="/repos/${{ github.repository }}/compare/${COMMIT_RANGE}"
-          ANSWER=$(gh api -H "Accept: application/vnd.github.v3+json" ${QUERY})
-          NBEHIND=$(jq '.behind_by' <<< "${ANSWER}")
-          echo "depth=$(( ${NBEHIND} + 3 ))" >> $GITHUB_OUTPUT
-          echo "pr_depth=$(( ${{ github.event.pull_request.commits }} + 3 ))" >> $GITHUB_OUTPUT
-
-      - name: Checkout SeqAn3
+      - name: Checkout
         uses: actions/checkout@v3
         with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-          path: seqan3
-          fetch-depth: ${{ steps.fetch_depth.outputs.pr_depth }}
+          fetch-depth: 0
+          ref: "refs/pull/${{ github.event.number }}/merge"
           submodules: false
+          token: ${{ secrets.SEQAN_ACTIONS_PAT }}
 
-      # Comments on each git line:
-      # Checkout new branch that will be rebased. Actual PR branch remains untouched.
-      # Add the upstream repository.
-      # Disallow (accidental) pushes to upstream.
-      # Fetch the upstream. Fetch as many commits such that the branch point of the PR branch is visible.
-      # For rebasing, use last commit's user name.
-      # For rebasing, use last commit's user email.
-      # Rebase on upstream.
-      - name: Rebase on upstream
-        run: |
-          cd seqan3
-          git checkout -b seqan_clang_format_rebase_${{ github.event.pull_request.head.ref }}
-          git remote add upstream ${{ github.event.pull_request.base.repo.html_url }}
-          git remote set-url --push upstream nopush
-          git fetch --depth ${{ steps.fetch_depth.outputs.depth }} upstream ${{ github.event.pull_request.base.ref }}
-          git config user.name "$(git log -1 --format='%cn' ${{ github.event.pull_request.head.sha }})"
-          git config user.email "$(git log -1 --format='%ce' ${{ github.event.pull_request.head.sha }})"
-          git rebase upstream/${{ github.event.pull_request.base.ref }}
-
-      - name: Copy upstream .clang-format
-        run: |
-          cd seqan3
-          git show upstream/${{ github.event.pull_request.base.ref }}:.clang-format | \
-          tee ${{ github.workspace }}/.clang-format
-
-      # Get filenames (--name-only) of added, copied, modified, renamed, changed (ACMRT) files relative to the base
-      # branch (github.event.pull_request.base.sha).
-      # Exclude contrib include folder, exclude submodules folder.
-      # Include only hpp and cpp files as well as files in the std include folder.
-      # { grep ... || test $? = 1; } ensures that grep exits with code 0 on empty output.
       - name: Get changed files
         id: changed_files
         run: |
-          cd seqan3
           LIST=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} | \
           { grep -v -E "(include/seqan3/contrib/|submodules/|*.sh|*.pl|*.py|*.patch)" || test $? = 1; } | \
           { grep -E "(.cpp|.hpp|include/seqan3/std/)" || test $? = 1; } | xargs)
           echo "list=$LIST" >> $GITHUB_OUTPUT
 
-      - name: Install clang-format
-        if: ${{ steps.changed_files.outputs.list }}
+      - name: Switch to fork
         run: |
-          echo 'APT::Acquire::Retries "5";' | sudo tee -a /etc/apt/apt.conf.d/80-retries > /dev/null
-          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-          sudo apt-add-repository --no-update --yes "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-15 main"
-          sudo apt-add-repository --no-update --yes "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main"
-          sudo apt-get update
-          sudo apt-get install --yes clang-format-15
+          git remote add fork ${{ github.event.pull_request.head.repo.html_url }}
+          git fetch fork ${{ github.event.pull_request.head.ref }}
+          git checkout --force --track fork/${{ github.event.pull_request.head.ref }}
 
       - name: Run clang-format
         if: ${{ steps.changed_files.outputs.list }}
-        run: |
-          cd seqan3
-          git checkout ${{ github.event.pull_request.head.ref }}
-          echo "${{ steps.changed_files.outputs.list }}" | \
-          xargs clang-format-15 --style=file:${{ github.workspace }}/.clang-format -i
+        uses: DoozyX/clang-format-lint-action@v0.15
+        with:
+          source: ${{ steps.changed_files.outputs.list }}
+          clangFormatVersion: 15
+          inplace: True
 
       - name: Import GPG key
         if: ${{ steps.changed_files.outputs.list }}
         uses: crazy-max/ghaction-import-gpg@v5
         with:
-          workdir: seqan3
           gpg_private_key: ${{ secrets.SEQAN_ACTIONS_GPG_KEY }}
           passphrase: ${{ secrets.SEQAN_ACTIONS_GPG_PASSPHRASE }}
           git_user_signingkey: true
@@ -155,12 +104,12 @@ jobs:
 
       - name: Commit changes
         if: ${{ steps.changed_files.outputs.list }}
-        uses: EndBug/add-and-commit@v9
-        with:
-          author_name: seqan-actions[bot]
-          author_email: seqan-actions@users.noreply.github.com
-          message: '[MISC] clang-format'
-          cwd: './seqan3'
+        run: |
+          git config user.name "seqan-actions[bot]"
+          git config user.email "seqan-actions@users.noreply.github.com"
+          git add .
+          git commit -m '[MISC] clang-format' || true
+          git push fork ${{ github.event.pull_request.head.ref }}
 
       # Wait for 5 seconds such that workflows triggered by adding the label run on the newest commit.
       - name: Defer workflow
