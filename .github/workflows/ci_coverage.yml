@@ -73,9 +73,7 @@ jobs:
         run: bash ./seqan3/.github/workflows/scripts/install_cmake.sh
 
       - name: Install ccache
-        run: |
-          conda install --yes --override-channels --channel conda-forge ccache
-          sudo ln -s $CONDA/bin/ccache /usr/bin/ccache
+        run: sudo apt-get install --yes ccache
 
       - name: Install compiler ${{ matrix.cxx }}
         run: sudo apt-get install --yes ${{ matrix.cxx }}

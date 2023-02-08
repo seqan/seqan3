@@ -171,9 +171,7 @@ jobs:
 
       - name: Install ccache
         if: matrix.requires_ccache
-        run: |
-          conda install --yes --override-channels --channel conda-forge ccache
-          sudo ln -s $CONDA/bin/ccache /usr/bin/ccache
+        run: sudo apt-get install --yes ccache
 
       - name: Install compiler ${{ matrix.cxx }}
         if: matrix.requires_toolchain
