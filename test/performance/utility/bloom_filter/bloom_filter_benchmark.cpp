@@ -76,7 +76,10 @@ void contains_benchmark(::benchmark::State & state)
     for (auto _ : state)
     {
         for (auto hash : hash_values)
-            benchmark::DoNotOptimize(bf.contains(hash));
+        {
+            bool result = bf.contains(hash);
+            benchmark::DoNotOptimize(result);
+        }
     }
 
     state.counters["hashes/sec"] = hashes_per_second(std::ranges::size(hash_values));
@@ -89,7 +92,8 @@ void count_benchmark(::benchmark::State & state)
 
     for (auto _ : state)
     {
-        benchmark::DoNotOptimize(bf.count(hash_values));
+        size_t result = bf.count(hash_values);
+        benchmark::DoNotOptimize(result);
     }
 
     state.counters["hashes/sec"] = hashes_per_second(std::ranges::size(hash_values));

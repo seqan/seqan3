@@ -36,8 +36,13 @@ template <typename rng_t>
 void sequential_read_impl(benchmark::State & state, rng_t && rng)
 {
     for (auto _ : state)
+    {
         for (seqan3::aa27 c : rng)
-            benchmark::DoNotOptimize(c.to_rank());
+        {
+            auto rank = c.to_rank();
+            benchmark::DoNotOptimize(rank);
+        }
+    }
 }
 
 template <typename tag_t>
@@ -69,8 +74,13 @@ template <typename rng_t>
 void random_access_impl(benchmark::State & state, rng_t && rng, std::vector<size_t> const & access_positions)
 {
     for (auto _ : state)
+    {
         for (auto pos : access_positions)
-            benchmark::DoNotOptimize(rng[pos].to_rank());
+        {
+            auto access = rng[pos].to_rank();
+            benchmark::DoNotOptimize(access);
+        }
+    }
 }
 
 template <typename tag_t>

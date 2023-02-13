@@ -87,8 +87,13 @@ void assign_rank_seqan2(benchmark::State & state)
 
     alphabet_t a{};
     for (auto _ : state)
+    {
         for (rank_t r : ranks)
-            benchmark::DoNotOptimize(a = r);
+        {
+            a = r;
+            benchmark::DoNotOptimize(a);
+        }
+    }
 }
 
 BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan::Dna);

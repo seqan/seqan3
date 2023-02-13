@@ -54,7 +54,8 @@ void read_left2right(benchmark::State & state)
     auto it = std::ranges::begin(gap_decorator);
     for (auto _ : state)
     {
-        benchmark::DoNotOptimize(*it++);
+        auto deref_postincrement = *it++;
+        benchmark::DoNotOptimize(deref_postincrement);
         if (it == std::ranges::end(gap_decorator))
             it = std::ranges::begin(gap_decorator);
     }

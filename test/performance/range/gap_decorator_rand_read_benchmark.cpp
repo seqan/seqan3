@@ -68,7 +68,10 @@ void read_random(benchmark::State & state)
     for (auto _ : state)
     {
         for (k = 0; k < 10; ++k)
-            benchmark::DoNotOptimize(gap_decorator[access_positions[j + k]]);
+        {
+            auto access = gap_decorator[access_positions[j + k]];
+            benchmark::DoNotOptimize(access);
+        }
         ++j;
         j %= (1 << 10) - 10;
     }
