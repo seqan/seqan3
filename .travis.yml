@@ -1,6 +1,6 @@
 version: ~> 1.0
 os: linux
-dist: jammy
+dist: focal
 language: cpp
 
 branches:
@@ -22,7 +22,7 @@ addons:
       - sourceline: 'ppa:ubuntu-toolchain-r/test'
       - sourceline: 'ppa:ubuntu-toolchain-r/ppa'
     packages:
-      - gcc-12
+      - gcc-10
 
 arch:
   - arm64
@@ -31,8 +31,8 @@ arch:
 
 env:
   global:
-    - CXX=g++-12
-    - CC=gcc-12
+    - CXX=g++-10
+    - CC=gcc-10
   jobs:
     - BUILD=unit
     - BUILD=snippet
