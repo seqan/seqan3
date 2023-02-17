@@ -43,15 +43,16 @@ struct assignment_functor
         requires (id == tag::std_copy)
     static constexpr void call(container_t & to, container_t const & from) noexcept
     {
-        benchmark::DoNotOptimize(std::copy(std::ranges::begin(from), std::ranges::end(from), std::ranges::begin(to)));
+        std::copy(std::ranges::begin(from), std::ranges::end(from), std::ranges::begin(to));
+        benchmark::DoNotOptimize(to);
     }
 
     template <typename container_t>
         requires (id == tag::uninitialized_copy)
     static constexpr void call(container_t & to, container_t const & from) noexcept
     {
-        benchmark::DoNotOptimize(
-            std::uninitialized_copy(std::ranges::begin(from), std::ranges::end(from), std::ranges::begin(to)));
+        std::uninitialized_copy(std::ranges::begin(from), std::ranges::end(from), std::ranges::begin(to));
+        benchmark::DoNotOptimize(to);
     }
 };
 

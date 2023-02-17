@@ -51,8 +51,13 @@ void to_char(benchmark::State & state)
     std::array<alphabet_t, 256> alphs = create_alphabet_array<alphabet_t, false>();
 
     for (auto _ : state)
+    {
         for (alphabet_t a : alphs)
-            benchmark::DoNotOptimize(seqan3::to_char(a));
+        {
+            char c = seqan3::to_char(a);
+            benchmark::DoNotOptimize(c);
+        }
+    }
 }
 
 /* regular alphabets, sorted by size */
@@ -96,8 +101,13 @@ void to_char_seqan2(benchmark::State & state)
     std::array<alphabet_t, 256> alphs = create_alphabet_array<alphabet_t, true>();
 
     for (auto _ : state)
+    {
         for (alphabet_t a : alphs)
-            benchmark::DoNotOptimize(static_cast<char>(a));
+        {
+            char c = static_cast<char>(a);
+            benchmark::DoNotOptimize(c);
+        }
+    }
 }
 
 BENCHMARK_TEMPLATE(to_char_seqan2, seqan::Dna);

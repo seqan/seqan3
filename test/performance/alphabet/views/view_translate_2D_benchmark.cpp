@@ -40,8 +40,13 @@ template <typename rng_t>
 void sequential_read_impl(benchmark::State & state, rng_t && rng)
 {
     for (auto _ : state)
+    {
         for (auto && outer : rng)
-            benchmark::DoNotOptimize(outer[0].to_rank());
+        {
+            auto rank = outer[0].to_rank();
+            benchmark::DoNotOptimize(rank);
+        }
+    }
 }
 
 template <typename tag_t>
@@ -84,8 +89,13 @@ template <typename rng_t>
 void random_access_impl(benchmark::State & state, rng_t && rng, std::vector<size_t> const & access_positions)
 {
     for (auto _ : state)
+    {
         for (auto pos : access_positions)
-            benchmark::DoNotOptimize(rng[pos][0].to_rank());
+        {
+            auto access = rng[pos][0].to_rank();
+            benchmark::DoNotOptimize(access);
+        }
+    }
 }
 
 template <typename tag_t>

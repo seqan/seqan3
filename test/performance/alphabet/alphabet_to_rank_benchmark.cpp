@@ -45,8 +45,13 @@ void to_rank(benchmark::State & state)
     std::array<alphabet_t, 256> alphs = create_alphabet_array<alphabet_t, false>(seqan3::alphabet_size<alphabet_t>);
 
     for (auto _ : state)
+    {
         for (alphabet_t a : alphs)
-            benchmark::DoNotOptimize(seqan3::to_rank(a));
+        {
+            auto rank = seqan3::to_rank(a);
+            benchmark::DoNotOptimize(rank);
+        }
+    }
 }
 
 /* regular alphabets, sorted by size */
@@ -90,8 +95,13 @@ void to_rank_seqan2(benchmark::State & state)
     std::array<alphabet_t, 256> alphs = create_alphabet_array<alphabet_t, true>(seqan::ValueSize<alphabet_t>::VALUE);
 
     for (auto _ : state)
+    {
         for (alphabet_t a : alphs)
-            benchmark::DoNotOptimize(seqan::ordValue(a));
+        {
+            auto ord_value = seqan::ordValue(a);
+            benchmark::DoNotOptimize(ord_value);
+        }
+    }
 }
 
 BENCHMARK_TEMPLATE(to_rank_seqan2, seqan::Dna);

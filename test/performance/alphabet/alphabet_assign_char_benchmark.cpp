@@ -78,8 +78,13 @@ void assign_char_seqan2(benchmark::State & state)
 
     alphabet_t a{};
     for (auto _ : state)
+    {
         for (char c : chars)
-            benchmark::DoNotOptimize(a = c);
+        {
+            a = c;
+            benchmark::DoNotOptimize(a);
+        }
+    }
 }
 
 BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Dna);
