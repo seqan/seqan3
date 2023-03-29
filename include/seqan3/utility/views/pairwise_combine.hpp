@@ -254,7 +254,6 @@ class pairwise_combine_view<underlying_range_type>::basic_iterator :
 private:
     //!\brief Friend declaration for iterator with different range const-ness.
     template <typename other_range_type>
-        requires std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
     friend class basic_iterator;
 
     //!\brief Alias type for the iterator over the passed range type.
