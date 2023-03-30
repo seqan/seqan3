@@ -50,9 +50,6 @@ protected:
 
     //!\brief This friend declaration is required to allow non-const to const-construction.
     template <typename range_type2, template <typename...> typename derived_t_template2, typename... args2_t>
-        requires std::is_const_v<range_type>
-              && (!std::is_const_v<range_type2>) && std::is_same_v<std::remove_const_t<range_type>, range_type2>
-              && std::is_same_v<derived_t_template2<args2_t...>, derived_t_template<args_t...>>
     friend class random_access_iterator_base;
 
     //!\brief Because this is CRTP, we know the full derived type:
