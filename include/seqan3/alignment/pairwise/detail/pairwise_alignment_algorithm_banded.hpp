@@ -365,7 +365,7 @@ protected:
         // Iteration phase: iterate over column and compute each cell
         // ---------------------------------------------------------------------
 
-        for (auto && alphabet2 : sequence2 | std::views::drop(1))
+        for (auto && alphabet2 : std::views::drop(sequence2, 1))
         {
             current_alignment_column_it = next_alignment_column_it;
             auto cell = *current_alignment_column_it;
