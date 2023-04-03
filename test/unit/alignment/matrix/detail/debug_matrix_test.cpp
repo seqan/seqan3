@@ -219,6 +219,12 @@ struct debug_matrix_traits<seqan3::detail::debug_matrix<matrix_t, first_sequence
     using second_sequence_type = second_sequence_t;
 };
 
+#pragma GCC diagnostic push
+// Ignore bogus warnings in fortified gcc13 build
+#if defined(_FORTIFY_SOURCE) && (_FORTIFY_SOURCE == 2) // _FORTIFY_SOURCE=2 may cause conforming programs to fail
+#    pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+
 TEST_F(debug_matrix_test, matrix_concept)
 {
     EXPECT_TRUE((seqan3::detail::matrix<seqan3::detail::row_wise_matrix<int>>));
@@ -620,3 +626,5 @@ TEST_F(trace_matrix_test, transpose_matrix_rvalue)
 
     EXPECT_EQ(transpose_matrix, transposed_trace_matrix);
 }
+
+#pragma GCC diagnostic pop
