@@ -119,7 +119,7 @@ jobs:
 
       - name: Create comment
         if: ${{ failure() }}
-        uses: peter-evans/create-or-update-comment@v2
+        uses: peter-evans/create-or-update-comment@v3
         with:
           issue-number: ${{ env.ISSUE }}
           body: ${{ steps.comment-body.outputs.body }}
