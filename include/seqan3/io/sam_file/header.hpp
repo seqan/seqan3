@@ -24,6 +24,21 @@
 namespace seqan3
 {
 
+/*!\brief Stores information of the program/tool that was used to create a SAM/BAM file.
+ * \ingroup io_sam_file
+ *
+ * \remark For a complete overview, take a look at \ref io_sam_file
+ */
+struct sam_file_program_info_t
+{
+    std::string id;                //!< A unique (file scope) id.
+    std::string name;              //!< The official name.
+    std::string command_line_call; //!< The command line call that produces the file.
+    std::string previous;          //!< The id of the previous program if program calls were chained.
+    std::string description;       //!< A description of the program and/or program call.
+    std::string version;           //!< The program/tool version.
+};
+
 /*!\brief Stores the header information of SAM/BAM files.
  * \ingroup io_sam_file
  *
@@ -63,19 +78,10 @@ public:
     {}
     //!\}
 
-    //!\brief Stores information of the program/tool that was used to create the file.
-    struct program_info_t
-    {
-        std::string id;                //!< A unique (file scope) id.
-        std::string name;              //!< The official name.
-        std::string command_line_call; //!< The command line call that produces the file.
-        std::string previous;          //!< The id of the previous program if program calls were chained.
-        std::string description;       //!< A description of the program and/or program call.
-        std::string version;           //!< The program/tool version.
-    };
-
-    std::string format_version; //!< The file format version. Note: this is overwritten by our formats on output.
-    std::string sorting;        //!< The sorting of the file. SAM: [unknown, unsorted, queryname, coordinate].
+    using program_info_t =
+        sam_file_program_info_t; //!< Stores information of the program/tool that was used to create the file.
+    std::string format_version;  //!< The file format version. Note: this is overwritten by our formats on output.
+    std::string sorting;         //!< The sorting of the file. SAM: [unknown, unsorted, queryname, coordinate].
     std::string
         subsorting; //!< The sub-sorting of the file. SAM: [unknown, unsorted, queryname, coordinate](:[A-Za-z0-9_-]+)+.
     std::string grouping; //!< The grouping of the file. SAM: [none, query, reference].
