@@ -212,24 +212,23 @@ TEST(header, copy_program_info_t)
 read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	NM:i:7
 )";
     seqan3::sam_file_input fin{std::istringstream{comp}, seqan3::format_sam{}};
-
     auto & input_header(fin.header());
 
-    // We would like to test that (some of) the headers can be copied even if
-    // ref_ids_types do not match.
-    typedef std::remove_cvref_t<decltype(input_header.ref_ids())>
-        input_ref_ids_type; // std::deque <std::string> by default.
-    typedef std::array<std::string, 0> output_ref_ids_type;
+    // We would like to test that (some of) the headers can be copied even if ref_ids_types do not match.
+    // input_ref_ids_type is std::deque<std::string> by default.
+    using input_ref_ids_type = std::remove_cvref_t<decltype(input_header.ref_ids())>;
+    using output_ref_ids_type = std::array<std::string, 0>;
     static_assert(!std::is_same_v<input_ref_ids_type, output_ref_ids_type>);
 
     seqan3::sam_file_output fout{std::ostringstream{},
                                  output_ref_ids_type{},
                                  std::ranges::empty_view<std::size_t>{},
                                  seqan3::format_sam{}};
-    fout.header().program_infos = fin.header().program_infos;
+    auto & output_header(fout.header());
+    output_header.program_infos = input_header.program_infos;
 
     // Verify that the above was sufficient to copy the headers.
-    auto const & pg_infos(fout.header().program_infos);
+    auto const & pg_infos(output_header.program_infos);
     EXPECT_FALSE(pg_infos.empty());
     EXPECT_EQ("cool_program", pg_infos.front().name);
 }
