@@ -92,7 +92,7 @@ jobs:
 
       - name: Run clang-format
         if: ${{ steps.changed_files.outputs.cpp_list }}
-        uses: DoozyX/clang-format-lint-action@v0.15
+        uses: DoozyX/clang-format-lint-action@v0.16
         with:
           source: ${{ steps.changed_files.outputs.cpp_list }}
           clangFormatVersion: 15
