@@ -1,4 +1,4 @@
-name: SeqAn3 lint
+name: Lint
 
 on:
   pull_request_target:
@@ -8,12 +8,12 @@ env:
 
 defaults:
   run:
-    shell: bash -euxo pipefail {0}
+    shell: bash -Eeuxo pipefail {0}
 
 jobs:
   # Cancel other workflows that are dependent on this workflow by adding jobs that have the same concurrency group.
   cancel_linux:
-    name: Cancel Linux
+    name: Cancel running Workflows
     concurrency:
       group: linux-${{ github.event.pull_request.number }}
       cancel-in-progress: true
@@ -22,7 +22,7 @@ jobs:
       - name: "Cancel Linux"
         run: echo "Cancelling Linux"
   cancel_macos:
-    name: Cancel macOS
+    name: Cancel running Workflows
     concurrency:
       group: macos-${{ github.event.pull_request.number }}
       cancel-in-progress: true
@@ -31,7 +31,7 @@ jobs:
       - name: "Cancel macOS"
         run: echo "Cancelling macOS"
   cancel_misc:
-    name: Cancel Misc
+    name: Cancel running Workflows
     concurrency:
       group: misc-${{ github.event.pull_request.number }}
       cancel-in-progress: true
@@ -40,7 +40,7 @@ jobs:
       - name: "Cancel Misc"
         run: echo "Cancelling Misc"
   cancel_coverage:
-    name: Cancel Coverage
+    name: Cancel running Workflows
     concurrency:
       group: coverage-${{ github.event.pull_request.number }}
       cancel-in-progress: true
@@ -49,9 +49,9 @@ jobs:
       - name: "Cancel Coverage"
         run: echo "Cancelling Coverage"
   lint:
-    name: clang-format
+    name: Lint
     concurrency:
-      group: clang-format-${{ github.event.pull_request.number }}
+      group: lint-${{ github.event.pull_request.number }}
       cancel-in-progress: true
     needs: [cancel_linux, cancel_macos, cancel_misc, cancel_coverage]
     runs-on: ubuntu-22.04
@@ -61,7 +61,7 @@ jobs:
         env:
             GITHUB_TOKEN: ${{ secrets.SEQAN_ACTIONS_PAT }}
             PR_URL: ${{ github.event.pull_request.html_url }}
-        run: gh pr edit $PR_URL --add-label "clang-format"
+        run: gh pr edit $PR_URL --add-label "lint"
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -74,10 +74,15 @@ jobs:
       - name: Get changed files
         id: changed_files
         run: |
-          LIST=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} | \
-          { grep -v -E "(include/seqan3/contrib/|submodules/|*.sh|*.pl|*.py|*.patch)" || test $? = 1; } | \
-          { grep -E "(.cpp|.hpp|include/seqan3/std/)" || test $? = 1; } | xargs)
-          echo "list=$LIST" >> $GITHUB_OUTPUT
+          CPP_LIST=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} | \
+          { grep -v -E "(lib/)" || test $? = 1; } | \
+          { grep -E "(\.cpp|\.hpp)$" || test $? = 1; } | xargs)
+          echo "cpp_list=$CPP_LIST" >> $GITHUB_OUTPUT
+
+          CMAKE_LIST=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} | \
+          { grep -v -E "(lib/)" || test $? = 1; } | \
+          { grep -E "(\.cmake|CMakeLists.txt)$" || test $? = 1; } | xargs)
+          echo "cmake_list=$CMAKE_LIST" >> $GITHUB_OUTPUT
 
       - name: Switch to fork
         run: |
@@ -86,15 +91,30 @@ jobs:
           git checkout --force --track fork/${{ github.event.pull_request.head.ref }}
 
       - name: Run clang-format
-        if: ${{ steps.changed_files.outputs.list }}
+        if: ${{ steps.changed_files.outputs.cpp_list }}
         uses: DoozyX/clang-format-lint-action@v0.15
         with:
-          source: ${{ steps.changed_files.outputs.list }}
+          source: ${{ steps.changed_files.outputs.cpp_list }}
           clangFormatVersion: 15
           inplace: True
 
+      - name: Run cmake-format
+        if: ${{ steps.changed_files.outputs.cmake_list }}
+        uses: PuneetMatharu/cmake-format-lint-action@v1.0.1
+        with:
+          args: --config-files .cmake-format.yaml --in-place
+
+      - name: Check git status
+        id: git_status
+        run: |
+          if [[ -z $(git status -uno --porcelain) ]]; then
+            echo "commit_required=" >> $GITHUB_OUTPUT
+          else
+            echo "commit_required=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Import GPG key
-        if: ${{ steps.changed_files.outputs.list }}
+        if: ${{ steps.git_status.outputs.commit_required }}
         uses: crazy-max/ghaction-import-gpg@v5
         with:
           gpg_private_key: ${{ secrets.SEQAN_ACTIONS_GPG_KEY }}
@@ -103,21 +123,17 @@ jobs:
           git_commit_gpgsign: true
 
       - name: Commit changes
-        if: ${{ steps.changed_files.outputs.list }}
+        if: ${{ steps.git_status.outputs.commit_required }}
         run: |
           git config user.name "seqan-actions[bot]"
           git config user.email "seqan-actions@users.noreply.github.com"
           git add .
-          git commit -m '[MISC] clang-format' || true
+          git commit -m '[MISC] automatic linting'
           git push fork ${{ github.event.pull_request.head.ref }}
 
-      # Wait for 5 seconds such that workflows triggered by adding the label run on the newest commit.
-      - name: Defer workflow
-        if: ${{ steps.changed_files.outputs.list }}
-        run: sleep 5
-
       - name: Remove label
+        if: ${{ !steps.git_status.outputs.commit_required }}
         env:
             GITHUB_TOKEN: ${{ secrets.SEQAN_ACTIONS_PAT }}
             PR_URL: ${{ github.event.pull_request.html_url }}
-        run: gh pr edit $PR_URL --remove-label "clang-format"
+        run: gh pr edit $PR_URL --remove-label "lint"
