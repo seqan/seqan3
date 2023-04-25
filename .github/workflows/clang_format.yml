@@ -92,7 +92,7 @@ jobs:
 
       - name: Run clang-format
         if: ${{ steps.changed_files.outputs.cpp_list }}
-        uses: DoozyX/clang-format-lint-action@v0.15
+        uses: DoozyX/clang-format-lint-action@v0.16
         with:
           source: ${{ steps.changed_files.outputs.cpp_list }}
           clangFormatVersion: 15
@@ -100,7 +100,7 @@ jobs:
 
       - name: Run cmake-format
         if: ${{ steps.changed_files.outputs.cmake_list }}
-        uses: PuneetMatharu/cmake-format-lint-action@v1.0.1
+        uses: PuneetMatharu/cmake-format-lint-action@v1.0.2
         with:
           args: --config-files .cmake-format.yaml --in-place
 
