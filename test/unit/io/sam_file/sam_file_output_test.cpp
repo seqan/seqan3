@@ -202,6 +202,7 @@ void assign_impl(source_t && source)
 // ----------------------------------------------------------------------------
 // header
 // ----------------------------------------------------------------------------
+// See https://github.com/seqan/seqan3/issues/3137
 TEST(header, copy_program_info_t)
 {
     std::string comp =
