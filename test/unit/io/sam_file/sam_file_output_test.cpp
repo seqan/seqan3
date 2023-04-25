@@ -8,7 +8,9 @@
 #include <gtest/gtest.h>
 
 #include <iterator>
+#include <ranges>
 #include <sstream>
+#include <type_traits>
 
 #include <seqan3/io/sam_file/input.hpp>
 #include <seqan3/io/sam_file/output.hpp>
@@ -195,6 +197,41 @@ void assign_impl(source_t && source)
 
     fout.get_stream().flush();
     EXPECT_EQ(reinterpret_cast<std::ostringstream &>(fout.get_stream()).str(), output_comp);
+}
+
+// ----------------------------------------------------------------------------
+// header
+// ----------------------------------------------------------------------------
+// See https://github.com/seqan/seqan3/issues/3137
+TEST(header, copy_program_info_t)
+{
+    std::string comp =
+        R"(@HD	VN:1.6	SO:unknown	GO:none
+@SQ	SN:ref	LN:26
+@PG	ID:prog1	PN:cool_program
+@CO	This is a comment.
+read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	NM:i:7
+)";
+    seqan3::sam_file_input fin{std::istringstream{comp}, seqan3::format_sam{}};
+    auto & input_header(fin.header());
+
+    // We would like to test that (some of) the headers can be copied even if ref_ids_types do not match.
+    // input_ref_ids_type is std::deque<std::string> by default.
+    using input_ref_ids_type = std::remove_cvref_t<decltype(input_header.ref_ids())>;
+    using output_ref_ids_type = std::array<std::string, 0>;
+    static_assert(!std::is_same_v<input_ref_ids_type, output_ref_ids_type>);
+
+    seqan3::sam_file_output fout{std::ostringstream{},
+                                 output_ref_ids_type{},
+                                 std::ranges::empty_view<std::size_t>{},
+                                 seqan3::format_sam{}};
+    auto & output_header(fout.header());
+    output_header.program_infos = input_header.program_infos;
+
+    // Verify that the above was sufficient to copy the headers.
+    auto const & pg_infos(output_header.program_infos);
+    EXPECT_FALSE(pg_infos.empty());
+    EXPECT_EQ("cool_program", pg_infos.front().name);
 }
 
 // ----------------------------------------------------------------------------
