@@ -119,7 +119,7 @@ TEST_F(read, whitespace_in_seq)
 struct char_traits : public seqan3::sequence_file_input_default_traits_dna
 {
     using sequence_alphabet = char;
-    using sequence_legal_alphabet = char;
+    using sequence_legal_alphabet = seqan3::dna4;
 };
 using sequence_file_type = seqan3::sequence_file_input<char_traits,
                                                        seqan3::fields<seqan3::field::id, seqan3::field::seq>,

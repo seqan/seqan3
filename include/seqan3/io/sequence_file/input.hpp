@@ -64,8 +64,8 @@ namespace seqan3
  * \brief Alphabet of the characters for the seqan3::field::seq; must satisfy seqan3::alphabet.
  */
 /*!\typedef using sequence_legal_alphabet
- * \brief Intermediate alphabet for seqan3::field::seq; must satisfy seqan3::alphabet and be convertible to
- * `sequence_alphabet`.
+ * \brief Intermediate alphabet for seqan3::field::seq; must satisfy seqan3::alphabet and be either convertible to
+ * `sequence_alphabet` or a character type.
  *
  * \details
  *
@@ -99,7 +99,8 @@ concept sequence_file_input_traits =
     requires (t v) {
         requires writable_alphabet<typename t::sequence_alphabet>;
         requires writable_alphabet<typename t::sequence_legal_alphabet>;
-        requires explicitly_convertible_to<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
+        requires detail::is_char_adaptation_v<typename t::sequence_alphabet>
+                     || explicitly_convertible_to<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
         requires sequence_container<typename t::template sequence_container<typename t::sequence_alphabet>>;
 
         requires writable_alphabet<typename t::id_alphabet>;
@@ -228,7 +229,8 @@ public:
     using field_ids = fields<field::seq, field::id, field::qual>;
 
     static_assert(
-        []() constexpr {
+        []() constexpr
+        {
             for (field f : selected_field_ids::as_array)
                 if (!field_ids::contains(f))
                     return false;
