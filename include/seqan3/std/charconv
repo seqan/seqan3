@@ -28,7 +28,6 @@
  *
  * | stdlib version | __cpp_lib_to_chars                               | chars_format   | to_chars_result | from_chars_result | to_chars (int) | from_chars (int) | to_chars (float)     | from_chars (float)   |
  * | -------------- | ------------------------------------------------ | -------------- | --------------- | ----------------- | -------------- | ---------------- | -------------------- | -------------------- |
- * | gcc 10         | undefined and `<charconv>` header                | stdlib         | stdlib          | stdlib            | stdlib         | stdlib           | shim (ostringstream) | shim (strto[f/d/ld]) |
  * | gcc 11         | undefined (or 201611) and `<charconv>` header    | stdlib         | stdlib          | stdlib            | stdlib         | stdlib           | stdlib               | stdlib               |
  *
  * Note: gcc 11 implements float too, but does not define __cpp_lib_to_chars

@@ -78,10 +78,10 @@ a different (updated) on-disk format.
 The main requirement for SeqAn3 is that your operating system provides one of the compilers supported by us.
 In general, we only support the latest three major compiler versions.
 We currently support the following compilers on 64-bit operating systems with little-endian CPU architectures:
-  * GCC7, GCC8, GCC9, GCC10, GCC11
+  * GCC11, GCC12, GCC13
 
-\note Only the most recent minor release of a compiler is guaranteed to be supported, e.g. when `gcc-10.4` is released,
-we may drop support for `gcc-10.3`. Since all platforms with an older version receive minor release updates,
+\note Only the most recent minor release of a compiler is guaranteed to be supported, e.g. when `gcc-11.4` is released,
+we may drop support for `gcc-11.3`. Since all platforms with an older version receive minor release updates,
 this should not be a problem.
 
 We promise to support the above compilers in the latest release of SeqAn3, or until all the following

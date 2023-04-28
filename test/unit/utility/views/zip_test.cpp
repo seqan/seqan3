@@ -209,14 +209,3 @@ TEST_F(zip_test, use_as_output_range)
     EXPECT_EQ(i, 4u);
     EXPECT_EQ(zip_view.size(), 4u);
 }
-
-// https://github.com/ericniebler/range-v3/issues/1480
-TEST_F(zip_test, gcc10bug_rangev3_1480)
-{
-    // This regression test only checks if the respective code compiles.
-    std::vector<char> const first_sequence{};
-    std::vector<char> const second_sequence{};
-
-    auto zip_view = seqan3::views::zip(first_sequence, second_sequence);
-    std::ranges::for_each(zip_view, [&]([[maybe_unused]] auto && value) {});
-}

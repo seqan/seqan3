@@ -817,14 +817,14 @@ inline void format_bam::write_header(stream_t & stream, sam_file_output_options 
         // write SAM header to temporary stream first to query its size.
         std::ostringstream os;
         detail::format_sam_base::write_header(os, options, header);
-#if SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI || (SEQAN3_COMPILER_IS_GCC && (__GNUC__ == 10))
+#if SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
         int32_t const l_text{static_cast<int32_t>(os.str().size())};
 #else
         int32_t const l_text{static_cast<int32_t>(os.view().size())};
 #endif
         std::ranges::copy_n(reinterpret_cast<char const *>(&l_text), 4, stream_it); // write text length
 
-#if SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI || (SEQAN3_COMPILER_IS_GCC && (__GNUC__ == 10))
+#if SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
         auto header_view = os.str();
 #else
         auto header_view = os.view();

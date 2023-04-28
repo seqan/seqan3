@@ -61,14 +61,10 @@
 // ============================================================================
 
 #if SEQAN3_COMPILER_IS_GCC
-#    if (__GNUC__ < 10)
+#    if (__GNUC__ < 11)
 #        error                                                                                                         \
-            "SeqAn 3.1.x is the last version that supports GCC 7, 8, and 9. Please upgrade your compiler or use 3.1.x."
-#    endif // (__GNUC__ < 10)
-
-#    if (__GNUC__ == 10 && __GNUC_MINOR__ <= 3)
-#        pragma GCC warning "Be aware that GCC < 10.4 might have bugs that cause SeqAn3 fail to compile."
-#    endif // (__GNUC__ == 10 && __GNUC_MINOR__ <= 3)
+            "SeqAn 3.1.x is the last version that supports GCC 7, 8, and 9. SeqAn 3.2.x is the latest version that support GCC 10. Please upgrade your compiler or use 3.1.x./3.2.x."
+#    endif // (__GNUC__ < 11)
 
 #    if (__GNUC__ == 11 && __GNUC_MINOR__ <= 2)
 #        pragma GCC warning "Be aware that GCC < 11.3 might have bugs that cause SeqAn3 fail to compile."
@@ -84,10 +80,10 @@
 #    endif // SEQAN3_DOXYGEN_ONLY(1)0
 
 #    ifndef SEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC
-#        if (__GNUC__ > 12)
+#        if (__GNUC__ > 13)
 #            pragma message                                                                                            \
-                "Your compiler is newer than the latest supported compiler of this SeqAn version (gcc-12). It might be that SeqAn does not compile due to this. You can disable this warning by setting -DSEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC."
-#        endif // (__GNUC__ > 12)
+                "Your compiler is newer than the latest supported compiler of this SeqAn version (gcc-13). It might be that SeqAn does not compile due to this. You can disable this warning by setting -DSEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC."
+#        endif // (__GNUC__ > 13)
 #    endif     // SEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC
 
 // ============================================================================
@@ -108,9 +104,8 @@
 #endif
 
 // C++ standard [required]
-// Note: gcc10 -std=c++20 still defines __cplusplus=201709
 #ifdef __cplusplus
-#    if (__cplusplus < 201709)
+#    if (__cplusplus < 202002L)
 #        error "SeqAn3 requires C++20, make sure that you have set -std=c++20."
 #    endif
 #else
@@ -206,25 +201,6 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 #ifndef SEQAN3_WORKAROUND_VIEW_PERFORMANCE
 //!\brief Performance of views, especially filter and join is currently bad, especially in I/O.
 #    define SEQAN3_WORKAROUND_VIEW_PERFORMANCE 1
-#endif
-
-//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=96070 and https://github.com/seqan/product_backlog/issues/151
-#ifndef SEQAN3_WORKAROUND_GCC_96070 // fixed since gcc10.4
-#    if SEQAN3_COMPILER_IS_GCC && (__GNUC__ == 10 && __GNUC_MINOR__ < 4)
-#        define SEQAN3_WORKAROUND_GCC_96070 1
-#    else
-#        define SEQAN3_WORKAROUND_GCC_96070 0
-#    endif
-#endif
-
-//!\brief Workaround to access the static id of the configuration elements inside of the concept definition
-//!       (fixed in gcc11).
-#ifndef SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
-#    if SEQAN3_COMPILER_IS_GCC && (__GNUC__ < 11)
-#        define SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT 1
-#    else
-#        define SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT 0
-#    endif
 #endif
 
 //!\brief A view does not need to be default constructible. This change is first implemented in gcc12.

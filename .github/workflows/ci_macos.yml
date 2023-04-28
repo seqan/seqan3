@@ -32,29 +32,26 @@ jobs:
     name: ${{ matrix.name }}
     runs-on: macos-12
     timeout-minutes: 120
-    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'clang-format'
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'lint'
     strategy:
       fail-fast: true
       matrix:
         include:
+          - name: "Unit gcc13"
+            cxx: "g++-13"
+            cc: "gcc-13"
+            build: unit
+            build_type: Release
+
           - name: "Unit gcc12"
-            os: macos-12
             cxx: "g++-12"
             cc: "gcc-12"
             build: unit
             build_type: Release
 
           - name: "Unit gcc11"
-            os: macos-12
             cxx: "g++-11"
             cc: "gcc-11"
-            build: unit
-            build_type: Release
-
-          - name: "Unit gcc10"
-            os: macos-12
-            cxx: "g++-10"
-            cc: "gcc-10"
             build: unit
             build_type: Release
 

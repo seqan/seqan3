@@ -33,7 +33,7 @@ jobs:
     name: ${{ matrix.name }}
     runs-on: ubuntu-22.04
     timeout-minutes: 120
-    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'clang-format'
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'lint'
     strategy:
       fail-fast: true
       matrix:

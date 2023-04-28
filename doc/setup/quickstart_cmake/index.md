@@ -12,13 +12,13 @@ works.
 
 # Software
 Requirements:
-  - gcc >= 10
+  - gcc >= 11
   - cmake >= 3.4
   - git
 
 ## Installing GCC
 
-SeqAn requires GCC >= 10. Current versions of LLVM/Clang and VisualStudio/MSVC are **not yet supported**.
+SeqAn requires GCC >= 11. Current versions of LLVM/Clang and VisualStudio/MSVC are **not yet supported**.
 We will briefly explain how to install GCC-11 (or the latest GCC if such an option is available) on some popular
 operating systems. We recommend using the latest version of GCC available. For more information, refer to your
 operating system's documentation.

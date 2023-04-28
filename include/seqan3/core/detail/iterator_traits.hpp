@@ -56,18 +56,6 @@ template <typename t>
 concept has_iterator_category = requires () { typename t::iterator_category; };
 //!\endcond
 
-#if SEQAN3_WORKAROUND_GCC_96070
-/*!\brief This is a workaround for gcc 10.x, x < 4. That version of the stdlib always expects an iterator_category
- *        to be defined. There are some view combinations that do not work with this "fix".
- */
-template <typename underlying_iterator_t>
-    requires (!has_iterator_category<std::iterator_traits<underlying_iterator_t>>)
-struct maybe_iterator_category<underlying_iterator_t>
-{
-    using iterator_category = void;
-};
-#endif // SEQAN3_WORKAROUND_GCC_96070
-
 //!\cond
 template <typename underlying_iterator_t>
     requires has_iterator_category<std::iterator_traits<underlying_iterator_t>>

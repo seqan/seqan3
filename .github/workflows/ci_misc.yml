@@ -31,14 +31,14 @@ jobs:
     name: ${{ matrix.name }}
     runs-on: ubuntu-22.04
     timeout-minutes: 120
-    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'clang-format'
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'lint'
     strategy:
       fail-fast: false
       matrix:
         include:
-          - name: "Snippet gcc10"
-            cxx: "g++-10"
-            cc: "gcc-10"
+          - name: "Snippet gcc11"
+            cxx: "g++-11"
+            cc: "gcc-11"
             build: snippet
             build_type: Release
             build_threads: 2
@@ -51,9 +51,9 @@ jobs:
             skip_run_tests: false
             use_include_dependencies: "OFF"
 
-          - name: "Performance gcc10"
-            cxx: "g++-10"
-            cc: "gcc-10"
+          - name: "Performance gcc11"
+            cxx: "g++-11"
+            cc: "gcc-11"
             build: performance
             build_type: Release
             build_threads: 2
@@ -66,6 +66,7 @@ jobs:
             skip_run_tests: false
             use_include_dependencies: "OFF"
 
+          # 13 not yet available: https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test
           - name: "Header gcc12"
             cxx: "g++-12"
             cc: "gcc-12"
@@ -80,9 +81,9 @@ jobs:
             skip_run_tests: false
             use_include_dependencies: "OFF"
 
-          - name: "Header gcc10"
-            cxx: "g++-10"
-            cc: "gcc-10"
+          - name: "Header gcc11"
+            cxx: "g++-11"
+            cc: "gcc-11"
             build: header
             build_type: Release
             build_threads: 2
@@ -96,8 +97,8 @@ jobs:
             use_include_dependencies: "OFF"
 
           - name: "Non-cyclic tests"
-            cxx: "g++-10"
-            cc: "gcc-10"
+            cxx: "g++-11"
+            cc: "gcc-11"
             build: unit
             build_type: Debug
             build_threads: 2
@@ -111,8 +112,8 @@ jobs:
             use_include_dependencies: "ON"
 
           - name: "CMake external project"
-            cxx: "g++-10"
-            cc: "gcc-10"
+            cxx: "g++-11"
+            cc: "gcc-11"
             build: external_project
             build_type: Debug
             build_threads: 1 # output is important to be in sequential order
