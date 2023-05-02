@@ -32,11 +32,18 @@ jobs:
     name: ${{ matrix.name }}
     runs-on: ubuntu-22.04
     timeout-minutes: 120
-    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'clang-format'
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'lint'
     strategy:
       fail-fast: true
       matrix:
         include:
+          # Not yet available: https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test
+          # - name: "Unit gcc13"
+          #   cxx: "g++-13"
+          #   cc: "gcc-13"
+          #   build: unit
+          #   build_type: Release
+
           - name: "Unit gcc12"
             cxx: "g++-12"
             cc: "gcc-12"
@@ -46,12 +53,6 @@ jobs:
           - name: "Unit gcc11"
             cxx: "g++-11"
             cc: "gcc-11"
-            build: unit
-            build_type: Release
-
-          - name: "Unit gcc10"
-            cxx: "g++-10"
-            cc: "gcc-10"
             build: unit
             build_type: Release
 

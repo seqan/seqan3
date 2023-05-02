@@ -125,13 +125,6 @@ public:
     }
 
     constexpr auto end()
-#if SEQAN3_COMPILER_IS_GCC && (__GNUC__ == 10) // GCC10 needs a little help with the return type
-        -> std::conditional_t<std::ranges::forward_range<V> && std::is_reference_v<InnerRng>
-                                  && std::ranges::forward_range<InnerRng> && std::ranges::common_range<V>
-                                  && std::ranges::common_range<InnerRng>,
-                              iterator<view_helper::simple_view<V> && view_helper::simple_view<Pattern>>,
-                              sentinel<view_helper::simple_view<V> && view_helper::simple_view<Pattern>>>
-#endif
     {
         constexpr bool is_simple = view_helper::simple_view<V> && view_helper::simple_view<Pattern>;
         if constexpr (std::ranges::forward_range<V> && std::is_reference_v<InnerRng>

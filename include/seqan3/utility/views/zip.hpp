@@ -103,26 +103,6 @@ concept all_bidirectional = (std::ranges::bidirectional_range<view_helper::maybe
 template <bool is_const, typename... range_ts>
 concept all_forward = (std::ranges::forward_range<view_helper::maybe_const<is_const, range_ts>> && ...);
 
-// Pre cpp20-iterators: Infer iterator_category from modelled concepts.
-#if SEQAN3_COMPILER_IS_GCC && (__GNUC__ == 10)
-template <bool is_const, typename... range_ts>
-concept all_contiguous = (std::ranges::contiguous_range<view_helper::maybe_const<is_const, range_ts>> && ...);
-
-template <bool Const, typename... Views>
-struct iterator_category_t
-{
-    using iterator_category = std::conditional_t<
-        all_contiguous<Const, Views...>,
-        std::contiguous_iterator_tag,
-        std::conditional_t<
-            all_random_access<Const, Views...>,
-            std::random_access_iterator_tag,
-            std::conditional_t<
-                all_bidirectional<Const, Views...>,
-                std::bidirectional_iterator_tag,
-                std::conditional_t<all_forward<Const, Views...>, std::forward_iterator_tag, std::input_iterator_tag>>>>;
-};
-#else // cpp20 iterators
 template <bool>
 struct iterator_category_t;
 template <>
@@ -133,7 +113,6 @@ struct iterator_category_t<true>
 template <>
 struct iterator_category_t<false>
 {};
-#endif
 
 } // namespace seqan3::detail::zip
 
@@ -224,11 +203,7 @@ zip_view(range_ts &&...) -> zip_view<seqan3::detail::all_t<range_ts>...>;
 template <std::ranges::input_range... Views>
     requires (std::ranges::view<Views> && ...) && (sizeof...(Views) > 0)
 template <bool Const>
-#if SEQAN3_COMPILER_IS_GCC && (__GNUC__ == 10) // cpp17 iterators
-class zip_view<Views...>::iterator : public zip::iterator_category_t<Const, Views...>
-#else // cpp20 iterators
 class zip_view<Views...>::iterator : public zip::iterator_category_t<zip::all_forward<Const, Views...>>
-#endif
 {
 private:
     constexpr explicit iterator(
