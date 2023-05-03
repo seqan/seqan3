@@ -175,7 +175,7 @@ public:
     constexpr const_iterator begin() const noexcept
         requires const_iterable_range<underlying_range_type>
     {
-        return {std::ranges::cbegin(u_range), std::ranges::cbegin(u_range), std::ranges::cend(u_range)};
+        return {std::ranges::begin(u_range), std::ranges::begin(u_range), std::ranges::end(u_range)};
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.
@@ -200,7 +200,7 @@ public:
     constexpr const_iterator end() const noexcept
         requires const_iterable_range<underlying_range_type>
     {
-        return {back_iterator, std::ranges::cbegin(u_range), std::ranges::cend(u_range)};
+        return {back_iterator, std::ranges::begin(u_range), std::ranges::end(u_range)};
     }
     //!\}
 

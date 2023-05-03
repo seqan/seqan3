@@ -150,7 +150,7 @@ public:
         if constexpr (and_consume && !std::ranges::forward_range<urng_t const>)
             return basic_consume_iterator<true>{std::ranges::cbegin(urange), fun, std::ranges::cend(urange)};
         else
-            return basic_iterator<true>{std::ranges::cbegin(urange)};
+            return basic_iterator<true>{std::ranges::begin(urange)};
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.
@@ -181,7 +181,7 @@ public:
         if constexpr (and_consume && !std::ranges::forward_range<urng_t const>)
             return basic_consume_sentinel<true>{};
         else
-            return basic_sentinel<true>{std::ranges::cend(urange), fun};
+            return basic_sentinel<true>{std::ranges::end(urange), fun};
     }
     //!\}
 };
@@ -375,7 +375,7 @@ public:
     //!\brief Construct from a not const range a const range.
     basic_sentinel(basic_sentinel<!const_range> other)
         requires const_range && std::convertible_to<std::ranges::sentinel_t<urng_t>, underlying_sentinel_t>
-    : underlying_sentinel{std::move(other.underlying_sentinel)}, fun{other.fun}
+        : underlying_sentinel{std::move(other.underlying_sentinel)}, fun{other.fun}
     {}
     //!\}
 

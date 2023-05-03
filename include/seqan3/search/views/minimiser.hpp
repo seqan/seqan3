@@ -194,7 +194,7 @@ public:
     basic_iterator<true> begin() const
         requires const_iterable
     {
-        return {std::ranges::cbegin(urange1), std::ranges::cend(urange1), std::ranges::cbegin(urange2), window_size};
+        return {std::ranges::begin(urange1), std::ranges::end(urange1), std::ranges::begin(urange2), window_size};
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.
