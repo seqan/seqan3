@@ -85,7 +85,7 @@ public:
     constexpr auto begin() const noexcept
         requires const_iterable_range<urng_t>
     {
-        return basic_iterator<decltype(std::ranges::cbegin(urng))>{std::ranges::cbegin(urng)};
+        return basic_iterator<decltype(std::ranges::begin(urng))>{std::ranges::begin(urng)};
     }
 
     /*!\brief Returns the sentinel to the end of the range.
@@ -109,7 +109,7 @@ public:
         requires const_iterable_range<urng_t>
     {
         if constexpr (std::ranges::common_range<urng_t>)
-            return basic_iterator<decltype(std::ranges::cend(urng))>{std::ranges::cend(urng)};
+            return basic_iterator<decltype(std::ranges::end(urng))>{std::ranges::end(urng)};
         else
             return std::ranges::cend(urng);
     }

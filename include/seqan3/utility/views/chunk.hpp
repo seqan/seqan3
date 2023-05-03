@@ -107,7 +107,7 @@ public:
         requires const_iterable_range<urng_t>
     {
         if constexpr (std::ranges::forward_range<urng_t>)
-            return basic_iterator<true>{std::ranges::cbegin(urange), std::ranges::cend(urange), chunk_size};
+            return basic_iterator<true>{std::ranges::begin(urange), std::ranges::end(urange), chunk_size};
         else
             return basic_input_iterator<true>{std::ranges::cbegin(urange), std::ranges::cend(urange), chunk_size};
     }

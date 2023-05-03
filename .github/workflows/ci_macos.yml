@@ -42,6 +42,7 @@ jobs:
             cc: "gcc-13"
             build: unit
             build_type: Release
+            cxx_flags: "-std=c++23"
 
           - name: "Unit gcc12"
             cxx: "g++-12"

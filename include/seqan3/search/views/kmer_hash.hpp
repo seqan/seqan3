@@ -122,7 +122,7 @@ public:
     auto begin() const noexcept
         requires const_iterable_range<urng_t>
     {
-        return basic_iterator<true>{std::ranges::cbegin(urange), std::ranges::cend(urange), shape_};
+        return basic_iterator<true>{std::ranges::begin(urange), std::ranges::end(urange), shape_};
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.
@@ -155,7 +155,7 @@ public:
     {
         // Assigning the end iterator to the text_right iterator of the basic_iterator only works for common ranges.
         if constexpr (std::ranges::common_range<urng_t const>)
-            return basic_iterator<true>{std::ranges::cbegin(urange), std::ranges::cend(urange), shape_, true};
+            return basic_iterator<true>{std::ranges::begin(urange), std::ranges::end(urange), shape_, true};
         else
             return std::ranges::cend(urange);
     }
@@ -252,7 +252,7 @@ public:
     //!\brief Allow iterator on a const range to be constructible from an iterator over a non-const range.
     constexpr basic_iterator(basic_iterator<!const_range> const & it) noexcept
         requires const_range
-    :
+        :
         hash_value{std::move(it.hash_value)},
         roll_factor{std::move(it.roll_factor)},
         shape_{std::move(it.shape_)},
