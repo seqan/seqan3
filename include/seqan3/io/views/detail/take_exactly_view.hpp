@@ -159,7 +159,7 @@ public:
         {
             // const_iterator does not work if the underlying iterator is a std::input_iterator (it needs to access
             // target_size)
-            return const_iterator{std::ranges::cbegin(urange), 0, target_size};
+            return const_iterator{std::ranges::begin(urange), 0, target_size};
         }
     }
 
