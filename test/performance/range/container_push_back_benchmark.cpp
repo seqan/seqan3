@@ -112,7 +112,7 @@ BENCHMARK_TEMPLATE(push_back, small_vec, seqan3::alphabet_variant<char, seqan3::
 
 #if SEQAN3_HAS_SEQAN2
 
-#include <seqan/sequence.h>
+#    include <seqan/sequence.h>
 
 template <template <typename...> typename container_t, typename spec_t, typename alphabet_t>
 void push_back2(benchmark::State & state)

@@ -98,7 +98,8 @@ void index_benchmark_seqan3(benchmark::State & state)
 #if SEQAN3_HAS_SEQAN2
 struct sequence_store_seqan2
 {
-    seqan2::String<seqan2::Dna> const dna4_rng{seqan3::test::generate_sequence_seqan2<seqan2::Dna>(max_length, 0, seed)};
+    seqan2::String<seqan2::Dna> const dna4_rng{
+        seqan3::test::generate_sequence_seqan2<seqan2::Dna>(max_length, 0, seed)};
     seqan2::String<seqan2::AminoAcid> const aa27_rng{
         seqan3::test::generate_sequence_seqan2<seqan2::AminoAcid>(max_length, 0, seed)};
     seqan2::String<char> const char_rng{
@@ -137,9 +138,10 @@ void index_benchmark_seqan2(benchmark::State & state)
 
     using inner_rng_t = std::conditional_t<dimension == 1, rng_t, std::ranges::range_value_t<rng_t>>;
     using index_cfg = seqan2::FastFMIndexConfig<void, uint64_t>;
-    using index_t = std::conditional_t<index_tag == tag::fm_index,
-                                       seqan2::Index<rng_t, seqan2::FMIndex<void, index_cfg>>,
-                                       seqan2::Index<rng_t, seqan2::BidirectionalIndex<seqan2::FMIndex<void, index_cfg>>>>;
+    using index_t =
+        std::conditional_t<index_tag == tag::fm_index,
+                           seqan2::Index<rng_t, seqan2::FMIndex<void, index_cfg>>,
+                           seqan2::Index<rng_t, seqan2::BidirectionalIndex<seqan2::FMIndex<void, index_cfg>>>>;
 
     rng_t sequence;
     inner_rng_t inner_sequence;
