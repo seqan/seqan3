@@ -100,7 +100,7 @@ compile time measurably.
 In your program of assignment 1, initialise a vector of `seqan3::dna4` instead of `int`.
 The vector shall store the DNA string `ACTG`.
 Check the [API documentation](http://docs.seqan.de/seqan/3-master-user/modules.html) for which header you need to include.
-Additionally, browse the documentation for `seqan::dna4` on how to initialise a `seqan3::dna4` letter.
+Additionally, browse the documentation for `seqan3::dna4` on how to initialise a `seqan3::dna4` letter.
 \endassignment
 \solution
 \snippet introduction_dna4.cpp debug
