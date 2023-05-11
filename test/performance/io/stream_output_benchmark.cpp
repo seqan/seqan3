@@ -139,7 +139,7 @@ void seqan2_compressed(benchmark::State & state)
 {
     std::ostringstream os;
 
-    seqan::VirtualStream<char, seqan::Output> ogzf;
+    seqan2::VirtualStream<char, seqan2::Output> ogzf;
     compression_type tag;
     open(ogzf, os, tag);
 
@@ -147,14 +147,14 @@ void seqan2_compressed(benchmark::State & state)
     for (auto _ : state)
         write(ogzf, static_cast<char>(i++ % 128));
 }
-BENCHMARK_TEMPLATE(seqan2_compressed, seqan::Nothing);
+BENCHMARK_TEMPLATE(seqan2_compressed, seqan2::Nothing);
 
 #    ifdef SEQAN_HAS_ZLIB
-BENCHMARK_TEMPLATE(seqan2_compressed, seqan::GZFile);
-BENCHMARK_TEMPLATE(seqan2_compressed, seqan::BgzfFile);
+BENCHMARK_TEMPLATE(seqan2_compressed, seqan2::GZFile);
+BENCHMARK_TEMPLATE(seqan2_compressed, seqan2::BgzfFile);
 #    endif
 #    ifdef SEQAN_HAS_BZIP2
-BENCHMARK_TEMPLATE(seqan2_compressed, seqan::BZ2File);
+BENCHMARK_TEMPLATE(seqan2_compressed, seqan2::BZ2File);
 #    endif
 
 #endif // SEQAN3_HAS_SEQAN2

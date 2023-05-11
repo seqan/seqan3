@@ -66,8 +66,8 @@ auto generate_data_seqan2()
 {
     using sequence_t = decltype(seqan3::test::generate_sequence_seqan2<alphabet_t>());
 
-    seqan::StringSet<sequence_t> vec1;
-    seqan::StringSet<sequence_t> vec2;
+    seqan2::StringSet<sequence_t> vec1;
+    seqan2::StringSet<sequence_t> vec2;
     for (unsigned i = 0; i < set_size; ++i)
     {
         appendValue(vec1, seqan3::test::generate_sequence_seqan2<alphabet_t>(sequence_length, variance, i));
@@ -139,16 +139,16 @@ BENCHMARK_TEMPLATE(seqan3_affine_dna4_omp_for, trace)->UseRealTime();
 template <typename result_t>
 void seqan2_affine_dna4_parallel(benchmark::State & state)
 {
-    auto [vec1, vec2] = generate_data_seqan2<seqan::Dna>();
-    seqan::ExecutionPolicy<seqan::Parallel, seqan::Serial> exec{};
+    auto [vec1, vec2] = generate_data_seqan2<seqan2::Dna>();
+    seqan2::ExecutionPolicy<seqan2::Parallel, seqan2::Serial> exec{};
     setNumThreads(exec, std::thread::hardware_concurrency());
 
     int64_t total = 0;
     for (auto _ : state)
     {
         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
-        auto res = seqan::globalAlignmentScore(exec, vec1, vec2, seqan::Score<int>{4, -5, -1, -11});
-        total = std::accumulate(seqan::begin(res), seqan::end(res), total);
+        auto res = seqan2::globalAlignmentScore(exec, vec1, vec2, seqan2::Score<int>{4, -5, -1, -11});
+        total = std::accumulate(seqan2::begin(res), seqan2::end(res), total);
     }
 
     state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
@@ -166,16 +166,16 @@ void seqan2_affine_dna4_omp_for(benchmark::State & state)
 {
     constexpr bool score_only = std::is_same_v<result_t, seqan3::align_cfg::output_score>;
 
-    auto [vec1, vec2] = generate_data_seqan2<seqan::Dna>();
+    auto [vec1, vec2] = generate_data_seqan2<seqan2::Dna>();
 
     using gapped_t = std::conditional_t<score_only,
                                         std::remove_reference_t<decltype(vec1[0])>,
-                                        seqan::Gaps<std::remove_reference_t<decltype(vec1[0])>>>;
+                                        seqan2::Gaps<std::remove_reference_t<decltype(vec1[0])>>>;
 
-    seqan::StringSet<gapped_t> gap1;
-    seqan::StringSet<gapped_t> gap2;
+    seqan2::StringSet<gapped_t> gap1;
+    seqan2::StringSet<gapped_t> gap2;
 
-    for (size_t i = 0; i < seqan::length(vec1); ++i)
+    for (size_t i = 0; i < seqan2::length(vec1); ++i)
     {
         appendValue(gap1, gapped_t{vec1[i]});
         appendValue(gap2, gapped_t{vec2[i]});
@@ -185,12 +185,12 @@ void seqan2_affine_dna4_omp_for(benchmark::State & state)
     for (auto _ : state)
     {
 #    pragma omp parallel for num_threads(std::thread::hardware_concurrency()) schedule(guided)
-        for (size_t i = 0; i < seqan::length(vec1); ++i)
+        for (size_t i = 0; i < seqan2::length(vec1); ++i)
         {
             if constexpr (score_only)
-                total += seqan::globalAlignmentScore(vec1[i], vec2[i], seqan::Score<int>{4, -5, -1, -11});
+                total += seqan2::globalAlignmentScore(vec1[i], vec2[i], seqan2::Score<int>{4, -5, -1, -11});
             else
-                total += seqan::globalAlignment(gap1[i], gap2[i], seqan::Score<int>{4, -5, -1, -11});
+                total += seqan2::globalAlignment(gap1[i], gap2[i], seqan2::Score<int>{4, -5, -1, -11});
         }
     }
 

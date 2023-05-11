@@ -152,13 +152,13 @@ void seqan2_sam_file_read_from_stream(benchmark::State & state)
 
     // create temporary BamFileIn and read from disk to get the context...
     write_file(filename, n_queries);
-    seqan::BamHeader tmp_header;
-    seqan::BamFileIn tmp_bam_file_in(filename.c_str());
-    seqan::readHeader(tmp_header, tmp_bam_file_in);
-    auto cxt = seqan::context(tmp_bam_file_in);
+    seqan2::BamHeader tmp_header;
+    seqan2::BamFileIn tmp_bam_file_in(filename.c_str());
+    seqan2::readHeader(tmp_header, tmp_bam_file_in);
+    auto cxt = seqan2::context(tmp_bam_file_in);
 
-    seqan::BamAlignmentRecord record;
-    seqan::BamHeader header;
+    seqan2::BamAlignmentRecord record;
+    seqan2::BamHeader header;
 
     std::istringstream istream{sam_file};
 
@@ -167,14 +167,14 @@ void seqan2_sam_file_read_from_stream(benchmark::State & state)
         istream.clear();
         istream.seekg(0, std::ios::beg);
 
-        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input>>(istream);
+        auto it = seqan2::Iter<std::istringstream, seqan2::StreamIterator<seqan2::Input>>(istream);
 
-        seqan::readHeader(header, cxt, it, seqan::Sam());
+        seqan2::readHeader(header, cxt, it, seqan2::Sam());
 
         for (size_t i = 0; i < n_queries; ++i)
         {
-            seqan::readRecord(record, cxt, it, seqan::Sam());
-            seqan::clear(record);
+            seqan2::readRecord(record, cxt, it, seqan2::Sam());
+            seqan2::clear(record);
         }
 
         clear(header);
@@ -190,20 +190,20 @@ void seqan2_sam_file_read_from_disk(benchmark::State & state)
 
     write_file(tmp_path, n_queries);
 
-    seqan::BamHeader header;
-    seqan::BamAlignmentRecord record;
+    seqan2::BamHeader header;
+    seqan2::BamAlignmentRecord record;
 
     for (auto _ : state)
     {
-        seqan::BamFileIn bamFileIn(tmp_path.c_str());
+        seqan2::BamFileIn bamFileIn(tmp_path.c_str());
 
-        seqan::readHeader(header, bamFileIn);
+        seqan2::readHeader(header, bamFileIn);
 
-        while (!seqan::atEnd(bamFileIn))
-            seqan::readRecord(record, bamFileIn);
+        while (!seqan2::atEnd(bamFileIn))
+            seqan2::readRecord(record, bamFileIn);
 
-        seqan::clear(header);
-        seqan::clear(record);
+        seqan2::clear(header);
+        seqan2::clear(record);
     }
 }
 

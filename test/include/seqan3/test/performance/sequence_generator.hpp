@@ -145,10 +145,10 @@ template <typename alphabet_t>
 auto generate_sequence_seqan2(size_t const len = 500, size_t const variance = 0, size_t const seed = 0)
 {
     std::mt19937 gen(seed);
-    std::uniform_int_distribution<size_t> dis_alpha(0, seqan::ValueSize<alphabet_t>::VALUE - 1);
+    std::uniform_int_distribution<size_t> dis_alpha(0, seqan2::ValueSize<alphabet_t>::VALUE - 1);
     std::uniform_int_distribution<size_t> dis_length(len - variance, len + variance);
 
-    seqan::String<alphabet_t> sequence;
+    seqan2::String<alphabet_t> sequence;
     size_t length = dis_length(gen);
 
     for (size_t l = 0; l < length; ++l)
@@ -164,8 +164,8 @@ auto generate_sequence_pairs_seqan2(size_t const sequence_length,
 {
     using sequence_t = decltype(generate_sequence_seqan2<alphabet_t>());
 
-    seqan::StringSet<sequence_t> vec1;
-    seqan::StringSet<sequence_t> vec2;
+    seqan2::StringSet<sequence_t> vec1;
+    seqan2::StringSet<sequence_t> vec2;
 
     for (unsigned i = 0; i < set_size; ++i)
     {

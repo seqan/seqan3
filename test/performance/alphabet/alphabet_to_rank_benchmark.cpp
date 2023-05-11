@@ -92,27 +92,27 @@ BENCHMARK_TEMPLATE(to_rank, seqan3::qualified<seqan3::dna5, seqan3::phred94>);
 template <typename alphabet_t>
 void to_rank_seqan2(benchmark::State & state)
 {
-    std::array<alphabet_t, 256> alphs = create_alphabet_array<alphabet_t, true>(seqan::ValueSize<alphabet_t>::VALUE);
+    std::array<alphabet_t, 256> alphs = create_alphabet_array<alphabet_t, true>(seqan2::ValueSize<alphabet_t>::VALUE);
 
     for (auto _ : state)
     {
         for (alphabet_t a : alphs)
         {
-            auto ord_value = seqan::ordValue(a);
+            auto ord_value = seqan2::ordValue(a);
             benchmark::DoNotOptimize(ord_value);
         }
     }
 }
 
-BENCHMARK_TEMPLATE(to_rank_seqan2, seqan::Dna);
-BENCHMARK_TEMPLATE(to_rank_seqan2, seqan::Rna);
-BENCHMARK_TEMPLATE(to_rank_seqan2, seqan::Dna5);
-BENCHMARK_TEMPLATE(to_rank_seqan2, seqan::Rna5);
-BENCHMARK_TEMPLATE(to_rank_seqan2, seqan::Iupac);
-BENCHMARK_TEMPLATE(to_rank_seqan2, seqan::AminoAcid);
+BENCHMARK_TEMPLATE(to_rank_seqan2, seqan2::Dna);
+BENCHMARK_TEMPLATE(to_rank_seqan2, seqan2::Rna);
+BENCHMARK_TEMPLATE(to_rank_seqan2, seqan2::Dna5);
+BENCHMARK_TEMPLATE(to_rank_seqan2, seqan2::Rna5);
+BENCHMARK_TEMPLATE(to_rank_seqan2, seqan2::Iupac);
+BENCHMARK_TEMPLATE(to_rank_seqan2, seqan2::AminoAcid);
 
-BENCHMARK_TEMPLATE(to_rank_seqan2, seqan::Dna5Q);
-BENCHMARK_TEMPLATE(to_rank_seqan2, typename seqan::GappedValueType<seqan::Dna>::Type);
+BENCHMARK_TEMPLATE(to_rank_seqan2, seqan2::Dna5Q);
+BENCHMARK_TEMPLATE(to_rank_seqan2, typename seqan2::GappedValueType<seqan2::Dna>::Type);
 #endif
 
 BENCHMARK_MAIN();

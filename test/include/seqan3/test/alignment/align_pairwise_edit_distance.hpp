@@ -125,12 +125,12 @@ struct edit_distance_algorithm_seqan2
         static int execute(sequence1_t & sequence1, sequence2_t & sequence2)
         {
             constexpr bool is_semi_global = is_semi_global_t{};
-            using method_t = std::conditional_t<is_semi_global, seqan::MyersUkkonen, seqan::MyersUkkonenGlobal>;
-            using pattern_t = seqan::Pattern<sequence2_t, method_t>;
+            using method_t = std::conditional_t<is_semi_global, seqan2::MyersUkkonen, seqan2::MyersUkkonenGlobal>;
+            using pattern_t = seqan2::Pattern<sequence2_t, method_t>;
 
             pattern_t pattern(sequence2, std::numeric_limits<int>::max());
-            seqan::Finder<sequence1_t> finder(sequence1);
-            while (seqan::find(finder, pattern))
+            seqan2::Finder<sequence1_t> finder(sequence1);
+            while (seqan2::find(finder, pattern))
                 ;
 
             return -static_cast<int>(pattern.errors);

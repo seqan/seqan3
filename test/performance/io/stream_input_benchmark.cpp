@@ -65,7 +65,7 @@ std::string const input_comp;
 
 #ifdef SEQAN3_HAS_SEQAN2
 template <>
-std::string const & input_comp<seqan::Nothing> = input;
+std::string const & input_comp<seqan2::Nothing> = input;
 #endif
 
 #if defined(SEQAN3_HAS_ZLIB)
@@ -98,10 +98,10 @@ std::string const input_comp<seqan3::contrib::bgzf_istream>
 // clang-format on
 #    ifdef SEQAN3_HAS_SEQAN2
 template <>
-std::string const & input_comp<seqan::GZFile> = input_comp<seqan3::contrib::gz_istream>;
+std::string const & input_comp<seqan2::GZFile> = input_comp<seqan3::contrib::gz_istream>;
 
 template <>
-std::string const & input_comp<seqan::BgzfFile> = input_comp<seqan3::contrib::bgzf_istream>;
+std::string const & input_comp<seqan2::BgzfFile> = input_comp<seqan3::contrib::bgzf_istream>;
 #    endif
 #endif
 
@@ -121,7 +121,7 @@ std::string const input_comp<seqan3::contrib::bz2_istream>
 // clang-format on
 #    ifdef SEQAN3_HAS_SEQAN2
 template <>
-std::string const & input_comp<seqan::BZ2File> = input_comp<seqan3::contrib::bz2_istream>;
+std::string const & input_comp<seqan2::BZ2File> = input_comp<seqan3::contrib::bz2_istream>;
 #    endif
 #endif
 
@@ -266,7 +266,7 @@ void seqan2_uncompressed(benchmark::State & state)
     {
         s.clear();
         s.seekg(0, std::ios::beg);
-        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input>>(s);
+        auto it = seqan2::Iter<std::istringstream, seqan2::StreamIterator<seqan2::Input>>(s);
 
         for (size_t v = 0; v < input.size(); ++v)
         {
@@ -288,7 +288,7 @@ void seqan2_compressed_impl(benchmark::State & state)
         s.clear();
         s.seekg(0, std::ios::beg);
         stream_t comp{s};
-        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input>>(comp);
+        auto it = seqan2::Iter<std::istringstream, seqan2::StreamIterator<seqan2::Input>>(comp);
 
         for (size_t v = 0; v < input_comp<compression_t>.size(); ++v)
         {
@@ -304,29 +304,29 @@ template <typename compression_type>
 void seqan2_compressed(benchmark::State & state)
 {
 #    ifdef SEQAN_HAS_ZLIB
-    if constexpr (std::is_same_v<compression_type, seqan::GZFile>)
-        seqan2_compressed_impl<seqan::GZFile, zlib_stream::zip_istream>(state);
-    else if constexpr (std::is_same_v<compression_type, seqan::BgzfFile>)
-        seqan2_compressed_impl<seqan::BgzfFile, seqan::bgzf_istream>(state);
+    if constexpr (std::is_same_v<compression_type, seqan2::GZFile>)
+        seqan2_compressed_impl<seqan2::GZFile, zlib_stream::zip_istream>(state);
+    else if constexpr (std::is_same_v<compression_type, seqan2::BgzfFile>)
+        seqan2_compressed_impl<seqan2::BgzfFile, seqan2::bgzf_istream>(state);
 #    endif // SEQAN_HAS_ZLIB
 
 #    ifdef SEQAN_HAS_BZIP2
-    if constexpr (std::is_same_v<compression_type, seqan::BZ2File>)
-        seqan2_compressed_impl<seqan::BZ2File, bzip2_stream::bzip2_istream>(state);
+    if constexpr (std::is_same_v<compression_type, seqan2::BZ2File>)
+        seqan2_compressed_impl<seqan2::BZ2File, bzip2_stream::bzip2_istream>(state);
 #    endif // SEQAN_HAS_BZIP2
 
-    if constexpr (std::is_same_v<compression_type, seqan::Nothing>)
+    if constexpr (std::is_same_v<compression_type, seqan2::Nothing>)
         seqan2_uncompressed(state);
 }
 
-BENCHMARK_TEMPLATE(seqan2_compressed, seqan::Nothing);
+BENCHMARK_TEMPLATE(seqan2_compressed, seqan2::Nothing);
 
 #    ifdef SEQAN_HAS_ZLIB
-BENCHMARK_TEMPLATE(seqan2_compressed, seqan::GZFile);
-BENCHMARK_TEMPLATE(seqan2_compressed, seqan::BgzfFile);
+BENCHMARK_TEMPLATE(seqan2_compressed, seqan2::GZFile);
+BENCHMARK_TEMPLATE(seqan2_compressed, seqan2::BgzfFile);
 #    endif
 #    ifdef SEQAN_HAS_BZIP2
-BENCHMARK_TEMPLATE(seqan2_compressed, seqan::BZ2File);
+BENCHMARK_TEMPLATE(seqan2_compressed, seqan2::BZ2File);
 #    endif
 
 #endif // SEQAN3_HAS_SEQAN2

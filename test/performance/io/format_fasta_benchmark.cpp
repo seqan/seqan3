@@ -72,17 +72,17 @@ BENCHMARK(seqan3_dna5_ostringstream_write);
 void seqan2_dna5_ostringstream_write(benchmark::State & state)
 {
     std::ostringstream ostream;
-    seqan::CharString id = fasta_hdr;
-    seqan::Dna5String seq = fasta_seq;
+    seqan2::CharString id = fasta_hdr;
+    seqan2::Dna5String seq = fasta_seq;
 
     for (auto _ : state)
     {
         for (size_t i = 0; i < iterations_per_run; ++i)
-            seqan::writeRecord(ostream, id, seq, seqan::Fasta());
+            seqan2::writeRecord(ostream, id, seq, seqan2::Fasta());
     }
 
     ostream = std::ostringstream{};
-    seqan::writeRecord(ostream, id, seq, seqan::Fasta());
+    seqan2::writeRecord(ostream, id, seq, seqan2::Fasta());
     size_t bytes_per_run = ostream.str().size() * iterations_per_run;
     state.counters["iterations_per_run"] = iterations_per_run;
     state.counters["bytes_per_run"] = bytes_per_run;
@@ -120,8 +120,8 @@ BENCHMARK(seqan3_dna5_istringstream_read);
 
 void seqan2_dna5_istringstream_read(benchmark::State & state)
 {
-    seqan::CharString id;
-    seqan::Dna5String seq;
+    seqan2::CharString id;
+    seqan2::Dna5String seq;
 
     std::istringstream istream{fasta_file};
 
@@ -129,11 +129,11 @@ void seqan2_dna5_istringstream_read(benchmark::State & state)
     {
         istream.clear();
         istream.seekg(0, std::ios::beg);
-        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input>>(istream);
+        auto it = seqan2::Iter<std::istringstream, seqan2::StreamIterator<seqan2::Input>>(istream);
 
         for (size_t i = 0; i < iterations_per_run; ++i)
         {
-            readRecord(id, seq, it, seqan::Fasta{});
+            readRecord(id, seq, it, seqan2::Fasta{});
             clear(id);
             clear(seq);
         }

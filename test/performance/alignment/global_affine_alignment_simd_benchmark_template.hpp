@@ -101,13 +101,13 @@ void seqan2_affine_accelerated(benchmark::State & state, alphabet_t, args_t &&..
     for (auto _ : state)
     {
         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
-        seqan::String<int> res;
+        seqan2::String<int> res;
         if constexpr (execute_with_band)
-            res = seqan::globalAlignmentScore(exec, vec1, vec2, scoring_scheme, lower_diagonal, upper_diagonal);
+            res = seqan2::globalAlignmentScore(exec, vec1, vec2, scoring_scheme, lower_diagonal, upper_diagonal);
         else
-            res = seqan::globalAlignmentScore(exec, vec1, vec2, scoring_scheme);
+            res = seqan2::globalAlignmentScore(exec, vec1, vec2, scoring_scheme);
 
-        total = std::accumulate(seqan::begin(res), seqan::end(res), total);
+        total = std::accumulate(seqan2::begin(res), seqan2::end(res), total);
     }
 
     state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2), seqan3_align_cfg);

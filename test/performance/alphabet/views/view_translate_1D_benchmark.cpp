@@ -129,12 +129,12 @@ void copy_impl(benchmark::State & state, std::vector<seqan3::dna4> const & dna_s
 
 #ifdef SEQAN3_HAS_SEQAN2
 template <typename tag_t>
-void copy_impl_seqan2(benchmark::State & state, seqan::DnaString const & dna_sequence)
+void copy_impl_seqan2(benchmark::State & state, seqan2::DnaString const & dna_sequence)
 {
     for (auto _ : state)
     {
-        seqan::String<seqan::AminoAcid> out{};
-        seqan::translate(out, dna_sequence, seqan::SINGLE_FRAME, seqan::CANONICAL, tag_t{});
+        seqan2::String<seqan2::AminoAcid> out{};
+        seqan2::translate(out, dna_sequence, seqan2::SINGLE_FRAME, seqan2::CANONICAL, tag_t{});
     }
 }
 #endif // SEQAN3_HAS_SEQAN2
@@ -145,7 +145,7 @@ void copy(benchmark::State & state)
     std::vector<seqan3::dna4> seqan3_dna_sequence{seqan3::test::generate_sequence<seqan3::dna4>(1000, 0, 0)};
 
 #ifdef SEQAN3_HAS_SEQAN2
-    seqan::DnaString seqan2_dna_sequence{seqan3::test::generate_sequence_seqan2<seqan::Dna>(1000, 0, 0)};
+    seqan2::DnaString seqan2_dna_sequence{seqan3::test::generate_sequence_seqan2<seqan2::Dna>(1000, 0, 0)};
 #endif // SEQAN3_HAS_SEQAN2
 
     if constexpr (std::is_same_v<tag_t, translate_tag>)
@@ -164,8 +164,8 @@ void copy(benchmark::State & state)
 BENCHMARK_TEMPLATE(copy, translate_tag);
 
 #ifdef SEQAN3_HAS_SEQAN2
-BENCHMARK_TEMPLATE(copy, seqan::Serial);
-BENCHMARK_TEMPLATE(copy, seqan::Parallel);
+BENCHMARK_TEMPLATE(copy, seqan2::Serial);
+BENCHMARK_TEMPLATE(copy, seqan2::Parallel);
 #endif // SEQAN3_HAS_SEQAN2
 
 // ============================================================================

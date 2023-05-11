@@ -127,32 +127,32 @@ void sequential_write2(benchmark::State & state)
             element = letter;
 
     state.counters["sizeof"] = sizeof(alphabet_t);
-    state.counters["alph_size"] = seqan::ValueSize<alphabet_t>::VALUE;
+    state.counters["alph_size"] = seqan2::ValueSize<alphabet_t>::VALUE;
 }
 
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Alloc<>, char);
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Alloc<>, uint8_t);
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Alloc<>, uint16_t);
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Alloc<>, uint32_t);
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Alloc<>, uint64_t);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Alloc<>, char);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Alloc<>, uint8_t);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Alloc<>, uint16_t);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Alloc<>, uint32_t);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Alloc<>, uint64_t);
 
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Alloc<>, seqan::Dna);
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Alloc<>, seqan::Dna5);
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Alloc<>, seqan::Iupac);
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Alloc<>, seqan::AminoAcid);
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Alloc<>, seqan::Dna5Q);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Alloc<>, seqan2::Dna);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Alloc<>, seqan2::Dna5);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Alloc<>, seqan2::Iupac);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Alloc<>, seqan2::AminoAcid);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Alloc<>, seqan2::Dna5Q);
 
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Packed<>, seqan::Dna);
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Packed<>, seqan::Dna5);
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Packed<>, seqan::Iupac);
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Packed<>, seqan::AminoAcid);
-// BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Packed<>, seqan::Dna5Q); // broken in SeqAn2
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Packed<>, seqan2::Dna);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Packed<>, seqan2::Dna5);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Packed<>, seqan2::Iupac);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Packed<>, seqan2::AminoAcid);
+// BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Packed<>, seqan2::Dna5Q); // broken in SeqAn2
 
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Array<10'000>, seqan::Dna);
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Array<10'000>, seqan::Dna5);
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Array<10'000>, seqan::Iupac);
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Array<10'000>, seqan::AminoAcid);
-BENCHMARK_TEMPLATE(sequential_write2, seqan::String, seqan::Array<10'000>, seqan::Dna5Q);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Array<10'000>, seqan2::Dna);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Array<10'000>, seqan2::Dna5);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Array<10'000>, seqan2::Iupac);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Array<10'000>, seqan2::AminoAcid);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Array<10'000>, seqan2::Dna5Q);
 
 #endif // SEQAN3_HAS_SEQAN2
 
