@@ -90,9 +90,9 @@ void read_all(benchmark::State & state)
         for (auto _ : state)
         {
             std::ifstream s{filename, std::ios::binary};
-            auto it = seqan::Iter<std::ifstream, seqan::StreamIterator<seqan::Input>>{s};
+            auto it = seqan2::Iter<std::ifstream, seqan2::StreamIterator<seqan2::Input>>{s};
 
-            for (; !seqan::atEnd(it); ++it)
+            for (; !seqan2::atEnd(it); ++it)
                 c += *it;
         }
     }

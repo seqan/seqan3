@@ -85,8 +85,8 @@ void seqan2_edit_distance_dna4(benchmark::State & state)
     using seqan3::test::edit_distance_algorithm_seqan2;
 
     size_t sequence_length = 500;
-    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
-    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 1);
+    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 0);
+    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 1);
     int score = 0;
 
     seqan3::configuration align_cfg = seqan3::align_cfg::method_global{};
@@ -104,12 +104,12 @@ void seqan2_edit_distance_dna4(benchmark::State & state)
 void seqan2_edit_distance_generic_dna4(benchmark::State & state)
 {
     size_t sequence_length = 500;
-    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
-    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 1);
+    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 0);
+    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 1);
     int score = 0;
 
     for (auto _ : state)
-        score += seqan::globalAlignmentScore(seq1, seq2, seqan::Score<int>{0, -1, -1});
+        score += seqan2::globalAlignmentScore(seq1, seq2, seqan2::Score<int>{0, -1, -1});
 
     state.counters["score"] = score;
     state.counters["cells"] =
@@ -173,7 +173,7 @@ void seqan2_edit_distance_dna4_collection(benchmark::State & state)
     size_t sequence_length = 500;
     size_t set_size = 100;
 
-    auto [vec1, vec2] = seqan3::test::generate_sequence_pairs_seqan2<seqan::Dna>(sequence_length, set_size);
+    auto [vec1, vec2] = seqan3::test::generate_sequence_pairs_seqan2<seqan2::Dna>(sequence_length, set_size);
     int score = 0;
 
     seqan3::configuration align_cfg = seqan3::align_cfg::method_global{};
@@ -195,12 +195,12 @@ void seqan2_edit_distance_dna4_generic_collection(benchmark::State & state)
     size_t sequence_length = 500;
     size_t set_size = 100;
 
-    auto [vec1, vec2] = seqan3::test::generate_sequence_pairs_seqan2<seqan::Dna>(sequence_length, set_size);
+    auto [vec1, vec2] = seqan3::test::generate_sequence_pairs_seqan2<seqan2::Dna>(sequence_length, set_size);
     int score = 0;
 
     for (auto _ : state)
     {
-        for (int score_ : seqan::globalAlignmentScore(vec1, vec2, seqan::Score<int>{0, -1, -1}))
+        for (int score_ : seqan2::globalAlignmentScore(vec1, vec2, seqan2::Score<int>{0, -1, -1}))
             score += score_;
     }
 

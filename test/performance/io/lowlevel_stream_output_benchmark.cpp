@@ -67,7 +67,7 @@ void write_all(benchmark::State & state)
 #ifdef SEQAN3_HAS_SEQAN2
             else if constexpr (id == tag::seqan2_stream_it || id == tag::seqan2_stream_it_write_range)
             {
-                return seqan::Iter<std::ofstream, seqan::StreamIterator<seqan::Output>>{os};
+                return seqan2::Iter<std::ofstream, seqan2::StreamIterator<seqan2::Output>>{os};
             }
 #endif
         }();
@@ -79,7 +79,7 @@ void write_all(benchmark::State & state)
 #ifdef SEQAN3_HAS_SEQAN2
         else if constexpr (id == tag::seqan2_stream_it_write_range)
         {
-            seqan::write(it, seqan2_sequence);
+            seqan2::write(it, seqan2_sequence);
         }
 #endif
         else

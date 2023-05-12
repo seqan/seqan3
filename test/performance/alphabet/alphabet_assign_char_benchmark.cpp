@@ -87,15 +87,15 @@ void assign_char_seqan2(benchmark::State & state)
     }
 }
 
-BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Dna);
-BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Rna);
-BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Dna5);
-BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Rna5);
-BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Iupac);
-BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::AminoAcid);
+BENCHMARK_TEMPLATE(assign_char_seqan2, seqan2::Dna);
+BENCHMARK_TEMPLATE(assign_char_seqan2, seqan2::Rna);
+BENCHMARK_TEMPLATE(assign_char_seqan2, seqan2::Dna5);
+BENCHMARK_TEMPLATE(assign_char_seqan2, seqan2::Rna5);
+BENCHMARK_TEMPLATE(assign_char_seqan2, seqan2::Iupac);
+BENCHMARK_TEMPLATE(assign_char_seqan2, seqan2::AminoAcid);
 
-BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Dna5Q);
-BENCHMARK_TEMPLATE(assign_char_seqan2, typename seqan::GappedValueType<seqan::Dna>::Type);
+BENCHMARK_TEMPLATE(assign_char_seqan2, seqan2::Dna5Q);
+BENCHMARK_TEMPLATE(assign_char_seqan2, typename seqan2::GappedValueType<seqan2::Dna>::Type);
 #endif
 
 BENCHMARK_MAIN();

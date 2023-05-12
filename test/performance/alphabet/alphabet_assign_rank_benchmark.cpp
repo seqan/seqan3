@@ -83,7 +83,7 @@ void assign_rank_seqan2(benchmark::State & state)
     using rank_t = uint8_t;
 
     std::array<rank_t, 256> ranks{};
-    fill_rank_array<rank_t>(ranks, seqan::ValueSize<alphabet_t>::VALUE);
+    fill_rank_array<rank_t>(ranks, seqan2::ValueSize<alphabet_t>::VALUE);
 
     alphabet_t a{};
     for (auto _ : state)
@@ -96,15 +96,15 @@ void assign_rank_seqan2(benchmark::State & state)
     }
 }
 
-BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan::Dna);
-BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan::Rna);
-BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan::Dna5);
-BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan::Rna5);
-BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan::Iupac);
-BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan::AminoAcid);
+BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan2::Dna);
+BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan2::Rna);
+BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan2::Dna5);
+BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan2::Rna5);
+BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan2::Iupac);
+BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan2::AminoAcid);
 
-BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan::Dna5Q);
-BENCHMARK_TEMPLATE(assign_rank_seqan2, typename seqan::GappedValueType<seqan::Dna>::Type);
+BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan2::Dna5Q);
+BENCHMARK_TEMPLATE(assign_rank_seqan2, typename seqan2::GappedValueType<seqan2::Dna>::Type);
 #endif
 
 BENCHMARK_MAIN();

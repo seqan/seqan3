@@ -80,7 +80,7 @@ void seqan2_align_pairwise_edit_distance_benchmark(benchmark::State & state,
     if constexpr (collection_benchmark)
     {
         for (auto _ : state)
-            for (size_t i = 0u; i < seqan::length(sequences1); ++i)
+            for (size_t i = 0u; i < seqan2::length(sequences1); ++i)
                 total += algorithm_seqan2(sequences1[i], sequences2[i]);
     }
     else

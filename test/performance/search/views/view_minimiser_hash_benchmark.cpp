@@ -64,14 +64,14 @@ enum class method_tag
 #ifdef SEQAN3_HAS_SEQAN2
 inline auto make_gapped_shape_seqan2(size_t const k)
 {
-    seqan::String<char> bitmap;
+    seqan2::String<char> bitmap;
 
     for (size_t i{0}; i < k - 1; ++i)
-        seqan::append(bitmap, seqan::CharString(std::to_string((i + 1) % 2)));
+        seqan2::append(bitmap, seqan2::CharString(std::to_string((i + 1) % 2)));
 
-    seqan::append(bitmap, seqan::CharString("1"));
+    seqan2::append(bitmap, seqan2::CharString("1"));
 
-    return seqan::Shape<seqan::Dna, seqan::GenericShape>(bitmap);
+    return seqan2::Shape<seqan2::Dna, seqan2::GenericShape>(bitmap);
 }
 #endif // SEQAN3_HAS_SEQAN2
 
@@ -151,14 +151,14 @@ void compute_minimisers(benchmark::State & state)
 #ifdef SEQAN3_HAS_SEQAN2
         else
         {
-            auto seqan2_seq = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
+            auto seqan2_seq = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 0);
             using shape_t = std::conditional_t<tag == method_tag::seqan2_ungapped,
-                                               seqan::Shape<seqan::Dna, seqan::SimpleShape>,
-                                               seqan::Shape<seqan::Dna, seqan::GenericShape>>;
+                                               seqan2::Shape<seqan2::Dna, seqan2::SimpleShape>,
+                                               seqan2::Shape<seqan2::Dna, seqan2::GenericShape>>;
 
             shape_t shape;
             if constexpr (tag == method_tag::seqan2_ungapped)
-                seqan::resize(shape, k);
+                seqan2::resize(shape, k);
             else
                 shape = make_gapped_shape_seqan2(k);
 

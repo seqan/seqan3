@@ -169,12 +169,12 @@ void copy_impl(benchmark::State & state,
 
 #ifdef SEQAN3_HAS_SEQAN2
 template <typename tag_t, typename stringset_t>
-void copy_impl_seqan2(benchmark::State & state, seqan::StringSet<seqan::DnaString> const & dna_sequence_collection)
+void copy_impl_seqan2(benchmark::State & state, seqan2::StringSet<seqan2::DnaString> const & dna_sequence_collection)
 {
     for (auto _ : state)
     {
-        seqan::StringSet<seqan::String<seqan::AminoAcid>, stringset_t> out{};
-        seqan::translate(out, dna_sequence_collection, seqan::SIX_FRAME, seqan::CANONICAL, tag_t{});
+        seqan2::StringSet<seqan2::String<seqan2::AminoAcid>, stringset_t> out{};
+        seqan2::translate(out, dna_sequence_collection, seqan2::SIX_FRAME, seqan2::CANONICAL, tag_t{});
     }
 }
 #endif // SEQAN3_HAS_SEQAN2
@@ -204,12 +204,12 @@ void copy(benchmark::State & state)
 template <typename tag_t, typename stringset_t>
 void copy(benchmark::State & state)
 {
-    seqan::StringSet<seqan::DnaString> dna_sequence_collection{};
+    seqan2::StringSet<seqan2::DnaString> dna_sequence_collection{};
     resize(dna_sequence_collection, 500);
 
     for (size_t i = 0; i < length(dna_sequence_collection); ++i)
     {
-        dna_sequence_collection[i] = seqan3::test::generate_sequence_seqan2<seqan::Dna>(100, 0, 0);
+        dna_sequence_collection[i] = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(100, 0, 0);
     }
 
     copy_impl_seqan2<tag_t, stringset_t>(state, dna_sequence_collection);
@@ -220,10 +220,10 @@ BENCHMARK_TEMPLATE(copy, translate_tag);
 BENCHMARK_TEMPLATE(copy, translate_join_tag);
 
 #ifdef SEQAN3_HAS_SEQAN2
-BENCHMARK_TEMPLATE(copy, seqan::Serial, seqan::Owner<>);
-BENCHMARK_TEMPLATE(copy, seqan::Serial, seqan::Owner<seqan::ConcatDirect<>>);
-BENCHMARK_TEMPLATE(copy, seqan::Parallel, seqan::Owner<>);
-BENCHMARK_TEMPLATE(copy, seqan::Parallel, seqan::Owner<seqan::ConcatDirect<>>);
+BENCHMARK_TEMPLATE(copy, seqan2::Serial, seqan2::Owner<>);
+BENCHMARK_TEMPLATE(copy, seqan2::Serial, seqan2::Owner<seqan2::ConcatDirect<>>);
+BENCHMARK_TEMPLATE(copy, seqan2::Parallel, seqan2::Owner<>);
+BENCHMARK_TEMPLATE(copy, seqan2::Parallel, seqan2::Owner<seqan2::ConcatDirect<>>);
 #endif // SEQAN3_HAS_SEQAN2
 
 // ============================================================================

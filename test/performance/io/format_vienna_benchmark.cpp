@@ -69,19 +69,19 @@ BENCHMARK(write_seqan3);
 void write_seqan2(benchmark::State & state)
 {
     std::ostringstream ostream;
-    seqan::RnaRecord record{};
+    seqan2::RnaRecord record{};
     record.name = header;
     record.sequence = sequence;
-    seqan::bracket2graph(record.fixedGraphs, structure);
+    seqan2::bracket2graph(record.fixedGraphs, structure);
 
     for (auto _ : state)
     {
         for (size_t idx = 0; idx < iterations_per_run; ++idx)
-            seqan::writeRecord(ostream, record, seqan::Vienna());
+            seqan2::writeRecord(ostream, record, seqan2::Vienna());
     }
 
     ostream = std::ostringstream{};
-    seqan::writeRecord(ostream, record, seqan::Vienna());
+    seqan2::writeRecord(ostream, record, seqan2::Vienna());
     size_t bytes_per_run = ostream.str().size() * iterations_per_run;
     state.counters["iterations_per_run"] = iterations_per_run;
     state.counters["bytes_per_run"] = bytes_per_run;
@@ -115,18 +115,18 @@ BENCHMARK(read_seqan3);
 #if SEQAN3_HAS_SEQAN2
 void read_seqan2(benchmark::State & state)
 {
-    seqan::RnaRecord record{};
+    seqan2::RnaRecord record{};
     std::istringstream istream{vienna_file};
 
     for (auto _ : state)
     {
         istream.clear();
         istream.seekg(0, std::ios::beg);
-        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input>>(istream);
+        auto it = seqan2::Iter<std::istringstream, seqan2::StreamIterator<seqan2::Input>>(istream);
 
         for (size_t idx = 0; idx < iterations_per_run; ++idx)
         {
-            seqan::readRecord(record, it, seqan::Vienna());
+            seqan2::readRecord(record, it, seqan2::Vienna());
             clear(record);
         }
     }

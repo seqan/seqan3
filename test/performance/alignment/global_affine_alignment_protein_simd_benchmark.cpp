@@ -51,14 +51,14 @@ BENCHMARK_CAPTURE(seqan3_affine_accelerated,
 // SeqAn2
 // ----------------------------------------------------------------------------
 
-using scoring_scheme_t = seqan::Score<int16_t, seqan::ScoreMatrix<seqan::AminoAcid, seqan::ScoreSpecBlosum62>>;
+using scoring_scheme_t = seqan2::Score<int16_t, seqan2::ScoreMatrix<seqan2::AminoAcid, seqan2::ScoreSpecBlosum62>>;
 
 // Note SeqAn2 has no parallel interface yet for computing the traceback as well.
 BENCHMARK_CAPTURE(seqan2_affine_accelerated,
                   simd_with_score,
-                  seqan::AminoAcid{},
+                  seqan2::AminoAcid{},
                   scoring_scheme_t{-1, -11},
-                  seqan::ExecutionPolicy<seqan::Serial, seqan::Vectorial>{},
+                  seqan2::ExecutionPolicy<seqan2::Serial, seqan2::Vectorial>{},
                   1,
                   affine_cfg)
     ->UseRealTime()
@@ -66,9 +66,9 @@ BENCHMARK_CAPTURE(seqan2_affine_accelerated,
 
 BENCHMARK_CAPTURE(seqan2_affine_accelerated,
                   simd_parallel_with_score,
-                  seqan::AminoAcid{},
+                  seqan2::AminoAcid{},
                   scoring_scheme_t{-1, -11},
-                  seqan::ExecutionPolicy<seqan::Parallel, seqan::Vectorial>{},
+                  seqan2::ExecutionPolicy<seqan2::Parallel, seqan2::Vectorial>{},
                   get_number_of_threads(),
                   affine_cfg)
     ->UseRealTime()

@@ -174,19 +174,19 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
     std::string fastq_file = generate_fastq_string(iterations_per_run);
     std::istringstream istream{fastq_file};
 
-    seqan::CharString id{};
-    seqan::Dna5String seq{};
-    seqan::CharString qual{};
+    seqan2::CharString id{};
+    seqan2::Dna5String seq{};
+    seqan2::CharString qual{};
 
     for (auto _ : state)
     {
         istream.clear();
         istream.seekg(0, std::ios::beg);
-        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input>>(istream);
+        auto it = seqan2::Iter<std::istringstream, seqan2::StreamIterator<seqan2::Input>>(istream);
 
         for (size_t i = 0; i < iterations_per_run; ++i)
         {
-            readRecord(id, seq, qual, it, seqan::Fastq{});
+            readRecord(id, seq, qual, it, seqan2::Fastq{});
             clear(id);
             clear(seq);
             clear(qual);
@@ -211,18 +211,18 @@ void fastq_read_from_disk_seqan2(benchmark::State & state)
     auto filename = tmp.path() / "format_fastq_benchmark_test_file.fastq";
     create_fastq_file_for(filename, fastq_content);
 
-    seqan::CharString id{};
-    seqan::Dna5String seq{};
-    seqan::CharString qual{};
+    seqan2::CharString id{};
+    seqan2::Dna5String seq{};
+    seqan2::CharString qual{};
 
     for (auto _ : state)
     {
-        seqan::SeqFileIn seqFileIn(filename.c_str());
+        seqan2::SeqFileIn seqFileIn(filename.c_str());
         auto it = seqFileIn.iter;
 
         for (size_t i = 0; i < iterations_per_run; ++i)
         {
-            readRecord(id, seq, qual, it, seqan::Fastq{});
+            readRecord(id, seq, qual, it, seqan2::Fastq{});
             clear(id);
             clear(seq);
             clear(qual);

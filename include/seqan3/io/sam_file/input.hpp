@@ -361,7 +361,7 @@ public:
                              field::header_ptr>;
 
     static_assert(!selected_field_ids::contains(field::alignment),
-                  "The seqan3::field::alignment was removed from the allowed fields for seqan::sam_file_input. "
+                  "The seqan3::field::alignment was removed from the allowed fields for seqan3::sam_file_input. "
                   "Only seqan3::field::cigar is supported. Please see seqan3::alignment_from_cigar on how to get an "
                   "alignment from the cigar information.");
 

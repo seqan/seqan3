@@ -48,7 +48,7 @@ static void simple(benchmark::State & state)
             sum += seqan3::is_alpha(arr[i]);
 #if SEQAN3_HAS_SEQAN2
         else if constexpr (id == tag::seqan2)
-            sum += seqan::IsAlpha{}(arr[i]);
+            sum += seqan2::IsAlpha{}(arr[i]);
 #endif
     }
 
@@ -83,9 +83,9 @@ static void combined(benchmark::State & state)
             sum += seqan3::is_alpha(arr[i]) || seqan3::is_blank(arr[i]) || seqan3::is_digit(arr[i]);
 #if SEQAN3_HAS_SEQAN2
         else if constexpr (id == tag::seqan2)
-            sum += seqan::OrFunctor<seqan::OrFunctor<seqan::IsAlpha, seqan::IsBlank>, seqan::IsDigit>{}(arr[i]);
+            sum += seqan2::OrFunctor<seqan2::OrFunctor<seqan2::IsAlpha, seqan2::IsBlank>, seqan2::IsDigit>{}(arr[i]);
         else if constexpr (id == tag::seqan2_serial)
-            sum += seqan::IsAlpha{}(arr[i]) || seqan::IsBlank{}(arr[i]) || seqan::IsDigit{}(arr[i]);
+            sum += seqan2::IsAlpha{}(arr[i]) || seqan2::IsBlank{}(arr[i]) || seqan2::IsDigit{}(arr[i]);
 #endif
     }
 

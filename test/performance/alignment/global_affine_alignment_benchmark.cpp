@@ -59,13 +59,13 @@ BENCHMARK(seqan3_affine_dna4);
 void seqan2_affine_dna4(benchmark::State & state)
 {
     size_t sequence_length = 500;
-    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
-    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 1);
+    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 0);
+    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 1);
 
     for (auto _ : state)
     {
         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
-        seqan::globalAlignmentScore(seq1, seq2, seqan::Score<int>{4, -5, -1, -11});
+        seqan2::globalAlignmentScore(seq1, seq2, seqan2::Score<int>{4, -5, -1, -11});
     }
 
     state.counters["cells"] = seqan3::test::pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)), affine_cfg);
@@ -102,15 +102,15 @@ BENCHMARK(seqan3_affine_dna4_trace);
 void seqan2_affine_dna4_trace(benchmark::State & state)
 {
     size_t sequence_length = 500;
-    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
-    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 1);
+    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 0);
+    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 1);
 
-    seqan::Gaps<decltype(seq1)> gap1{seq1};
-    seqan::Gaps<decltype(seq2)> gap2{seq2};
+    seqan2::Gaps<decltype(seq1)> gap1{seq1};
+    seqan2::Gaps<decltype(seq2)> gap2{seq2};
     for (auto _ : state)
     {
         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
-        seqan::globalAlignment(gap1, gap2, seqan::Score<int>{4, -5, -1, -11});
+        seqan2::globalAlignment(gap1, gap2, seqan2::Score<int>{4, -5, -1, -11});
     }
 
     state.counters["cells"] = seqan3::test::pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)), affine_cfg);
@@ -156,14 +156,14 @@ void seqan2_affine_dna4_collection(benchmark::State & state)
 {
     size_t sequence_length = 100;
     size_t set_size = 100;
-    using sequence_t = decltype(seqan3::test::generate_sequence_seqan2<seqan::Dna>());
+    using sequence_t = decltype(seqan3::test::generate_sequence_seqan2<seqan2::Dna>());
 
-    seqan::StringSet<sequence_t> vec1;
-    seqan::StringSet<sequence_t> vec2;
+    seqan2::StringSet<sequence_t> vec1;
+    seqan2::StringSet<sequence_t> vec2;
     for (unsigned i = 0; i < set_size; ++i)
     {
-        sequence_t seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, i);
-        sequence_t seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, i + set_size);
+        sequence_t seq1 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, i);
+        sequence_t seq2 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, i + set_size);
         appendValue(vec1, seq1);
         appendValue(vec2, seq2);
     }
@@ -171,7 +171,7 @@ void seqan2_affine_dna4_collection(benchmark::State & state)
     for (auto _ : state)
     {
         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
-        seqan::globalAlignmentScore(vec1, vec2, seqan::Score<int>{4, -5, -1, -11});
+        seqan2::globalAlignmentScore(vec1, vec2, seqan2::Score<int>{4, -5, -1, -11});
     }
 
     state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
@@ -217,31 +217,31 @@ void seqan2_affine_dna4_trace_collection(benchmark::State & state)
 {
     size_t sequence_length = 100;
     size_t set_size = 100;
-    using sequence_t = decltype(seqan3::test::generate_sequence_seqan2<seqan::Dna>());
+    using sequence_t = decltype(seqan3::test::generate_sequence_seqan2<seqan2::Dna>());
 
-    seqan::StringSet<sequence_t> vec1;
-    seqan::StringSet<sequence_t> vec2;
+    seqan2::StringSet<sequence_t> vec1;
+    seqan2::StringSet<sequence_t> vec2;
     for (unsigned i = 0; i < set_size; ++i)
     {
-        sequence_t seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, i);
-        sequence_t seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, i + set_size);
+        sequence_t seq1 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, i);
+        sequence_t seq2 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, i + set_size);
         appendValue(vec1, seq1);
         appendValue(vec2, seq2);
     }
 
-    seqan::StringSet<seqan::Gaps<sequence_t>> gap1;
-    seqan::StringSet<seqan::Gaps<sequence_t>> gap2;
+    seqan2::StringSet<seqan2::Gaps<sequence_t>> gap1;
+    seqan2::StringSet<seqan2::Gaps<sequence_t>> gap2;
 
     for (unsigned i = 0; i < set_size; ++i)
     {
-        appendValue(gap1, seqan::Gaps<sequence_t>{vec1[i]});
-        appendValue(gap2, seqan::Gaps<sequence_t>{vec2[i]});
+        appendValue(gap1, seqan2::Gaps<sequence_t>{vec1[i]});
+        appendValue(gap2, seqan2::Gaps<sequence_t>{vec2[i]});
     }
 
     for (auto _ : state)
     {
         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
-        seqan::globalAlignment(gap1, gap2, seqan::Score<int>{4, -5, -1, -11});
+        seqan2::globalAlignment(gap1, gap2, seqan2::Score<int>{4, -5, -1, -11});
     }
 
     state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);

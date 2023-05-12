@@ -83,7 +83,7 @@ class strong_type;
 //------------------------------------------------------------------------------
 
 /*!\interface seqan3::detail::derived_from_strong_type <>
- * \brief Defines the requirements of a seqan::detail::strong_type specialisation.
+ * \brief Defines the requirements of a seqan3::detail::strong_type specialisation.
  * \tparam strong_type_t The type the concept check is performed on (the putative strong type).
  * \ingroup core
  */

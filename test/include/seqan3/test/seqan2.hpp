@@ -44,9 +44,9 @@ namespace std
  *        needed for std::input_iterator and std::ranges::input_range.
  */
 template <typename... args_t>
-struct indirectly_readable_traits<seqan::Iter<args_t...>>
+struct indirectly_readable_traits<seqan2::Iter<args_t...>>
 {
-    using value_type = typename seqan::Value<seqan::Iter<args_t...>>::Type;
+    using value_type = typename seqan2::Value<seqan2::Iter<args_t...>>::Type;
 };
 
 } // namespace std

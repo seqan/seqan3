@@ -73,16 +73,16 @@ static constexpr void resize(container_t & container,
 
 #if SEQAN3_HAS_SEQAN2
 template <typename container_t>
-static constexpr void clear(container_t & container) noexcept(noexcept(seqan::clear(std::declval<container_t>())))
+static constexpr void clear(container_t & container) noexcept(noexcept(seqan2::clear(std::declval<container_t>())))
 {
-    seqan::clear(container);
+    seqan2::clear(container);
 }
 
 template <typename container_t>
 static constexpr void resize(container_t & container,
-                             size_t const size) noexcept(noexcept(seqan::resize(std::declval<container_t>(), 1u)))
+                             size_t const size) noexcept(noexcept(seqan2::resize(std::declval<container_t>(), 1u)))
 {
-    seqan::resize(container, size);
+    seqan2::resize(container, size);
 }
 #endif // SEQAN3_HAS_SEQAN2
 
@@ -128,26 +128,26 @@ BENCHMARK_TEMPLATE(assign, tag::uninitialized_copy, std::vector, seqan3::dna5);
 BENCHMARK_TEMPLATE(assign, tag::uninitialized_copy, std::vector, seqan3::aa27);
 
 #if SEQAN3_HAS_SEQAN2
-BENCHMARK_TEMPLATE(assign, tag::assignment_operator, std::vector, seqan::Dna);
-BENCHMARK_TEMPLATE(assign, tag::assignment_operator, std::vector, seqan::Dna5);
-BENCHMARK_TEMPLATE(assign, tag::assignment_operator, std::vector, seqan::AminoAcid);
-BENCHMARK_TEMPLATE(assign, tag::assignment_operator, seqan::String, seqan::Dna);
-BENCHMARK_TEMPLATE(assign, tag::assignment_operator, seqan::String, seqan::Dna5);
-BENCHMARK_TEMPLATE(assign, tag::assignment_operator, seqan::String, seqan::AminoAcid);
+BENCHMARK_TEMPLATE(assign, tag::assignment_operator, std::vector, seqan2::Dna);
+BENCHMARK_TEMPLATE(assign, tag::assignment_operator, std::vector, seqan2::Dna5);
+BENCHMARK_TEMPLATE(assign, tag::assignment_operator, std::vector, seqan2::AminoAcid);
+BENCHMARK_TEMPLATE(assign, tag::assignment_operator, seqan2::String, seqan2::Dna);
+BENCHMARK_TEMPLATE(assign, tag::assignment_operator, seqan2::String, seqan2::Dna5);
+BENCHMARK_TEMPLATE(assign, tag::assignment_operator, seqan2::String, seqan2::AminoAcid);
 
-BENCHMARK_TEMPLATE(assign, tag::std_copy, std::vector, seqan::Dna);
-BENCHMARK_TEMPLATE(assign, tag::std_copy, std::vector, seqan::Dna5);
-BENCHMARK_TEMPLATE(assign, tag::std_copy, std::vector, seqan::AminoAcid);
-BENCHMARK_TEMPLATE(assign, tag::std_copy, seqan::String, seqan::Dna);
-BENCHMARK_TEMPLATE(assign, tag::std_copy, seqan::String, seqan::Dna5);
-BENCHMARK_TEMPLATE(assign, tag::std_copy, seqan::String, seqan::AminoAcid);
+BENCHMARK_TEMPLATE(assign, tag::std_copy, std::vector, seqan2::Dna);
+BENCHMARK_TEMPLATE(assign, tag::std_copy, std::vector, seqan2::Dna5);
+BENCHMARK_TEMPLATE(assign, tag::std_copy, std::vector, seqan2::AminoAcid);
+BENCHMARK_TEMPLATE(assign, tag::std_copy, seqan2::String, seqan2::Dna);
+BENCHMARK_TEMPLATE(assign, tag::std_copy, seqan2::String, seqan2::Dna5);
+BENCHMARK_TEMPLATE(assign, tag::std_copy, seqan2::String, seqan2::AminoAcid);
 
-BENCHMARK_TEMPLATE(assign, tag::uninitialized_copy, std::vector, seqan::Dna);
-BENCHMARK_TEMPLATE(assign, tag::uninitialized_copy, std::vector, seqan::Dna5);
-BENCHMARK_TEMPLATE(assign, tag::uninitialized_copy, std::vector, seqan::AminoAcid);
-BENCHMARK_TEMPLATE(assign, tag::uninitialized_copy, seqan::String, seqan::Dna);
-BENCHMARK_TEMPLATE(assign, tag::uninitialized_copy, seqan::String, seqan::Dna5);
-BENCHMARK_TEMPLATE(assign, tag::uninitialized_copy, seqan::String, seqan::AminoAcid);
+BENCHMARK_TEMPLATE(assign, tag::uninitialized_copy, std::vector, seqan2::Dna);
+BENCHMARK_TEMPLATE(assign, tag::uninitialized_copy, std::vector, seqan2::Dna5);
+BENCHMARK_TEMPLATE(assign, tag::uninitialized_copy, std::vector, seqan2::AminoAcid);
+BENCHMARK_TEMPLATE(assign, tag::uninitialized_copy, seqan2::String, seqan2::Dna);
+BENCHMARK_TEMPLATE(assign, tag::uninitialized_copy, seqan2::String, seqan2::Dna5);
+BENCHMARK_TEMPLATE(assign, tag::uninitialized_copy, seqan2::String, seqan2::AminoAcid);
 #endif // SEQAN3_HAS_SEQAN2
 
 BENCHMARK_MAIN();
