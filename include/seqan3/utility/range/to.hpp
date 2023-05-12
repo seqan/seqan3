@@ -12,140 +12,17 @@
 
 #pragma once
 
-#include <algorithm>
-#include <ranges>
-
-#include <seqan3/core/range/detail/adaptor_from_functor.hpp>
-#include <seqan3/utility/concept.hpp>
-
-namespace seqan3::detail
-{
-
-//!\brief Function object to convert a std::ranges::input_range to a fully defined container.
-template <typename container_t>
-    requires (!std::ranges::view<container_t>)
-struct to_fn
-{
-private:
-    /*!\brief Copies a range into a container.
-     * \tparam rng_t       Type of the range.
-     * \tparam container_t Type of the target container.
-     */
-    template <std::ranges::input_range rng_t>
-        requires std::convertible_to<std::ranges::range_reference_t<rng_t>, std::ranges::range_value_t<container_t>>
-    auto impl(rng_t && rng, container_t & container) const
-    {
-        std::ranges::copy(rng, std::back_inserter(container));
-    }
-
-    //!\overload
-    template <std::ranges::input_range rng_t>
-    auto impl(rng_t && rng, container_t & container) const
-        requires std::ranges::input_range<std::ranges::range_value_t<rng_t>>
-    {
-        auto adaptor = to_fn<std::ranges::range_value_t<container_t>>{};
-        auto inner_rng = rng | std::views::transform(adaptor);
-        std::ranges::copy(inner_rng, std::back_inserter(container));
-    }
-
-public:
-    /*!\brief Converts a template-template into a container.
-     * \tparam rng_t  The type of the range being processed.
-     * \tparam args_t The types of the arguments for the constructor.
-     * \param  rng    The range being processed.
-     * \param  args   Arguments to pass to the constructor of the container.
-     */
-    template <std::ranges::input_range rng_t, typename... args_t>
-    constexpr auto operator()(rng_t && rng, args_t &&... args) const
-    {
-        auto new_container = container_t(std::forward<args_t>(args)...);
-
-        // reserve memory if functionality is available
-        if constexpr (std::ranges::sized_range<rng_t> && requires (container_t c) { c.reserve(size_t{}); })
-            new_container.reserve(std::ranges::size(rng));
-
-        impl(std::forward<rng_t>(rng), new_container);
-        return new_container;
-    }
-};
-
-/*!\brief Similar to to_fn, but accepts a template-template as argument,
- *        e.g.: to_fn<vector> instead of to_fn<vector<int>>.
- */
-template <template <typename> typename container_t>
-struct to_template_template_fn
-{
-    /*!\brief Converts a template-template into a container.
-     * \tparam rng_t  The type of the range being processed.
-     * \tparam args_t The types of the arguments for the constructor.
-     * \param  rng    The range being processed.
-     * \param  args   Arguments to pass to the constructor of the container.
-     */
-    template <std::ranges::input_range rng_t, typename... args_t>
-    constexpr auto operator()(rng_t && rng, args_t &&... args) const
-    {
-        auto adaptor = to_fn<container_t<std::ranges::range_value_t<rng_t>>>{};
-        return adaptor(std::forward<rng_t>(rng), std::forward<args_t>(args)...);
-    }
-};
-
-} // namespace seqan3::detail
+#include <seqan3/contrib/std/to.hpp>
+#include <seqan3/core/platform.hpp>
 
 namespace seqan3::ranges
 {
 
 /*!\brief Converts a range to a container.
  * \ingroup utility_range
- * \details
- * To convert a range to a container, either the "pipe syntax" or the "function call" syntax can be used.
- * Both syntaxes support the explicit specification of the target container or
- * a specification with a deduced value type.
- *
- * Currently supported containers are:
- * - `std::vector`
- * - `std::list`
- * - `std::deque`
- *
- * \include doc/tutorial/05_ranges/to.cpp
- *
  * \noapi{This is a implementation of the C++23 ranges::to. It will be replaced with std::ranges::to.}
+ * \sa https://en.cppreference.com/w/cpp/ranges/to
  */
-template <typename container_t, typename... args_t>
-constexpr auto to(args_t &&... args)
-{
-    return detail::adaptor_from_functor{detail::to_fn<container_t>{}, std::forward<args_t>(args)...};
-}
-
-/*!\brief Converts a range to a container.
- * \ingroup utility_range
- * \overload
- */
-template <template <typename...> typename container_t, typename... args_t>
-constexpr auto to(args_t &&... args)
-{
-    return detail::adaptor_from_functor{detail::to_template_template_fn<container_t>{}, std::forward<args_t>(args)...};
-}
-
-/*!\brief Converts a range to a container.
- * \ingroup utility_range
- * \overload
- */
-template <typename container_t, std::ranges::input_range rng_t, typename... args_t>
-constexpr auto to(rng_t && rng, args_t &&... args)
-{
-    return detail::adaptor_from_functor{detail::to_fn<container_t>{},
-                                        std::forward<args_t>(args)...}(std::forward<rng_t>(rng));
-}
-
-/*!\brief Converts a range to a container.
- * \ingroup utility_range
- * \overload
- */
-template <template <class...> typename container_t, std::ranges::input_range rng_t, typename... args_t>
-constexpr auto to(rng_t && rng, args_t &&... args)
-{
-    return detail::adaptor_from_functor{detail::to_template_template_fn<container_t>{},
-                                        std::forward<args_t>(args)...}(std::forward<rng_t>(rng));
-}
+using SEQAN3_DOXYGEN_ONLY(to =) seqan::std::ranges::to;
 
 } // namespace seqan3::ranges

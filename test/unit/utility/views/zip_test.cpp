@@ -144,7 +144,7 @@ TEST_F(zip_test, basic)
         EXPECT_EQ(zip_view.size(), 4u);
     }
     {
-        auto zip_view = range | seqan3::views::zip(other_range);
+        auto zip_view = seqan3::views::zip(range, other_range);
         size_t i{};
         for (auto && [elem_1, elem_2] : zip_view)
         {
