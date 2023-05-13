@@ -32,6 +32,10 @@ jobs:
       matrix:
         compiler: [11, 12] #,13
         build: [unit, snippet, performance, header]
+        include:
+          - compiler: 12
+            build: unit
+            cxx_flags: "-Wno-restrict" # Bogus errors in gtest that won't be fixed upstream
 
     steps:
       - name: Checkout SeqAn3
@@ -84,6 +88,7 @@ jobs:
           mkdir seqan3-build
           cd seqan3-build
           cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=Release \
+                                                   -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
                                                    -DSEQAN3_VERBOSE_TESTS=OFF \
                                                    -DSEQAN3_BENCHMARK_MIN_TIME=0.01
           case "${{ matrix.build }}" in
