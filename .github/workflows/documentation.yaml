@@ -62,7 +62,7 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
         with:
-          flags: '-azr --delete --timeout=60 --omit-dir-times'
+          flags: '-zr --delete --timeout=60 --omit-dir-times'
           src: 'doc-build/doc_usr/html/'
           dest: '$REMOTE_USER@$REMOTE_HOST:$TARGET/3-master-user'
 
@@ -74,6 +74,6 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
         with:
-          flags: '-azr --delete --timeout=60 --omit-dir-times'
+          flags: '-zr --delete --timeout=60 --omit-dir-times'
           src: 'doc-build/doc_dev/html/'
           dest: '$REMOTE_USER@$REMOTE_HOST:$TARGET/3-master-dev'

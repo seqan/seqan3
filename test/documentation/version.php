@@ -7,19 +7,7 @@ $files = scandir($LOCALDIR, SCANDIR_SORT_DESCENDING);
 $list = array();
 foreach( $files as $file  )
 {
-    if( strpos($file, "master_") !== FALSE ) // Skip directories starting with "master_"
-        continue;
-    if( $file == "master") // Skip SeqAn2 "master" documentation
-        continue;
-    if( $file == "index.html") // Skip seqan/index.html
-        continue;
-    if( strpos($file, "develop") !== FALSE )  // Skip SeqAn2 "develop" and "develop_" documentation
-        continue;
-    if( $file[0] == "1") // Skip SeqAn1 versioned documentation
-        continue;
-    if( $file[0] == "2") // Skip SeqAn2 versioned documentation
-        continue;
-    if( strpos($file, "learning-resources") !== FALSE ) // Skip learning resources
+    if( strpos($file, "hidden_") !== FALSE ) // Skip directories starting with "hidden_"
         continue;
     if( $file[0] == "." ) // Skip current directory
         continue;
