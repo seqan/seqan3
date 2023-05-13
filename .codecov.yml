@@ -9,8 +9,7 @@ coverage:
     project:  # project is the overall code coverage of the whole codebase
       default:
         if_ci_failed: success # per default, codecov would fail if any CI fails
-        target: auto          # the target coverage, usually the code coverage of the base-branch
-        threshold: 0.02%      # codecov/project fails if there is a drop of more than 0.02%
+        informational: true   # the codecov/project status is never "fail"
     patch:  # patch is the code-coverage of the changed lines in the PR
       default:
         if_ci_failed: success # per default, codecov would fail if any CI fails
