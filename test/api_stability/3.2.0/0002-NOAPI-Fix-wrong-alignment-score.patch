@@ -1,7 +1,7 @@
-From 96ff359cf3b9fec51a4802ef025c4a4a5fb49bfc Mon Sep 17 00:00:00 2001
+From b465f21eb58a9f56e98f8d25f008809bb997cedd Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Mon, 9 Jan 2023 15:16:43 +0100
-Subject: [PATCH 2/3] [NOAPI] Fix wrong alignment score
+Subject: [PATCH 2/4] [NOAPI] Fix wrong alignment score
 
 ---
  .../matrix/detail/debug_stream_trace_directions_test.cpp      | 4 ++--
@@ -39,5 +39,5 @@ index 830572184..e5d2bd799 100644
  static constexpr auto UL = U | L;
  static constexpr auto DL = D | L;
 -- 
-2.39.0
+2.40.1
 

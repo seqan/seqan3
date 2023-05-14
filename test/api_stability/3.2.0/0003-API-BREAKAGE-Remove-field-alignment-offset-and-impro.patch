@@ -1,7 +1,7 @@
-From bbbdd26e0aab2f2d5447d75f80b8aa0a064631ff Mon Sep 17 00:00:00 2001
+From e186b58707e8c25ae8d6d1301674f45a48ead9fa Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Mon, 9 Jan 2023 15:16:55 +0100
-Subject: [PATCH 3/3] [API][BREAKAGE] Remove field::{alignment,offset} and
+Subject: [PATCH 3/4] [API][BREAKAGE] Remove field::{alignment,offset} and
  improve performance
 
 ---
@@ -1901,5 +1901,5 @@ index 29dae8568..715888254 100644
  
      EXPECT_EQ(counter, 3u);
 -- 
-2.39.0
+2.40.1
 

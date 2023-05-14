@@ -1,0 +1,1573 @@
+From 03becc43be5398bb3d4572a8adbb0389a07b0f0e Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Sun, 14 May 2023 15:21:47 +0200
+Subject: [PATCH 4/4] [API][FIX] Use namespace seqan2
+
+---
+ .../align_pairwise_edit_distance.hpp          |  8 +--
+ .../test/performance/seqan2_minimiser.h       | 22 +++----
+ .../test/performance/sequence_generator.hpp   |  8 +--
+ test/include/seqan3/test/seqan2.hpp           |  4 +-
+ .../edit_distance_benchmark_template.hpp      |  2 +-
+ .../edit_distance_unbanded_benchmark.cpp      | 16 ++---
+ ...affine_alignment_banded_simd_benchmark.cpp | 12 ++--
+ .../global_affine_alignment_benchmark.cpp     | 48 +++++++--------
+ ...al_affine_alignment_parallel_benchmark.cpp | 28 ++++-----
+ ...ffine_alignment_protein_simd_benchmark.cpp | 10 ++--
+ ...global_affine_alignment_simd_benchmark.cpp | 12 ++--
+ ...fine_alignment_simd_benchmark_template.hpp |  8 +--
+ .../local_affine_alignment_benchmark.cpp      | 48 +++++++--------
+ .../alphabet_assign_char_benchmark.cpp        | 16 ++---
+ .../alphabet_assign_rank_benchmark.cpp        | 18 +++---
+ .../alphabet/alphabet_to_char_benchmark.cpp   | 18 +++---
+ .../alphabet/alphabet_to_rank_benchmark.cpp   | 24 ++++----
+ .../views/view_translate_1D_benchmark.cpp     | 12 ++--
+ .../views/view_translate_2D_1D_benchmark.cpp  | 18 +++---
+ .../performance/io/format_fasta_benchmark.cpp | 16 ++---
+ .../performance/io/format_fastq_benchmark.cpp | 20 +++----
+ test/performance/io/format_sam_benchmark.cpp  | 38 ++++++------
+ .../io/format_vienna_benchmark.cpp            | 14 ++---
+ .../io/lowlevel_stream_input_benchmark.cpp    |  6 +-
+ .../io/lowlevel_stream_output_benchmark.cpp   |  4 +-
+ .../performance/io/stream_input_benchmark.cpp | 34 +++++------
+ .../io/stream_output_benchmark.cpp            | 10 ++--
+ .../search/index_construction_benchmark.cpp   | 60 ++++++++++---------
+ .../search/views/view_kmer_hash_benchmark.cpp | 34 +++++------
+ .../views/view_minimiser_hash_benchmark.cpp   | 16 ++---
+ .../char_predicate_benchmark.cpp              |  6 +-
+ test/unit/test/seqan2_test.cpp                | 12 ++--
+ 32 files changed, 304 insertions(+), 298 deletions(-)
+
+diff --git a/test/include/seqan3/test/alignment/align_pairwise_edit_distance.hpp b/test/include/seqan3/test/alignment/align_pairwise_edit_distance.hpp
+index eeeb48e55..86bc9d8ef 100644
+--- a/test/include/seqan3/test/alignment/align_pairwise_edit_distance.hpp
++++ b/test/include/seqan3/test/alignment/align_pairwise_edit_distance.hpp
+@@ -125,12 +125,12 @@ struct edit_distance_algorithm_seqan2
+         static int execute(sequence1_t & sequence1, sequence2_t & sequence2)
+         {
+             constexpr bool is_semi_global = is_semi_global_t{};
+-            using method_t = std::conditional_t<is_semi_global, seqan::MyersUkkonen, seqan::MyersUkkonenGlobal>;
+-            using pattern_t = seqan::Pattern<sequence2_t, method_t>;
++            using method_t = std::conditional_t<is_semi_global, seqan2::MyersUkkonen, seqan2::MyersUkkonenGlobal>;
++            using pattern_t = seqan2::Pattern<sequence2_t, method_t>;
+ 
+             pattern_t pattern(sequence2, std::numeric_limits<int>::max());
+-            seqan::Finder<sequence1_t> finder(sequence1);
+-            while (seqan::find(finder, pattern))
++            seqan2::Finder<sequence1_t> finder(sequence1);
++            while (seqan2::find(finder, pattern))
+                 ;
+ 
+             return -static_cast<int>(pattern.errors);
+diff --git a/test/include/seqan3/test/performance/seqan2_minimiser.h b/test/include/seqan3/test/performance/seqan2_minimiser.h
+index 33947e6e2..491a9b8d4 100644
+--- a/test/include/seqan3/test/performance/seqan2_minimiser.h
++++ b/test/include/seqan3/test/performance/seqan2_minimiser.h
+@@ -31,13 +31,13 @@ class minimiser
+ {
+ private:
+     //!\brief The alphabet type.
+-    using alphabet_t = seqan::Dna;
++    using alphabet_t = seqan2::Dna;
+     //!\brief The text type.
+-    using text_t = seqan::String<alphabet_t>;
++    using text_t = seqan2::String<alphabet_t>;
+     //!\brief The type of the complemented text.
+-    using complement_t = seqan::ModifiedString<text_t const, seqan::ModComplementDna>;
++    using complement_t = seqan2::ModifiedString<text_t const, seqan2::ModComplementDna>;
+     //!\brief The type of the reverse complemented text.
+-    using reverse_complement_t = seqan::ModifiedString<complement_t, seqan::ModReverse>;
++    using reverse_complement_t = seqan2::ModifiedString<complement_t, seqan2::ModReverse>;
+ 
+     //!\brief The window size of the minimiser.
+     uint64_t w{};
+@@ -84,7 +84,7 @@ public:
+ 
+     void compute(text_t const & text)
+     {
+-        uint64_t text_length = seqan::length(text);
++        uint64_t text_length = seqan2::length(text);
+ 
+         forward_hashes.clear();
+         reverse_hashes.clear();
+@@ -111,15 +111,15 @@ public:
+ 
+         forward_hashes.reserve(possible_kmers);
+         reverse_hashes.reserve(possible_kmers);
+-        auto it1 = seqan::begin(text);
+-        auto it2 = seqan::begin(rc_text);
+-        seqan::hashInit(forward_shape, it1);
+-        seqan::hashInit(reverse_shape, it2);
++        auto it1 = seqan2::begin(text);
++        auto it2 = seqan2::begin(rc_text);
++        seqan2::hashInit(forward_shape, it1);
++        seqan2::hashInit(reverse_shape, it2);
+ 
+         for (uint64_t i = 0; i < possible_kmers; ++i, ++it1, ++it2)
+         {
+-            forward_hashes.push_back(hash_impl(seqan::hashNext(forward_shape, it1)));
+-            reverse_hashes.push_back(hash_impl(seqan::hashNext(reverse_shape, it2)));
++            forward_hashes.push_back(hash_impl(seqan2::hashNext(forward_shape, it1)));
++            reverse_hashes.push_back(hash_impl(seqan2::hashNext(reverse_shape, it2)));
+         }
+ 
+         // Choose the minimisers.
+diff --git a/test/include/seqan3/test/performance/sequence_generator.hpp b/test/include/seqan3/test/performance/sequence_generator.hpp
+index 4b7cdc10c..d4faba6f8 100644
+--- a/test/include/seqan3/test/performance/sequence_generator.hpp
++++ b/test/include/seqan3/test/performance/sequence_generator.hpp
+@@ -145,10 +145,10 @@ template <typename alphabet_t>
+ auto generate_sequence_seqan2(size_t const len = 500, size_t const variance = 0, size_t const seed = 0)
+ {
+     std::mt19937 gen(seed);
+-    std::uniform_int_distribution<size_t> dis_alpha(0, seqan::ValueSize<alphabet_t>::VALUE - 1);
++    std::uniform_int_distribution<size_t> dis_alpha(0, seqan2::ValueSize<alphabet_t>::VALUE - 1);
+     std::uniform_int_distribution<size_t> dis_length(len - variance, len + variance);
+ 
+-    seqan::String<alphabet_t> sequence;
++    seqan2::String<alphabet_t> sequence;
+     size_t length = dis_length(gen);
+ 
+     for (size_t l = 0; l < length; ++l)
+@@ -164,8 +164,8 @@ auto generate_sequence_pairs_seqan2(size_t const sequence_length,
+ {
+     using sequence_t = decltype(generate_sequence_seqan2<alphabet_t>());
+ 
+-    seqan::StringSet<sequence_t> vec1;
+-    seqan::StringSet<sequence_t> vec2;
++    seqan2::StringSet<sequence_t> vec1;
++    seqan2::StringSet<sequence_t> vec2;
+ 
+     for (unsigned i = 0; i < set_size; ++i)
+     {
+diff --git a/test/include/seqan3/test/seqan2.hpp b/test/include/seqan3/test/seqan2.hpp
+index b92624404..d6c793684 100644
+--- a/test/include/seqan3/test/seqan2.hpp
++++ b/test/include/seqan3/test/seqan2.hpp
+@@ -44,9 +44,9 @@ namespace std
+  *        needed for std::input_iterator and std::ranges::input_range.
+  */
+ template <typename... args_t>
+-struct indirectly_readable_traits<seqan::Iter<args_t...>>
++struct indirectly_readable_traits<seqan2::Iter<args_t...>>
+ {
+-    using value_type = typename seqan::Value<seqan::Iter<args_t...>>::Type;
++    using value_type = typename seqan2::Value<seqan2::Iter<args_t...>>::Type;
+ };
+ 
+ } // namespace std
+diff --git a/test/performance/alignment/edit_distance_benchmark_template.hpp b/test/performance/alignment/edit_distance_benchmark_template.hpp
+index 527866a71..8b17195fa 100644
+--- a/test/performance/alignment/edit_distance_benchmark_template.hpp
++++ b/test/performance/alignment/edit_distance_benchmark_template.hpp
+@@ -80,7 +80,7 @@ void seqan2_align_pairwise_edit_distance_benchmark(benchmark::State & state,
+     if constexpr (collection_benchmark)
+     {
+         for (auto _ : state)
+-            for (size_t i = 0u; i < seqan::length(sequences1); ++i)
++            for (size_t i = 0u; i < seqan2::length(sequences1); ++i)
+                 total += algorithm_seqan2(sequences1[i], sequences2[i]);
+     }
+     else
+diff --git a/test/performance/alignment/edit_distance_unbanded_benchmark.cpp b/test/performance/alignment/edit_distance_unbanded_benchmark.cpp
+index 8a36e1b00..a053ab3c7 100644
+--- a/test/performance/alignment/edit_distance_unbanded_benchmark.cpp
++++ b/test/performance/alignment/edit_distance_unbanded_benchmark.cpp
+@@ -85,8 +85,8 @@ void seqan2_edit_distance_dna4(benchmark::State & state)
+     using seqan3::test::edit_distance_algorithm_seqan2;
+ 
+     size_t sequence_length = 500;
+-    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
+-    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 1);
++    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 0);
++    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 1);
+     int score = 0;
+ 
+     seqan3::configuration align_cfg = seqan3::align_cfg::method_global{};
+@@ -104,12 +104,12 @@ void seqan2_edit_distance_dna4(benchmark::State & state)
+ void seqan2_edit_distance_generic_dna4(benchmark::State & state)
+ {
+     size_t sequence_length = 500;
+-    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
+-    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 1);
++    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 0);
++    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 1);
+     int score = 0;
+ 
+     for (auto _ : state)
+-        score += seqan::globalAlignmentScore(seq1, seq2, seqan::Score<int>{0, -1, -1});
++        score += seqan2::globalAlignmentScore(seq1, seq2, seqan2::Score<int>{0, -1, -1});
+ 
+     state.counters["score"] = score;
+     state.counters["cells"] =
+@@ -173,7 +173,7 @@ void seqan2_edit_distance_dna4_collection(benchmark::State & state)
+     size_t sequence_length = 500;
+     size_t set_size = 100;
+ 
+-    auto [vec1, vec2] = seqan3::test::generate_sequence_pairs_seqan2<seqan::Dna>(sequence_length, set_size);
++    auto [vec1, vec2] = seqan3::test::generate_sequence_pairs_seqan2<seqan2::Dna>(sequence_length, set_size);
+     int score = 0;
+ 
+     seqan3::configuration align_cfg = seqan3::align_cfg::method_global{};
+@@ -195,12 +195,12 @@ void seqan2_edit_distance_dna4_generic_collection(benchmark::State & state)
+     size_t sequence_length = 500;
+     size_t set_size = 100;
+ 
+-    auto [vec1, vec2] = seqan3::test::generate_sequence_pairs_seqan2<seqan::Dna>(sequence_length, set_size);
++    auto [vec1, vec2] = seqan3::test::generate_sequence_pairs_seqan2<seqan2::Dna>(sequence_length, set_size);
+     int score = 0;
+ 
+     for (auto _ : state)
+     {
+-        for (int score_ : seqan::globalAlignmentScore(vec1, vec2, seqan::Score<int>{0, -1, -1}))
++        for (int score_ : seqan2::globalAlignmentScore(vec1, vec2, seqan2::Score<int>{0, -1, -1}))
+             score += score_;
+     }
+ 
+diff --git a/test/performance/alignment/global_affine_alignment_banded_simd_benchmark.cpp b/test/performance/alignment/global_affine_alignment_banded_simd_benchmark.cpp
+index 7ab5a97d0..b40f4aad5 100644
+--- a/test/performance/alignment/global_affine_alignment_banded_simd_benchmark.cpp
++++ b/test/performance/alignment/global_affine_alignment_banded_simd_benchmark.cpp
+@@ -55,9 +55,9 @@ BENCHMARK_CAPTURE(seqan3_affine_accelerated,
+ // Note SeqAn2 has no parallel interface yet for computing the traceback as well.
+ BENCHMARK_CAPTURE(seqan2_affine_accelerated,
+                   simd_with_score,
+-                  seqan::Dna{},
+-                  seqan::Score<int16_t>{4, -5, -1, -11},
+-                  seqan::ExecutionPolicy<seqan::Serial, seqan::Vectorial>{},
++                  seqan2::Dna{},
++                  seqan2::Score<int16_t>{4, -5, -1, -11},
++                  seqan2::ExecutionPolicy<seqan2::Serial, seqan2::Vectorial>{},
+                   1,
+                   affine_cfg)
+     ->UseRealTime()
+@@ -65,9 +65,9 @@ BENCHMARK_CAPTURE(seqan2_affine_accelerated,
+ 
+ BENCHMARK_CAPTURE(seqan2_affine_accelerated,
+                   simd_parallel_with_score,
+-                  seqan::Dna{},
+-                  seqan::Score<int16_t>{4, -5, -1, -11},
+-                  seqan::ExecutionPolicy<seqan::Parallel, seqan::Vectorial>{},
++                  seqan2::Dna{},
++                  seqan2::Score<int16_t>{4, -5, -1, -11},
++                  seqan2::ExecutionPolicy<seqan2::Parallel, seqan2::Vectorial>{},
+                   get_number_of_threads(),
+                   affine_cfg)
+     ->UseRealTime()
+diff --git a/test/performance/alignment/global_affine_alignment_benchmark.cpp b/test/performance/alignment/global_affine_alignment_benchmark.cpp
+index 449cc5db8..2650ff6f3 100644
+--- a/test/performance/alignment/global_affine_alignment_benchmark.cpp
++++ b/test/performance/alignment/global_affine_alignment_benchmark.cpp
+@@ -59,13 +59,13 @@ BENCHMARK(seqan3_affine_dna4);
+ void seqan2_affine_dna4(benchmark::State & state)
+ {
+     size_t sequence_length = 500;
+-    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
+-    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 1);
++    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 0);
++    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 1);
+ 
+     for (auto _ : state)
+     {
+         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
+-        seqan::globalAlignmentScore(seq1, seq2, seqan::Score<int>{4, -5, -1, -11});
++        seqan2::globalAlignmentScore(seq1, seq2, seqan2::Score<int>{4, -5, -1, -11});
+     }
+ 
+     state.counters["cells"] = seqan3::test::pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)), affine_cfg);
+@@ -102,15 +102,15 @@ BENCHMARK(seqan3_affine_dna4_trace);
+ void seqan2_affine_dna4_trace(benchmark::State & state)
+ {
+     size_t sequence_length = 500;
+-    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
+-    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 1);
++    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 0);
++    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 1);
+ 
+-    seqan::Gaps<decltype(seq1)> gap1{seq1};
+-    seqan::Gaps<decltype(seq2)> gap2{seq2};
++    seqan2::Gaps<decltype(seq1)> gap1{seq1};
++    seqan2::Gaps<decltype(seq2)> gap2{seq2};
+     for (auto _ : state)
+     {
+         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
+-        seqan::globalAlignment(gap1, gap2, seqan::Score<int>{4, -5, -1, -11});
++        seqan2::globalAlignment(gap1, gap2, seqan2::Score<int>{4, -5, -1, -11});
+     }
+ 
+     state.counters["cells"] = seqan3::test::pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)), affine_cfg);
+@@ -156,14 +156,14 @@ void seqan2_affine_dna4_collection(benchmark::State & state)
+ {
+     size_t sequence_length = 100;
+     size_t set_size = 100;
+-    using sequence_t = decltype(seqan3::test::generate_sequence_seqan2<seqan::Dna>());
++    using sequence_t = decltype(seqan3::test::generate_sequence_seqan2<seqan2::Dna>());
+ 
+-    seqan::StringSet<sequence_t> vec1;
+-    seqan::StringSet<sequence_t> vec2;
++    seqan2::StringSet<sequence_t> vec1;
++    seqan2::StringSet<sequence_t> vec2;
+     for (unsigned i = 0; i < set_size; ++i)
+     {
+-        sequence_t seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, i);
+-        sequence_t seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, i + set_size);
++        sequence_t seq1 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, i);
++        sequence_t seq2 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, i + set_size);
+         appendValue(vec1, seq1);
+         appendValue(vec2, seq2);
+     }
+@@ -171,7 +171,7 @@ void seqan2_affine_dna4_collection(benchmark::State & state)
+     for (auto _ : state)
+     {
+         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
+-        seqan::globalAlignmentScore(vec1, vec2, seqan::Score<int>{4, -5, -1, -11});
++        seqan2::globalAlignmentScore(vec1, vec2, seqan2::Score<int>{4, -5, -1, -11});
+     }
+ 
+     state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
+@@ -217,31 +217,31 @@ void seqan2_affine_dna4_trace_collection(benchmark::State & state)
+ {
+     size_t sequence_length = 100;
+     size_t set_size = 100;
+-    using sequence_t = decltype(seqan3::test::generate_sequence_seqan2<seqan::Dna>());
++    using sequence_t = decltype(seqan3::test::generate_sequence_seqan2<seqan2::Dna>());
+ 
+-    seqan::StringSet<sequence_t> vec1;
+-    seqan::StringSet<sequence_t> vec2;
++    seqan2::StringSet<sequence_t> vec1;
++    seqan2::StringSet<sequence_t> vec2;
+     for (unsigned i = 0; i < set_size; ++i)
+     {
+-        sequence_t seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, i);
+-        sequence_t seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, i + set_size);
++        sequence_t seq1 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, i);
++        sequence_t seq2 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, i + set_size);
+         appendValue(vec1, seq1);
+         appendValue(vec2, seq2);
+     }
+ 
+-    seqan::StringSet<seqan::Gaps<sequence_t>> gap1;
+-    seqan::StringSet<seqan::Gaps<sequence_t>> gap2;
++    seqan2::StringSet<seqan2::Gaps<sequence_t>> gap1;
++    seqan2::StringSet<seqan2::Gaps<sequence_t>> gap2;
+ 
+     for (unsigned i = 0; i < set_size; ++i)
+     {
+-        appendValue(gap1, seqan::Gaps<sequence_t>{vec1[i]});
+-        appendValue(gap2, seqan::Gaps<sequence_t>{vec2[i]});
++        appendValue(gap1, seqan2::Gaps<sequence_t>{vec1[i]});
++        appendValue(gap2, seqan2::Gaps<sequence_t>{vec2[i]});
+     }
+ 
+     for (auto _ : state)
+     {
+         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
+-        seqan::globalAlignment(gap1, gap2, seqan::Score<int>{4, -5, -1, -11});
++        seqan2::globalAlignment(gap1, gap2, seqan2::Score<int>{4, -5, -1, -11});
+     }
+ 
+     state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
+diff --git a/test/performance/alignment/global_affine_alignment_parallel_benchmark.cpp b/test/performance/alignment/global_affine_alignment_parallel_benchmark.cpp
+index a45f9d92a..9b0e3a5f3 100644
+--- a/test/performance/alignment/global_affine_alignment_parallel_benchmark.cpp
++++ b/test/performance/alignment/global_affine_alignment_parallel_benchmark.cpp
+@@ -66,8 +66,8 @@ auto generate_data_seqan2()
+ {
+     using sequence_t = decltype(seqan3::test::generate_sequence_seqan2<alphabet_t>());
+ 
+-    seqan::StringSet<sequence_t> vec1;
+-    seqan::StringSet<sequence_t> vec2;
++    seqan2::StringSet<sequence_t> vec1;
++    seqan2::StringSet<sequence_t> vec2;
+     for (unsigned i = 0; i < set_size; ++i)
+     {
+         appendValue(vec1, seqan3::test::generate_sequence_seqan2<alphabet_t>(sequence_length, variance, i));
+@@ -139,16 +139,16 @@ BENCHMARK_TEMPLATE(seqan3_affine_dna4_omp_for, trace)->UseRealTime();
+ template <typename result_t>
+ void seqan2_affine_dna4_parallel(benchmark::State & state)
+ {
+-    auto [vec1, vec2] = generate_data_seqan2<seqan::Dna>();
+-    seqan::ExecutionPolicy<seqan::Parallel, seqan::Serial> exec{};
++    auto [vec1, vec2] = generate_data_seqan2<seqan2::Dna>();
++    seqan2::ExecutionPolicy<seqan2::Parallel, seqan2::Serial> exec{};
+     setNumThreads(exec, std::thread::hardware_concurrency());
+ 
+     int64_t total = 0;
+     for (auto _ : state)
+     {
+         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
+-        auto res = seqan::globalAlignmentScore(exec, vec1, vec2, seqan::Score<int>{4, -5, -1, -11});
+-        total = std::accumulate(seqan::begin(res), seqan::end(res), total);
++        auto res = seqan2::globalAlignmentScore(exec, vec1, vec2, seqan2::Score<int>{4, -5, -1, -11});
++        total = std::accumulate(seqan2::begin(res), seqan2::end(res), total);
+     }
+ 
+     state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
+@@ -166,16 +166,16 @@ void seqan2_affine_dna4_omp_for(benchmark::State & state)
+ {
+     constexpr bool score_only = std::is_same_v<result_t, seqan3::align_cfg::output_score>;
+ 
+-    auto [vec1, vec2] = generate_data_seqan2<seqan::Dna>();
++    auto [vec1, vec2] = generate_data_seqan2<seqan2::Dna>();
+ 
+     using gapped_t = std::conditional_t<score_only,
+                                         std::remove_reference_t<decltype(vec1[0])>,
+-                                        seqan::Gaps<std::remove_reference_t<decltype(vec1[0])>>>;
++                                        seqan2::Gaps<std::remove_reference_t<decltype(vec1[0])>>>;
+ 
+-    seqan::StringSet<gapped_t> gap1;
+-    seqan::StringSet<gapped_t> gap2;
++    seqan2::StringSet<gapped_t> gap1;
++    seqan2::StringSet<gapped_t> gap2;
+ 
+-    for (size_t i = 0; i < seqan::length(vec1); ++i)
++    for (size_t i = 0; i < seqan2::length(vec1); ++i)
+     {
+         appendValue(gap1, gapped_t{vec1[i]});
+         appendValue(gap2, gapped_t{vec2[i]});
+@@ -185,12 +185,12 @@ void seqan2_affine_dna4_omp_for(benchmark::State & state)
+     for (auto _ : state)
+     {
+ #    pragma omp parallel for num_threads(std::thread::hardware_concurrency()) schedule(guided)
+-        for (size_t i = 0; i < seqan::length(vec1); ++i)
++        for (size_t i = 0; i < seqan2::length(vec1); ++i)
+         {
+             if constexpr (score_only)
+-                total += seqan::globalAlignmentScore(vec1[i], vec2[i], seqan::Score<int>{4, -5, -1, -11});
++                total += seqan2::globalAlignmentScore(vec1[i], vec2[i], seqan2::Score<int>{4, -5, -1, -11});
+             else
+-                total += seqan::globalAlignment(gap1[i], gap2[i], seqan::Score<int>{4, -5, -1, -11});
++                total += seqan2::globalAlignment(gap1[i], gap2[i], seqan2::Score<int>{4, -5, -1, -11});
+         }
+     }
+ 
+diff --git a/test/performance/alignment/global_affine_alignment_protein_simd_benchmark.cpp b/test/performance/alignment/global_affine_alignment_protein_simd_benchmark.cpp
+index a785ae355..d85b5faed 100644
+--- a/test/performance/alignment/global_affine_alignment_protein_simd_benchmark.cpp
++++ b/test/performance/alignment/global_affine_alignment_protein_simd_benchmark.cpp
+@@ -51,14 +51,14 @@ BENCHMARK_CAPTURE(seqan3_affine_accelerated,
+ // SeqAn2
+ // ----------------------------------------------------------------------------
+ 
+-using scoring_scheme_t = seqan::Score<int16_t, seqan::ScoreMatrix<seqan::AminoAcid, seqan::ScoreSpecBlosum62>>;
++using scoring_scheme_t = seqan2::Score<int16_t, seqan2::ScoreMatrix<seqan2::AminoAcid, seqan2::ScoreSpecBlosum62>>;
+ 
+ // Note SeqAn2 has no parallel interface yet for computing the traceback as well.
+ BENCHMARK_CAPTURE(seqan2_affine_accelerated,
+                   simd_with_score,
+-                  seqan::AminoAcid{},
++                  seqan2::AminoAcid{},
+                   scoring_scheme_t{-1, -11},
+-                  seqan::ExecutionPolicy<seqan::Serial, seqan::Vectorial>{},
++                  seqan2::ExecutionPolicy<seqan2::Serial, seqan2::Vectorial>{},
+                   1,
+                   affine_cfg)
+     ->UseRealTime()
+@@ -66,9 +66,9 @@ BENCHMARK_CAPTURE(seqan2_affine_accelerated,
+ 
+ BENCHMARK_CAPTURE(seqan2_affine_accelerated,
+                   simd_parallel_with_score,
+-                  seqan::AminoAcid{},
++                  seqan2::AminoAcid{},
+                   scoring_scheme_t{-1, -11},
+-                  seqan::ExecutionPolicy<seqan::Parallel, seqan::Vectorial>{},
++                  seqan2::ExecutionPolicy<seqan2::Parallel, seqan2::Vectorial>{},
+                   get_number_of_threads(),
+                   affine_cfg)
+     ->UseRealTime()
+diff --git a/test/performance/alignment/global_affine_alignment_simd_benchmark.cpp b/test/performance/alignment/global_affine_alignment_simd_benchmark.cpp
+index 8c1b75481..1ce7c29f6 100644
+--- a/test/performance/alignment/global_affine_alignment_simd_benchmark.cpp
++++ b/test/performance/alignment/global_affine_alignment_simd_benchmark.cpp
+@@ -77,9 +77,9 @@ BENCHMARK_CAPTURE(seqan3_affine_accelerated,
+ // Note SeqAn2 has no parallel interface yet for computing the traceback as well.
+ BENCHMARK_CAPTURE(seqan2_affine_accelerated,
+                   simd_with_score,
+-                  seqan::Dna{},
+-                  seqan::Score<int16_t>{4, -5, -1, -11},
+-                  seqan::ExecutionPolicy<seqan::Serial, seqan::Vectorial>{},
++                  seqan2::Dna{},
++                  seqan2::Score<int16_t>{4, -5, -1, -11},
++                  seqan2::ExecutionPolicy<seqan2::Serial, seqan2::Vectorial>{},
+                   1,
+                   affine_cfg)
+     ->UseRealTime()
+@@ -87,9 +87,9 @@ BENCHMARK_CAPTURE(seqan2_affine_accelerated,
+ 
+ BENCHMARK_CAPTURE(seqan2_affine_accelerated,
+                   simd_parallel_with_score,
+-                  seqan::Dna{},
+-                  seqan::Score<int16_t>{4, -5, -1, -11},
+-                  seqan::ExecutionPolicy<seqan::Parallel, seqan::Vectorial>{},
++                  seqan2::Dna{},
++                  seqan2::Score<int16_t>{4, -5, -1, -11},
++                  seqan2::ExecutionPolicy<seqan2::Parallel, seqan2::Vectorial>{},
+                   get_number_of_threads(),
+                   affine_cfg)
+     ->UseRealTime()
+diff --git a/test/performance/alignment/global_affine_alignment_simd_benchmark_template.hpp b/test/performance/alignment/global_affine_alignment_simd_benchmark_template.hpp
+index 8faca01c9..5be836617 100644
+--- a/test/performance/alignment/global_affine_alignment_simd_benchmark_template.hpp
++++ b/test/performance/alignment/global_affine_alignment_simd_benchmark_template.hpp
+@@ -101,13 +101,13 @@ void seqan2_affine_accelerated(benchmark::State & state, alphabet_t, args_t &&..
+     for (auto _ : state)
+     {
+         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
+-        seqan::String<int> res;
++        seqan2::String<int> res;
+         if constexpr (execute_with_band)
+-            res = seqan::globalAlignmentScore(exec, vec1, vec2, scoring_scheme, lower_diagonal, upper_diagonal);
++            res = seqan2::globalAlignmentScore(exec, vec1, vec2, scoring_scheme, lower_diagonal, upper_diagonal);
+         else
+-            res = seqan::globalAlignmentScore(exec, vec1, vec2, scoring_scheme);
++            res = seqan2::globalAlignmentScore(exec, vec1, vec2, scoring_scheme);
+ 
+-        total = std::accumulate(seqan::begin(res), seqan::end(res), total);
++        total = std::accumulate(seqan2::begin(res), seqan2::end(res), total);
+     }
+ 
+     state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2), seqan3_align_cfg);
+diff --git a/test/performance/alignment/local_affine_alignment_benchmark.cpp b/test/performance/alignment/local_affine_alignment_benchmark.cpp
+index a0eb197ac..b21046443 100644
+--- a/test/performance/alignment/local_affine_alignment_benchmark.cpp
++++ b/test/performance/alignment/local_affine_alignment_benchmark.cpp
+@@ -58,13 +58,13 @@ BENCHMARK(seqan3_affine_dna4);
+ 
+ void seqan2_affine_dna4(benchmark::State & state)
+ {
+-    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(500, 0, 0);
+-    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(250, 0, 1);
++    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(500, 0, 0);
++    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(250, 0, 1);
+ 
+     for (auto _ : state)
+     {
+         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
+-        seqan::localAlignmentScore(seq1, seq2, seqan::Score<int>{4, -5, -1, -11});
++        seqan2::localAlignmentScore(seq1, seq2, seqan2::Score<int>{4, -5, -1, -11});
+     }
+ 
+     state.counters["cells"] =
+@@ -101,15 +101,15 @@ BENCHMARK(seqan3_affine_dna4_trace);
+ 
+ void seqan2_affine_dna4_trace(benchmark::State & state)
+ {
+-    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(500, 0, 0);
+-    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(250, 0, 1);
++    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(500, 0, 0);
++    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(250, 0, 1);
+ 
+-    seqan::Gaps<decltype(seq1)> gap1{seq1};
+-    seqan::Gaps<decltype(seq2)> gap2{seq2};
++    seqan2::Gaps<decltype(seq1)> gap1{seq1};
++    seqan2::Gaps<decltype(seq2)> gap2{seq2};
+     for (auto _ : state)
+     {
+         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
+-        seqan::localAlignment(gap1, gap2, seqan::Score<int>{4, -5, -1, -11});
++        seqan2::localAlignment(gap1, gap2, seqan2::Score<int>{4, -5, -1, -11});
+     }
+ 
+     state.counters["cells"] =
+@@ -152,14 +152,14 @@ BENCHMARK(seqan3_affine_dna4_collection);
+ 
+ void seqan2_affine_dna4_collection(benchmark::State & state)
+ {
+-    using sequence_t = decltype(seqan3::test::generate_sequence_seqan2<seqan::Dna>());
++    using sequence_t = decltype(seqan3::test::generate_sequence_seqan2<seqan2::Dna>());
+ 
+-    seqan::StringSet<sequence_t> vec1;
+-    seqan::StringSet<sequence_t> vec2;
++    seqan2::StringSet<sequence_t> vec1;
++    seqan2::StringSet<sequence_t> vec2;
+     for (unsigned i = 0; i < 100; ++i)
+     {
+-        sequence_t seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(100, 0, i);
+-        sequence_t seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(50, 0, i + 100);
++        sequence_t seq1 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(100, 0, i);
++        sequence_t seq2 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(50, 0, i + 100);
+         appendValue(vec1, seq1);
+         appendValue(vec2, seq2);
+     }
+@@ -167,7 +167,7 @@ void seqan2_affine_dna4_collection(benchmark::State & state)
+     for (auto _ : state)
+     {
+         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
+-        seqan::localAlignmentScore(vec1, vec2, seqan::Score<int>{4, -5, -1, -11});
++        seqan2::localAlignmentScore(vec1, vec2, seqan2::Score<int>{4, -5, -1, -11});
+     }
+ }
+ 
+@@ -208,31 +208,31 @@ BENCHMARK(seqan3_affine_dna4_trace_collection);
+ 
+ void seqan2_affine_dna4_trace_collection(benchmark::State & state)
+ {
+-    using sequence_t = decltype(seqan3::test::generate_sequence_seqan2<seqan::Dna>());
++    using sequence_t = decltype(seqan3::test::generate_sequence_seqan2<seqan2::Dna>());
+ 
+-    seqan::StringSet<sequence_t> vec1;
+-    seqan::StringSet<sequence_t> vec2;
++    seqan2::StringSet<sequence_t> vec1;
++    seqan2::StringSet<sequence_t> vec2;
+     for (unsigned i = 0; i < 100; ++i)
+     {
+-        sequence_t seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(100, 0, i);
+-        sequence_t seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(50, 0, i + 100);
++        sequence_t seq1 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(100, 0, i);
++        sequence_t seq2 = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(50, 0, i + 100);
+         appendValue(vec1, seq1);
+         appendValue(vec2, seq2);
+     }
+ 
+-    seqan::StringSet<seqan::Gaps<sequence_t>> gap1;
+-    seqan::StringSet<seqan::Gaps<sequence_t>> gap2;
++    seqan2::StringSet<seqan2::Gaps<sequence_t>> gap1;
++    seqan2::StringSet<seqan2::Gaps<sequence_t>> gap2;
+ 
+     for (unsigned i = 0; i < 100; ++i)
+     {
+-        appendValue(gap1, seqan::Gaps<sequence_t>{vec1[i]});
+-        appendValue(gap2, seqan::Gaps<sequence_t>{vec2[i]});
++        appendValue(gap1, seqan2::Gaps<sequence_t>{vec1[i]});
++        appendValue(gap2, seqan2::Gaps<sequence_t>{vec2[i]});
+     }
+ 
+     for (auto _ : state)
+     {
+         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
+-        seqan::localAlignment(gap1, gap2, seqan::Score<int>{4, -5, -1, -11}, seqan::Gotoh());
++        seqan2::localAlignment(gap1, gap2, seqan2::Score<int>{4, -5, -1, -11}, seqan2::Gotoh());
+     }
+ 
+     state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2), local_affine_cfg);
+diff --git a/test/performance/alphabet/alphabet_assign_char_benchmark.cpp b/test/performance/alphabet/alphabet_assign_char_benchmark.cpp
+index 12db9860e..0c92369b3 100644
+--- a/test/performance/alphabet/alphabet_assign_char_benchmark.cpp
++++ b/test/performance/alphabet/alphabet_assign_char_benchmark.cpp
+@@ -80,15 +80,15 @@ void assign_char_seqan2(benchmark::State & state)
+             benchmark::DoNotOptimize(a = c);
+ }
+ 
+-BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Dna);
+-BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Rna);
+-BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Dna5);
+-BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Rna5);
+-BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Iupac);
+-BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::AminoAcid);
++BENCHMARK_TEMPLATE(assign_char_seqan2, seqan2::Dna);
++BENCHMARK_TEMPLATE(assign_char_seqan2, seqan2::Rna);
++BENCHMARK_TEMPLATE(assign_char_seqan2, seqan2::Dna5);
++BENCHMARK_TEMPLATE(assign_char_seqan2, seqan2::Rna5);
++BENCHMARK_TEMPLATE(assign_char_seqan2, seqan2::Iupac);
++BENCHMARK_TEMPLATE(assign_char_seqan2, seqan2::AminoAcid);
+ 
+-BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Dna5Q);
+-BENCHMARK_TEMPLATE(assign_char_seqan2, typename seqan::GappedValueType<seqan::Dna>::Type);
++BENCHMARK_TEMPLATE(assign_char_seqan2, seqan2::Dna5Q);
++BENCHMARK_TEMPLATE(assign_char_seqan2, typename seqan2::GappedValueType<seqan2::Dna>::Type);
+ #endif
+ 
+ BENCHMARK_MAIN();
+diff --git a/test/performance/alphabet/alphabet_assign_rank_benchmark.cpp b/test/performance/alphabet/alphabet_assign_rank_benchmark.cpp
+index cdf12e39a..ef1b9afc5 100644
+--- a/test/performance/alphabet/alphabet_assign_rank_benchmark.cpp
++++ b/test/performance/alphabet/alphabet_assign_rank_benchmark.cpp
+@@ -81,7 +81,7 @@ void assign_rank_seqan2(benchmark::State & state)
+     using rank_t = uint8_t;
+ 
+     std::array<rank_t, 256> ranks{};
+-    fill_rank_array<rank_t>(ranks, seqan::ValueSize<alphabet_t>::VALUE);
++    fill_rank_array<rank_t>(ranks, seqan2::ValueSize<alphabet_t>::VALUE);
+ 
+     alphabet_t a{};
+     for (auto _ : state)
+@@ -89,15 +89,15 @@ void assign_rank_seqan2(benchmark::State & state)
+             benchmark::DoNotOptimize(a = r);
+ }
+ 
+-BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan::Dna);
+-BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan::Rna);
+-BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan::Dna5);
+-BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan::Rna5);
+-BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan::Iupac);
+-BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan::AminoAcid);
++BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan2::Dna);
++BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan2::Rna);
++BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan2::Dna5);
++BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan2::Rna5);
++BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan2::Iupac);
++BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan2::AminoAcid);
+ 
+-BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan::Dna5Q);
+-BENCHMARK_TEMPLATE(assign_rank_seqan2, typename seqan::GappedValueType<seqan::Dna>::Type);
++BENCHMARK_TEMPLATE(assign_rank_seqan2, seqan2::Dna5Q);
++BENCHMARK_TEMPLATE(assign_rank_seqan2, typename seqan2::GappedValueType<seqan2::Dna>::Type);
+ #endif
+ 
+ BENCHMARK_MAIN();
+diff --git a/test/performance/alphabet/alphabet_to_char_benchmark.cpp b/test/performance/alphabet/alphabet_to_char_benchmark.cpp
+index 4a3d58c99..63ed8c3e9 100644
+--- a/test/performance/alphabet/alphabet_to_char_benchmark.cpp
++++ b/test/performance/alphabet/alphabet_to_char_benchmark.cpp
+@@ -98,15 +98,15 @@ void to_char_seqan2(benchmark::State & state)
+             benchmark::DoNotOptimize(static_cast<char>(a));
+ }
+ 
+-BENCHMARK_TEMPLATE(to_char_seqan2, seqan::Dna);
+-BENCHMARK_TEMPLATE(to_char_seqan2, seqan::Rna);
+-BENCHMARK_TEMPLATE(to_char_seqan2, seqan::Dna5);
+-BENCHMARK_TEMPLATE(to_char_seqan2, seqan::Rna5);
+-BENCHMARK_TEMPLATE(to_char_seqan2, seqan::Iupac);
+-BENCHMARK_TEMPLATE(to_char_seqan2, seqan::AminoAcid);
+-
+-BENCHMARK_TEMPLATE(to_char_seqan2, seqan::Dna5Q);
+-BENCHMARK_TEMPLATE(to_char_seqan2, typename seqan::GappedValueType<seqan::Dna>::Type);
++BENCHMARK_TEMPLATE(to_char_seqan2, seqan2::Dna);
++BENCHMARK_TEMPLATE(to_char_seqan2, seqan2::Rna);
++BENCHMARK_TEMPLATE(to_char_seqan2, seqan2::Dna5);
++BENCHMARK_TEMPLATE(to_char_seqan2, seqan2::Rna5);
++BENCHMARK_TEMPLATE(to_char_seqan2, seqan2::Iupac);
++BENCHMARK_TEMPLATE(to_char_seqan2, seqan2::AminoAcid);
++
++BENCHMARK_TEMPLATE(to_char_seqan2, seqan2::Dna5Q);
++BENCHMARK_TEMPLATE(to_char_seqan2, typename seqan2::GappedValueType<seqan2::Dna>::Type);
+ #endif
+ 
+ BENCHMARK_MAIN();
+diff --git a/test/performance/alphabet/alphabet_to_rank_benchmark.cpp b/test/performance/alphabet/alphabet_to_rank_benchmark.cpp
+index fc5e17e8d..554a8bdf0 100644
+--- a/test/performance/alphabet/alphabet_to_rank_benchmark.cpp
++++ b/test/performance/alphabet/alphabet_to_rank_benchmark.cpp
+@@ -85,22 +85,26 @@ BENCHMARK_TEMPLATE(to_rank, seqan3::qualified<seqan3::dna5, seqan3::phred94>);
+ template <typename alphabet_t>
+ void to_rank_seqan2(benchmark::State & state)
+ {
+-    std::array<alphabet_t, 256> alphs = create_alphabet_array<alphabet_t, true>(seqan::ValueSize<alphabet_t>::VALUE);
++    std::array<alphabet_t, 256> alphs = create_alphabet_array<alphabet_t, true>(seqan2::ValueSize<alphabet_t>::VALUE);
+ 
+     for (auto _ : state)
+         for (alphabet_t a : alphs)
+-            benchmark::DoNotOptimize(seqan::ordValue(a));
++        {
++            auto ord_value = seqan2::ordValue(a);
++            benchmark::DoNotOptimize(ord_value);
++        }
++    }
+ }
+ 
+-BENCHMARK_TEMPLATE(to_rank_seqan2, seqan::Dna);
+-BENCHMARK_TEMPLATE(to_rank_seqan2, seqan::Rna);
+-BENCHMARK_TEMPLATE(to_rank_seqan2, seqan::Dna5);
+-BENCHMARK_TEMPLATE(to_rank_seqan2, seqan::Rna5);
+-BENCHMARK_TEMPLATE(to_rank_seqan2, seqan::Iupac);
+-BENCHMARK_TEMPLATE(to_rank_seqan2, seqan::AminoAcid);
++BENCHMARK_TEMPLATE(to_rank_seqan2, seqan2::Dna);
++BENCHMARK_TEMPLATE(to_rank_seqan2, seqan2::Rna);
++BENCHMARK_TEMPLATE(to_rank_seqan2, seqan2::Dna5);
++BENCHMARK_TEMPLATE(to_rank_seqan2, seqan2::Rna5);
++BENCHMARK_TEMPLATE(to_rank_seqan2, seqan2::Iupac);
++BENCHMARK_TEMPLATE(to_rank_seqan2, seqan2::AminoAcid);
+ 
+-BENCHMARK_TEMPLATE(to_rank_seqan2, seqan::Dna5Q);
+-BENCHMARK_TEMPLATE(to_rank_seqan2, typename seqan::GappedValueType<seqan::Dna>::Type);
++BENCHMARK_TEMPLATE(to_rank_seqan2, seqan2::Dna5Q);
++BENCHMARK_TEMPLATE(to_rank_seqan2, typename seqan2::GappedValueType<seqan2::Dna>::Type);
+ #endif
+ 
+ BENCHMARK_MAIN();
+diff --git a/test/performance/alphabet/views/view_translate_1D_benchmark.cpp b/test/performance/alphabet/views/view_translate_1D_benchmark.cpp
+index 78d7b8e6a..1856703dc 100644
+--- a/test/performance/alphabet/views/view_translate_1D_benchmark.cpp
++++ b/test/performance/alphabet/views/view_translate_1D_benchmark.cpp
+@@ -119,12 +119,12 @@ void copy_impl(benchmark::State & state, std::vector<seqan3::dna4> const & dna_s
+ 
+ #ifdef SEQAN3_HAS_SEQAN2
+ template <typename tag_t>
+-void copy_impl_seqan2(benchmark::State & state, seqan::DnaString const & dna_sequence)
++void copy_impl_seqan2(benchmark::State & state, seqan2::DnaString const & dna_sequence)
+ {
+     for (auto _ : state)
+     {
+-        seqan::String<seqan::AminoAcid> out{};
+-        seqan::translate(out, dna_sequence, seqan::SINGLE_FRAME, seqan::CANONICAL, tag_t{});
++        seqan2::String<seqan2::AminoAcid> out{};
++        seqan2::translate(out, dna_sequence, seqan2::SINGLE_FRAME, seqan2::CANONICAL, tag_t{});
+     }
+ }
+ #endif // SEQAN3_HAS_SEQAN2
+@@ -135,7 +135,7 @@ void copy(benchmark::State & state)
+     std::vector<seqan3::dna4> seqan3_dna_sequence{seqan3::test::generate_sequence<seqan3::dna4>(1000, 0, 0)};
+ 
+ #ifdef SEQAN3_HAS_SEQAN2
+-    seqan::DnaString seqan2_dna_sequence{seqan3::test::generate_sequence_seqan2<seqan::Dna>(1000, 0, 0)};
++    seqan2::DnaString seqan2_dna_sequence{seqan3::test::generate_sequence_seqan2<seqan2::Dna>(1000, 0, 0)};
+ #endif // SEQAN3_HAS_SEQAN2
+ 
+     if constexpr (std::is_same_v<tag_t, translate_tag>)
+@@ -154,8 +154,8 @@ void copy(benchmark::State & state)
+ BENCHMARK_TEMPLATE(copy, translate_tag);
+ 
+ #ifdef SEQAN3_HAS_SEQAN2
+-BENCHMARK_TEMPLATE(copy, seqan::Serial);
+-BENCHMARK_TEMPLATE(copy, seqan::Parallel);
++BENCHMARK_TEMPLATE(copy, seqan2::Serial);
++BENCHMARK_TEMPLATE(copy, seqan2::Parallel);
+ #endif // SEQAN3_HAS_SEQAN2
+ 
+ // ============================================================================
+diff --git a/test/performance/alphabet/views/view_translate_2D_1D_benchmark.cpp b/test/performance/alphabet/views/view_translate_2D_1D_benchmark.cpp
+index fc88b877a..43ea02834 100644
+--- a/test/performance/alphabet/views/view_translate_2D_1D_benchmark.cpp
++++ b/test/performance/alphabet/views/view_translate_2D_1D_benchmark.cpp
+@@ -155,12 +155,12 @@ void copy_impl(benchmark::State & state,
+ 
+ #ifdef SEQAN3_HAS_SEQAN2
+ template <typename tag_t, typename stringset_t>
+-void copy_impl_seqan2(benchmark::State & state, seqan::StringSet<seqan::DnaString> const & dna_sequence_collection)
++void copy_impl_seqan2(benchmark::State & state, seqan2::StringSet<seqan2::DnaString> const & dna_sequence_collection)
+ {
+     for (auto _ : state)
+     {
+-        seqan::StringSet<seqan::String<seqan::AminoAcid>, stringset_t> out{};
+-        seqan::translate(out, dna_sequence_collection, seqan::SIX_FRAME, seqan::CANONICAL, tag_t{});
++        seqan2::StringSet<seqan2::String<seqan2::AminoAcid>, stringset_t> out{};
++        seqan2::translate(out, dna_sequence_collection, seqan2::SIX_FRAME, seqan2::CANONICAL, tag_t{});
+     }
+ }
+ #endif // SEQAN3_HAS_SEQAN2
+@@ -190,12 +190,12 @@ void copy(benchmark::State & state)
+ template <typename tag_t, typename stringset_t>
+ void copy(benchmark::State & state)
+ {
+-    seqan::StringSet<seqan::DnaString> dna_sequence_collection{};
++    seqan2::StringSet<seqan2::DnaString> dna_sequence_collection{};
+     resize(dna_sequence_collection, 500);
+ 
+     for (size_t i = 0; i < length(dna_sequence_collection); ++i)
+     {
+-        dna_sequence_collection[i] = seqan3::test::generate_sequence_seqan2<seqan::Dna>(100, 0, 0);
++        dna_sequence_collection[i] = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(100, 0, 0);
+     }
+ 
+     copy_impl_seqan2<tag_t, stringset_t>(state, dna_sequence_collection);
+@@ -206,10 +206,10 @@ BENCHMARK_TEMPLATE(copy, translate_tag);
+ BENCHMARK_TEMPLATE(copy, translate_join_tag);
+ 
+ #ifdef SEQAN3_HAS_SEQAN2
+-BENCHMARK_TEMPLATE(copy, seqan::Serial, seqan::Owner<>);
+-BENCHMARK_TEMPLATE(copy, seqan::Serial, seqan::Owner<seqan::ConcatDirect<>>);
+-BENCHMARK_TEMPLATE(copy, seqan::Parallel, seqan::Owner<>);
+-BENCHMARK_TEMPLATE(copy, seqan::Parallel, seqan::Owner<seqan::ConcatDirect<>>);
++BENCHMARK_TEMPLATE(copy, seqan2::Serial, seqan2::Owner<>);
++BENCHMARK_TEMPLATE(copy, seqan2::Serial, seqan2::Owner<seqan2::ConcatDirect<>>);
++BENCHMARK_TEMPLATE(copy, seqan2::Parallel, seqan2::Owner<>);
++BENCHMARK_TEMPLATE(copy, seqan2::Parallel, seqan2::Owner<seqan2::ConcatDirect<>>);
+ #endif // SEQAN3_HAS_SEQAN2
+ 
+ // ============================================================================
+diff --git a/test/performance/io/format_fasta_benchmark.cpp b/test/performance/io/format_fasta_benchmark.cpp
+index a7396295a..e226a6346 100644
+--- a/test/performance/io/format_fasta_benchmark.cpp
++++ b/test/performance/io/format_fasta_benchmark.cpp
+@@ -72,17 +72,17 @@ BENCHMARK(seqan3_dna5_ostringstream_write);
+ void seqan2_dna5_ostringstream_write(benchmark::State & state)
+ {
+     std::ostringstream ostream;
+-    seqan::CharString id = fasta_hdr;
+-    seqan::Dna5String seq = fasta_seq;
++    seqan2::CharString id = fasta_hdr;
++    seqan2::Dna5String seq = fasta_seq;
+ 
+     for (auto _ : state)
+     {
+         for (size_t i = 0; i < iterations_per_run; ++i)
+-            seqan::writeRecord(ostream, id, seq, seqan::Fasta());
++            seqan2::writeRecord(ostream, id, seq, seqan2::Fasta());
+     }
+ 
+     ostream = std::ostringstream{};
+-    seqan::writeRecord(ostream, id, seq, seqan::Fasta());
++    seqan2::writeRecord(ostream, id, seq, seqan2::Fasta());
+     size_t bytes_per_run = ostream.str().size() * iterations_per_run;
+     state.counters["iterations_per_run"] = iterations_per_run;
+     state.counters["bytes_per_run"] = bytes_per_run;
+@@ -120,8 +120,8 @@ BENCHMARK(seqan3_dna5_istringstream_read);
+ 
+ void seqan2_dna5_istringstream_read(benchmark::State & state)
+ {
+-    seqan::CharString id;
+-    seqan::Dna5String seq;
++    seqan2::CharString id;
++    seqan2::Dna5String seq;
+ 
+     std::istringstream istream{fasta_file};
+ 
+@@ -129,11 +129,11 @@ void seqan2_dna5_istringstream_read(benchmark::State & state)
+     {
+         istream.clear();
+         istream.seekg(0, std::ios::beg);
+-        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input>>(istream);
++        auto it = seqan2::Iter<std::istringstream, seqan2::StreamIterator<seqan2::Input>>(istream);
+ 
+         for (size_t i = 0; i < iterations_per_run; ++i)
+         {
+-            readRecord(id, seq, it, seqan::Fasta{});
++            readRecord(id, seq, it, seqan2::Fasta{});
+             clear(id);
+             clear(seq);
+         }
+diff --git a/test/performance/io/format_fastq_benchmark.cpp b/test/performance/io/format_fastq_benchmark.cpp
+index bc695619c..d1fe858e8 100644
+--- a/test/performance/io/format_fastq_benchmark.cpp
++++ b/test/performance/io/format_fastq_benchmark.cpp
+@@ -177,19 +177,19 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
+     std::string fastq_file = generate_fastq_string(iterations_per_run);
+     std::istringstream istream{fastq_file};
+ 
+-    seqan::CharString id{};
+-    seqan::Dna5String seq{};
+-    seqan::CharString qual{};
++    seqan2::CharString id{};
++    seqan2::Dna5String seq{};
++    seqan2::CharString qual{};
+ 
+     for (auto _ : state)
+     {
+         istream.clear();
+         istream.seekg(0, std::ios::beg);
+-        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input>>(istream);
++        auto it = seqan2::Iter<std::istringstream, seqan2::StreamIterator<seqan2::Input>>(istream);
+ 
+         for (size_t i = 0; i < iterations_per_run; ++i)
+         {
+-            readRecord(id, seq, qual, it, seqan::Fastq{});
++            readRecord(id, seq, qual, it, seqan2::Fastq{});
+             clear(id);
+             clear(seq);
+             clear(qual);
+@@ -212,18 +212,18 @@ void fastq_read_from_disk_seqan2(benchmark::State & state)
+     std::string fastq_file = generate_fastq_string(iterations_per_run);
+     auto file_name = create_fastq_file_for(fastq_file);
+ 
+-    seqan::CharString id{};
+-    seqan::Dna5String seq{};
+-    seqan::CharString qual{};
++    seqan2::CharString id{};
++    seqan2::Dna5String seq{};
++    seqan2::CharString qual{};
+ 
+     for (auto _ : state)
+     {
+-        seqan::SeqFileIn seqFileIn(file_name.get_path().c_str());
++        seqan2::SeqFileIn seqFileIn(filename.c_str());
+         auto it = seqFileIn.iter;
+ 
+         for (size_t i = 0; i < iterations_per_run; ++i)
+         {
+-            readRecord(id, seq, qual, it, seqan::Fastq{});
++            readRecord(id, seq, qual, it, seqan2::Fastq{});
+             clear(id);
+             clear(seq);
+             clear(qual);
+diff --git a/test/performance/io/format_sam_benchmark.cpp b/test/performance/io/format_sam_benchmark.cpp
+index ef3753b0a..a2804906c 100644
+--- a/test/performance/io/format_sam_benchmark.cpp
++++ b/test/performance/io/format_sam_benchmark.cpp
+@@ -149,14 +149,14 @@ void seqan2_sam_file_read_from_stream(benchmark::State & state)
+     std::string sam_file = create_sam_file_string(n_queries);
+ 
+     // create temporary BamFileIn and read from disk to get the context...
+-    write_file(file_name.get_path(), n_queries);
+-    seqan::BamHeader tmp_header;
+-    seqan::BamFileIn tmp_bam_file_in(file_name.get_path().c_str());
+-    seqan::readHeader(tmp_header, tmp_bam_file_in);
+-    auto cxt = seqan::context(tmp_bam_file_in);
++    write_file(filename, n_queries);
++    seqan2::BamHeader tmp_header;
++    seqan2::BamFileIn tmp_bam_file_in(filename.c_str());
++    seqan2::readHeader(tmp_header, tmp_bam_file_in);
++    auto cxt = seqan2::context(tmp_bam_file_in);
+ 
+-    seqan::BamAlignmentRecord record;
+-    seqan::BamHeader header;
++    seqan2::BamAlignmentRecord record;
++    seqan2::BamHeader header;
+ 
+     std::istringstream istream{sam_file};
+ 
+@@ -165,14 +165,14 @@ void seqan2_sam_file_read_from_stream(benchmark::State & state)
+         istream.clear();
+         istream.seekg(0, std::ios::beg);
+ 
+-        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input>>(istream);
++        auto it = seqan2::Iter<std::istringstream, seqan2::StreamIterator<seqan2::Input>>(istream);
+ 
+-        seqan::readHeader(header, cxt, it, seqan::Sam());
++        seqan2::readHeader(header, cxt, it, seqan2::Sam());
+ 
+         for (size_t i = 0; i < n_queries; ++i)
+         {
+-            seqan::readRecord(record, cxt, it, seqan::Sam());
+-            seqan::clear(record);
++            seqan2::readRecord(record, cxt, it, seqan2::Sam());
++            seqan2::clear(record);
+         }
+ 
+         clear(header);
+@@ -187,20 +187,20 @@ void seqan2_sam_file_read_from_disk(benchmark::State & state)
+ 
+     write_file(tmp_path, n_queries);
+ 
+-    seqan::BamHeader header;
+-    seqan::BamAlignmentRecord record;
++    seqan2::BamHeader header;
++    seqan2::BamAlignmentRecord record;
+ 
+     for (auto _ : state)
+     {
+-        seqan::BamFileIn bamFileIn(tmp_path.c_str());
++        seqan2::BamFileIn bamFileIn(tmp_path.c_str());
+ 
+-        seqan::readHeader(header, bamFileIn);
++        seqan2::readHeader(header, bamFileIn);
+ 
+-        while (!seqan::atEnd(bamFileIn))
+-            seqan::readRecord(record, bamFileIn);
++        while (!seqan2::atEnd(bamFileIn))
++            seqan2::readRecord(record, bamFileIn);
+ 
+-        seqan::clear(header);
+-        seqan::clear(record);
++        seqan2::clear(header);
++        seqan2::clear(record);
+     }
+ }
+ 
+diff --git a/test/performance/io/format_vienna_benchmark.cpp b/test/performance/io/format_vienna_benchmark.cpp
+index e4dc81796..f531035a2 100644
+--- a/test/performance/io/format_vienna_benchmark.cpp
++++ b/test/performance/io/format_vienna_benchmark.cpp
+@@ -70,19 +70,19 @@ BENCHMARK(write_seqan3);
+ void write_seqan2(benchmark::State & state)
+ {
+     std::ostringstream ostream;
+-    seqan::RnaRecord record{};
++    seqan2::RnaRecord record{};
+     record.name = header;
+     record.sequence = sequence;
+-    seqan::bracket2graph(record.fixedGraphs, structure);
++    seqan2::bracket2graph(record.fixedGraphs, structure);
+ 
+     for (auto _ : state)
+     {
+         for (size_t idx = 0; idx < iterations_per_run; ++idx)
+-            seqan::writeRecord(ostream, record, seqan::Vienna());
++            seqan2::writeRecord(ostream, record, seqan2::Vienna());
+     }
+ 
+     ostream = std::ostringstream{};
+-    seqan::writeRecord(ostream, record, seqan::Vienna());
++    seqan2::writeRecord(ostream, record, seqan2::Vienna());
+     size_t bytes_per_run = ostream.str().size() * iterations_per_run;
+     state.counters["iterations_per_run"] = iterations_per_run;
+     state.counters["bytes_per_run"] = bytes_per_run;
+@@ -116,18 +116,18 @@ BENCHMARK(read_seqan3);
+ #if SEQAN3_HAS_SEQAN2
+ void read_seqan2(benchmark::State & state)
+ {
+-    seqan::RnaRecord record{};
++    seqan2::RnaRecord record{};
+     std::istringstream istream{vienna_file};
+ 
+     for (auto _ : state)
+     {
+         istream.clear();
+         istream.seekg(0, std::ios::beg);
+-        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input>>(istream);
++        auto it = seqan2::Iter<std::istringstream, seqan2::StreamIterator<seqan2::Input>>(istream);
+ 
+         for (size_t idx = 0; idx < iterations_per_run; ++idx)
+         {
+-            seqan::readRecord(record, it, seqan::Vienna());
++            seqan2::readRecord(record, it, seqan2::Vienna());
+             clear(record);
+         }
+     }
+diff --git a/test/performance/io/lowlevel_stream_input_benchmark.cpp b/test/performance/io/lowlevel_stream_input_benchmark.cpp
+index e1e96ff54..f4b54fbdb 100644
+--- a/test/performance/io/lowlevel_stream_input_benchmark.cpp
++++ b/test/performance/io/lowlevel_stream_input_benchmark.cpp
+@@ -88,10 +88,10 @@ void read_all(benchmark::State & state)
+     {
+         for (auto _ : state)
+         {
+-            std::ifstream s{filename.get_path(), std::ios::binary};
+-            auto it = seqan::Iter<std::ifstream, seqan::StreamIterator<seqan::Input>>{s};
++            std::ifstream s{filename, std::ios::binary};
++            auto it = seqan2::Iter<std::ifstream, seqan2::StreamIterator<seqan2::Input>>{s};
+ 
+-            for (; !seqan::atEnd(it); ++it)
++            for (; !seqan2::atEnd(it); ++it)
+                 c += *it;
+         }
+     }
+diff --git a/test/performance/io/lowlevel_stream_output_benchmark.cpp b/test/performance/io/lowlevel_stream_output_benchmark.cpp
+index 113e35b3a..216f62203 100644
+--- a/test/performance/io/lowlevel_stream_output_benchmark.cpp
++++ b/test/performance/io/lowlevel_stream_output_benchmark.cpp
+@@ -66,7 +66,7 @@ void write_all(benchmark::State & state)
+ #ifdef SEQAN3_HAS_SEQAN2
+             else if constexpr (id == tag::seqan2_stream_it || id == tag::seqan2_stream_it_write_range)
+             {
+-                return seqan::Iter<std::ofstream, seqan::StreamIterator<seqan::Output>>{os};
++                return seqan2::Iter<std::ofstream, seqan2::StreamIterator<seqan2::Output>>{os};
+             }
+ #endif
+         }();
+@@ -78,7 +78,7 @@ void write_all(benchmark::State & state)
+ #ifdef SEQAN3_HAS_SEQAN2
+         else if constexpr (id == tag::seqan2_stream_it_write_range)
+         {
+-            seqan::write(it, seqan2_sequence);
++            seqan2::write(it, seqan2_sequence);
+         }
+ #endif
+         else
+diff --git a/test/performance/io/stream_input_benchmark.cpp b/test/performance/io/stream_input_benchmark.cpp
+index f40732d43..52c2075c1 100644
+--- a/test/performance/io/stream_input_benchmark.cpp
++++ b/test/performance/io/stream_input_benchmark.cpp
+@@ -65,7 +65,7 @@ std::string const input_comp;
+ 
+ #ifdef SEQAN3_HAS_SEQAN2
+ template <>
+-std::string const & input_comp<seqan::Nothing> = input;
++std::string const & input_comp<seqan2::Nothing> = input;
+ #endif
+ 
+ #if defined(SEQAN3_HAS_ZLIB)
+@@ -98,10 +98,10 @@ std::string const input_comp<seqan3::contrib::bgzf_istream>
+ // clang-format on
+ #    ifdef SEQAN3_HAS_SEQAN2
+ template <>
+-std::string const & input_comp<seqan::GZFile> = input_comp<seqan3::contrib::gz_istream>;
++std::string const & input_comp<seqan2::GZFile> = input_comp<seqan3::contrib::gz_istream>;
+ 
+ template <>
+-std::string const & input_comp<seqan::BgzfFile> = input_comp<seqan3::contrib::bgzf_istream>;
++std::string const & input_comp<seqan2::BgzfFile> = input_comp<seqan3::contrib::bgzf_istream>;
+ #    endif
+ #endif
+ 
+@@ -121,7 +121,7 @@ std::string const input_comp<seqan3::contrib::bz2_istream>
+ // clang-format on
+ #    ifdef SEQAN3_HAS_SEQAN2
+ template <>
+-std::string const & input_comp<seqan::BZ2File> = input_comp<seqan3::contrib::bz2_istream>;
++std::string const & input_comp<seqan2::BZ2File> = input_comp<seqan3::contrib::bz2_istream>;
+ #    endif
+ #endif
+ 
+@@ -266,7 +266,7 @@ void seqan2_uncompressed(benchmark::State & state)
+     {
+         s.clear();
+         s.seekg(0, std::ios::beg);
+-        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input>>(s);
++        auto it = seqan2::Iter<std::istringstream, seqan2::StreamIterator<seqan2::Input>>(s);
+ 
+         for (size_t v = 0; v < input.size(); ++v)
+         {
+@@ -288,7 +288,7 @@ void seqan2_compressed_impl(benchmark::State & state)
+         s.clear();
+         s.seekg(0, std::ios::beg);
+         stream_t comp{s};
+-        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input>>(comp);
++        auto it = seqan2::Iter<std::istringstream, seqan2::StreamIterator<seqan2::Input>>(comp);
+ 
+         for (size_t v = 0; v < input_comp<compression_t>.size(); ++v)
+         {
+@@ -304,29 +304,29 @@ template <typename compression_type>
+ void seqan2_compressed(benchmark::State & state)
+ {
+ #    ifdef SEQAN_HAS_ZLIB
+-    if constexpr (std::is_same_v<compression_type, seqan::GZFile>)
+-        seqan2_compressed_impl<seqan::GZFile, zlib_stream::zip_istream>(state);
+-    else if constexpr (std::is_same_v<compression_type, seqan::BgzfFile>)
+-        seqan2_compressed_impl<seqan::BgzfFile, seqan::bgzf_istream>(state);
++    if constexpr (std::is_same_v<compression_type, seqan2::GZFile>)
++        seqan2_compressed_impl<seqan2::GZFile, zlib_stream::zip_istream>(state);
++    else if constexpr (std::is_same_v<compression_type, seqan2::BgzfFile>)
++        seqan2_compressed_impl<seqan2::BgzfFile, seqan2::bgzf_istream>(state);
+ #    endif // SEQAN_HAS_ZLIB
+ 
+ #    ifdef SEQAN_HAS_BZIP2
+-    if constexpr (std::is_same_v<compression_type, seqan::BZ2File>)
+-        seqan2_compressed_impl<seqan::BZ2File, bzip2_stream::bzip2_istream>(state);
++    if constexpr (std::is_same_v<compression_type, seqan2::BZ2File>)
++        seqan2_compressed_impl<seqan2::BZ2File, bzip2_stream::bzip2_istream>(state);
+ #    endif // SEQAN_HAS_BZIP2
+ 
+-    if constexpr (std::is_same_v<compression_type, seqan::Nothing>)
++    if constexpr (std::is_same_v<compression_type, seqan2::Nothing>)
+         seqan2_uncompressed(state);
+ }
+ 
+-BENCHMARK_TEMPLATE(seqan2_compressed, seqan::Nothing);
++BENCHMARK_TEMPLATE(seqan2_compressed, seqan2::Nothing);
+ 
+ #    ifdef SEQAN_HAS_ZLIB
+-BENCHMARK_TEMPLATE(seqan2_compressed, seqan::GZFile);
+-BENCHMARK_TEMPLATE(seqan2_compressed, seqan::BgzfFile);
++BENCHMARK_TEMPLATE(seqan2_compressed, seqan2::GZFile);
++BENCHMARK_TEMPLATE(seqan2_compressed, seqan2::BgzfFile);
+ #    endif
+ #    ifdef SEQAN_HAS_BZIP2
+-BENCHMARK_TEMPLATE(seqan2_compressed, seqan::BZ2File);
++BENCHMARK_TEMPLATE(seqan2_compressed, seqan2::BZ2File);
+ #    endif
+ 
+ #endif // SEQAN3_HAS_SEQAN2
+diff --git a/test/performance/io/stream_output_benchmark.cpp b/test/performance/io/stream_output_benchmark.cpp
+index 7058f398f..6cda534b7 100644
+--- a/test/performance/io/stream_output_benchmark.cpp
++++ b/test/performance/io/stream_output_benchmark.cpp
+@@ -139,7 +139,7 @@ void seqan2_compressed(benchmark::State & state)
+ {
+     std::ostringstream os;
+ 
+-    seqan::VirtualStream<char, seqan::Output> ogzf;
++    seqan2::VirtualStream<char, seqan2::Output> ogzf;
+     compression_type tag;
+     open(ogzf, os, tag);
+ 
+@@ -147,14 +147,14 @@ void seqan2_compressed(benchmark::State & state)
+     for (auto _ : state)
+         write(ogzf, static_cast<char>(i++ % 128));
+ }
+-BENCHMARK_TEMPLATE(seqan2_compressed, seqan::Nothing);
++BENCHMARK_TEMPLATE(seqan2_compressed, seqan2::Nothing);
+ 
+ #    ifdef SEQAN_HAS_ZLIB
+-BENCHMARK_TEMPLATE(seqan2_compressed, seqan::GZFile);
+-BENCHMARK_TEMPLATE(seqan2_compressed, seqan::BgzfFile);
++BENCHMARK_TEMPLATE(seqan2_compressed, seqan2::GZFile);
++BENCHMARK_TEMPLATE(seqan2_compressed, seqan2::BgzfFile);
+ #    endif
+ #    ifdef SEQAN_HAS_BZIP2
+-BENCHMARK_TEMPLATE(seqan2_compressed, seqan::BZ2File);
++BENCHMARK_TEMPLATE(seqan2_compressed, seqan2::BZ2File);
+ #    endif
+ 
+ #endif // SEQAN3_HAS_SEQAN2
+diff --git a/test/performance/search/index_construction_benchmark.cpp b/test/performance/search/index_construction_benchmark.cpp
+index 3ca867e05..1b97da50f 100644
+--- a/test/performance/search/index_construction_benchmark.cpp
++++ b/test/performance/search/index_construction_benchmark.cpp
+@@ -99,10 +99,11 @@ void index_benchmark_seqan3(benchmark::State & state)
+ #if SEQAN3_HAS_SEQAN2
+ struct sequence_store_seqan2
+ {
+-    seqan::String<seqan::Dna> const dna4_rng{seqan3::test::generate_sequence_seqan2<seqan::Dna>(max_length, 0, seed)};
+-    seqan::String<seqan::AminoAcid> const aa27_rng{
+-        seqan3::test::generate_sequence_seqan2<seqan::AminoAcid>(max_length, 0, seed)};
+-    seqan::String<char> const char_rng{
++    seqan2::String<seqan2::Dna> const dna4_rng{
++        seqan3::test::generate_sequence_seqan2<seqan2::Dna>(max_length, 0, seed)};
++    seqan2::String<seqan2::AminoAcid> const aa27_rng{
++        seqan3::test::generate_sequence_seqan2<seqan2::AminoAcid>(max_length, 0, seed)};
++    seqan2::String<char> const char_rng{
+         []()
+         {
+             std::vector<uint8_t> const ranks{
+@@ -117,9 +118,9 @@ sequence_store_seqan2 store2{};
+ template <typename rng_t>
+ constexpr size_t seqan_dimension_v()
+ {
+-    if (seqan3::detail::is_type_specialisation_of_v<rng_t, seqan::String>)
++    if (seqan3::detail::is_type_specialisation_of_v<rng_t, seqan2::String>)
+         return 1;
+-    if (seqan3::detail::is_type_specialisation_of_v<rng_t, seqan::StringSet>)
++    if (seqan3::detail::is_type_specialisation_of_v<rng_t, seqan2::StringSet>)
+         return 2;
+     return 0;
+ }
+@@ -128,29 +129,30 @@ template <tag index_tag, typename rng_t>
+ void index_benchmark_seqan2(benchmark::State & state)
+ {
+     constexpr size_t dimension = seqan_dimension_v<rng_t>();
+-    static_assert(dimension != 0, "Use seqan::String or seqan::StringSet for SeqAn2 index benchmarks!");
++    static_assert(dimension != 0, "Use seqan2::String or seqan2::StringSet for SeqAn2 index benchmarks!");
+ 
+-    // Calling std::ranges::range_value_t twice on seqan::String<char> is not valid.
++    // Calling std::ranges::range_value_t twice on seqan2::String<char> is not valid.
+     using alphabet_t = seqan3::detail::lazy_conditional_t<
+         dimension == 1,
+         std::ranges::range_value_t<rng_t>,
+         seqan3::detail::lazy<std::ranges::range_value_t, std::ranges::range_value_t<rng_t>>>;
+ 
+     using inner_rng_t = std::conditional_t<dimension == 1, rng_t, std::ranges::range_value_t<rng_t>>;
+-    using index_cfg = seqan::FastFMIndexConfig<void, uint64_t>;
+-    using index_t = std::conditional_t<index_tag == tag::fm_index,
+-                                       seqan::Index<rng_t, seqan::FMIndex<void, index_cfg>>,
+-                                       seqan::Index<rng_t, seqan::BidirectionalIndex<seqan::FMIndex<void, index_cfg>>>>;
++    using index_cfg = seqan2::FastFMIndexConfig<void, uint64_t>;
++    using index_t =
++        std::conditional_t<index_tag == tag::fm_index,
++                           seqan2::Index<rng_t, seqan2::FMIndex<void, index_cfg>>,
++                           seqan2::Index<rng_t, seqan2::BidirectionalIndex<seqan2::FMIndex<void, index_cfg>>>>;
+ 
+     rng_t sequence;
+     inner_rng_t inner_sequence;
+ 
+-    if constexpr (std::same_as<alphabet_t, seqan::Dna>)
+-        inner_sequence = seqan::prefix(store2.dna4_rng, state.range(0));
+-    else if constexpr (std::same_as<alphabet_t, seqan::AminoAcid>)
+-        inner_sequence = seqan::prefix(store2.aa27_rng, state.range(0));
++    if constexpr (std::same_as<alphabet_t, seqan2::Dna>)
++        inner_sequence = seqan2::prefix(store2.dna4_rng, state.range(0));
++    else if constexpr (std::same_as<alphabet_t, seqan2::AminoAcid>)
++        inner_sequence = seqan2::prefix(store2.aa27_rng, state.range(0));
+     else
+-        inner_sequence = seqan::prefix(store2.char_rng, state.range(0));
++        inner_sequence = seqan2::prefix(store2.char_rng, state.range(0));
+ 
+     if constexpr (dimension == 1)
+     {
+@@ -159,13 +161,13 @@ void index_benchmark_seqan2(benchmark::State & state)
+     else
+     {
+         for (int32_t i = 0; i < state.range(1); ++i)
+-            seqan::appendValue(sequence, inner_sequence);
++            seqan2::appendValue(sequence, inner_sequence);
+     }
+ 
+     for (auto _ : state)
+     {
+         index_t index{sequence};
+-        seqan::indexCreate(index, seqan::FibreSALF());
++        seqan2::indexCreate(index, seqan2::FibreSALF());
+     }
+ }
+ #endif // SEQAN3_HAS_SEQAN2
+@@ -190,20 +192,20 @@ BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::bi_fm_index, two_dimensional<std
+ 
+ #if SEQAN3_HAS_SEQAN2
+ template <typename t>
+-using one_dimensional2 = seqan::String<t>;
++using one_dimensional2 = seqan2::String<t>;
+ template <typename t>
+-using two_dimensional2 = seqan::StringSet<seqan::String<t>>;
++using two_dimensional2 = seqan2::StringSet<seqan2::String<t>>;
+ 
+-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index, one_dimensional2<seqan::Dna>)->Apply(arguments);
+-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index, two_dimensional2<seqan::Dna>)->Apply(arguments);
+-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index, one_dimensional2<seqan::AminoAcid>)->Apply(arguments);
+-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index, two_dimensional2<seqan::AminoAcid>)->Apply(arguments);
++BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index, one_dimensional2<seqan2::Dna>)->Apply(arguments);
++BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index, two_dimensional2<seqan2::Dna>)->Apply(arguments);
++BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index, one_dimensional2<seqan2::AminoAcid>)->Apply(arguments);
++BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index, two_dimensional2<seqan2::AminoAcid>)->Apply(arguments);
+ BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index, one_dimensional2<char>)->Apply(arguments);
+ BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index, two_dimensional2<char>)->Apply(arguments);
+-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, one_dimensional2<seqan::Dna>)->Apply(arguments);
+-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, two_dimensional2<seqan::Dna>)->Apply(arguments);
+-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, one_dimensional2<seqan::AminoAcid>)->Apply(arguments);
+-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, two_dimensional2<seqan::AminoAcid>)->Apply(arguments);
++BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, one_dimensional2<seqan2::Dna>)->Apply(arguments);
++BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, two_dimensional2<seqan2::Dna>)->Apply(arguments);
++BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, one_dimensional2<seqan2::AminoAcid>)->Apply(arguments);
++BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, two_dimensional2<seqan2::AminoAcid>)->Apply(arguments);
+ BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, one_dimensional2<char>)->Apply(arguments);
+ BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, two_dimensional2<char>)->Apply(arguments);
+ #endif // SEQAN3_HAS_SEQAN2
+diff --git a/test/performance/search/views/view_kmer_hash_benchmark.cpp b/test/performance/search/views/view_kmer_hash_benchmark.cpp
+index b27e3bfcf..b29ded168 100644
+--- a/test/performance/search/views/view_kmer_hash_benchmark.cpp
++++ b/test/performance/search/views/view_kmer_hash_benchmark.cpp
+@@ -127,14 +127,14 @@ static void naive_kmer_hash(benchmark::State & state)
+ #ifdef SEQAN3_HAS_SEQAN2
+ inline auto make_gapped_shape_seqan2(size_t const k)
+ {
+-    seqan::String<char> bitmap;
++    seqan2::String<char> bitmap;
+ 
+     for (size_t i{0}; i < k - 1; ++i)
+-        seqan::append(bitmap, seqan::CharString(std::to_string((i + 1) % 2)));
++        seqan2::append(bitmap, seqan2::CharString(std::to_string((i + 1) % 2)));
+ 
+-    seqan::append(bitmap, seqan::CharString("1"));
++    seqan2::append(bitmap, seqan2::CharString("1"));
+ 
+-    seqan::Shape<seqan::Dna, seqan::GenericShape> s(bitmap);
++    seqan2::Shape<seqan2::Dna, seqan2::GenericShape> s(bitmap);
+     return s;
+ }
+ 
+@@ -144,19 +144,19 @@ static void seqan2_kmer_hash_ungapped(benchmark::State & state)
+     assert(sequence_length > 0);
+     size_t k = static_cast<size_t>(state.range(1));
+     assert(k > 0);
+-    auto seq = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
+-    seqan::Shape<seqan::Dna, seqan::SimpleShape> s;
+-    seqan::resize(s, k);
++    auto seq = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 0);
++    seqan2::Shape<seqan2::Dna, seqan2::SimpleShape> s;
++    seqan2::resize(s, k);
+ 
+     size_t sum{0};
+ 
+     for (auto _ : state)
+     {
+-        auto it = seqan::begin(seq);
+-        seqan::hashInit(s, it);
+-        for (size_t i{0}; i < seqan::length(seq) - k + 1; ++i, ++it)
++        auto it = seqan2::begin(seq);
++        seqan2::hashInit(s, it);
++        for (size_t i{0}; i < seqan2::length(seq) - k + 1; ++i, ++it)
+         {
+-            benchmark::DoNotOptimize(sum += seqan::hashNext(s, it));
++            benchmark::DoNotOptimize(sum += seqan2::hashNext(s, it));
+         }
+     }
+ 
+@@ -172,18 +172,18 @@ static void seqan2_kmer_hash_gapped(benchmark::State & state)
+     assert(sequence_length > 0);
+     size_t k = static_cast<size_t>(state.range(1));
+     assert(k > 0);
+-    auto seq = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
+-    seqan::Shape<seqan::Dna, seqan::GenericShape> s = make_gapped_shape_seqan2(k);
++    auto seq = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 0);
++    seqan2::Shape<seqan2::Dna, seqan2::GenericShape> s = make_gapped_shape_seqan2(k);
+ 
+     size_t sum{0};
+ 
+     for (auto _ : state)
+     {
+-        auto it = seqan::begin(seq);
+-        seqan::hashInit(s, it);
+-        for (size_t i{0}; i < seqan::length(seq) - k + 1; ++i, ++it)
++        auto it = seqan2::begin(seq);
++        seqan2::hashInit(s, it);
++        for (size_t i{0}; i < seqan2::length(seq) - k + 1; ++i, ++it)
+         {
+-            benchmark::DoNotOptimize(sum += seqan::hashNext(s, it));
++            benchmark::DoNotOptimize(sum += seqan2::hashNext(s, it));
+         }
+     }
+ 
+diff --git a/test/performance/search/views/view_minimiser_hash_benchmark.cpp b/test/performance/search/views/view_minimiser_hash_benchmark.cpp
+index e129d9f09..de9a35303 100644
+--- a/test/performance/search/views/view_minimiser_hash_benchmark.cpp
++++ b/test/performance/search/views/view_minimiser_hash_benchmark.cpp
+@@ -64,14 +64,14 @@ enum class method_tag
+ #ifdef SEQAN3_HAS_SEQAN2
+ inline auto make_gapped_shape_seqan2(size_t const k)
+ {
+-    seqan::String<char> bitmap;
++    seqan2::String<char> bitmap;
+ 
+     for (size_t i{0}; i < k - 1; ++i)
+-        seqan::append(bitmap, seqan::CharString(std::to_string((i + 1) % 2)));
++        seqan2::append(bitmap, seqan2::CharString(std::to_string((i + 1) % 2)));
+ 
+-    seqan::append(bitmap, seqan::CharString("1"));
++    seqan2::append(bitmap, seqan2::CharString("1"));
+ 
+-    return seqan::Shape<seqan::Dna, seqan::GenericShape>(bitmap);
++    return seqan2::Shape<seqan2::Dna, seqan2::GenericShape>(bitmap);
+ }
+ #endif // SEQAN3_HAS_SEQAN2
+ 
+@@ -151,14 +151,14 @@ void compute_minimisers(benchmark::State & state)
+ #ifdef SEQAN3_HAS_SEQAN2
+         else
+         {
+-            auto seqan2_seq = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
++            auto seqan2_seq = seqan3::test::generate_sequence_seqan2<seqan2::Dna>(sequence_length, 0, 0);
+             using shape_t = std::conditional_t<tag == method_tag::seqan2_ungapped,
+-                                               seqan::Shape<seqan::Dna, seqan::SimpleShape>,
+-                                               seqan::Shape<seqan::Dna, seqan::GenericShape>>;
++                                               seqan2::Shape<seqan2::Dna, seqan2::SimpleShape>,
++                                               seqan2::Shape<seqan2::Dna, seqan2::GenericShape>>;
+ 
+             shape_t shape;
+             if constexpr (tag == method_tag::seqan2_ungapped)
+-                seqan::resize(shape, k);
++                seqan2::resize(shape, k);
+             else
+                 shape = make_gapped_shape_seqan2(k);
+ 
+diff --git a/test/performance/utility/char_operations/char_predicate_benchmark.cpp b/test/performance/utility/char_operations/char_predicate_benchmark.cpp
+index 666352598..050f2639b 100644
+--- a/test/performance/utility/char_operations/char_predicate_benchmark.cpp
++++ b/test/performance/utility/char_operations/char_predicate_benchmark.cpp
+@@ -48,7 +48,7 @@ static void simple(benchmark::State & state)
+             sum += seqan3::is_alpha(arr[i]);
+ #if SEQAN3_HAS_SEQAN2
+         else if constexpr (id == tag::seqan2)
+-            sum += seqan::IsAlpha{}(arr[i]);
++            sum += seqan2::IsAlpha{}(arr[i]);
+ #endif
+     }
+ 
+@@ -83,9 +83,9 @@ static void combined(benchmark::State & state)
+             sum += seqan3::is_alpha(arr[i]) || seqan3::is_blank(arr[i]) || seqan3::is_digit(arr[i]);
+ #if SEQAN3_HAS_SEQAN2
+         else if constexpr (id == tag::seqan2)
+-            sum += seqan::OrFunctor<seqan::OrFunctor<seqan::IsAlpha, seqan::IsBlank>, seqan::IsDigit>{}(arr[i]);
++            sum += seqan2::OrFunctor<seqan2::OrFunctor<seqan2::IsAlpha, seqan2::IsBlank>, seqan2::IsDigit>{}(arr[i]);
+         else if constexpr (id == tag::seqan2_serial)
+-            sum += seqan::IsAlpha{}(arr[i]) || seqan::IsBlank{}(arr[i]) || seqan::IsDigit{}(arr[i]);
++            sum += seqan2::IsAlpha{}(arr[i]) || seqan2::IsBlank{}(arr[i]) || seqan2::IsDigit{}(arr[i]);
+ #endif
+     }
+ 
+diff --git a/test/unit/test/seqan2_test.cpp b/test/unit/test/seqan2_test.cpp
+index 134a9b108..771ae2557 100644
+--- a/test/unit/test/seqan2_test.cpp
++++ b/test/unit/test/seqan2_test.cpp
+@@ -21,7 +21,7 @@ template <typename T>
+ class seqan2_container : public ::testing::Test
+ {};
+ 
+-using seqan2_container_types = ::testing::Types<seqan::String<int>, seqan::StringSet<int>>;
++using seqan2_container_types = ::testing::Types<seqan2::String<int>, seqan2::StringSet<int>>;
+ TYPED_TEST_SUITE(seqan2_container, seqan2_container_types, );
+ 
+ template <typename container_t>
+@@ -30,7 +30,7 @@ container_t construct_iota(int n)
+     container_t container{};
+ 
+     for (int i = 0; i < n; ++i)
+-        seqan::appendValue(container, i);
++        seqan2::appendValue(container, i);
+ 
+     return container;
+ }
+@@ -51,8 +51,8 @@ TYPED_TEST(seqan2_container, std_ranges_begin_end)
+     auto it = std::ranges::begin(container);
+     auto it_end = std::ranges::end(container);
+ 
+-    EXPECT_SAME_TYPE(decltype(it), decltype(seqan::begin(container)));
+-    EXPECT_SAME_TYPE(decltype(it_end), decltype(seqan::end(container)));
++    EXPECT_SAME_TYPE(decltype(it), decltype(seqan2::begin(container)));
++    EXPECT_SAME_TYPE(decltype(it_end), decltype(seqan2::end(container)));
+ 
+     for (int i = 0; it != it_end; ++it, ++i)
+     {
+@@ -91,10 +91,10 @@ TYPED_TEST(seqan2_container, std_iterator)
+ template <typename range_t>
+ concept SeqAn2Range = requires (range_t range) {
+                           {
+-                              seqan::begin(range)
++                              seqan2::begin(range)
+                               } -> std::same_as<std::ranges::iterator_t<range_t>>;
+                           {
+-                              seqan::end(range)
++                              seqan2::end(range)
+                               } -> std::same_as<std::ranges::iterator_t<range_t>>;
+                       };
+ 
+-- 
+2.40.1
+
