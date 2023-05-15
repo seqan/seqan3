@@ -61,19 +61,19 @@ TYPED_TEST_SUITE(chunk_view_test, underlying_range_types, );
 
 TYPED_TEST(chunk_view_test, concepts)
 {
-    // chunk view preserves input / forward / bidirectional / random_access / sized.
+    // chunk view preserves input / forward / bidirectional / random_access / sized / common.
     EXPECT_EQ((std::ranges::range<TypeParam>), (std::ranges::range<decltype(this->v)>));
     EXPECT_EQ((std::ranges::input_range<TypeParam>), (std::ranges::input_range<decltype(this->v)>));
     EXPECT_EQ((std::ranges::forward_range<TypeParam>), (std::ranges::forward_range<decltype(this->v)>));
     EXPECT_EQ((std::ranges::bidirectional_range<TypeParam>), (std::ranges::bidirectional_range<decltype(this->v)>));
     EXPECT_EQ((std::ranges::random_access_range<TypeParam>), (std::ranges::random_access_range<decltype(this->v)>));
     EXPECT_EQ((std::ranges::sized_range<TypeParam>), (std::ranges::sized_range<decltype(this->v)>));
+    EXPECT_EQ((std::ranges::common_range<TypeParam>), (std::ranges::common_range<decltype(this->v)>));
 
     // it always ensures view
     EXPECT_TRUE((std::ranges::view<decltype(this->v)>));
 
-    // it loses contiguous range, common_range and output range
-    EXPECT_FALSE((std::ranges::common_range<decltype(this->v)>));
+    // it loses contiguous range and output range
     EXPECT_FALSE((std::ranges::contiguous_range<decltype(this->v)>));
     EXPECT_FALSE((std::ranges::output_range<decltype(this->v), std::ranges::range_value_t<TypeParam> &>));
 }
@@ -183,12 +183,4 @@ TYPED_TEST(chunk_view_test, use_on_temporaries)
         }
         EXPECT_EQ(i, 4u);
     }
-}
-
-TYPED_TEST(chunk_view_test, big_chunk)
-{
-    // Check that a very big number (1ULL<<42) can be stored as chunk_size inside the chunk_view.
-    // error: conversion from ‘long long unsigned int’ to ‘uint16_t’ {aka ‘short unsigned int’} changes value
-    // from ‘4398046511104’ to ‘0’ [-Werror=overflow]
-    [[maybe_unused]] auto v = this->text | seqan3::views::chunk(1ULL << 42);
 }
