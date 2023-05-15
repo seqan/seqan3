@@ -43,7 +43,6 @@ jobs:
             build_type: Release
             build_threads: 2
             test_threads: 1 # snippets create and delete files and some separate tests create/delete the same files
-            cxx_flags: "-std=c++2a"
             cmake: 3.16.9
             requires_toolchain: true
             requires_ccache: true
@@ -58,7 +57,6 @@ jobs:
             build_type: Release
             build_threads: 2
             test_threads: 2
-            cxx_flags: "-std=c++2a"
             cmake: 3.16.9
             requires_toolchain: true
             requires_ccache: true
@@ -66,10 +64,9 @@ jobs:
             skip_run_tests: false
             use_include_dependencies: "OFF"
 
-          # 13 not yet available: https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test
-          - name: "Header gcc12"
-            cxx: "g++-12"
-            cc: "gcc-12"
+          - name: "Header gcc13"
+            cxx: "g++-13"
+            cc: "gcc-13"
             build: header
             build_type: Release
             build_threads: 2
@@ -88,7 +85,6 @@ jobs:
             build_type: Release
             build_threads: 2
             test_threads: 2
-            cxx_flags: "-std=c++2a"
             cmake: 3.16.9
             requires_toolchain: true
             requires_ccache: true
@@ -103,7 +99,6 @@ jobs:
             build_type: Debug
             build_threads: 2
             test_threads: 2
-            cxx_flags: "-std=c++2a"
             cmake: 3.16.9
             requires_toolchain: true
             requires_ccache: true
@@ -118,7 +113,6 @@ jobs:
             build_type: Debug
             build_threads: 1 # output is important to be in sequential order
             test_threads: 2
-            cxx_flags: "-std=c++2a"
             cmake: 3.16.9
             requires_toolchain: true
             requires_ccache: false

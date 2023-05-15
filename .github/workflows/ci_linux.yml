@@ -37,12 +37,11 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          # Not yet available: https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test
-          # - name: "Unit gcc13"
-          #   cxx: "g++-13"
-          #   cc: "gcc-13"
-          #   build: unit
-          #   build_type: Release
+          - name: "Unit gcc13"
+            cxx: "g++-13"
+            cc: "gcc-13"
+            build: unit
+            build_type: Release
 
           - name: "Unit gcc12"
             cxx: "g++-12"
