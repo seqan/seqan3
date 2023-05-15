@@ -7,7 +7,7 @@ on:
       compiler:
         description: 'GCC version'
         required: true
-        default: '12'
+        default: '13'
       cxx_flags:
         descriptions: 'CXXFLAGS to pass to compiler'
 
