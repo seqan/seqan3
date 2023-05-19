@@ -59,7 +59,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 #### Dependencies
   * We require at least CMake 3.16 for our test suite. Note that the minimum requirement for using SeqAn3 is unchanged
     ([\#3050](https://github.com/seqan/seqan3/pull/3050)).
-  * We now use Doxygen version 1.9.6 to build our documentation ([\#3116](https://github.com/seqan/seqan3/pull/3116)).
+  * We now use Doxygen version 1.9.7 to build our documentation ([\#3116](https://github.com/seqan/seqan3/pull/3116),
+    [\#3158](https://github.com/seqan/seqan3/pull/3158)).
 
 # 3.2.0
 
