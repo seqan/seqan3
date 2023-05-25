@@ -19,10 +19,13 @@
 namespace seqan3::detail
 {
 
-/*!\brief Iterate over a range (consumes single-pass input ranges).
+/*!\brief Iterate over a range.
  * \ingroup core_range
  * \tparam rng_t Type of the range; must satisfy std::ranges::input_range.
  * \param rng The range.
+ * \details
+ * * `std::ranges::input_range<rng_t>`: Consumes input range.
+ * * `std::ranges::forward_range<rng_t>`: NO-OP.
  */
 template <std::ranges::input_range rng_t>
 constexpr void consume(rng_t && rng)
@@ -33,10 +36,6 @@ constexpr void consume(rng_t && rng)
         ++it;
 }
 
-/*!\brief Iterate over a range (NO-OP for forward ranges).
- * \ingroup core_range
- * \tparam rng_t Type of the range; must satisfy std::ranges::forward_range.
- */
 template <std::ranges::forward_range rng_t>
 constexpr void consume(rng_t &&)
 {}
