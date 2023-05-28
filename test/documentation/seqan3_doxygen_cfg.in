@@ -192,19 +192,24 @@ IGNORE_PREFIX          =
 GENERATE_HTML          = YES
 HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
-HTML_HEADER            =
+HTML_HEADER            = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3_header.html
 HTML_FOOTER            = ${SEQAN3_DOXYGEN_OUTPUT_DIR}/seqan3_footer.html
 HTML_STYLESHEET        =
-HTML_EXTRA_STYLESHEET  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3.css \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3_dark.css
-HTML_EXTRA_FILES       = ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc/tutorial/10_sam_file/example.sam \
+HTML_EXTRA_STYLESHEET  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/doxygen-awesome/doxygen-awesome.css \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3.css
+HTML_EXTRA_FILES       = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/doxygen-awesome/doxygen-awesome-darkmode-toggle.js \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/doxygen-awesome/doxygen-awesome-fragment-copy-button.js \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/doxygen-awesome/doxygen-awesome-paragraph-link.js \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/doxygen-awesome/doxygen-awesome-interactive-toc.js \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/doxygen-awesome/doxygen-awesome-tabs.js \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc/tutorial/10_sam_file/example.sam \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/version.js \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/version.php \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/api-stability.js
-HTML_COLORSTYLE        = AUTO_LIGHT
-HTML_COLORSTYLE_HUE    = 220
-HTML_COLORSTYLE_SAT    = 100
-HTML_COLORSTYLE_GAMMA  = 80
+HTML_COLORSTYLE        = LIGHT
+HTML_COLORSTYLE_HUE    = 209
+HTML_COLORSTYLE_SAT    = 255
+HTML_COLORSTYLE_GAMMA  = 113
 HTML_TIMESTAMP         = YES
 HTML_DYNAMIC_MENUS     = YES
 HTML_DYNAMIC_SECTIONS  = YES
@@ -232,7 +237,7 @@ QHP_SECT_FILTER_ATTRS  =
 QHG_LOCATION           =
 GENERATE_ECLIPSEHELP   = NO
 ECLIPSE_DOC_ID         = org.doxygen.Project
-DISABLE_INDEX          = YES
+DISABLE_INDEX          = NO
 GENERATE_TREEVIEW      = YES
 FULL_SIDEBAR           = NO
 ENUM_VALUES_PER_LINE   = 4

@@ -1,215 +1,75 @@
-body {
-    background-color: #CCC;
-    color: black;
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+/* https://jothepro.github.io/doxygen-awesome-css/md_docs_customization.html */
+
+
+/* make all important pages bold
+#nav-tree .label a[class^="modules"][class$="html"],
+#nav-tree .label a[class^="group"][class$="html"],
+#nav-tree .label a[class^="usergroup"][class$="html"],
+#nav-tree .label a[class^="namespace"][class$="html"],
+#nav-tree .label a[class="nolink"],
+#nav-tree .label a[class="annotated.html"],
+#nav-tree .label a[class="hierarchy.html"],
+#nav-tree .label a[class="index.html"],
+#nav-tree .label a[class="files.html"],
+#nav-tree .label a[class="concepts.html"],
+#nav-tree .label a[class="cookbook.html"] {
+    font-weight: bolder;
+}
+*/
+
+/* add icons */
+#nav-tree .label a[class^="group"][class$="html"]::before {
+    content: "📁 "; /*Note: first character is a utf8 symbol (U+1F4C1)*/
 }
 
-div, p, dl {
-    font-size: 13pt;
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-    line-height: 30px;
+#nav-tree .label a[class^="namespace"][class$="html"]::before {
+    content: "📦 "; /*Note: first character is a utf8 symbol (U+1F4E6)*/
 }
 
-h1, h2, h3, h4, h5, h6, summary.seqan {
-    transition: text-shadow 0.5s linear;
-    margin-right: 15px;
-    color: #354C7B;
-    padding-top: 0.5em;
-    padding-bottom: 4px;
+/* add Concept and Class suffix */
+#nav-tree .label a[class^="interface"][class$="html"]::after {
+    content: " Concept";
+    color: var(--page-secondary-foreground-color);
 }
 
-summary, summary.seqan {
-    outline:none;
+#nav-tree .label a[class^="concept"][class$="html"]::after {
+    content: " Concept";
+    color: var(--page-secondary-foreground-color);
 }
 
-summary.seqan {
-    font-weight: bold;
-    font-size: 1.17em;
+/* Remove suffix from Concept List */
+#nav-tree .label a[class^="concepts.html"]::after {
+    content: "" !important;
+    color: var(--page-secondary-foreground-color);
 }
 
-details.seqan {
-    padding: 2px 6px;
+#nav-tree .label a[class^="class"][class$="html"]::after,
+#nav-tree .label a[class^="struct"][class$="html"]::after {
+    content: " Class";
+    color: var(--page-secondary-foreground-color);
 }
 
-details.seqan[open] {
-    background-color: #efefef;
-    border: none;
-    box-shadow: 3px 3px 4px #959595;
-    padding: 2px 6px;
+/* override light-mode variables here */
+html {
+    --seqan-stable-api-color: #008000;
+    --seqan-stable-api-box-color: #14b82a;
+    --seqan-experimental-api-color: #cc8500;
+    --seqan-experimental-api-box-color: #ffc965;
+    --seqan-no-api-color: #ff9999;
+    --seqan-no-api-box-color: #ffcccc;
 }
 
-h1 {
-    padding-top: 1.5em;
-    border-bottom: 2px solid #DADADA;
-}
-
-table {
-    font-size: 12pt;
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-    table-layout: auto;
-    width: 100%;
-}
-
-.memItemLeft, .memTemplItemLeft {
-    white-space: normal;
-    width: 30%;
-}
-
-.memItemRight {
-    width: 70%;
-}
-
-div.contents {
-    margin-bottom: 10px;
-    padding: 40px;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 1010px; /* code snippet with 120 line length still fits*/
-    background-color: white;
-    border-radius: 8px;
-}
-
-#titlearea {
-    background-color: white;
-    align-content: center;
-}
-
-#projectlogo {
-    padding: 10px;
-    width: 150px;
-    filter: drop-shadow(0 0 0.1rem rgb(251,227,0));
-}
-
-hr.footer {
-    display: none;
-}
-
-.title {
-    text-align: center;
-}
-
-.footer {
-    background-color: #AAA;
-}
-
-/* code snippets */
-div.fragment {
-    font-size: 12pt;
-    line-height: 30px;
-    font-family: "Ubuntu Mono", "SFMono-Regular",source-code-pro,Menlo,Monaco,Consolas,"Roboto Mono","Droid Sans Mono","Liberation Mono",Consolas,"Courier New",Courier,monospace;
-    padding: 15px;
-    border-radius: 8px;
-    background-color: #F6F8FA;
-    border: 1px solid #F6F8FA;
-}
-
-/* inline code */
-code {
-    font-size: 11pt;
-    line-height: 30px;
-    font-family: "Ubuntu Mono", "SFMono-Regular",source-code-pro,Menlo,Monaco,Consolas,"Roboto Mono","Droid Sans Mono","Liberation Mono",Consolas,"Courier New",Courier,monospace;
-    padding: 1px 0px 1px 0px;
-    border-radius: 1px;
-    background-color: #F6F8FA;
-    border: 1px solid #F6F8FA;
-}
-
-dl.section {
-    padding: 10px;
-    border-radius: 4px;
-}
-
-dl.attention {
-    background-color: #FFF1F1;
-    border-radius: 4px;
-}
-
-dl.warning {
-    border-color: #E08D12;
-    background-color: #FBF0E0;
-    border-radius: 4px;
-}
-
-dl.note {
-    border-color: #E9DF24;
-    background-color: #FCFBE6;
-    border-radius: 4px;
-}
-
-hr {
-    border-top: 2px solid #E4E4E4;
-    height: 2px;
-}
-
-/* markdown tables */
-table.markdownTable {
-    empty-cells: show;
-    border: 1px solid #CBCBCB;
-}
-
-table.markdownTable caption {
-    color: #000;
-    font: italic 85%/1 arial,sans-serif;
-    padding: 1em 0;
-    text-align: center;
-}
-
-table.markdownTable td:first-child, table.markdownTable th:first-child {
-    border-left-width: 0;
-}
-
-table.markdownTable thead {
-    background-color: #E0E0E0;
-    color: #000;
-    text-align: left;
-    vertical-align: bottom;
-}
-
-table.markdownTable td {
-    background-color: transparent;
-    border: 0;
-    border-bottom: 2px solid #CBCBCB;
-    border-width: 0 1 0 0px;
-    font-size: inherit;
-    margin: 0;
-    overflow: visible;
-    padding: .5em 1em;
-}
-
-table.markdownTable th {
-    border: 0;
-    border-width: 0 1 0 0px;
-    font-size: inherit;
-    margin: 0;
-    overflow: visible;
-    padding: .5em 1em;
-    border-bottom: 2px solid #CBCBCB;
-    background-color: #EBEDF2;
-    color: black;
-    font-style: bold;
-}
-
-/* automatic TOC */
-div.toc {
-    max-width: 20em;
-    width: auto;
-    align-content: center;
-}
-div.toc li {
-    font-size: 10pt;
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-}
-
-div.toc h3 {
-    font-size: 12pt;
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+/* define dark-mode variable overrides here if you DO use doxygen-awesome-darkmode-toggle.js */
+html.dark-mode {
+    --seqan-no-api-color: #811212;
+    --seqan-no-api-box-color: #e74b4b;
 }
 
 /* assignment box */
 div.assignment {
     padding: 0;
-    background-color: #dce2ef;
-    border-left: 6px solid #2f436a;
+    background-color: var(--todo-color);
+    border-left: 6px solid var(--todo-color-darker);
     border-radius: 4px;
 }
 
@@ -229,144 +89,40 @@ div.assignment_content {
 /* solution box */
 div.solution {
     padding: 1em;
-    background-color: #d4edce;
-    border-left: 6px solid #408000;
+    background-color: var(--invariant-color);
+    border-left: 6px solid var(--invariant-color-darker);
     border-radius: 4px;
-    color: #354C7B;
 }
 
-#nav-tree .item {
-    padding-top: 2px;
-    padding-bottom: 3px;
-    line-height: 18px;
+summary {
+    margin-right: 15px;
+    padding-top: 0.5em;
+    padding-bottom: 4px;
+    outline:none;
+    font-weight: bold;
+    font-size: 1.17em;
 }
 
-#nav-tree .selected {
-    color: #1E227D;
-    text-shadow: none;
-    background-image: none;
-    background-color: rgb(193, 201, 225);
-}
-
-/* Side nav bar styles: */
-#nav-tree .label a { /*default*/
-    color: #3D578C;
-    font-size: 10pt;
-}
-
-/* make all important pages bold */
-#nav-tree .label a[class^="modules"][class$="html"],
-#nav-tree .label a[class^="group"][class$="html"],
-#nav-tree .label a[class^="usergroup"][class$="html"],
-#nav-tree .label a[class^="namespace"][class$="html"],
-#nav-tree .label a[class="nolink"],
-#nav-tree .label a[class="annotated.html"],
-#nav-tree .label a[class="hierarchy.html"],
-#nav-tree .label a[class="index.html"],
-#nav-tree .label a[class="files.html"],
-#nav-tree .label a[class="concepts.html"],
-#nav-tree .label a[class="cookbook.html"] {
-    color: #3D578C;
-    font-weight: bolder;
-}
-
-/* add icons */
-#nav-tree .label a[class^="group"][class$="html"]::before {
-    content: "📁 "; /*Note: first character is a utf8 symbol (U+1F4C1)*/
-}
-
-#nav-tree .label a[class^="namespace"][class$="html"]::before {
-    content: "📦 "; /*Note: first character is a utf8 symbol (U+1F4E6)*/
-}
-
-/* add Concept and Class suffix */
-#nav-tree .label a[class^="interface"][class$="html"]::after {
-    content: " Concept";
-    color: grey;
-}
-
-#nav-tree .label a[class^="concept"][class$="html"]::after {
-    content: " Concept";
-    color: grey;
-}
-
-/* Remove suffix from Concept List */
-#nav-tree .label a[class^="concepts.html"]::after {
-    content: "" !important;
-    color: grey;
-}
-
-#nav-tree .label a[class^="class"][class$="html"]::after,
-#nav-tree .label a[class^="struct"][class$="html"]::after {
-    content: " Class";
-    color: grey;
+details {
+    padding: 2px 6px;
 }
 
 .mlabel.experimental-api
 {
-    background-color: orange;
-    border-top: 1px solid #da8d00; /* darken(orange, 14.5) */
-    border-left: 1px solid #da8d00; /* same as above */
-    border-right: 1px solid #ffc965; /* lighten(orange, 40) */
-    border-bottom: 1px solid #ffc965; /* same as above */
+    background-color: var(--seqan-experimental-api-color);
+    box-shadow: 1px 1px 2px 0px var(--seqan-experimental-api-box-color);
 }
 
 .mlabel.stable-api
 {
-    background-color: green;
-    border-top: 1px solid #006d00; /* darken(green, 14.5) */
-    border-left: 1px solid #006d00; /* same as above */
-    border-right: 1px solid #00cc00; /* lighten(green, 20) */
-    border-bottom: 1px solid #00cc00; /* same as above */
+    background-color: var(--seqan-stable-api-color);
+    box-shadow: 1px 1px 2px 0px var(--seqan-stable-api-box-color);
 }
 
 .mlabel.no-api
 {
-    background-color: red;
-    border-top: 1px solid #da0000; /* darken(red, 14.5) */
-    border-left: 1px solid #da0000; /* same as above */
-    border-right: 1px solid #ff9999; /* lighten(red, 60) */
-    border-bottom: 1px solid #ff9999; /* same as above */
-}
-
-dl.stable-api::before {
-    content: "✔️"; /*Note: first character is a utf8 symbol (U+2714)*/
-    font-size: 18pt;
-}
-
-dl.stable-api {
-    margin-left: -7px;
-    padding-left: 3px;
-    border-left: 4px solid;
-    background-color: #e8ffe8;
-    border-color: #00D000;
-}
-
-dl.experimental-api::before {
-    content: "⚗️"; /*Note: first character is a utf8 symbol (U+2697)*/
-    font-size: 18pt;
-}
-
-dl.experimental-api {
-    margin-left: -7px;
-    padding-left: 3px;
-    border-left: 4px solid;
-    border-color: #E08D12;
-    background-color: #FBF0E0;
-}
-
-dl.no-api::before {
-    content: "🚩"; /*Note: first character is a utf8 symbol (U+1F6A9)*/
-    font-size: 18pt;
-}
-
-dl.no-api {
-    margin-left: -7px;
-    padding-left: 3px;
-    border-left: 4px solid;
-    border-color: #FF0000;
-    background-color: #FFF1F1;
-    /* border-radius: 4px; */
+    background-color: var(--seqan-no-api-color);
+    box-shadow: 1px 1px 2px 0px var(--seqan-no-api-box-color);
 }
 
 .mlabel.experimental-api.header, .mlabel.stable-api.header, .mlabel.no-api.header
@@ -379,11 +135,56 @@ dl.no-api {
 .memtitle.no-api
 {
     background-image: none;
-    background-color: #ffb3b3;
+    background-color: var(--seqan-no-api-color);
 }
 
 .memtitle.experimental-api
 {
     background-image: none;
-    background-color: #FBF0E0;
+    background-color: var(--seqan-experimental-api-color);
 }
+
+dl.stable-api::before {
+    content: "✔️"; /*Note: first character is a utf8 symbol (U+2714)*/
+    font-size: 18pt;
+}
+
+dl.stable-api {
+    margin-left: -7px;
+    padding-left: 3px;
+    border-left: 4px solid;
+    border-color: var(--seqan-stable-api-color);
+    background-color: var(--seqan-stable-api-box-color);
+    color: #2f4153;
+}
+
+dl.experimental-api::before {
+    content: "⚗️"; /*Note: first character is a utf8 symbol (U+2697)*/
+    font-size: 18pt;
+}
+
+dl.experimental-api {
+    margin-left: -7px;
+    padding-left: 3px;
+    border-left: 4px solid;
+    border-color: var(--seqan-experimental-api-color);
+    background-color: var(--seqan-experimental-api-box-color);
+    color: #2f4153;
+}
+
+dl.no-api::before {
+    content: "🚩"; /*Note: first character is a utf8 symbol (U+1F6A9)*/
+    font-size: 18pt;
+}
+
+dl.no-api {
+    margin-left: -7px;
+    padding-left: 3px;
+    border-left: 4px solid;
+    border-color: var(--seqan-no-api-color);
+    background-color: var(--seqan-no-api-box-color);
+    color: #2f4153;
+}
+
+
+
