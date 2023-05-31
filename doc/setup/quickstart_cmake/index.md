@@ -23,24 +23,22 @@ We will briefly explain how to install GCC-11 (or the latest GCC if such an opti
 operating systems. We recommend using the latest version of GCC available. For more information, refer to your
 operating system's documentation.
 
-\startcollapsible{Linux-based}
-
-#### Ubuntu >= 22.04
+### Linux
+<div class="tabbed">
+- <b class="tab-title">Ubuntu >= 22.04</b>
 ```bash
 # Installs default compiler version (gcc-11 for Ubuntu 22.04).
 sudo apt install g++
-# To install gcc-12, follow below instructions.
+# To install gcc-12, follow instructions for Ubuntu < 22.04.
 ```
-
-#### Ubuntu < 22.04
+- <b class="tab-title">Ubuntu < 22.04</b>
 ```bash
 sudo add-apt-repository --no-update --yes ppa:ubuntu-toolchain-r/ppa
 sudo add-apt-repository --no-update --yes ppa:ubuntu-toolchain-r/test
 sudo apt-get update
 sudo apt install g++-11
 ```
-
-#### Using [conda](https://conda.io)
+- <b class="tab-title">Using conda</b>
 To avoid interference with system packages, we recommend creating a new environment when using conda.
 ```bash
 conda create -n conda_gcc_env -c conda-forge gcc_linux-64
@@ -49,48 +47,39 @@ conda activate conda_gcc_env
 This will put GCC in a separate environment `conda_gcc_env` which can be activated via `conda activate conda_gcc_env`
 and deactivated via `conda deactivate`.
 
-\endcollapsible
+</div>
 
-\startcollapsible{macOS}
-
-#### Using [Homebrew](https://brew.sh/)
+### macOS
+<div class="tabbed">
+- <b class="tab-title">Using Homebrew</b>
 ```bash
 brew install gcc@11
 ```
-
-#### Using [MacPorts](https://www.macports.org/)
+- <b class="tab-title">Using Macports</b>
 ```bash
 sudo port install gcc11
 ```
 
-\endcollapsible
+</div>
 
-\startcollapsible{Windows}
-
-#### Using [WSL](https://docs.microsoft.com/en-us/windows/wsl/about)
+### Windows
 The Windows Subsystem for Linux offers an easy way to run a Linux distribution under Windows.
 Follow [Microsoft's setup guide](https://docs.microsoft.com/en-us/windows/wsl/about) to install WSL and then follow
 the steps listed for Linux-based systems.
 
-\endcollapsible
-
-\startcollapsible{Browser-based}
-
-#### Using [gitpod.io](https://gitpod.io/#https://github.com/seqan/seqan3/)
+### Browser
+<div class="tabbed">
+- <b class="tab-title">Using gitpod.io</b>
 [gitpod.io](https://gitpod.io) allows you to edit, compile and run code from within your browser. The free version includes 50
 hours of use per month, which is plenty for our tutorials. A GitHub account is required.
 [Click here](https://gitpod.io/#https://github.com/seqan/seqan3/) to open SeqAn3 in gitpod.
-
-<!-- Codespaces are currently not free. Revisit in the future.
-#### Using [GitHub codespaces](https://github.com/codespaces)
-GitHub offers a service similar to gitpod. Codespaces are currently in **public beta** and may not be available to
-everyone. [Click here](https://github.com/codespaces) to check for availability.
-
+- <b class="tab-title">Using GitHub Codespaces</b>
+[GitHub Codespaces](https://github.com/codespaces) offer a service similar to gitpod, including a free monthly quota.
+[Click here](https://codespaces.new/seqan/seqan3) to open SeqAn3 in Codespaces.
 Please note that you may have to manually clone the submodules by running `git submodule update --init`.
--->
 
-\endcollapsible
-
+</div>
+<br>
 \attention After installing, `g++ --version` should print the desired GCC version.
            If not, you may have to use, for example, `g++-11 --version` or even specify the full path to your compiler.
 
