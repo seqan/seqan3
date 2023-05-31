@@ -23,15 +23,6 @@ else ()
     set (SEQAN3_DOXYGEN_HAVE_DOT "YES")
 endif ()
 
-### Use mathjax instead of latex to render formulas.
-find_package (LATEX QUIET)
-
-if (${LATEX_FOUND})
-    set (SEQAN3_DOXYGEN_USE_MATHJAX "NO")
-else ()
-    set (SEQAN3_DOXYGEN_USE_MATHJAX "YES")
-endif ()
-
 ### Number of threads to use for dot. Doxygen's default is 0 (all threads).
 set (SEQAN3_DOXYGEN_DOT_NUM_THREADS "0")
 
@@ -47,7 +38,6 @@ option (SEQAN3_DEV_DOC "Create build target and test for developer documentation
 option (SEQAN3_VERCEL_PREVIEW_DOC "Is this a preview build by vercel.com?" OFF)
 
 if (SEQAN3_VERCEL_PREVIEW_DOC)
-    set (SEQAN3_DOXYGEN_USE_MATHJAX "YES")
     set (SEQAN3_DOXYGEN_DOT_NUM_THREADS "2")
     set (SEQAN3_DOXYFILE_OPTION_POWERED_BY_VERCEL
          "HTML_EXTRA_FILES       += ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/.vercel/powered-by-vercel.svg")
