@@ -1,7 +1,7 @@
-From b465f21eb58a9f56e98f8d25f008809bb997cedd Mon Sep 17 00:00:00 2001
+From 3e37b45a4aa12391268dcfe5da5f318a17e80b86 Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Mon, 9 Jan 2023 15:16:43 +0100
-Subject: [PATCH 2/4] [NOAPI] Fix wrong alignment score
+Subject: [PATCH 2/6] [NOAPI] Fix wrong alignment score
 
 ---
  .../matrix/detail/debug_stream_trace_directions_test.cpp      | 4 ++--
