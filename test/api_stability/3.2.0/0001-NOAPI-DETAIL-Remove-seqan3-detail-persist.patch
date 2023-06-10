@@ -1,7 +1,7 @@
-From a891b3f97e31ae3692260b0f6bdbdd7d5623e014 Mon Sep 17 00:00:00 2001
+From 10f7fffd7ebd542f88b35eef42e70f4e6cdfa8c7 Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Thu, 20 Oct 2022 14:58:05 +0200
-Subject: [PATCH 1/4] [NOAPI] [DETAIL] Remove seqan3::detail::persist
+Subject: [PATCH 1/6] [NOAPI] [DETAIL] Remove seqan3::detail::persist
 
 ---
  test/snippet/core/detail/persist_view.cpp     |  37 ------
