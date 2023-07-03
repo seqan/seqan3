@@ -12,7 +12,7 @@ cmake_minimum_required (VERSION 3.16)
 macro (seqan3_require_benchmark)
     enable_testing ()
 
-    set (benchmark_version "1.7.0")
+    set (benchmark_version "1.8.0")
     set (gbenchmark_git_tag "v${benchmark_version}")
 
     find_package (benchmark ${benchmark_version} EXACT QUIET)
