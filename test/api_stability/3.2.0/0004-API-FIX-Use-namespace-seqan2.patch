@@ -1,7 +1,7 @@
-From ea874af70b8e12d88b5c64f4c538c159df0c822b Mon Sep 17 00:00:00 2001
+From 68326cb41a9487f27a93b8ad385e30f2760c6167 Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Sun, 14 May 2023 15:21:47 +0200
-Subject: [PATCH 4/6] [API][FIX] Use namespace seqan2
+Subject: [PATCH 4/7] [API][FIX] Use namespace seqan2
 
 ---
  .../align_pairwise_edit_distance.hpp          |  8 +--
@@ -1569,5 +1569,5 @@ index 134a9b108..771ae2557 100644
                        };
  
 -- 
-2.40.1
+2.41.0
 
