@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2022, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2022, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2023, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2023, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -32,12 +32,14 @@ TYPED_TEST_SUITE(quality_conversion, quality_conversion_gtest_types, );
 
 TYPED_TEST(quality_conversion, explicit_conversion)
 {
-    seqan3::detail::for_each<quality_conversion_types>([&](auto qual) constexpr {
-        using out_type = std::decay_t<typename decltype(qual)::type>;
-        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_phred(0)), out_type{}.assign_phred(0));
-        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_phred(5)), out_type{}.assign_phred(5));
-        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_phred(15)), out_type{}.assign_phred(15));
-        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_phred(20)), out_type{}.assign_phred(20));
-        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_phred(40)), out_type{}.assign_phred(40));
-    });
+    seqan3::detail::for_each<quality_conversion_types>(
+        [&](auto qual) constexpr
+        {
+            using out_type = std::decay_t<typename decltype(qual)::type>;
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_phred(0)), out_type{}.assign_phred(0));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_phred(5)), out_type{}.assign_phred(5));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_phred(15)), out_type{}.assign_phred(15));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_phred(20)), out_type{}.assign_phred(20));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_phred(40)), out_type{}.assign_phred(40));
+        });
 }

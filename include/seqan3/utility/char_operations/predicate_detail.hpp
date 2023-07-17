@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2022, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2022, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2023, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2023, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -293,8 +293,7 @@ struct is_in_interval_type : public char_predicate_base<is_in_interval_type<inte
             ret[i] = true;
 
         return ret;
-    }
-    ();
+    }();
 };
 
 // ----------------------------------------------------------------------------
@@ -331,8 +330,7 @@ struct is_char_type : public char_predicate_base<is_char_type<char_v>>
             ret[static_cast<uint8_t>(char_v)] = true;
 
         return ret;
-    }
-    ();
+    }();
 };
 
 } // namespace seqan3::detail

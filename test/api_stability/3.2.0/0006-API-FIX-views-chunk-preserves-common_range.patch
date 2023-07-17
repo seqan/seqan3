@@ -1,7 +1,7 @@
-From bb4305d06083259b6efb5383331189781362bf82 Mon Sep 17 00:00:00 2001
+From 16d2c1546f55d58d1e0b1e199f19cafc3be8a863 Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Sat, 10 Jun 2023 11:23:53 +0200
-Subject: [PATCH 6/6] [API][FIX] views::chunk preserves common_range
+Subject: [PATCH 6/7] [API][FIX] views::chunk preserves common_range
 
 ---
  test/unit/utility/views/chunk_test.cpp | 14 +++-----------
@@ -47,5 +47,5 @@ index 9b8c12baa..3bb2d8b89 100644
 -    [[maybe_unused]] auto v = this->text | seqan3::views::chunk(1ULL << 42);
 -}
 -- 
-2.40.1
+2.41.0
 

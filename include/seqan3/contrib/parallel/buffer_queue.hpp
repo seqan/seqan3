@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2022, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2022, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2023, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2023, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -19,8 +19,8 @@
 #include <cmath>
 #include <concepts>
 #include <mutex>
-#include <seqan3/std/new>
 #include <ranges>
+#include <seqan3/std/new>
 #include <shared_mutex>
 #include <span>
 #include <type_traits>
@@ -90,21 +90,20 @@ template <std::semiregular value_t,
 class buffer_queue
 {
 public:
-
-    using buffer_type     = buffer_t;
-    using value_type      = typename buffer_type::value_type;
-    using size_type       = typename buffer_type::size_type;
-    using reference       = void;
+    using buffer_type = buffer_t;
+    using value_type = typename buffer_type::value_type;
+    using size_type = typename buffer_type::size_type;
+    using reference = void;
     using const_reference = void;
 
     // Default constructor sets capacity to 1 (still empty)
     buffer_queue() : buffer_queue{0u}
     {}
-    buffer_queue(buffer_queue const &)             = delete;
-    buffer_queue(buffer_queue &&)                  = delete;
+    buffer_queue(buffer_queue const &) = delete;
+    buffer_queue(buffer_queue &&) = delete;
     buffer_queue & operator=(buffer_queue const &) = delete;
-    buffer_queue & operator=(buffer_queue &&)      = delete;
-    ~buffer_queue()                                = default;
+    buffer_queue & operator=(buffer_queue &&) = delete;
+    ~buffer_queue() = default;
 
     // you can set the initial capacity here
     explicit buffer_queue(size_type const init_capacity)
@@ -270,8 +269,8 @@ public:
         }
     }
     //!\}
-private:
 
+private:
     /*!\brief Checks if the capacity of the ring buffer is exhausted.
      * \param[in] from The thread local position to read from the buffer.
      * \param[in] to The thread local position to write to the buffer.
@@ -303,7 +302,7 @@ private:
      */
     constexpr size_type to_buffer_position(size_type const position) const
     {
-       return position & (ring_buffer_capacity - 1);
+        return position & (ring_buffer_capacity - 1);
     }
 
     /*!\brief Increments the given position by one and returns the next position in the buffer.
@@ -333,33 +332,31 @@ private:
         //
         // return the next greater position that fulfils the invariants
         if (to_buffer_position(++position) >= buffer.size())
-            position += ring_buffer_capacity - buffer.size();  // If the position reached
+            position += ring_buffer_capacity - buffer.size(); // If the position reached
         return position;
     }
 
     template <typename value2_t>
-        requires (std::convertible_to<value2_t, value_t>) &&
-                 (buffer_policy == buffer_queue_policy::fixed)
-    bool overflow(value2_t &&)
+        requires (std::convertible_to<value2_t, value_t>) && (buffer_policy == buffer_queue_policy::fixed) bool
+    overflow(value2_t &&)
     {
         return false;
     }
 
     template <typename value2_t>
-        requires (std::convertible_to<value2_t, value_t>) &&
-                 (buffer_policy == buffer_queue_policy::dynamic)
-    bool overflow(value2_t && value);
+        requires (std::convertible_to<value2_t, value_t>) && (buffer_policy == buffer_queue_policy::dynamic) bool
+    overflow(value2_t && value);
 
     //!\brief The buffer that is used as ring buffer.
     buffer_t buffer;
     alignas(std::hardware_destructive_interference_size) std::shared_mutex mutable mutex{};
-    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    pop_front_position{0};
-    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    pending_pop_front_position{0};
-    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    push_back_position{0};
-    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    pending_push_back_position{0};
-    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    ring_buffer_capacity{0};
-    alignas(std::hardware_destructive_interference_size) std::atomic_bool          writer_waiting{false};
-    alignas(std::hardware_destructive_interference_size) bool                      closed_flag{false};
+    alignas(std::hardware_destructive_interference_size) std::atomic<size_type> pop_front_position{0};
+    alignas(std::hardware_destructive_interference_size) std::atomic<size_type> pending_pop_front_position{0};
+    alignas(std::hardware_destructive_interference_size) std::atomic<size_type> push_back_position{0};
+    alignas(std::hardware_destructive_interference_size) std::atomic<size_type> pending_push_back_position{0};
+    alignas(std::hardware_destructive_interference_size) std::atomic<size_type> ring_buffer_capacity{0};
+    alignas(std::hardware_destructive_interference_size) std::atomic_bool writer_waiting{false};
+    alignas(std::hardware_destructive_interference_size) bool closed_flag{false};
 };
 
 // Specifies a fixed size buffer queue.
@@ -380,8 +377,7 @@ using dynamic_buffer_queue = buffer_queue<value_t, buffer_t, buffer_queue_policy
 
 template <std::semiregular value_t, sequence_container buffer_t, buffer_queue_policy buffer_policy>
 template <typename value2_t>
-    requires (std::convertible_to<value2_t, value_t>) &&
-             (buffer_policy == buffer_queue_policy::dynamic)
+    requires (std::convertible_to<value2_t, value_t>) && (buffer_policy == buffer_queue_policy::dynamic)
 inline bool buffer_queue<value_t, buffer_t, buffer_policy>::overflow(value2_t && value)
 {
     // try to extend capacity
@@ -501,7 +497,7 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_pop(v
         while (!this->pop_front_position.compare_exchange_weak(acquired_slot, next_local_pop_front_position))
         {
             acquired_slot = local_pending_pop_front_position;
-            delay.wait();  // add adapting delay in case of high contention.
+            delay.wait(); // add adapting delay in case of high contention.
         }
     }
 
@@ -575,8 +571,8 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_push(
                     detail::spin_delay delay{};
                     // the slot this thread acquired to write to
                     size_type acquired_slot = local_pending_push_back_position;
-                    while (!this->push_back_position.compare_exchange_weak(acquired_slot,
-                                                                           next_local_push_back_position))
+                    while (
+                        !this->push_back_position.compare_exchange_weak(acquired_slot, next_local_push_back_position))
                     {
                         acquired_slot = local_pending_push_back_position;
                         delay.wait();

@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2022, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2022, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2023, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2023, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -599,7 +599,8 @@ private:
 
     //!\brief For the given components, compute the combined rank.
     template <std::size_t... idx>
-    static constexpr rank_type rank_sum_helper(component_types... components, std::index_sequence<idx...> const &) noexcept
+    static constexpr rank_type rank_sum_helper(component_types... components,
+                                               std::index_sequence<idx...> const &) noexcept
     {
         return ((seqan3::to_rank(components) * cummulative_alph_sizes[idx]) + ...);
     }

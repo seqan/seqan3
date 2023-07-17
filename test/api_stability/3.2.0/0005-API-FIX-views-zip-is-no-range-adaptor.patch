@@ -1,7 +1,7 @@
-From 418f3853e4a62b5cd5997011cfcb429e7bceaef6 Mon Sep 17 00:00:00 2001
+From dddfcdbc792adc1b2c0bae848ab25351c6782c02 Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Sat, 10 Jun 2023 10:28:52 +0200
-Subject: [PATCH 5/6] [API][FIX] views::zip is no range adaptor
+Subject: [PATCH 5/7] [API][FIX] views::zip is no range adaptor
 
 ---
  test/unit/utility/views/zip_test.cpp | 2 +-
@@ -21,5 +21,5 @@ index a92e78651..3dd4d65f3 100644
          for (auto && [elem_1, elem_2] : zip_view)
          {
 -- 
-2.40.1
+2.41.0
 

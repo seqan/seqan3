@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2022, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2022, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2023, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2023, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -27,12 +27,12 @@
 #include <seqan3/utility/detail/to_little_endian.hpp>
 
 #if !defined(SEQAN3_HAS_ZLIB) && !defined(SEQAN3_HEADER_TEST)
-#   error "This file cannot be used when building without GZip-support."
+#    error "This file cannot be used when building without GZip-support."
 #endif // !defined(SEQAN3_HAS_ZLIB) && !defined(SEQAN3_HEADER_TEST)
 
 #if defined(SEQAN3_HAS_ZLIB)
 // Zlib headers
-#include <zlib.h>
+#    include <zlib.h>
 
 namespace seqan3::contrib
 {
@@ -47,16 +47,13 @@ namespace seqan3::contrib
 
 // Special end-of-file marker defined by the BGZF compression format.
 // See: https://samtools.github.io/hts-specs/SAMv1.pdf
-static constexpr std::array<char, 28> BGZF_END_OF_FILE_MARKER {{'\x1f', '\x8b', '\x08', '\x04',
-                                                                '\x00', '\x00', '\x00', '\x00',
-                                                                '\x00', '\xff', '\x06', '\x00',
-                                                                '\x42', '\x43', '\x02', '\x00',
-                                                                '\x1b', '\x00', '\x03', '\x00',
-                                                                '\x00', '\x00', '\x00', '\x00',
-                                                                '\x00', '\x00', '\x00', '\x00'}};
+static constexpr std::array<char, 28> BGZF_END_OF_FILE_MARKER{
+    {'\x1f', '\x8b', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xff', '\x06', '\x00', '\x42', '\x43',
+     '\x02', '\x00', '\x1b', '\x00', '\x03', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'}};
 
 template <typename TAlgTag>
-struct CompressionContext {};
+struct CompressionContext
+{};
 
 template <typename TAlgTag>
 struct DefaultPageSize;
@@ -73,8 +70,7 @@ struct CompressionContext<detail::gz_compression>
 };
 
 template <>
-struct CompressionContext<detail::bgzf_compression>:
-    CompressionContext<detail::gz_compression>
+struct CompressionContext<detail::bgzf_compression> : CompressionContext<detail::gz_compression>
 {
     static constexpr size_t BLOCK_HEADER_LENGTH = detail::bgzf_compression::magic_header.size();
     unsigned char headerPos;
@@ -83,15 +79,18 @@ struct CompressionContext<detail::bgzf_compression>:
 template <>
 struct DefaultPageSize<detail::bgzf_compression>
 {
-    static const unsigned MAX_BLOCK_SIZE = 64 * 1024;
-    static const unsigned BLOCK_FOOTER_LENGTH = 8;
+    static unsigned const MAX_BLOCK_SIZE = 64 * 1024;
+    static unsigned const BLOCK_FOOTER_LENGTH = 8;
     // 5 bytes block overhead (see 3.2.4. at https://tools.ietf.org/html/rfc1951)
-    static const unsigned ZLIB_BLOCK_OVERHEAD = 5;
+    static unsigned const ZLIB_BLOCK_OVERHEAD = 5;
 
     // Reduce the maximal input size, such that the compressed data
     // always fits in one block even for level Z_NO_COMPRESSION.
-    enum { BLOCK_HEADER_LENGTH = CompressionContext<detail::bgzf_compression>::BLOCK_HEADER_LENGTH };
-    static const unsigned VALUE = MAX_BLOCK_SIZE - BLOCK_HEADER_LENGTH - BLOCK_FOOTER_LENGTH - ZLIB_BLOCK_OVERHEAD;
+    enum
+    {
+        BLOCK_HEADER_LENGTH = CompressionContext<detail::bgzf_compression>::BLOCK_HEADER_LENGTH
+    };
+    static unsigned const VALUE = MAX_BLOCK_SIZE - BLOCK_HEADER_LENGTH - BLOCK_FOOTER_LENGTH - ZLIB_BLOCK_OVERHEAD;
 };
 
 // ============================================================================
@@ -102,21 +101,20 @@ struct DefaultPageSize<detail::bgzf_compression>
 // Function compressInit()
 // ----------------------------------------------------------------------------
 
-inline void
-compressInit(CompressionContext<detail::gz_compression> & ctx)
+inline void compressInit(CompressionContext<detail::gz_compression> & ctx)
 {
-    const int GZIP_WINDOW_BITS = -15;   // no zlib header
-    const int Z_DEFAULT_MEM_LEVEL = 8;
+    int const GZIP_WINDOW_BITS = -15; // no zlib header
+    int const Z_DEFAULT_MEM_LEVEL = 8;
 
     ctx.strm.zalloc = NULL;
     ctx.strm.zfree = NULL;
 
     // (weese:) We use Z_BEST_SPEED instead of Z_DEFAULT_COMPRESSION as it turned out
     //          to be 2x faster and produces only 7% bigger output
-//    int status = deflateInit2(&ctx.strm, Z_DEFAULT_COMPRESSION, Z_DEFLATED,
-//                              GZIP_WINDOW_BITS, Z_DEFAULT_MEM_LEVEL, Z_DEFAULT_STRATEGY);
-    int status = deflateInit2(&ctx.strm, Z_BEST_SPEED, Z_DEFLATED,
-                              GZIP_WINDOW_BITS, Z_DEFAULT_MEM_LEVEL, Z_DEFAULT_STRATEGY);
+    //    int status = deflateInit2(&ctx.strm, Z_DEFAULT_COMPRESSION, Z_DEFLATED,
+    //                              GZIP_WINDOW_BITS, Z_DEFAULT_MEM_LEVEL, Z_DEFAULT_STRATEGY);
+    int status =
+        deflateInit2(&ctx.strm, Z_BEST_SPEED, Z_DEFLATED, GZIP_WINDOW_BITS, Z_DEFAULT_MEM_LEVEL, Z_DEFAULT_STRATEGY);
     if (status != Z_OK)
         throw io_error("Calling deflateInit2() failed for gz file.");
 }
@@ -125,8 +123,7 @@ compressInit(CompressionContext<detail::gz_compression> & ctx)
 // Function compressInit()
 // ----------------------------------------------------------------------------
 
-inline void
-compressInit(CompressionContext<detail::bgzf_compression> & ctx)
+inline void compressInit(CompressionContext<detail::bgzf_compression> & ctx)
 {
     compressInit(static_cast<CompressionContext<detail::gz_compression> &>(ctx));
     ctx.headerPos = 0;
@@ -136,16 +133,14 @@ compressInit(CompressionContext<detail::bgzf_compression> & ctx)
 // Helper Function _bgzfUnpackXX()
 // ----------------------------------------------------------------------------
 
-inline uint16_t
-_bgzfUnpack16(char const * buffer)
+inline uint16_t _bgzfUnpack16(char const * buffer)
 {
     uint16_t tmp;
     std::uninitialized_copy(buffer, buffer + sizeof(uint16_t), reinterpret_cast<char *>(&tmp));
     return detail::to_little_endian(tmp);
 }
 
-inline uint32_t
-_bgzfUnpack32(char const * buffer)
+inline uint32_t _bgzfUnpack32(char const * buffer)
 {
     uint32_t tmp;
     std::uninitialized_copy(buffer, buffer + sizeof(uint32_t), reinterpret_cast<char *>(&tmp));
@@ -156,8 +151,7 @@ _bgzfUnpack32(char const * buffer)
 // Helper Function _bgzfPackXX()
 // ----------------------------------------------------------------------------
 
-inline void
-_bgzfPack16(char * buffer, uint16_t value)
+inline void _bgzfPack16(char * buffer, uint16_t value)
 {
     value = detail::to_little_endian(value);
     std::uninitialized_copy(reinterpret_cast<char *>(&value),
@@ -165,8 +159,7 @@ _bgzfPack16(char * buffer, uint16_t value)
                             buffer);
 }
 
-inline void
-_bgzfPack32(char * buffer, uint32_t value)
+inline void _bgzfPack32(char * buffer, uint32_t value)
 {
     value = detail::to_little_endian(value);
     std::uninitialized_copy(reinterpret_cast<char *>(&value),
@@ -179,9 +172,11 @@ _bgzfPack32(char * buffer, uint32_t value)
 // ----------------------------------------------------------------------------
 
 template <typename TDestValue, typename TDestCapacity, typename TSourceValue, typename TSourceLength>
-inline TDestCapacity
-_compressBlock(TDestValue *dstBegin,   TDestCapacity dstCapacity,
-               TSourceValue *srcBegin, TSourceLength srcLength, CompressionContext<detail::bgzf_compression> & ctx)
+inline TDestCapacity _compressBlock(TDestValue * dstBegin,
+                                    TDestCapacity dstCapacity,
+                                    TSourceValue * srcBegin,
+                                    TSourceLength srcLength,
+                                    CompressionContext<detail::bgzf_compression> & ctx)
 {
     const size_t BLOCK_HEADER_LENGTH = DefaultPageSize<detail::bgzf_compression>::BLOCK_HEADER_LENGTH;
     const size_t BLOCK_FOOTER_LENGTH = DefaultPageSize<detail::bgzf_compression>::BLOCK_FOOTER_LENGTH;
@@ -211,7 +206,6 @@ _compressBlock(TDestValue *dstBegin,   TDestCapacity dstCapacity,
     if (status != Z_OK)
         throw io_error("BGZF deflateEnd() failed.");
 
-
     // 3. APPEND FOOTER
 
     // Set compressed length into buffer, compute CRC and write CRC into buffer.
@@ -230,10 +224,9 @@ _compressBlock(TDestValue *dstBegin,   TDestCapacity dstCapacity,
 // Function decompressInit() - GZIP
 // ----------------------------------------------------------------------------
 
-inline void
-decompressInit(CompressionContext<detail::gz_compression> & ctx)
+inline void decompressInit(CompressionContext<detail::gz_compression> & ctx)
 {
-    const int GZIP_WINDOW_BITS = -15;   // no zlib header
+    int const GZIP_WINDOW_BITS = -15; // no zlib header
 
     ctx.strm.zalloc = NULL;
     ctx.strm.zfree = NULL;
@@ -246,8 +239,7 @@ decompressInit(CompressionContext<detail::gz_compression> & ctx)
 // Function decompressInit() - BGZF
 // ----------------------------------------------------------------------------
 
-inline void
-decompressInit(CompressionContext<detail::bgzf_compression> & ctx)
+inline void decompressInit(CompressionContext<detail::bgzf_compression> & ctx)
 {
     decompressInit(static_cast<CompressionContext<detail::gz_compression> &>(ctx));
     ctx.headerPos = 0;
@@ -258,9 +250,11 @@ decompressInit(CompressionContext<detail::bgzf_compression> & ctx)
 // ----------------------------------------------------------------------------
 
 template <typename TDestValue, typename TDestCapacity, typename TSourceValue, typename TSourceLength>
-inline TDestCapacity
-_decompressBlock(TDestValue *dstBegin,   TDestCapacity dstCapacity,
-                 TSourceValue *srcBegin, TSourceLength srcLength, CompressionContext<detail::bgzf_compression> & ctx)
+inline TDestCapacity _decompressBlock(TDestValue * dstBegin,
+                                      TDestCapacity dstCapacity,
+                                      TSourceValue * srcBegin,
+                                      TSourceLength srcLength,
+                                      CompressionContext<detail::bgzf_compression> & ctx)
 {
     const size_t BLOCK_HEADER_LENGTH = DefaultPageSize<detail::bgzf_compression>::BLOCK_HEADER_LENGTH;
     const size_t BLOCK_FOOTER_LENGTH = DefaultPageSize<detail::bgzf_compression>::BLOCK_FOOTER_LENGTH;
@@ -279,7 +273,6 @@ _decompressBlock(TDestValue *dstBegin,   TDestCapacity dstCapacity,
     size_t compressedLen = _bgzfUnpack16(srcBegin + 16) + 1u;
     if (compressedLen != srcLength)
         throw io_error("BGZF compressed size mismatch.");
-
 
     // 2. DECOMPRESS
 
@@ -300,7 +293,6 @@ _decompressBlock(TDestValue *dstBegin,   TDestCapacity dstCapacity,
     if (status != Z_OK)
         throw io_error("BGZF inflateEnd() failed.");
 
-
     // 3. CHECK FOOTER
 
     // Check compressed length in buffer, compute CRC and compare with CRC in buffer.
@@ -317,6 +309,6 @@ _decompressBlock(TDestValue *dstBegin,   TDestCapacity dstCapacity,
     return (dstCapacity - ctx.strm.avail_out) / sizeof(TDestValue);
 }
 
-}  // namespace seqan3::contrib
+} // namespace seqan3::contrib
 
 #endif // defined(SEQAN3_HAS_ZLIB)

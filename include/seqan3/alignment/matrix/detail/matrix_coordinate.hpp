@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2022, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2022, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2023, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2023, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -127,8 +127,8 @@ struct matrix_index
     constexpr matrix_index(row_index_type<scalar_index_t> const row_idx,
                            column_index_type<scalar_index_t> const col_idx) noexcept
         requires simd_index<index_t>
-    // Note the explicit type conversion is necessary since the scalar type might be of smaller bit size.
-    :
+        // Note the explicit type conversion is necessary since the scalar type might be of smaller bit size.
+        :
         row{simd::fill<index_t>(static_cast<typename simd_traits<index_t>::scalar_type>(row_idx.get()))},
         col{simd::fill<index_t>(static_cast<typename simd_traits<index_t>::scalar_type>(col_idx.get()))}
     {}

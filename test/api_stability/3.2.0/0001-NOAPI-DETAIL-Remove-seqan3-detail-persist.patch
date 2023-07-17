@@ -1,7 +1,7 @@
-From 10f7fffd7ebd542f88b35eef42e70f4e6cdfa8c7 Mon Sep 17 00:00:00 2001
+From d21a78ee5ea3b422fa845f871d9c0fa4e2fbb8d0 Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Thu, 20 Oct 2022 14:58:05 +0200
-Subject: [PATCH 1/6] [NOAPI] [DETAIL] Remove seqan3::detail::persist
+Subject: [PATCH 1/7] [NOAPI] [DETAIL] Remove seqan3::detail::persist
 
 ---
  test/snippet/core/detail/persist_view.cpp     |  37 ------
@@ -436,5 +436,5 @@ index d143d3dde..29dcd5fd3 100644
      using sentinel_type = std::ranges::sentinel_t<view_type>;
  
 -- 
-2.40.1
+2.41.0
 

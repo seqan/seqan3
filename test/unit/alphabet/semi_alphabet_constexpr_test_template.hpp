@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2022, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2022, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2023, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2023, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -83,8 +83,7 @@ TYPED_TEST_P(semi_alphabet_constexpr, copy_assignment)
         t2 = t1;
 
         return t2;
-    }
-    ();
+    }();
     EXPECT_EQ(t3, t0);
 }
 
@@ -100,8 +99,7 @@ TYPED_TEST_P(semi_alphabet_constexpr, move_assignment)
         t2 = std::move(t1);
 
         return t2;
-    }
-    ();
+    }();
     EXPECT_EQ(t3, t0);
 }
 
