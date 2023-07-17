@@ -17,8 +17,9 @@ DESCRIPTION
     copyright years that it ignores.
 
 EXAMPLES
-    ./test/scripts/update_copyright.sh 2020 2021 \$(find . -not -path '*/\.*' -type f)
-        Updates all copyright entries from 2020 to 2021. Only scans non hidden directories.
+    ./test/scripts/update_copyright.sh 2020 2021 \$(find . -not -path '*/\.*' -and -not -path '*/submodules/*' -and -not -path '*/build/*' -and -not -iname '*.patch' -type f)
+        Updates all copyright entries from 2020 to 2021. Only scans non hidden directories. Does not scan build and
+        submodules directory. Ignores patches in test/api_stability.
 "
 
 if [ $# -eq 0 ]; then
@@ -30,7 +31,7 @@ oldyear=$1
 year=$2
 shift 2
 
-echo "setting copyright dates from ${oldyear} to ${year}"
+echo "Setting copyright dates from ${oldyear} to ${year}"
 
 for file in "$@"; do
     perl -i -pe 's/^(.*Copyright \(c\) [0-9]{4}-)'${oldyear}'(, Knut Reinert.*$)/${1}'${year}'${2}/' $file
