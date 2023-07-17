@@ -47,7 +47,7 @@ public:
      */
     constexpr copyable_wrapper() noexcept(std::is_nothrow_default_constructible_v<t>)
         requires std::default_initializable<t>
-    : copyable_wrapper{std::in_place}
+        : copyable_wrapper{std::in_place}
     {}
 
     //!\brief Copy assignment for non-copyable wrapped types.

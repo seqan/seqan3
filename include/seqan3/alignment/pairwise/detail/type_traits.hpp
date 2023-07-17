@@ -152,8 +152,7 @@ public:
             return simd_traits<score_type>::length;
         else
             return 1;
-    }
-    ();
+    }();
     //!\brief Flag indicating whether the score shall be computed.
     static constexpr bool compute_score = configuration_t::template exists<align_cfg::output_score>();
     //!\brief Flag indicating whether the end positions shall be computed.

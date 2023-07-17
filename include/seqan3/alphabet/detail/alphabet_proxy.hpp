@@ -95,13 +95,13 @@ private:
     //!\brief Construction from the emulated type.
     constexpr alphabet_proxy(alphabet_type const a) noexcept
         requires std::is_class_v<alphabet_type>
-    : base_t{a}
+        : base_t{a}
     {}
 
     //!\brief Construction from the emulated type.
     constexpr alphabet_proxy(alphabet_type const a) noexcept
         requires (!std::is_class_v<alphabet_type>)
-    : base_t{}
+        : base_t{}
     {
         base_t::assign_rank(seqan3::to_rank(a));
     }

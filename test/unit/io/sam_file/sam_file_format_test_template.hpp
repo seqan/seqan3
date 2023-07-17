@@ -218,7 +218,6 @@ TYPED_TEST_P(sam_file_read, read_in_all_data)
     }
 }
 
-
 TYPED_TEST_P(sam_file_read, read_in_all_data_with_small_stream_buffer)
 {
     typename TestFixture::stream_type istream{this->verbose_reads_input};

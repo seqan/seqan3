@@ -41,7 +41,8 @@ namespace seqan3::contrib
 // ----------------------------------------------------------------------------
 
 template <typename TSpec = void>
-struct Tag{};
+struct Tag
+{};
 
 template <typename TSpec = Tag<void>>
 struct Suspendable;
@@ -53,32 +54,26 @@ struct Limit_;
 using Limit = Tag<Limit_>;
 
 template <typename TValue, typename TSpec>
-class ConcurrentQueue<TValue, Suspendable<TSpec> >
+class ConcurrentQueue<TValue, Suspendable<TSpec>>
 {
 public:
-    typedef std::vector<TValue>          TString;
-    typedef typename TString::size_type  TSize;
+    typedef std::vector<TValue> TString;
+    typedef typename TString::size_type TSize;
 
-    size_t                  readerCount;
-    size_t                  writerCount;
+    size_t readerCount;
+    size_t writerCount;
 
-    TString                 data;
-    TSize                   occupied;
-    TSize                   back;
-    TSize                   front;
+    TString data;
+    TSize occupied;
+    TSize back;
+    TSize front;
 
-    std::mutex              cs;
+    std::mutex cs;
     std::condition_variable more;
 
-    bool                    virgin;
+    bool virgin;
 
-    ConcurrentQueue():
-        readerCount(0),
-        writerCount(0),
-        occupied(0),
-        back(0),
-        front(0),
-        virgin(true)
+    ConcurrentQueue() : readerCount(0), writerCount(0), occupied(0), back(0), front(0), virgin(true)
     {}
 
     ~ConcurrentQueue()
@@ -92,74 +87,65 @@ public:
 };
 
 template <typename TValue>
-class ConcurrentQueue<TValue, Suspendable<Limit> >:
-    public ConcurrentQueue<TValue, Suspendable<> >
+class ConcurrentQueue<TValue, Suspendable<Limit>> : public ConcurrentQueue<TValue, Suspendable<>>
 {
 public:
-    typedef ConcurrentQueue<TValue, Suspendable<> > TBase;
-    typedef typename TBase::TString                 TString;
-    typedef typename TBase::TSize                   TSize;
+    typedef ConcurrentQueue<TValue, Suspendable<>> TBase;
+    typedef typename TBase::TString TString;
+    typedef typename TBase::TSize TSize;
 
     std::condition_variable less;
 
-    ConcurrentQueue(TSize maxSize):
-        TBase()
+    ConcurrentQueue(TSize maxSize) : TBase()
     {
         this->data.resize(maxSize);
         // reserve(this->data, maxSize, Exact());
         // _setLength(this->data, maxSize);
     }
 
-    ConcurrentQueue(ConcurrentQueue const & other):
-        TBase((TBase const &)other)
+    ConcurrentQueue(ConcurrentQueue const & other) : TBase((TBase const &)other)
     {}
 };
 
 template <typename TValue, typename TSpec>
-inline void
-lockReading(ConcurrentQueue<TValue, Suspendable<TSpec> > &)
+inline void lockReading(ConcurrentQueue<TValue, Suspendable<TSpec>> &)
 {}
 
 template <typename TValue, typename TSpec>
-inline void
-unlockReading(ConcurrentQueue<TValue, Suspendable<TSpec> > & me)
+inline void unlockReading(ConcurrentQueue<TValue, Suspendable<TSpec>> & me)
 {
     {
         std::lock_guard<std::mutex> lock(me.cs);
         if (--me.readerCount != 0u)
             return;
     }
-    me.less.notify_all();  // publish the condition that reader count is 0.
+    me.less.notify_all(); // publish the condition that reader count is 0.
 }
 
 template <typename TValue, typename TSpec>
-inline void
-lockWriting(ConcurrentQueue<TValue, Suspendable<TSpec> > &)
+inline void lockWriting(ConcurrentQueue<TValue, Suspendable<TSpec>> &)
 {}
 
 template <typename TValue, typename TSpec>
-inline void
-unlockWriting(ConcurrentQueue<TValue, Suspendable<TSpec> > & me)
+inline void unlockWriting(ConcurrentQueue<TValue, Suspendable<TSpec>> & me)
 {
     {
         std::lock_guard<std::mutex> lk(me.cs);
         if (--me.writerCount != 0u)
             return;
     }
-    me.more.notify_all();  // publish the condition, that writer count is 0.
+    me.more.notify_all(); // publish the condition, that writer count is 0.
 }
 
 template <typename TValue, typename TSize, typename TSpec>
-inline void
-setReaderCount(ConcurrentQueue<TValue, Suspendable<TSpec> > & me, TSize readerCount)
+inline void setReaderCount(ConcurrentQueue<TValue, Suspendable<TSpec>> & me, TSize readerCount)
 {
     std::unique_lock<std::mutex> lock(me.cs);
     me.readerCount = readerCount;
 }
 
 template <typename TValue, typename TSize, typename TSpec>
-inline void
-setWriterCount(ConcurrentQueue<TValue, Suspendable<TSpec> > & me, TSize writerCount)
+inline void setWriterCount(ConcurrentQueue<TValue, Suspendable<TSpec>> & me, TSize writerCount)
 {
     std::unique_lock<std::mutex> lock(me.cs);
     me.writerCount = writerCount;
@@ -167,7 +153,7 @@ setWriterCount(ConcurrentQueue<TValue, Suspendable<TSpec> > & me, TSize writerCo
 
 template <typename TValue, typename TSize1, typename TSize2, typename TSpec>
 inline void
-setReaderWriterCount(ConcurrentQueue<TValue, Suspendable<TSpec> > & me, TSize1 readerCount, TSize2 writerCount)
+setReaderWriterCount(ConcurrentQueue<TValue, Suspendable<TSpec>> & me, TSize1 readerCount, TSize2 writerCount)
 {
     std::unique_lock<std::mutex> lock(me.cs);
     me.readerCount = readerCount;
@@ -175,9 +161,7 @@ setReaderWriterCount(ConcurrentQueue<TValue, Suspendable<TSpec> > & me, TSize1 r
 }
 
 template <typename TValue, typename TSize, typename TSpec>
-inline bool
-waitForMinSize(ConcurrentQueue<TValue, Suspendable<TSpec> > & me,
-               TSize minSize)
+inline bool waitForMinSize(ConcurrentQueue<TValue, Suspendable<TSpec>> & me, TSize minSize)
 {
     std::unique_lock<std::mutex> lock(me.cs);
     while (me.occupied < minSize && me.writerCount > 0u)
@@ -186,27 +170,25 @@ waitForMinSize(ConcurrentQueue<TValue, Suspendable<TSpec> > & me,
 }
 
 template <typename TValue, typename TSpec>
-inline bool
-empty(ConcurrentQueue<TValue, Suspendable<TSpec> > const & me)
+inline bool empty(ConcurrentQueue<TValue, Suspendable<TSpec>> const & me)
 {
     return me.occupied == 0;
 }
 
 template <typename TValue, typename TSpec>
-inline typename ConcurrentQueue<TValue, Suspendable<TSpec> >::SizeType
-length(ConcurrentQueue<TValue, Suspendable<TSpec> > const & me)
+inline typename ConcurrentQueue<TValue, Suspendable<TSpec>>::SizeType
+length(ConcurrentQueue<TValue, Suspendable<TSpec>> const & me)
 {
     return me.occupied;
 }
 
 template <typename TValue, typename TSpec>
 inline bool
-_popFront(TValue & result, ConcurrentQueue<TValue, Suspendable<TSpec> > & me,
-          std::unique_lock<std::mutex> & lk)
+_popFront(TValue & result, ConcurrentQueue<TValue, Suspendable<TSpec>> & me, std::unique_lock<std::mutex> & lk)
 {
-    typedef ConcurrentQueue<TValue, Suspendable<TSpec> >    TQueue;
-    typedef typename TQueue::TString                        TString;
-    typedef typename TString::size_type                     TSize;
+    typedef ConcurrentQueue<TValue, Suspendable<TSpec>> TQueue;
+    typedef typename TQueue::TString TString;
+    typedef typename TString::size_type TSize;
 
     TSize cap = me.data.size();
 
@@ -238,13 +220,11 @@ _popFront(TValue & result, ConcurrentQueue<TValue, Suspendable<TSpec> > & me,
 
 template <typename TValue, typename TSpec>
 inline bool
-_popBack(TValue & result,
-         ConcurrentQueue<TValue, Suspendable<TSpec> > & me,
-         std::unique_lock<std::mutex> & lk)
+_popBack(TValue & result, ConcurrentQueue<TValue, Suspendable<TSpec>> & me, std::unique_lock<std::mutex> & lk)
 {
-    typedef ConcurrentQueue<TValue, Suspendable<TSpec> > TQueue;
-    typedef typename TQueue::TString                     TString;
-    typedef typename TString::size_type                  TSize;
+    typedef ConcurrentQueue<TValue, Suspendable<TSpec>> TQueue;
+    typedef typename TQueue::TString TString;
+    typedef typename TString::size_type TSize;
 
     TSize cap = me.data.size();
 
@@ -276,16 +256,14 @@ _popBack(TValue & result,
 }
 
 template <typename TValue, typename TSpec>
-inline bool
-popFront(TValue & result, ConcurrentQueue<TValue, Suspendable<TSpec> > & me)
+inline bool popFront(TValue & result, ConcurrentQueue<TValue, Suspendable<TSpec>> & me)
 {
     std::unique_lock<std::mutex> lock(me.cs);
     return _popFront(result, me, lock);
 }
 
 template <typename TValue>
-inline bool
-popFront(TValue & result, ConcurrentQueue<TValue, Suspendable<Limit> > & me)
+inline bool popFront(TValue & result, ConcurrentQueue<TValue, Suspendable<Limit>> & me)
 {
     {
         std::unique_lock<std::mutex> lk(me.cs);
@@ -297,16 +275,14 @@ popFront(TValue & result, ConcurrentQueue<TValue, Suspendable<Limit> > & me)
 }
 
 template <typename TValue, typename TSpec>
-inline bool
-popBack(TValue & result, ConcurrentQueue<TValue, Suspendable<TSpec> > & me)
+inline bool popBack(TValue & result, ConcurrentQueue<TValue, Suspendable<TSpec>> & me)
 {
     std::unique_lock<std::mutex> lk(me.cs);
     return _popBack(result, me, lk);
 }
 
 template <typename TValue>
-inline bool
-popBack(TValue & result, ConcurrentQueue<TValue, Suspendable<Limit> > & me)
+inline bool popBack(TValue & result, ConcurrentQueue<TValue, Suspendable<Limit>> & me)
 {
     {
         std::unique_lock<std::mutex> lk(me.cs);
@@ -317,16 +293,13 @@ popBack(TValue & result, ConcurrentQueue<TValue, Suspendable<Limit> > & me)
     return true;
 }
 
-
 template <typename TValue, typename TValue2, typename TSpec, typename TExpand>
 inline bool
-appendValue(ConcurrentQueue<TValue, Suspendable<TSpec> > & me,
-            TValue2 && val,
-            [[maybe_unused]] Tag<TExpand> expandTag)
+appendValue(ConcurrentQueue<TValue, Suspendable<TSpec>> & me, TValue2 && val, [[maybe_unused]] Tag<TExpand> expandTag)
 {
-    typedef ConcurrentQueue<TValue, Suspendable<TSpec> > TQueue;
-    typedef typename TQueue::TString                     TString;
-    typedef typename TString::size_type                  TSize;
+    typedef ConcurrentQueue<TValue, Suspendable<TSpec>> TQueue;
+    typedef typename TQueue::TString TString;
+    typedef typename TString::size_type TSize;
 
     {
         std::lock_guard<std::mutex> lock(me.cs);
@@ -369,20 +342,14 @@ appendValue(ConcurrentQueue<TValue, Suspendable<TSpec> > & me,
 }
 
 template <typename TValue, typename TValue2, typename TSpec, typename TExpand>
-inline bool
-appendValue(ConcurrentQueue<TValue, Suspendable<Limit> > & me,
-            TValue2 && val,
-            Tag<TExpand> expandTag);
+inline bool appendValue(ConcurrentQueue<TValue, Suspendable<Limit>> & me, TValue2 && val, Tag<TExpand> expandTag);
 
 template <typename TValue, typename TValue2>
-inline bool
-appendValue(ConcurrentQueue<TValue, Suspendable<Limit> > & me,
-            TValue2 && val,
-            Limit)
+inline bool appendValue(ConcurrentQueue<TValue, Suspendable<Limit>> & me, TValue2 && val, Limit)
 {
-    typedef ConcurrentQueue<TValue, Suspendable<Limit> > TQueue;
-    typedef typename TQueue::TString                     TString;
-    typedef typename TString::size_type                  TSize;
+    typedef ConcurrentQueue<TValue, Suspendable<Limit>> TQueue;
+    typedef typename TQueue::TString TString;
+    typedef typename TString::size_type TSize;
 
     {
         std::unique_lock<std::mutex> lock(me.cs);
@@ -412,9 +379,7 @@ appendValue(ConcurrentQueue<TValue, Suspendable<Limit> > & me,
 }
 
 template <typename TValue, typename TValue2, typename TSpec>
-inline bool
-appendValue(ConcurrentQueue<TValue, Suspendable<TSpec> > & me,
-            TValue2 && val)
+inline bool appendValue(ConcurrentQueue<TValue, Suspendable<TSpec>> & me, TValue2 && val)
 {
     return appendValue(me, std::forward<TValue2>(val), TSpec{});
 }

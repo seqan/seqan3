@@ -32,15 +32,17 @@ TYPED_TEST_SUITE(nucleotide_conversion, nucleotide_gtest_types, );
 // conversion to any other nucleotide type
 TYPED_TEST(nucleotide_conversion, explicit_conversion)
 {
-    seqan3::detail::for_each<nucleotide_types>([&](auto nucl) constexpr {
-        using out_type = std::decay_t<typename decltype(nucl)::type>;
-        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('A')), out_type{}.assign_char('A'));
-        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('C')), out_type{}.assign_char('C'));
-        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('G')), out_type{}.assign_char('G'));
-        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('T')), out_type{}.assign_char('T'));
-        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('U')), out_type{}.assign_char('U'));
-        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('T')), out_type{}.assign_char('U'));
-    });
+    seqan3::detail::for_each<nucleotide_types>(
+        [&](auto nucl) constexpr
+        {
+            using out_type = std::decay_t<typename decltype(nucl)::type>;
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('A')), out_type{}.assign_char('A'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('C')), out_type{}.assign_char('C'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('G')), out_type{}.assign_char('G'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('T')), out_type{}.assign_char('T'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('U')), out_type{}.assign_char('U'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('T')), out_type{}.assign_char('U'));
+        });
 }
 
 // conversion to rna/dna of same size

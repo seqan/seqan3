@@ -84,7 +84,8 @@ public:
     using field_ids = fields<field::seq, field::id, field::qual>;
 
     static_assert(
-        []() constexpr {
+        []() constexpr
+        {
             for (field f : selected_field_ids::as_array)
                 if (!field_ids::contains(f))
                     return false;

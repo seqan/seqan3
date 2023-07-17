@@ -152,7 +152,8 @@ struct fields
     }
 
     static_assert(
-        []() constexpr {
+        []() constexpr
+        {
             for (size_t i = 0; i < as_array.size(); ++i)
                 for (size_t j = i + 1; j < as_array.size(); ++j)
                     if (as_array[i] == as_array[j])

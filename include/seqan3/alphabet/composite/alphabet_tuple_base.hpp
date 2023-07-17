@@ -599,7 +599,8 @@ private:
 
     //!\brief For the given components, compute the combined rank.
     template <std::size_t... idx>
-    static constexpr rank_type rank_sum_helper(component_types... components, std::index_sequence<idx...> const &) noexcept
+    static constexpr rank_type rank_sum_helper(component_types... components,
+                                               std::index_sequence<idx...> const &) noexcept
     {
         return ((seqan3::to_rank(components) * cummulative_alph_sizes[idx]) + ...);
     }

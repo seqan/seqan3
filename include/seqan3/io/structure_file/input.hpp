@@ -390,7 +390,8 @@ public:
                              field::offset>;
 
     static_assert(
-        []() constexpr {
+        []() constexpr
+        {
             for (field f : selected_field_ids::as_array)
                 if (!field_ids::contains(f))
                     return false;
@@ -400,7 +401,8 @@ public:
         "of structure_file_input::field_ids for the accepted values.");
 
     static_assert(
-        []() constexpr {
+        []() constexpr
+        {
             return !(selected_field_ids::contains(field::structured_seq)
                      && (selected_field_ids::contains(field::seq) || (selected_field_ids::contains(field::structure))));
         }(),
