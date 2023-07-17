@@ -7,13 +7,11 @@ assignees: ''
 
 ---
 
-- [ ] Create a release branch, e.g. `release-[VERSION]`, and enable branch protection in the repository settings.
 - [ ] Update copyright year.
-- [ ] Update cookbook. ([Instructions](#cookbook))
 - [ ] Create at least one pre-release s.t. our package maintainers can try out a new release of our library. ([Instructions](#prerelease))
 - [ ] Check that the [directory structure](https://github.com/seqan/seqan3/blob/master/doc/setup/quickstart_cmake/index.md) is valid.
-- [ ] Check for critical performance regressions (via [this tool](https://github.com/wvandertoorn/cmp_benchmarks)).
-- [ ] Check [Nightlies](https://cdash.seqan.de/index.php?project=SeqAn3) for critical build failures. Change nightlies to build on release branch.
+- [ ] Check for critical performance regressions (see [here](https://github.com/seqan/seqan3/wiki/cmp_benchmarks:-Example-Usage)).
+- [ ] Check [Nightlies](https://cdash.seqan.de/index.php?project=SeqAn3) for critical build failures.
 - [ ] Check workarounds in `platform.hpp`. Are they still valid, or can they be limited to specific compiler versions?
 - [ ] Check the [Changelog.md](https://github.com/seqan/seqan3/blob/master/CHANGELOG.md) for completeness (including changed headers). ([Instructions](#changelog))
 - [ ] Update the index from cppreference.com so that up-to-date documentation links are generated. ([Instructions](#cppreference))
@@ -31,37 +29,27 @@ assignees: ''
 
 ---
 
-- [ ] Merge release branch into master.
 - [ ] Bump version. ([Instructions](#version-bump))
 - [ ] Update the version used for [update notifications](https://github.com/OpenMS/usage_plots/blob/master/seqan_versions.txt).
-- [ ] Delete release branch (remove branch protection in repository settings first).
-- [ ] Change [Nightlies](https://cdash.seqan.de/index.php?project=SeqAn3) back to master branch.
 - [ ] Announce release on [Twitter](https://twitter.com/seqanlib).
 - [ ] Announce release on [website](https://www.seqan.de).
 - [ ] Announce release on mailing list `seqan-dev@lists.fu-berlin.de`.
 - [ ] Announce release on [public Gitter channel](https://gitter.im/seqan/Lobby).
 - [ ] Notify upstream package maintainers:
-  - [ ] [brew](https://github.com/brewsci/homebrew-bio/tree/develop/Formula/seqan%403.rb) (@rrahn)
-  - [ ] [macports](https://github.com/macports/macports-ports/tree/master/science/seqan3/Portfile) (@rrahn)
-  - [ ] [bio.tools](https://bio.tools/seqan) (@rrahn)
+  - [ ] [brew](https://github.com/brewsci/homebrew-bio/tree/develop/Formula/seqan%403.rb) (@eseiler)
+  - [ ] [macports](https://github.com/macports/macports-ports/tree/master/science/seqan3/Portfile) (@eseiler)
+  - [ ] [bio.tools](https://bio.tools/seqan) (@eseiler)
   - [ ] [conda](https://github.com/bioconda/bioconda-recipes/tree/master/recipes/seqan3) (@eseiler)
+  - [ ] [conan](https://github.com/conan-io/conan-center-index/tree/master/recipes/seqan3) (@eseiler)
   - [ ] [debian](https://tracker.debian.org/pkg/seqan3) (@mr-c)
   - [ ] [fedora](https://src.fedoraproject.org/rpms/seqan3) (@sagitter)
 - [ ] Update release template with the current release tasks.
-- [ ] Clean up Wiki
 - [ ] Celebrate :tada: :beer:
 
 ---
 
 #### Instructions
 
-<a name="cookbook"></a>
-<details><summary>Update the cookbook</summary><br>
-
-Execute `path/to/seqan3/test/scripts/add_snippets_to_cookbook.sh path/to/seqan3/`.
-If there are any changes to the cookbook, push then in a PR.
-
-</details>
 <a name="prerelease"></a>
 <details><summary>Creating a pre-release</summary><br>
 
