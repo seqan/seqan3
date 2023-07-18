@@ -29,37 +29,62 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 ## New features
 
 #### Alignment
-* The function `seqan3::alignment_from_cigar` creates an alignment (tuple of 2 aligned sequences) from a
-  CIGAR vector (`std::vector<seqan3::cigar>`) ([\#3057](https://github.com/seqan/seqan3/pull/3057)) or a
-  CIGAR string (`std::string`) ([\#3077](https://github.com/seqan/seqan3/pull/3077)).
-* The function `seqan3::cigar_from_alignment` creates a CIGAR vector (`std::vector<seqan3::cigar>`) from an alignment
-  (tuple of 2 aligned sequences) ([\#3057](https://github.com/seqan/seqan3/pull/3057)).
+  * The function `seqan3::alignment_from_cigar` creates an alignment (tuple of two aligned sequences) from a
+    CIGAR vector (`std::vector<seqan3::cigar>`) ([\#3057](https://github.com/seqan/seqan3/pull/3057)) or a
+    CIGAR string (`std::string`) ([\#3077](https://github.com/seqan/seqan3/pull/3077)).
+  * The function `seqan3::cigar_from_alignment` creates a CIGAR vector (`std::vector<seqan3::cigar>`) from an alignment
+    (tuple of 2 aligned sequences) ([\#3057](https://github.com/seqan/seqan3/pull/3057)).
 
 #### Alphabet
   * Improved performance of vector assignment for alphabets ([\#3038](https://github.com/seqan/seqan3/pull/3038)).
   * Improved performance of `seqan3::dna4::complement()` ([\#3026](https://github.com/seqan/seqan3/pull/3026)).
-  * Char literals returning std::vector are now constexpr if supported by the compiler
+  * Char literals returning `std::vector` are now `constexpr` if supported by the compiler
     ([\#3073](https://github.com/seqan/seqan3/pull/3073)).
+
+#### I/O
+  * Made `seqan3::sam_file_header::program_info_t` easier to copy ([\#3145](https://github.com/seqan/seqan3/pull/3145)).
 
 #### Search
 
-* Added a constructor to the `seqan3::interleaved_bloom_filter` for decompressing a compressed
-  `seqan3::interleaved_bloom_filter` ([\#3082](https://github.com/seqan/seqan3/pull/3082)).
+  * Added a constructor to the `seqan3::interleaved_bloom_filter` for decompressing a compressed
+    `seqan3::interleaved_bloom_filter` ([\#3082](https://github.com/seqan/seqan3/pull/3082)).
 
 ## Notable Bug-fixes
 
+#### Alignment
+  * Resolved an issue resulting in a wrong alignment score ([\#3098](https://github.com/seqan/seqan3/pull/3098)).
+
 #### I/O
-* Empty SAM/BAM files must at least write a header to ensure a valid file
-  ([\#3081](https://github.com/seqan/seqan3/pull/3081)).
-* Reading SAM/BAM files is 2x faster than before
-  ([\#3106](https://github.com/seqan/seqan3/pull/3106)).
+  * Empty SAM/BAM files must at least write a header to ensure a valid file
+    ([\#3081](https://github.com/seqan/seqan3/pull/3081)).
+  * Reading SAM/BAM files is 2x faster than before
+    ([\#3106](https://github.com/seqan/seqan3/pull/3106)).
+  * `seqan3::sequence_file_input_traits` now allows `char` as a sequence alphabet
+    ([\#3128](https://github.com/seqan/seqan3/pull/3128)).
+
+#### Utility
+  * Fixed spin delay having no effect on the PowerPC platform ([\#3129](https://github.com/seqan/seqan3/pull/3129)).
 
 ## API changes
+
+#### Alignment
+  * The fields `seqan3::field::offset` and `seqan3::field::alignment` have been removed from `seqan3::sam_record`
+    ([\#3058](https://github.com/seqan/seqan3/pull/3058), [\#3089](https://github.com/seqan/seqan3/pull/3089)).
+    For `seqan3::field::offset`, please check the soft clipping of the CIGAR string (`seqan3::sam_record::cigar()`).
+    For `seqan3::field::alignment`, please use `seqan3::alignment_from_cigar`.
+
+#### Compiler
+  * Dropped support for GCC 10 ([\#3148](https://github.com/seqan/seqan3/pull/3148)).
+  * Added support for GCC 13 ([\#3148](https://github.com/seqan/seqan3/pull/3148)).
 
 #### Dependencies
   * We require at least CMake 3.16 for our test suite. Note that the minimum requirement for using SeqAn3 is unchanged
     ([\#3050](https://github.com/seqan/seqan3/pull/3050)).
   * We now use Doxygen version 1.9.6 to build our documentation ([\#3116](https://github.com/seqan/seqan3/pull/3116)).
+  * Updated sdsl-lite to 3.0.2 ([\#3170](https://github.com/seqan/seqan3/pull/3170)).
+  * Compatibility with SeqAn2: SeqAn2's namespace was changed from `seqan` to `seqan2`. For interoperability, an
+    up-to-date checkout of [SeqAn2's main branch](https://github.com/seqan/seqan) is required
+    ([\#3156](https://github.com/seqan/seqan3/pull/3156)).
 
 # 3.2.0
 
