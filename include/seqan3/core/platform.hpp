@@ -66,12 +66,12 @@
             "SeqAn 3.1.x is the last version that supports GCC 7, 8, and 9. SeqAn 3.2.x is the latest version that support GCC 10. Please upgrade your compiler or use 3.1.x./3.2.x."
 #    endif // (__GNUC__ < 11)
 
-#    if (__GNUC__ == 11 && __GNUC_MINOR__ <= 2)
-#        pragma GCC warning "Be aware that GCC < 11.3 might have bugs that cause SeqAn3 fail to compile."
+#    if (__GNUC__ == 11 && __GNUC_MINOR__ <= 3)
+#        pragma GCC warning "Be aware that GCC < 11.4 might have bugs that cause SeqAn3 fail to compile."
 #    endif // (__GNUC__ == 11 && __GNUC_MINOR__ <= 2)
 
-#    if (__GNUC__ == 12 && __GNUC_MINOR__ <= 1)
-#        pragma GCC warning "Be aware that GCC < 12.2 might have bugs that cause SeqAn3 fail to compile."
+#    if (__GNUC__ == 12 && __GNUC_MINOR__ <= 2)
+#        pragma GCC warning "Be aware that GCC < 12.3 might have bugs that cause SeqAn3 fail to compile."
 #    endif // (__GNUC__ == 12 && __GNUC_MINOR__ <= 1)
 
 #    if SEQAN3_DOXYGEN_ONLY(1) 0
