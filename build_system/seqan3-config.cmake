@@ -215,18 +215,17 @@ endif ()
 set (CMAKE_REQUIRED_FLAGS_SAVE ${CMAKE_REQUIRED_FLAGS})
 
 set (CXXSTD_TEST_SOURCE
-     "#if !defined (__cplusplus) || (__cplusplus < 201709)
+     "#if !defined (__cplusplus) || (__cplusplus < 202002L)
       #error NOCXX20
       #endif
       int main() {}")
 
 set (SEQAN3_FEATURE_CPP20_FLAG_BUILTIN "")
 set (SEQAN3_FEATURE_CPP20_FLAG_STD20 "-std=c++20")
-set (SEQAN3_FEATURE_CPP20_FLAG_STD2a "-std=c++2a")
 
 set (SEQAN3_CPP20_FLAG "")
 
-foreach (_FLAG BUILTIN STD20 STD2a)
+foreach (_FLAG BUILTIN STD20)
     set (CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS_SAVE} ${SEQAN3_FEATURE_CPP20_FLAG_${_FLAG}}")
 
     check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" CPP20_FLAG_${_FLAG})
