@@ -14,16 +14,6 @@ Will run all test suites on all compiler with AVX2 enabled:
 
 In case of failure, creates an issue containing error logs.
 
-## cancel.yml
-
-Cancels ongoing and queued runs for a branch if a new push is made:
-  * Any push to a branch
-  * Any push to a pull request
-
-This worklow needs to run on `pull_request_target` instead of `pull_request`.
-This means that this workflow runs on the base branch (i.e., `seqan3/master`) which is necessary to have the write
-permissions needed to cancel a run.
-
 ## ci_linux.yml
 
 Runs the unit test CI on Ubuntu runners:

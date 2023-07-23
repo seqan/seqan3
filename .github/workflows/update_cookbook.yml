@@ -1,4 +1,4 @@
-name: SeqAn3 lint
+name: SeqAn3 Cookbook
 
 on:
   push:
@@ -10,7 +10,7 @@ env:
 
 defaults:
   run:
-    shell: bash -exo pipefail {0}
+    shell: bash -Eexuo pipefail {0}
 
 jobs:
   update-cookbook:

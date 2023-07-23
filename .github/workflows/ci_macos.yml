@@ -1,31 +1,25 @@
-name: SeqAn3 CI on macOS
+name: Unit macOS
 
 on:
   push:
     branches:
-      # Push events to branches matching refs/heads/master
-      - 'master'
-      # Push events to branches matching refs/heads/release*
-      - 'release*'
-  # Trigger after PR was unlabeled
+      - 'main'
   pull_request:
     types:
       - unlabeled
-  # Enables a manual trigger, may run on any branch
   workflow_dispatch:
 
 concurrency:
   group: macos-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'push' }}
+  cancel-in-progress: ${{ github.event_name != 'push' }}
 
 env:
-  CMAKE_VERSION: 3.16.9
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
 
 defaults:
   run:
-    shell: bash -ex {0}
+    shell: bash -Eexuo pipefail {0}
 
 jobs:
   build:
@@ -37,22 +31,19 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - name: "Unit gcc13"
-            cxx: "g++-13"
-            cc: "gcc-13"
+          - name: "gcc13"
+            compiler: "gcc-13"
             build: unit
             build_type: Release
             cxx_flags: "-std=c++23"
 
-          - name: "Unit gcc12"
-            cxx: "g++-12"
-            cc: "gcc-12"
+          - name: "gcc12"
+            compiler: "gcc-12"
             build: unit
             build_type: Release
 
-          - name: "Unit gcc11"
-            cxx: "g++-11"
-            cc: "gcc-11"
+          - name: "gcc11"
+            compiler: "gcc-11"
             build: unit
             build_type: Release
 
@@ -71,41 +62,18 @@ jobs:
           path: seqan3/submodules/seqan
           fetch-depth: 1
 
-      - name: Configure Homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+      - name: Setup toolchain
+        uses: seqan/actions/setup-toolchain@main
+        with:
+          compiler: ${{ matrix.compiler }}
+          ccache_size: 75M
 
       - name: Install CMake
-        run: bash ./seqan3/.github/workflows/scripts/install_cmake.sh
-
-      - name: Install ccache
-        run: bash ./seqan3/.github/workflows/scripts/install_via_brew.sh ccache
-
-      - name: Install compiler ${{ matrix.cxx }}
-        env:
-          CC: ${{ matrix.cc }}
-        run: bash ./seqan3/.github/workflows/scripts/install_via_brew.sh $(echo ${CC/clang/llvm} | awk -F '-' '{print $1, $2}')
-
-      - name: Load ccache
-        uses: actions/cache@v3
+        uses: seqan/actions/setup-cmake@main
         with:
-          path: .ccache
-          key: ${{ runner.os }}-${{ matrix.name }}-ccache-${{ github.ref }}-${{ github.run_number }}
-          # Restoring: From current branch, otherwise from base branch, otherwise from any branch.
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.name }}-ccache-${{ github.ref }}
-            ${{ runner.os }}-${{ matrix.name }}-ccache-${{ github.base_ref }}
-            ${{ runner.os }}-${{ matrix.name }}-ccache-
-
-      - name: Tool versions
-        run: |
-          env cmake --version
-          env ${{ matrix.cxx }} --version
-          sudo xcode-select -s '/Applications/Xcode_13.4.1.app/Contents/Developer' # https://github.com/actions/runner-images/issues/6350
+          cmake: 3.16.9
 
       - name: Configure tests
-        env:
-          CXX: ${{ matrix.cxx }}
-          CC: ${{ matrix.cc }}
         run: |
           mkdir seqan3-build
           cd seqan3-build
@@ -115,12 +83,6 @@ jobs:
           make -j3 gtest_build
 
       - name: Build tests
-        env:
-          CCACHE_BASEDIR: ${{ github.workspace }}
-          CCACHE_DIR: ${{ github.workspace }}/.ccache
-          CCACHE_COMPRESS: true
-          CCACHE_COMPRESSLEVEL: 12
-          CCACHE_MAXSIZE: 75M
         run: |
           ccache -z
           cd seqan3-build

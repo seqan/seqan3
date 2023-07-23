@@ -16,13 +16,12 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  CMAKE_VERSION: 3.16.9
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
 
 defaults:
   run:
-    shell: bash -exo pipefail {0}
+    shell: bash -Eexuo pipefail {0}
 
 jobs:
   build:
@@ -44,15 +43,16 @@ jobs:
           path: seqan3/submodules/seqan
           fetch-depth: 1
 
-      - name: Configure APT
-        continue-on-error: true
-        run: bash ./seqan3/.github/workflows/scripts/configure_apt.sh
+      - name: Setup toolchain
+        uses: seqan/actions/setup-toolchain@main
+        with:
+          compiler: gcc-${{ matrix.compiler }}
+          use_actions_cache: false
 
       - name: Install CMake
-        run: bash ./seqan3/.github/workflows/scripts/install_cmake.sh
-
-      - name: Install compiler g++-${{ github.event.inputs.compiler }}
-        run: sudo apt-get install --yes g++-${{ github.event.inputs.compiler }}
+        uses: seqan/actions/setup-cmake@main
+        with:
+          cmake: 3.16.9
 
       - name: Create gcc wrapper
         run: |
@@ -63,7 +63,6 @@ jobs:
       - name: Configure tests
         env:
           CXX: ${{ github.workspace }}/g++.sh
-          CC: gcc-${{ github.event.inputs.compiler }}
         run: |
           mkdir seqan3-build
           cd seqan3-build

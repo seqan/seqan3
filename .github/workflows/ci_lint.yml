@@ -57,83 +57,10 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 15
     steps:
-      - name: Add label
-        env:
-            GITHUB_TOKEN: ${{ secrets.SEQAN_ACTIONS_PAT }}
-            PR_URL: ${{ github.event.pull_request.html_url }}
-        run: gh pr edit $PR_URL --add-label "lint"
-
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Run lint
+        uses: seqan/actions/lint@main
         with:
-          fetch-depth: 0
-          ref: "refs/pull/${{ github.event.number }}/merge"
-          submodules: false
+          clang_format: 15
           token: ${{ secrets.SEQAN_ACTIONS_PAT }}
-
-      - name: Get changed files
-        id: changed_files
-        run: |
-          CPP_LIST=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} | \
-          { grep -v -E "(lib/)" || test $? = 1; } | \
-          { grep -E "(\.cpp|\.hpp)$" || test $? = 1; } | xargs)
-          echo "cpp_list=$CPP_LIST" >> $GITHUB_OUTPUT
-
-          CMAKE_LIST=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} | \
-          { grep -v -E "(lib/)" || test $? = 1; } | \
-          { grep -E "(\.cmake|CMakeLists.txt)$" || test $? = 1; } | xargs)
-          echo "cmake_list=$CMAKE_LIST" >> $GITHUB_OUTPUT
-
-      - name: Switch to fork
-        run: |
-          git remote add fork ${{ github.event.pull_request.head.repo.html_url }}
-          git fetch fork ${{ github.event.pull_request.head.ref }}
-          git checkout --force --track fork/${{ github.event.pull_request.head.ref }}
-
-      - name: Run clang-format
-        if: ${{ steps.changed_files.outputs.cpp_list }}
-        uses: DoozyX/clang-format-lint-action@v0.16
-        with:
-          source: ${{ steps.changed_files.outputs.cpp_list }}
-          clangFormatVersion: 15
-          inplace: True
-
-      - name: Run cmake-format
-        if: ${{ steps.changed_files.outputs.cmake_list }}
-        uses: PuneetMatharu/cmake-format-lint-action@v1.0.2
-        with:
-          args: --config-files .cmake-format.yaml --in-place
-
-      - name: Check git status
-        id: git_status
-        run: |
-          if [[ -z $(git status -uno --porcelain) ]]; then
-            echo "commit_required=" >> $GITHUB_OUTPUT
-          else
-            echo "commit_required=true" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Import GPG key
-        if: ${{ steps.git_status.outputs.commit_required }}
-        uses: crazy-max/ghaction-import-gpg@v5
-        with:
-          gpg_private_key: ${{ secrets.SEQAN_ACTIONS_GPG_KEY }}
-          passphrase: ${{ secrets.SEQAN_ACTIONS_GPG_PASSPHRASE }}
-          git_user_signingkey: true
-          git_commit_gpgsign: true
-
-      - name: Commit changes
-        if: ${{ steps.git_status.outputs.commit_required }}
-        run: |
-          git config user.name "seqan-actions[bot]"
-          git config user.email "seqan-actions@users.noreply.github.com"
-          git add .
-          git commit -m '[MISC] automatic linting'
-          git push fork ${{ github.event.pull_request.head.ref }}
-
-      - name: Remove label
-        if: ${{ !steps.git_status.outputs.commit_required }}
-        env:
-            GITHUB_TOKEN: ${{ secrets.SEQAN_ACTIONS_PAT }}
-            PR_URL: ${{ github.event.pull_request.html_url }}
-        run: gh pr edit $PR_URL --remove-label "lint"
+          gpg_key: ${{ secrets.SEQAN_ACTIONS_GPG_KEY }}
+          gpg_passphrase: ${{ secrets.SEQAN_ACTIONS_GPG_PASSPHRASE }}
