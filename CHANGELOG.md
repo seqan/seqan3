@@ -81,7 +81,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   * We require at least CMake 3.16 for our test suite. Note that the minimum requirement for using SeqAn3 is unchanged
     ([\#3050](https://github.com/seqan/seqan3/pull/3050)).
   * We now use Doxygen version 1.9.6 to build our documentation ([\#3116](https://github.com/seqan/seqan3/pull/3116)).
-  * Updated sdsl-lite to 3.0.2 ([\#3170](https://github.com/seqan/seqan3/pull/3170)).
+  * Updated sdsl-lite to 3.0.3 ([\#3170](https://github.com/seqan/seqan3/pull/3170),
+    [\#3174](https://github.com/seqan/seqan3/pull/3174)).
   * Compatibility with SeqAn2: SeqAn2's namespace was changed from `seqan` to `seqan2`. For interoperability, an
     up-to-date checkout of [SeqAn2's main branch](https://github.com/seqan/seqan) is required
     ([\#3156](https://github.com/seqan/seqan3/pull/3156)).
