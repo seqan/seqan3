@@ -1,22 +1,17 @@
-name: SeqAn3 CI misc
+name: Linux
 
 on:
   push:
     branches:
-      # Push events to branches matching refs/heads/master
-      - 'master'
-      # Push events to branches matching refs/heads/release*
-      - 'release*'
-  # Trigger after PR was unlabeled
+      - 'main'
   pull_request:
     types:
       - unlabeled
-  # Enables a manual trigger, may run on any branch
   workflow_dispatch:
 
 concurrency:
   group: misc-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'push' }}
+  cancel-in-progress: ${{ github.event_name != 'push' }}
 
 env:
   SEQAN3_NO_VERSION_CHECK: 1
@@ -24,7 +19,7 @@ env:
 
 defaults:
   run:
-    shell: bash -ex {0}
+    shell: bash -Eexuo pipefail {0}
 
 jobs:
   build:
@@ -37,85 +32,67 @@ jobs:
       matrix:
         include:
           - name: "Snippet gcc11"
-            cxx: "g++-11"
-            cc: "gcc-11"
+            compiler: "gcc-11"
             build: snippet
             build_type: Release
             build_threads: 2
             test_threads: 1 # snippets create and delete files and some separate tests create/delete the same files
-            cmake: 3.16.9
             requires_toolchain: true
-            requires_ccache: true
             skip_build_tests: false
             skip_run_tests: false
             use_include_dependencies: "OFF"
 
           - name: "Performance gcc11"
-            cxx: "g++-11"
-            cc: "gcc-11"
+            compiler: "gcc-11"
             build: performance
             build_type: Release
             build_threads: 2
             test_threads: 2
-            cmake: 3.16.9
             requires_toolchain: true
-            requires_ccache: true
             skip_build_tests: false
             skip_run_tests: false
             use_include_dependencies: "OFF"
 
           - name: "Header gcc13"
-            cxx: "g++-13"
-            cc: "gcc-13"
+            compiler: "gcc-13"
             build: header
             build_type: Release
             build_threads: 2
             test_threads: 2
-            cmake: 3.16.9
             requires_toolchain: true
-            requires_ccache: true
             skip_build_tests: false
             skip_run_tests: false
             use_include_dependencies: "OFF"
 
           - name: "Header gcc11"
-            cxx: "g++-11"
-            cc: "gcc-11"
+            compiler: "gcc-11"
             build: header
             build_type: Release
             build_threads: 2
             test_threads: 2
-            cmake: 3.16.9
             requires_toolchain: true
-            requires_ccache: true
             skip_build_tests: false
             skip_run_tests: false
             use_include_dependencies: "OFF"
 
           - name: "Non-cyclic tests"
-            cxx: "g++-11"
-            cc: "gcc-11"
+            compiler: "gcc-11"
             build: unit
             build_type: Debug
             build_threads: 2
             test_threads: 2
-            cmake: 3.16.9
             requires_toolchain: true
-            requires_ccache: true
             skip_build_tests: true
             skip_run_tests: true
             use_include_dependencies: "ON"
 
           - name: "CMake external project"
-            cxx: "g++-11"
-            cc: "gcc-11"
+            compiler: "gcc-11"
             build: external_project
             build_type: Debug
             build_threads: 1 # output is important to be in sequential order
             test_threads: 2
-            cmake: 3.16.9
             requires_toolchain: true
-            requires_ccache: false
             skip_build_tests: false
             skip_run_tests: true
             use_include_dependencies: "OFF"
@@ -124,10 +101,7 @@ jobs:
             build: documentation
             build_threads: 2
             test_threads: 2
-            cmake: 3.16.9
-            doxygen: 1.9.6
             requires_toolchain: false
-            requires_ccache: false
             skip_build_tests: true
             skip_run_tests: false
             use_include_dependencies: "OFF"
@@ -147,52 +121,35 @@ jobs:
           path: seqan3/submodules/seqan
           fetch-depth: 1
 
-      - name: Configure APT
-        continue-on-error: true
-        run: bash ./seqan3/.github/workflows/scripts/configure_apt.sh
+      - name: Setup Package Manager
+        uses: seqan/actions/setup-package-manager@main
 
       - name: Install CMake
-        env:
-          BUILD: ${{ matrix.build }}
-          CMAKE_VERSION: ${{ matrix.cmake }}
-        run: bash ./seqan3/.github/workflows/scripts/install_cmake.sh
+        uses: seqan/actions/setup-cmake@main
+        with:
+          cmake: 3.16.9
+
+      - name: Install CMake dependency
+        if: matrix.build == 'external_project'
+        run: |
+          mkdir -p /tmp/libidn11-download
+          wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=/tmp/libidn11-download/ http://ftp.de.debian.org/debian/pool/main/libi/libidn/libidn11_1.33-3_amd64.deb
+          sudo dpkg -i /tmp/libidn11-download/libidn11_1.33-3_amd64.deb
 
       - name: Install Doxygen
         if: matrix.build == 'documentation'
-        env:
-          DOXYGEN_VERSION: ${{ matrix.doxygen }}
-        run: bash ./seqan3/.github/workflows/scripts/install_doxygen.sh
-
-      - name: Install ccache
-        if: matrix.requires_ccache
-        run: sudo apt-get install --yes ccache
-
-      - name: Install compiler ${{ matrix.cxx }}
-        if: matrix.requires_toolchain
-        run: sudo apt-get install --yes ${{ matrix.cxx }}
-
-      - name: Load ccache
-        if: matrix.requires_ccache
-        uses: actions/cache@v3
+        uses: seqan/actions/setup-doxygen@main
         with:
-          path: .ccache
-          key: ${{ matrix.name }}-ccache-${{ github.ref }}-${{ github.run_number }}
-          # Restoring: From current branch, otherwise from base branch, otherwise from any branch.
-          restore-keys: |
-            ${{ matrix.name }}-ccache-${{ github.ref }}
-            ${{ matrix.name }}-ccache-${{ github.base_ref }}
-            ${{ matrix.name }}-ccache-
+          doxygen: 1.9.6
 
-      - name: Tool versions
-        run: |
-          env cmake --version
-          env doxygen --version || true
-          env ${{ matrix.cxx }} --version || true
+      - name: Setup toolchain
+        if: matrix.requires_toolchain
+        uses: seqan/actions/setup-toolchain@main
+        with:
+          compiler: ${{ matrix.compiler }}
+          ccache_size: 75M
 
       - name: Configure tests
-        env:
-          CXX: ${{ matrix.cxx }}
-          CC: ${{ matrix.cc }}
         run: |
           mkdir seqan3-build
           cd seqan3-build
@@ -219,12 +176,6 @@ jobs:
 
       - name: Build tests
         if: ${{ !matrix.skip_build_tests }}
-        env:
-          CCACHE_BASEDIR: ${{ github.workspace }}
-          CCACHE_DIR: ${{ github.workspace }}/.ccache
-          CCACHE_COMPRESS: true
-          CCACHE_COMPRESSLEVEL: 12
-          CCACHE_MAXSIZE: 75M
         run: |
           ccache -z || true
           cd seqan3-build

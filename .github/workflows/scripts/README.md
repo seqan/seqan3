@@ -1,7 +1,3 @@
-## configure_apt.sh
-
-Allows `apt` to retry operations up to 5 times and adds two ppas needed for up-to-date compilers.
-
 ## g++_ram.sh
 
 `VERSION` needs to be replaced with the gcc version. When `DO_TIME` is `0`, this is just a wrapper for gcc that does
@@ -14,26 +10,6 @@ of `time -v`.
 We use `gcovr` to create our coverage reports. We do not want to report branch coverage, but only line coverage.
 However, when `gcovr` calls `gcov`, the arguments enabling branch coverage reporting are always added.
 `gcov.sh` will remove those arguments and pass the remaining arguments to `gcov`.
-
-## install_cmake.sh
-
-Downloads and installs CMake on Ubuntu and macOS.
-Uses the `RUNNER_OS`, `BUILD`, `GITHUB_PATH`, and `CMAKE_VERSION` env variables of the workflow.
-
-## install_doxygen.sh
-
-Downloads and install doxygen on Ubuntu.
-Uses the `DOXYGEN_VERSION` and `GITHUB_PATH` env variables of the workflow.
-
-## install_via_brew.sh
-
-Install a specified package via brew on macOS.
-Needs two inputs:
-  * The package name (e.g., `gcc`)
-  * The package version (optional)
-
-The script handles cases where some other version is already installed, or the package is installed but needs an
-updated.
 
 ## process_compiler_error_log.py
 
