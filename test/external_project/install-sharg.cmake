@@ -17,8 +17,8 @@ endif ()
 ExternalProject_Add (
     sharg_test_prerequisite
     PREFIX sharg_test_prerequisite
-    URL "https://github.com/seqan/sharg-parser/releases/download/1.0.0/sharg-1.0.0-Source.tar.xz"
-    URL_HASH SHA256=babd34fc0851ac6710346b67eb46ca067576fc319e0be5c478437733a69b66a0
+    URL "https://github.com/seqan/sharg-parser/releases/download/1.1.0/sharg-1.1.0-Source.tar.xz"
+    URL_HASH SHA256=3639862b5dfafc69f64ecbbced0e8c8836eb51d607282ebc3c3eb28610332259
     CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS} #
                "-DCMAKE_INSTALL_PREFIX=${SEQAN3_SYSTEM_PREFIX}"
     STEP_TARGETS configure install
