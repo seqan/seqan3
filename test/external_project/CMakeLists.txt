@@ -129,19 +129,19 @@ ExternalProject_Add (
     seqan3_setup_tutorial_with_sharg
     PREFIX seqan3_setup_tutorial_with_sharg
     SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_setup_tutorial_with_sharg"
-    CMAKE_COMMAND "${SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND}"
     CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
                "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}" #
                "-DSHARG_ROOT=${SHARG_ROOT}")
 add_dependencies (seqan3_setup_tutorial_with_sharg sharg_test_prerequisite)
 
 # 7) This test is the same as 5), but with Sharg and SeqAn3 installed.
-ExternalProject_Add (
-    seqan3_setup_tutorial_with_sharg_installed
-    PREFIX seqan3_setup_tutorial_with_sharg_installed
-    SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_setup_tutorial_with_sharg_installed"
-    CMAKE_COMMAND "${SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND}"
-    CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
-               "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
-               "-DCMAKE_SYSTEM_PREFIX_PATH=${SEQAN3_SYSTEM_PREFIX}")
-add_dependencies (seqan3_setup_tutorial_with_sharg_installed seqan3_test_prerequisite sharg_test_prerequisite)
+# Sharg 1.1.0 does not install submodules correctly.
+# ExternalProject_Add (
+#     seqan3_setup_tutorial_with_sharg_installed
+#     PREFIX seqan3_setup_tutorial_with_sharg_installed
+#     SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_setup_tutorial_with_sharg_installed"
+#     CMAKE_COMMAND "${SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND}"
+#     CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
+#                "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
+#                "-DCMAKE_SYSTEM_PREFIX_PATH=${SEQAN3_SYSTEM_PREFIX}")
+# add_dependencies (seqan3_setup_tutorial_with_sharg_installed seqan3_test_prerequisite sharg_test_prerequisite)
