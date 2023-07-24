@@ -1,0 +1,65 @@
+name: Documentation
+
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+    types:
+      - unlabeled
+  workflow_dispatch:
+
+concurrency:
+  group: documentation-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'push' }}
+
+env:
+  SEQAN3_NO_VERSION_CHECK: 1
+  TZ: Europe/Berlin
+
+defaults:
+  run:
+    shell: bash -Eexuo pipefail {0}
+
+jobs:
+  build:
+    name: Documentation
+    runs-on: ubuntu-22.04
+    timeout-minutes: 120
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'lint'
+    steps:
+      - name: Checkout SeqAn3
+        uses: actions/checkout@v3
+        with:
+          path: seqan3
+          fetch-depth: 1
+          submodules: true
+
+      - name: Checkout SeqAn2
+        uses: actions/checkout@v3
+        with:
+          repository: seqan/seqan
+          path: seqan3/submodules/seqan
+          fetch-depth: 1
+
+      - name: Install CMake
+        uses: seqan/actions/setup-cmake@main
+        with:
+          cmake: 3.16.9
+
+      - name: Install Doxygen
+        uses: seqan/actions/setup-doxygen@main
+        with:
+          doxygen: 1.9.6
+
+      - name: Configure tests
+        run: |
+          mkdir seqan3-build
+          cd seqan3-build
+          cmake ../seqan3/test/documentation
+          make -j2 download-cppreference-doxygen-web-tag
+
+      - name: Run tests
+        run: |
+          cd seqan3-build
+          ctest . -j2 --output-on-failure

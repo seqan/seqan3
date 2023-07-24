@@ -1,20 +1,20 @@
-name: SeqAn3 Latest Libraries CI
+name: AVX2
 
 on:
   # Will always run on the default branch
   schedule:
-    - cron: "0 4 * * SUN"
+    - cron: "0 6 * * SUN"
   # Enables a manual trigger, may run on any branch
   workflow_dispatch:
 
 concurrency:
-  group: libs-${{ github.event.pull_request.number || github.ref }}
+  group: avx2-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 env:
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
-  ISSUE: 2747 # Issue number to use for reporting failures
+  ISSUE: 2905 # Issue number to use for reporting failures
 
 defaults:
   run:
@@ -31,10 +31,6 @@ jobs:
       matrix:
         compiler: [11, 12, 13]
         build: [unit, snippet, performance, header]
-        include:
-          - compiler: 12
-            build: unit
-            cxx_flags: "-Wno-restrict" # Bogus errors in gtest that won't be fixed upstream
 
     steps:
       - name: Checkout SeqAn3
@@ -42,25 +38,6 @@ jobs:
         with:
           path: seqan3
           submodules: true
-
-      - name: Update all submodules
-        run: |
-          cd seqan3
-          git submodule status
-          git submodule update --recursive --remote
-          git submodule status
-
-      - name: Update googletest
-        run: |
-          grep 'gtest_git_tag ".*"' seqan3/test/cmake/seqan3_require_test.cmake
-          sed -i 's/gtest_git_tag ".*"/gtest_git_tag "main"/' seqan3/test/cmake/seqan3_require_test.cmake
-          grep 'gtest_git_tag ".*"' seqan3/test/cmake/seqan3_require_test.cmake
-
-      - name: Update googlebenchmark
-        run: |
-          grep 'gbenchmark_git_tag ".*"' seqan3/test/cmake/seqan3_require_benchmark.cmake
-          sed -i 's/gbenchmark_git_tag ".*"/gbenchmark_git_tag "main"/' seqan3/test/cmake/seqan3_require_benchmark.cmake
-          grep 'gbenchmark_git_tag ".*"' seqan3/test/cmake/seqan3_require_benchmark.cmake
 
       - name: Checkout SeqAn2
         uses: actions/checkout@v3
@@ -84,9 +61,9 @@ jobs:
           mkdir seqan3-build
           cd seqan3-build
           cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=Release \
-                                                   -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
                                                    -DSEQAN3_VERBOSE_TESTS=OFF \
-                                                   -DSEQAN3_BENCHMARK_MIN_TIME=0.01
+                                                   -DSEQAN3_BENCHMARK_MIN_TIME=0.01 \
+                                                   -DCMAKE_CXX_FLAGS="-mavx2"
           case "${{ matrix.build }}" in
             unit) make -j2 gtest_build;;
             snippet) make -j2 gtest_build;;
