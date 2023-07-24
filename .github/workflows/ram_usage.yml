@@ -46,7 +46,7 @@ jobs:
       - name: Setup toolchain
         uses: seqan/actions/setup-toolchain@main
         with:
-          compiler: gcc-${{ matrix.compiler }}
+          compiler: gcc-${{ github.event.inputs.compiler }}
           use_actions_cache: false
 
       - name: Install CMake
