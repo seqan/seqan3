@@ -12,24 +12,24 @@ cmake_minimum_required (VERSION 3.16)
 macro (seqan3_require_test)
     enable_testing ()
 
-    set (gtest_version "1.13.0")
-    set (gtest_git_tag "v${gtest_version}")
+    set (SEQAN3_GTEST_TAG "v1.13.0")
 
-    find_package (GTest ${gtest_version} EXACT QUIET)
+    find_package (GTest QUIET)
 
-    if (NOT GTest_FOUND)
-        message (STATUS "Fetching Google Test ${gtest_version}")
+    # Also ensure that Google Test if fetched for the latest library cron, which sets the tag to "main".
+    if (NOT GTest_FOUND OR "${SEQAN3_GTEST_TAG}" STREQUAL "main")
+        message (STATUS "Fetching Google Test ${SEQAN3_GTEST_TAG}")
 
         include (FetchContent)
         FetchContent_Declare (
             gtest_fetch_content
             GIT_REPOSITORY "https://github.com/google/googletest.git"
-            GIT_TAG "${gtest_git_tag}")
+            GIT_TAG "${SEQAN3_GTEST_TAG}")
         option (BUILD_GMOCK "" OFF)
         option (INSTALL_GTEST "" OFF)
         FetchContent_MakeAvailable (gtest_fetch_content)
     else ()
-        message (STATUS "Found Google Test ${gtest_version}")
+        message (STATUS "  Test dependency:            Google Test ${GTest_VERSION} found.")
     endif ()
 
     if (NOT TARGET gtest_build)
