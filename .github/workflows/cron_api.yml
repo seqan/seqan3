@@ -1,4 +1,4 @@
-name: SeqAn3 API-Stability
+name: API-Stability
 
 on:
   # Will always run on the default branch

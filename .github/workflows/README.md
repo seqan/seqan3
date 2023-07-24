@@ -1,66 +1,82 @@
-## api.yml
+# Continuous on Pull Request
 
-Runs the [API-Stability](https://github.com/seqan/seqan3/blob/master/test/api_stability/README.md) test:
-  * Every Sunday on master
-  * Manually on any branch
+## ci_cmake.yml
 
-In case of failure, creates an issue containing error logs.
+Runs CMake specific tests, e.g., using SeqAn3 as external project.
 
-## avx2.yml
+## ci_coverage.yml
 
-Will run all test suites on all compiler with AVX2 enabled:
-  * Every Sunday on master
-  * Manually on any branch
+Runs coverage test and uploads the report to Codecov.
 
-In case of failure, creates an issue containing error logs.
+## ci_documentation.yml
+
+Builds the documentation and checks for failures.
+
+## ci_lint.yml
+
+Runs clang-format and cmake-format. Resulting changes will be pushed as a new commit.
+
+Other CI only starts after linting does not produce changes.
+
+Only runs on PRs.
 
 ## ci_linux.yml
 
-Runs the unit test CI on Ubuntu runners:
-  * Any push to a master or release branch
-  * Any push to a pull request
-
-Also produces code coverage.
+Runs unit tests on Ubuntu.
 
 ## ci_macos.yml
 
-Runs the unit test CI on macOS runners:
-  * Any push to a master or release branch
-  * Any push to a pull request
-
-In contrast to Ubuntu runners, there are 3 cores available.
-Since macOS runs take longer and there generally less workers available, this workflow should be kept short.
+Runs unit tests on macOS.
 
 ## ci_misc.yml
 
-Runs various CI on Ubuntu runners:
-  * Any push to a master or release branch
-  * Any push to a pull request
+Runs snippet, performance, and header tests on Ubuntu.
 
-This workflow includes performance and snippet tests, CMake related CI, header test, and the documentation build.
+# Continuous on Push
 
-## documentation.yml
+These run in addition to *Continuous on Pull Request*.
 
-Builds documentation and uploads it to https://docs.seqan.de/:
-  * Any push to master
-  * Manually on any branch
+## deploy_documentation.yaml
+
+Builds documentation and uploads it to https://docs.seqan.de/.
 
 Uses repository secrets for the target server and authentication.
 
-## latest_libraries.yml
+## update_cookbook.yml
 
-Will update all submodules, gbenchmark and googletest to respective master versions and runs the test suite on all
-compilers:
-  * Every Sunday on master
-  * Manually on any branch
+Checks if any new snippets are to be added to the Cookbook. Will push a new commit if new snippets are found.
+
+# Cron
+
+## cron_api.yml
+
+Runs the [API-Stability](https://github.com/seqan/seqan3/blob/master/test/api_stability/README.md) test.
 
 In case of failure, creates an issue containing error logs.
 
+## cron_avx2.yml
+
+Will run all test suites on all compilers with AVX2 enabled.
+
+In case of failure, creates an issue containing error logs.
+
+## cron_latest_libraries.yml
+
+Will update all submodules, gbenchmark and googletest to respective main versions. Then runs all test suites on all
+compilers.
+
+In case of failure, creates an issue containing error logs.
+
+# On Demand
+
+## hide_comments.yml
+
+Can be used to hide bot comments in an issue. Intended for use with the CRON issues.
+
 ## ram_usage.yml
 
-Tracks the RAM-Usage when compiling and generates a CSV as artefact:
-  * Manually on any branch
+Tracks the RAM-Usage when compiling and generates a CSV artifact.
 
-This workflow needs two inputs:
-  * The GCC version (e.g., `11`)
-  * The CXX_FLAGS (optional)
+This workflow has two optional inputs:
+  * The GCC version (default: `13`)
+  * The CXX_FLAGS (default: None)

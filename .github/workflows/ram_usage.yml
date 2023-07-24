@@ -1,4 +1,4 @@
-name: SeqAn3 RAM-Usage
+name: RAM-Usage
 
 on:
   # Enables a manual trigger, may run on any branch
