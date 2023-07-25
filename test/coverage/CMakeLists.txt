@@ -71,6 +71,8 @@ seqan3_append_gcovr_args ("--exclude-lines-by-pattern" [['^\\s*[{}]{0,2}\\s*;*\\
 seqan3_append_gcovr_args ("--exclude-unreachable-branches")
 # Will exclude branches that are only generated for exception handling.
 seqan3_append_gcovr_args ("--exclude-throw-branches")
+# Will exclude non-code lines, e.g. lines with closing braces.
+seqan3_append_gcovr_args ("--exclude-noncode-lines")
 # Run up to this many gcov instances in parallel.
 seqan3_append_gcovr_args ("-j" "${SEQAN3_COVERAGE_PARALLEL_LEVEL}")
 
