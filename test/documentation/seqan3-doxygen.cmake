@@ -70,7 +70,7 @@ if (NOT EXISTS "${SEQAN3_DOXYGEN_STD_TAGFILE}" OR SEQAN3_DOXYGEN_STD_TAGFILE STR
         DOWNLOAD_NAME "html-book.tar.xz"
         DOWNLOAD_NO_EXTRACT YES
         BINARY_DIR "${PROJECT_BINARY_DIR}"
-        BUILD_BYPRODUCTS "${SEQAN3_DOXYGEN_STD_TAGFILE}"
+        BUILD_BYPRODUCTS "${SEQAN3_DEFAULT_DOXYGEN_STD_TAGFILE}"
         CONFIGURE_COMMAND /bin/sh -c "xzcat html-book.tar.xz | tar -xf - cppreference-doxygen-web.tag.xml"
         BUILD_COMMAND rm "html-book.tar.xz"
         INSTALL_COMMAND "")
@@ -78,7 +78,11 @@ else ()
     message (STATUS "Copying existing tag file: ${SEQAN3_DOXYGEN_STD_TAGFILE}")
     # Copy tag file such that it is present in the built documentation. This is useful if the documentation is
     # subsequently deployed to a server.
-    configure_file ("${SEQAN3_DOXYGEN_STD_TAGFILE}" "${SEQAN3_DEFAULT_DOXYGEN_STD_TAGFILE}" COPYONLY)
+    add_custom_target (download-cppreference-doxygen-web-tag)
+    add_custom_command (TARGET download-cppreference-doxygen-web-tag
+                        COMMAND ${CMAKE_COMMAND} -E copy "${SEQAN3_DOXYGEN_STD_TAGFILE}"
+                                "${SEQAN3_DEFAULT_DOXYGEN_STD_TAGFILE}"
+                        BYPRODUCTS "${SEQAN3_DEFAULT_DOXYGEN_STD_TAGFILE}")
     set (SEQAN3_DOXYGEN_STD_TAGFILE "${SEQAN3_DEFAULT_DOXYGEN_STD_TAGFILE}")
 endif ()
 
