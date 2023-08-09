@@ -47,20 +47,40 @@ if (SEQAN3_VERCEL_PREVIEW_DOC)
 endif ()
 
 ### Download and extract cppreference-doxygen-web.tag.xml for std:: documentation links
-set (SEQAN3_DOXYGEN_STD_TAGFILE "${PROJECT_BINARY_DIR}/cppreference-doxygen-web.tag.xml")
-include (ExternalProject)
-ExternalProject_Add (
-    download-cppreference-doxygen-web-tag
-    URL "https://github.com/PeterFeicht/cppreference-doc/releases/download/v20220730/html-book-20220730.tar.xz"
-    URL_HASH SHA256=71f15003c168b8dc5a00cbaf19b6480a9b3e87ab7e462aa39edb63d7511c028b
-    TLS_VERIFY ON
-    DOWNLOAD_DIR "${PROJECT_BINARY_DIR}"
-    DOWNLOAD_NAME "html-book.tar.xz"
-    DOWNLOAD_NO_EXTRACT YES
-    BINARY_DIR "${PROJECT_BINARY_DIR}"
-    CONFIGURE_COMMAND /bin/sh -c "xzcat html-book.tar.xz | tar -xf - cppreference-doxygen-web.tag.xml"
-    BUILD_COMMAND rm "html-book.tar.xz"
-    INSTALL_COMMAND "")
+# SEQAN3_DOXYGEN_STD_TAGFILE can be used to point to an existing tag file (cppreference-doxygen-web.tag.xml).
+# If SEQAN3_DOXYGEN_STD_TAGFILE is set by the user and the file exists, it will be copied.
+# If SEQAN3_DOXYGEN_STD_TAGFILE is not set by the user, or it is set by the user, but the file does not exist,
+# the tag file will be downloaded.
+set (SEQAN3_DEFAULT_DOXYGEN_STD_TAGFILE "${PROJECT_BINARY_DIR}/cppreference-doxygen-web.tag.xml")
+set (SEQAN3_DOXYGEN_STD_TAGFILE
+     "${SEQAN3_DEFAULT_DOXYGEN_STD_TAGFILE}"
+     CACHE STRING "Path to cppreference-doxygen-web.tag.xml")
+if (NOT EXISTS "${SEQAN3_DOXYGEN_STD_TAGFILE}" OR SEQAN3_DOXYGEN_STD_TAGFILE STREQUAL
+                                                  "${SEQAN3_DEFAULT_DOXYGEN_STD_TAGFILE}")
+    message (STATUS "Tag file will be fetched.")
+    # Reset path in case it was set from the outside, but does not exist.
+    set (SEQAN3_DOXYGEN_STD_TAGFILE "${SEQAN3_DEFAULT_DOXYGEN_STD_TAGFILE}")
+    include (ExternalProject)
+    ExternalProject_Add (
+        download-cppreference-doxygen-web-tag
+        URL "https://github.com/PeterFeicht/cppreference-doc/releases/download/v20220730/html-book-20220730.tar.xz"
+        URL_HASH SHA256=71f15003c168b8dc5a00cbaf19b6480a9b3e87ab7e462aa39edb63d7511c028b
+        TLS_VERIFY ON
+        DOWNLOAD_DIR "${PROJECT_BINARY_DIR}"
+        DOWNLOAD_NAME "html-book.tar.xz"
+        DOWNLOAD_NO_EXTRACT YES
+        BINARY_DIR "${PROJECT_BINARY_DIR}"
+        BUILD_BYPRODUCTS "${SEQAN3_DOXYGEN_STD_TAGFILE}"
+        CONFIGURE_COMMAND /bin/sh -c "xzcat html-book.tar.xz | tar -xf - cppreference-doxygen-web.tag.xml"
+        BUILD_COMMAND rm "html-book.tar.xz"
+        INSTALL_COMMAND "")
+else ()
+    message (STATUS "Copying existing tag file: ${SEQAN3_DOXYGEN_STD_TAGFILE}")
+    # Copy tag file such that it is present in the built documentation. This is useful if the documentation is
+    # subsequently deployed to a server.
+    configure_file ("${SEQAN3_DOXYGEN_STD_TAGFILE}" "${SEQAN3_DEFAULT_DOXYGEN_STD_TAGFILE}" COPYONLY)
+    set (SEQAN3_DOXYGEN_STD_TAGFILE "${SEQAN3_DEFAULT_DOXYGEN_STD_TAGFILE}")
+endif ()
 
 ### TEST HELPER
 

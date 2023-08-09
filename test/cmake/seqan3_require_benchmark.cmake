@@ -12,25 +12,25 @@ cmake_minimum_required (VERSION 3.16)
 macro (seqan3_require_benchmark)
     enable_testing ()
 
-    set (benchmark_version "1.8.2")
-    set (gbenchmark_git_tag "v${benchmark_version}")
+    set (SEQAN3_BENCHMARK_TAG "v1.8.2")
 
-    find_package (benchmark ${benchmark_version} EXACT QUIET)
+    find_package (benchmark QUIET)
 
-    if (NOT benchmark_FOUND)
-        message (STATUS "Fetching Google Benchmark ${benchmark_version}")
+    # Also ensure that Google Benchmark if fetched for the latest library cron, which sets the tag to "main".
+    if (NOT benchmark_FOUND OR "${SEQAN3_BENCHMARK_TAG}" STREQUAL "main")
+        message (STATUS "Fetching Google Benchmark ${SEQAN3_BENCHMARK_TAG}")
 
         include (FetchContent)
         FetchContent_Declare (
             gbenchmark_fetch_content
             GIT_REPOSITORY "https://github.com/google/benchmark.git"
-            GIT_TAG "${gbenchmark_git_tag}")
+            GIT_TAG "${SEQAN3_BENCHMARK_TAG}")
         option (BENCHMARK_ENABLE_TESTING "" OFF)
         option (BENCHMARK_ENABLE_WERROR "" OFF) # Does not apply to Debug builds.
         option (BENCHMARK_ENABLE_INSTALL "" OFF)
         FetchContent_MakeAvailable (gbenchmark_fetch_content)
     else ()
-        message (STATUS "Found Google Benchmark ${benchmark_version}")
+        message (STATUS "  Test dependency:            Google Benchmark ${benchmark_VERSION} found.")
     endif ()
 
     # NOTE: google benchmark's CMakeLists.txt already defines Shlwapi
