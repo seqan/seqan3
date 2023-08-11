@@ -69,11 +69,10 @@ jobs:
           wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=/tmp/libidn11-download/ http://ftp.de.debian.org/debian/pool/main/libi/libidn/libidn11_1.33-3_amd64.deb
           sudo dpkg -i /tmp/libidn11-download/libidn11_1.33-3_amd64.deb
 
-      - name: Setup toolchain
-        uses: seqan/actions/setup-toolchain@main
+      - name: Setup compiler
+        uses: seqan/actions/setup-compiler@main
         with:
           compiler: ${{ matrix.compiler }}
-          use_actions_cache: false
 
       - name: Configure tests
         run: |

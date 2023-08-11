@@ -43,11 +43,10 @@ jobs:
           path: seqan3/submodules/seqan
           fetch-depth: 1
 
-      - name: Setup toolchain
-        uses: seqan/actions/setup-toolchain@main
+      - name: Setup compiler
+        uses: seqan/actions/setup-compiler@main
         with:
           compiler: gcc-${{ github.event.inputs.compiler }}
-          use_actions_cache: false
 
       - name: Install CMake
         uses: seqan/actions/setup-cmake@main
