@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan::std::detail::adaptor_for_view_without_args
+ * \brief Provides seqan::stl::detail::adaptor_for_view_without_args
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -16,7 +16,7 @@
 
 #include "adaptor_base.hpp"
 
-namespace seqan::std::detail
+namespace seqan::stl::detail
 {
 
 // ============================================================================
@@ -43,7 +43,7 @@ private:
     template <typename... arg_types>
     static auto impl(arg_types &&... args)
     {
-        return view_type{::std::forward<arg_types>(args)...};
+        return view_type{std::forward<arg_types>(args)...};
     }
 
 public:
@@ -68,6 +68,6 @@ public:
     //!\}
 };
 
-} // namespace seqan::std::detail
+} // namespace seqan::stl::detail
 
 #endif // SEQAN_STD_DETAIL_ADAPTOR_FOR_VIEW_WITHOUT_ARGS

@@ -23,6 +23,6 @@ namespace seqan3
  * \ingroup utility_tuple
  */
 template <typename t1, typename t2>
-using common_pair = seqan::std::pair<t1, t2>;
+using common_pair = seqan::stl::pair<t1, t2>;
 
 } // namespace seqan3

@@ -24,6 +24,6 @@ namespace seqan3::views
  * \noapi{This is a implementation of the C++23 zip_view. It will be replaced with std::views::zip.}
  * \sa https://en.cppreference.com/w/cpp/ranges/zip_view
  */
-using SEQAN3_DOXYGEN_ONLY(zip =) seqan::std::views::zip;
+using SEQAN3_DOXYGEN_ONLY(zip =) seqan::stl::views::zip;
 
 } // namespace seqan3::views

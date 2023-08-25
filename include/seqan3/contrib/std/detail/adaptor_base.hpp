@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan::std::detail::adaptor_base and seqan::std::detail::combined_adaptor
+ * \brief Provides seqan::stl::detail::adaptor_base and seqan::stl::detail::combined_adaptor
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -17,7 +17,7 @@
 #include <ranges>
 #include <tuple>
 
-namespace seqan::std::detail
+namespace seqan::stl::detail
 {
 
 // ============================================================================
@@ -37,27 +37,27 @@ class adaptor_base
 {
 private:
     //!\brief Stores the arguments.
-    ::std::tuple<stored_args_ts...> arguments;
+    std::tuple<stored_args_ts...> arguments;
 
     //!\brief Helper function to unpack the tuple and delegate to the derived type.
     template <typename urng_t, size_t... Is>
-    constexpr auto pass_args_to_impl(urng_t && urange, ::std::index_sequence<Is...> const &) const &
+    constexpr auto pass_args_to_impl(urng_t && urange, std::index_sequence<Is...> const &) const &
     {
-        // ::std::get returns lvalue-reference to value, but we need to copy the values
+        // std::get returns lvalue-reference to value, but we need to copy the values
         // so that the view does not depend on the functor
         return static_cast<derived_type const &>(*this).impl(
-            ::std::forward<urng_t>(urange),
-            ::std::tuple_element_t<Is, ::std::tuple<stored_args_ts...>>(::std::get<Is>(arguments))...);
+            std::forward<urng_t>(urange),
+            std::tuple_element_t<Is, std::tuple<stored_args_ts...>>(std::get<Is>(arguments))...);
     }
 
     //!\overload
     template <typename urng_t, size_t... Is>
-    constexpr auto pass_args_to_impl(urng_t && urange, ::std::index_sequence<Is...> const &) &&
+    constexpr auto pass_args_to_impl(urng_t && urange, std::index_sequence<Is...> const &) &&
     {
         // move out values, because we don't need them anymore (*this is temporary)
         return static_cast<derived_type &&>(*this).impl(
-            ::std::forward<urng_t>(urange),
-            ::std::tuple_element_t<Is, ::std::tuple<stored_args_ts...>>(::std::get<Is>(::std::move(arguments)))...);
+            std::forward<urng_t>(urange),
+            std::tuple_element_t<Is, std::tuple<stored_args_ts...>>(std::get<Is>(std::move(arguments)))...);
     }
 
     //!\brief Befriend the derived_type so it can access private members if need be.
@@ -75,26 +75,25 @@ public:
     ~adaptor_base() noexcept = default;                                          //!< Defaulted.
 
     //!\brief Constructor with possible arguments; becomes a default constructor for adaptors without args.
-    constexpr adaptor_base(stored_args_ts... args) noexcept(noexcept(::std::tuple<stored_args_ts...>{
-        ::std::forward<stored_args_ts>(args)...})) :
-        arguments{::std::forward<stored_args_ts>(args)...}
+    constexpr adaptor_base(stored_args_ts... args) noexcept(noexcept(std::tuple<stored_args_ts...>{
+        std::forward<stored_args_ts>(args)...})) :
+        arguments{std::forward<stored_args_ts>(args)...}
     {}
     //!\}
 
     //!\brief Function-style overload for ranges.
-    template <::std::ranges::input_range urng_t>
+    template <std::ranges::input_range urng_t>
     constexpr auto operator()(urng_t && urange) const &
     {
-        return pass_args_to_impl(::std::forward<urng_t>(urange),
-                                 ::std::make_index_sequence<sizeof...(stored_args_ts)>{});
+        return pass_args_to_impl(std::forward<urng_t>(urange), std::make_index_sequence<sizeof...(stored_args_ts)>{});
     }
 
     //!\overload
-    template <::std::ranges::input_range urng_t>
+    template <std::ranges::input_range urng_t>
     constexpr auto operator()(urng_t && urange) &&
     {
-        return ::std::move(*this).pass_args_to_impl(::std::forward<urng_t>(urange),
-                                                    ::std::make_index_sequence<sizeof...(stored_args_ts)>{});
+        return std::move(*this).pass_args_to_impl(std::forward<urng_t>(urange),
+                                                  std::make_index_sequence<sizeof...(stored_args_ts)>{});
     }
 
     /*!\brief Left-hand-side pipe operator that handles range input or composing.
@@ -104,27 +103,27 @@ public:
      *
      * \details
      *
-     * If the LHS models ::std::ranges::input_range this functions delegates to operator()
+     * If the LHS models std::ranges::input_range this functions delegates to operator()
      * otherwise it assumes the LHS is another range adaptor closure object and it
      * returns a seqan3::detail::combined_adaptor that wraps that adaptor and this one.
      */
     template <typename arg_t>
     constexpr friend auto operator|(arg_t && arg, derived_type const & me)
     {
-        if constexpr (::std::ranges::input_range<arg_t>)
-            return me(::std::forward<arg_t>(arg));
+        if constexpr (std::ranges::input_range<arg_t>)
+            return me(std::forward<arg_t>(arg));
         else
-            return combined_adaptor{::std::forward<arg_t>(arg), me};
+            return combined_adaptor{std::forward<arg_t>(arg), me};
     }
 
     //!\overload
     template <typename arg_t>
     constexpr friend auto operator|(arg_t && arg, derived_type && me)
     {
-        if constexpr (::std::ranges::input_range<arg_t>)
-            return ::std::move(me)(::std::forward<arg_t>(arg));
+        if constexpr (std::ranges::input_range<arg_t>)
+            return std::move(me)(std::forward<arg_t>(arg));
         else
-            return combined_adaptor{::std::forward<arg_t>(arg), ::std::move(me)};
+            return combined_adaptor{std::forward<arg_t>(arg), std::move(me)};
     }
 
     /*!\brief Right-hand-side pipe operator that handles composing.
@@ -146,14 +145,14 @@ public:
     template <typename arg_t>
     constexpr friend auto operator|(adaptor_base const & me, arg_t && arg)
     {
-        return combined_adaptor{static_cast<derived_type const &>(me), ::std::forward<arg_t>(arg)};
+        return combined_adaptor{static_cast<derived_type const &>(me), std::forward<arg_t>(arg)};
     }
 
     //!\overload
     template <typename arg_t>
     constexpr friend auto operator|(adaptor_base && me, arg_t && arg)
     {
-        return combined_adaptor{static_cast<derived_type &&>(me), ::std::forward<arg_t>(arg)};
+        return combined_adaptor{static_cast<derived_type &&>(me), std::forward<arg_t>(arg)};
     }
 };
 
@@ -182,11 +181,11 @@ private:
     friend base_type;
 
     //!\brief Combine all arguments via `operator|`.
-    template <::std::ranges::input_range urng_t, typename left_adaptor_t_, typename right_adaptor_t_>
+    template <std::ranges::input_range urng_t, typename left_adaptor_t_, typename right_adaptor_t_>
     static auto impl(urng_t && urange, left_adaptor_t_ && left_adaptor, right_adaptor_t_ && right_adaptor)
     {
-        return ::std::forward<urng_t>(urange) | ::std::forward<left_adaptor_t_>(left_adaptor)
-             | ::std::forward<right_adaptor_t_>(right_adaptor);
+        return std::forward<urng_t>(urange) | std::forward<left_adaptor_t_>(left_adaptor)
+             | std::forward<right_adaptor_t_>(right_adaptor);
     }
 
 public:
@@ -205,11 +204,11 @@ public:
 
     //!\brief Store both arguments in the adaptor.
     constexpr combined_adaptor(left_adaptor_t l, right_adaptor_t r) :
-        base_type{::std::forward<left_adaptor_t>(l), ::std::forward<right_adaptor_t>(r)}
+        base_type{std::forward<left_adaptor_t>(l), std::forward<right_adaptor_t>(r)}
     {}
     //!\}
 };
 
-} // namespace seqan::std::detail
+} // namespace seqan::stl::detail
 
 #endif // SEQAN_STD_DETAIL_ADAPTOR_BASE

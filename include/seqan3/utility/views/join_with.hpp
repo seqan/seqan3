@@ -25,6 +25,6 @@ namespace seqan3::views
  * \noapi{This is a implementation of the C++23 join_with_view. It will be replaced with ::std::views::join_with.}
  * \sa https://en.cppreference.com/w/cpp/ranges/join_with_view
  */
-using SEQAN3_DOXYGEN_ONLY(join_with =) seqan::std::views::join_with;
+using SEQAN3_DOXYGEN_ONLY(join_with =) seqan::stl::views::join_with;
 
 } // namespace seqan3::views

@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Enrico Seiler <enrico.seiler AT fu-berlin.de>
- * \brief Provides [seqan::std::detail::non_propagating_cache](https://eel.is/c++draft/range.nonprop.cache).
+ * \brief Provides [seqan::stl::detail::non_propagating_cache](https://eel.is/c++draft/range.nonprop.cache).
  */
 
 // File might be included from multiple libraries.
@@ -16,14 +16,14 @@
 
 #include <optional>
 
-namespace seqan::std::detail
+namespace seqan::stl::detail
 {
 
 /*!\brief A helper that enables an input view to temporarily cache values as it is iterated over.
  * \sa https://eel.is/c++draft/range.nonprop.cache
  * \details
  *
- *  Behaves like ::std::optional, but
+ *  Behaves like std::optional, but
  *  - Constrains its type parameter `T` with `std::is_object_v<T>`.
  *  - Copy constructor is a no-op.
  *  - Move constructor is a no-op for `this` and destroys value of `other`.
@@ -32,14 +32,14 @@ namespace seqan::std::detail
  *  - Has an additional `emplace_deref` member function.
  */
 template <typename T>
-    requires ::std::is_object_v<T>
-class non_propagating_cache : public ::std::optional<T>
+    requires std::is_object_v<T>
+class non_propagating_cache : public std::optional<T>
 {
 public:
-    //!\brief Use ::std::optional constructors.
-    using ::std::optional<T>::optional;
-    //!\brief Use ::std::optional assignment operators.
-    using ::std::optional<T>::operator=;
+    //!\brief Use std::optional constructors.
+    using std::optional<T>::optional;
+    //!\brief Use std::optional assignment operators.
+    using std::optional<T>::operator=;
 
     //!\brief Copy construction is a no-op.
     constexpr non_propagating_cache(non_propagating_cache const &) noexcept
@@ -54,7 +54,7 @@ public:
     //!\brief Copy assignment is a no-op if `this` == `other`, otherwise destroys value of `this`.
     constexpr non_propagating_cache & operator=(non_propagating_cache const & other) noexcept
     {
-        if (::std::addressof(other) != this)
+        if (std::addressof(other) != this)
             this->reset();
         return *this;
     }
@@ -78,6 +78,6 @@ public:
     }
 };
 
-} // namespace seqan::std::detail
+} // namespace seqan::stl::detail
 
 #endif // SEQAN_STD_DETAIL_NON_PROPAGATING_CACHE

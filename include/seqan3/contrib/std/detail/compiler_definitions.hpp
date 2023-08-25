@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Enrico Seiler <enrico.seiler AT fu-berlin.de>
- * \brief Provides compiler definitions for seqan::std.
+ * \brief Provides compiler definitions for seqan::stl.
  */
 
 // File might be included from multiple libraries.

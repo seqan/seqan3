@@ -22,7 +22,7 @@ namespace seqan3::detail
  * \ingroup core
  * \sa https://en.cppreference.com/w/cpp/ranges/owning_view
  */
-using SEQAN3_DOXYGEN_ONLY(owning_view =) seqan::std::ranges::owning_view;
+using SEQAN3_DOXYGEN_ONLY(owning_view =) seqan::stl::ranges::owning_view;
 
 /*!\brief Returns a view that includes all elements of the range argument.
  * \ingroup core
@@ -35,11 +35,11 @@ using SEQAN3_DOXYGEN_ONLY(owning_view =) seqan::std::ranges::owning_view;
  *   * A std::ranges::ref_view of `rng` if that expression is valid.
  *   * Otherwise, a seqan3::detail::owning_view of `rng`.
  */
-using SEQAN3_DOXYGEN_ONLY(all =) seqan::std::views::all;
+using SEQAN3_DOXYGEN_ONLY(all =) seqan::stl::views::all;
 
 /*!\brief Returns the type that results from appying seqan3::detail::all to a range.
  * \ingroup core
  */
-using SEQAN3_DOXYGEN_ONLY(all_t =) seqan::std::views::all_t;
+using SEQAN3_DOXYGEN_ONLY(all_t =) seqan::stl::views::all_t;
 
 } // namespace seqan3::detail
