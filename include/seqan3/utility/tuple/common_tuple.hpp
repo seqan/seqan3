@@ -24,6 +24,6 @@ namespace seqan3
  * \ingroup utility_tuple
  */
 template <typename... t>
-using common_tuple = seqan::std::tuple<t...>;
+using common_tuple = seqan::stl::tuple<t...>;
 
 } // namespace seqan3

@@ -23,6 +23,6 @@ namespace seqan3::views
  * \noapi{This is a implementation of the C++23 chunk_view. It will be replaced with std::views::chunk.}
  * \sa https://en.cppreference.com/w/cpp/ranges/chunk_view
  */
-using SEQAN3_DOXYGEN_ONLY(chunk =) seqan::std::views::chunk;
+using SEQAN3_DOXYGEN_ONLY(chunk =) seqan::stl::views::chunk;
 
 } // namespace seqan3::views

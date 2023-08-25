@@ -23,6 +23,6 @@ namespace seqan3::ranges
  * \noapi{This is a implementation of the C++23 ranges::to. It will be replaced with std::ranges::to.}
  * \sa https://en.cppreference.com/w/cpp/ranges/to
  */
-using SEQAN3_DOXYGEN_ONLY(to =) seqan::std::ranges::to;
+using SEQAN3_DOXYGEN_ONLY(to =) seqan::stl::ranges::to;
 
 } // namespace seqan3::ranges
