@@ -43,14 +43,14 @@ jobs:
         run: echo "depth=$(( ${{ github.event.pull_request.commits }} + 2 ))" >> $GITHUB_OUTPUT
 
       - name: Checkout SeqAn3
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: seqan3
           fetch-depth: ${{ steps.fetch_depth.outputs.depth }}
           submodules: true
 
       - name: Checkout SeqAn2
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: seqan/seqan
           path: seqan3/submodules/seqan
