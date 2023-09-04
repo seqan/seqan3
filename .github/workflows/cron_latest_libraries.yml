@@ -38,7 +38,7 @@ jobs:
 
     steps:
       - name: Checkout SeqAn3
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: seqan3
           submodules: true
@@ -63,7 +63,7 @@ jobs:
           grep 'SEQAN3_BENCHMARK_TAG ".*"' seqan3/test/cmake/seqan3_require_benchmark.cmake
 
       - name: Checkout SeqAn2
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: seqan/seqan
           path: seqan3/submodules/seqan

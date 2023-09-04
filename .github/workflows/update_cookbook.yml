@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout SeqAn3
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.SEQAN_ACTIONS_PAT }}
 
