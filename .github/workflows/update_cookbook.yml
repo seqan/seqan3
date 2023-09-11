@@ -27,7 +27,7 @@ jobs:
           token: ${{ secrets.SEQAN_ACTIONS_PAT }}
 
       - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v5
+        uses: crazy-max/ghaction-import-gpg@v6
         with:
           gpg_private_key: ${{ secrets.SEQAN_ACTIONS_GPG_KEY }}
           passphrase: ${{ secrets.SEQAN_ACTIONS_GPG_PASSPHRASE }}
