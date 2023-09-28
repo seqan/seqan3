@@ -93,6 +93,9 @@ struct nonconstexpr_void_member_t
 
 TEST(type_trait, is_constexpr_invocable)
 {
+#if defined(__clang__)
+    GTEST_SKIP() << "Skipping on clang: https://github.com/llvm/llvm-project/issues/58078";
+#else // Whole test is in else/endif block, because i/j would be unused on clang.
     int i = 32;
     constexpr int j = 42;
 
@@ -115,4 +118,5 @@ TEST(type_trait, is_constexpr_invocable)
     EXPECT_TRUE((SEQAN3_IS_CONSTEXPR(constexpr_void_member_t{}.get_i(3))));
     EXPECT_TRUE((!SEQAN3_IS_CONSTEXPR(nonconstexpr_nonvoid_member_t{}.get_i(3))));
     EXPECT_TRUE((!SEQAN3_IS_CONSTEXPR(nonconstexpr_void_member_t{}.get_i(3))));
+#endif
 }
