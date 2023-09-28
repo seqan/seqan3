@@ -24,7 +24,7 @@
 #    include <x86intrin.h> // x86 intrinsics (linux)
 #endif
 
-#if __has_include(<intrin.h>)
+#if defined(_WIN32) && __has_include(<intrin.h>)
 #    include <intrin.h> // x86 intrinsics (windows)
 #endif
 
