@@ -19,8 +19,7 @@ struct dummy_view
 
 TEST(adaptor_combination, constexpr_combine)
 {
-    [[maybe_unused]] constexpr auto adaptor1 = seqan3::detail::adaptor_for_view_without_args<dummy_view>{};
-    [[maybe_unused]] constexpr auto adaptor2 = seqan3::detail::adaptor_for_view_without_args<dummy_view>{};
-
-    EXPECT_TRUE((SEQAN3_IS_CONSTEXPR(adaptor1 | adaptor2)));
+    constexpr auto adaptor1 = seqan3::detail::adaptor_for_view_without_args<dummy_view>{};
+    constexpr auto adaptor2 = seqan3::detail::adaptor_for_view_without_args<dummy_view>{};
+    [[maybe_unused]] static constinit auto combined = adaptor1 | adaptor2;
 }
