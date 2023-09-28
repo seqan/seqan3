@@ -109,69 +109,69 @@ struct read : public sequence_file_data
 
 TEST_F(read, newline_before_eof)
 {
-    input = {"@ID1\n"
-             "ACGTTTTTTTTTTTTTTT\n"
-             "+\n"
-             "!##$%&'()*+,-./++-\n"
-             "@ID2\n"
-             "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\n"
-             "+\n"
-             "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
-             "@ID3 lala\n"
-             "ACGTTTA\n"
-             "+\n"
-             "!!!!!!!"};
+    input = "@ID1\n"
+            "ACGTTTTTTTTTTTTTTT\n"
+            "+\n"
+            "!##$%&'()*+,-./++-\n"
+            "@ID2\n"
+            "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\n"
+            "+\n"
+            "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
+            "@ID3 lala\n"
+            "ACGTTTA\n"
+            "+\n"
+            "!!!!!!!";
     do_read_test(input);
 }
 
 TEST_F(read, whitespace_in_seq_qual)
 {
-    input = {"@ID1\n"
-             "ACGTTTTTTTT\nTTTTTTT\n"
-             "+\n"
-             "!##$\n%&'()*+,-./++-\n"
-             "@ID2\n"
-             "ACGTTTTTTTTTT\r\nTTTTTT\r\nTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\r\nTTTTTTTTTTTTTTTTTTTTTTT\n"
-             "+\n"
-             "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBD\nEBDEB\nDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
-             "@ID3 lala\n"
-             "ACGTT\nTA\n"
-             "+\n"
-             "!!!!!\n!!\n"};
+    input = "@ID1\n"
+            "ACGTTTTTTTT\nTTTTTTT\n"
+            "+\n"
+            "!##$\n%&'()*+,-./++-\n"
+            "@ID2\n"
+            "ACGTTTTTTTTTT\r\nTTTTTT\r\nTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\r\nTTTTTTTTTTTTTTTTTTTTTTT\n"
+            "+\n"
+            "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBD\nEBDEB\nDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
+            "@ID3 lala\n"
+            "ACGTT\nTA\n"
+            "+\n"
+            "!!!!!\n!!\n";
     do_read_test(input);
 }
 
 TEST_F(read, double_id_style)
 {
-    input = {"@ID1\n"
-             "ACGTTTTTTTTTTTTTTT\n"
-             "+ID1\n"
-             "!##$%&'()*+,-./++-\n"
-             "@ID2\n"
-             "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\n"
-             "+ID2\n"
-             "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
-             "@ID3 lala\n"
-             "ACGTTTA\n"
-             "+ID3 lala\n"
-             "!!!!!!!\n"};
+    input = "@ID1\n"
+            "ACGTTTTTTTTTTTTTTT\n"
+            "+ID1\n"
+            "!##$%&'()*+,-./++-\n"
+            "@ID2\n"
+            "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\n"
+            "+ID2\n"
+            "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
+            "@ID3 lala\n"
+            "ACGTTTA\n"
+            "+ID3 lala\n"
+            "!!!!!!!\n";
     do_read_test(input);
 }
 
 TEST_F(read, mixed_issues)
 {
-    input = {"@ID1\n"
-             "ACGTTTTTTTT\nTTTTTTT\n"
-             "+\n"
-             "!##$\n%&'()*+,-./++-\n"
-             "@ID2\n"
-             "ACGTTTTTTTTTT\r\nTTTTTT\r\nTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\r\nTTTTTTTTTTTTTTTTTTTTTTT\n"
-             "+\n"
-             "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBD\nEBDEB\nDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
-             "@ID3 lala\n"
-             "ACGTT\nTA\n"
-             "+ID3 lala\n"
-             "!!!!!\n!!"};
+    input = "@ID1\n"
+            "ACGTTTTTTTT\nTTTTTTT\n"
+            "+\n"
+            "!##$\n%&'()*+,-./++-\n"
+            "@ID2\n"
+            "ACGTTTTTTTTTT\r\nTTTTTT\r\nTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\r\nTTTTTTTTTTTTTTTTTTTTTTT\n"
+            "+\n"
+            "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBD\nEBDEB\nDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
+            "@ID3 lala\n"
+            "ACGTT\nTA\n"
+            "+ID3 lala\n"
+            "!!!!!\n!!";
     do_read_test(input);
 }
 
@@ -188,8 +188,8 @@ TEST_F(read, only_qual)
 //TODO fail_no_2nd_id
 TEST_F(read, fail_no_seq_after_id)
 {
-    std::stringstream istream{input = {"@ID1\n"
-                                       "ACGTTTTTTTTTTTTTTT"}};
+    std::stringstream istream{input = "@ID1\n"
+                                      "ACGTTTTTTTTTTTTTTT"};
 
     seqan3::sequence_file_input fin{istream, seqan3::format_fastq{}};
     EXPECT_THROW(fin.begin(), seqan3::unexpected_end_of_input);

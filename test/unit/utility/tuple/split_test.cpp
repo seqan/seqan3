@@ -16,6 +16,10 @@
 #include <seqan3/utility/tuple/split.hpp>
 
 #include "my_tuple.hpp"
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-braces"
+
 struct bar : public seqan3::detail::strong_type<unsigned, bar>
 {
     using seqan3::detail::strong_type<unsigned, bar>::strong_type;
@@ -260,3 +264,5 @@ TYPED_TEST(tuple_split, by_type_const_rvalue)
         EXPECT_FLOAT_EQ(std::get<3>(std::get<1>(res)), 2.1);
     }
 }
+
+#pragma GCC diagnostic pop

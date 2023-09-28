@@ -140,68 +140,68 @@ TEST_F(read, standard)
 
 TEST_F(read, newline_before_eof)
 {
-    input = {"> S.cerevisiae_tRNA-PHE M10740/1-73\n"
-             "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
-             "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
-             "> example 2\n"
-             "UUGGAGUACACAACCUGUACACUCUUUC\n"
-             "..(((((..(((...)))..)))))... (-3.71)"};
+    input = "> S.cerevisiae_tRNA-PHE M10740/1-73\n"
+            "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
+            "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
+            "> example 2\n"
+            "UUGGAGUACACAACCUGUACACUCUUUC\n"
+            "..(((((..(((...)))..)))))... (-3.71)";
     do_read_test(input);
 }
 
 TEST_F(read, whitespace_in_seq)
 {
-    input = {"> S.cerevisiae_tRNA-PHE M10740/1-73\n"
-             "GCGGAUUUAGCU CAGUUGGGAGAGCGCCAGACU GAAGAUUUGGAGGUC CUGUGUUCGAUCCACA   GAAUU CGCA\n"
-             "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
-             "> example 2\n"
-             "UUGGAGUAC   ACAACCUGUACAC UCUUUC \n"
-             "..(((((..(((...)))..)))))... (-3.71)\n"};
+    input = "> S.cerevisiae_tRNA-PHE M10740/1-73\n"
+            "GCGGAUUUAGCU CAGUUGGGAGAGCGCCAGACU GAAGAUUUGGAGGUC CUGUGUUCGAUCCACA   GAAUU CGCA\n"
+            "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
+            "> example 2\n"
+            "UUGGAGUAC   ACAACCUGUACAC UCUUUC \n"
+            "..(((((..(((...)))..)))))... (-3.71)\n";
     do_read_test(input);
 }
 
 TEST_F(read, no_energies)
 {
     check_energy = false;
-    input = {"> S.cerevisiae_tRNA-PHE M10740/1-73\n"
-             "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
-             "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))).\n"
-             "> example 2\n"
-             "UUGGAGUACACAACCUGUACACUCUUUC\n"
-             "..(((((..(((...)))..)))))...\n"};
+    input = "> S.cerevisiae_tRNA-PHE M10740/1-73\n"
+            "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
+            "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))).\n"
+            "> example 2\n"
+            "UUGGAGUACACAACCUGUACACUCUUUC\n"
+            "..(((((..(((...)))..)))))...\n";
     do_read_test(input);
 }
 
 TEST_F(read, no_ids)
 {
     check_id = false;
-    input = {"GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
-             "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
-             "UUGGAGUACACAACCUGUACACUCUUUC\n"
-             "..(((((..(((...)))..)))))... (-3.71)\n"};
+    input = "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
+            "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
+            "UUGGAGUACACAACCUGUACACUCUUUC\n"
+            "..(((((..(((...)))..)))))... (-3.71)\n";
     do_read_test(input);
 }
 
 TEST_F(read, spaces_and_carriage_return)
 {
     check_id = false;
-    input = {"> S.cerevisiae_tRNA-PHE M10740/1-73\r\n"
-             "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\r\n"
-             "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.5)\r\n"
-             ">example 2\r\n"
-             "UUGGAGUA CACAACCUGUACA  CUCU UUC \r\n"
-             "..(((((..(((...)))..)))))...     ( -3.71 )\r\n"};
+    input = "> S.cerevisiae_tRNA-PHE M10740/1-73\r\n"
+            "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\r\n"
+            "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.5)\r\n"
+            ">example 2\r\n"
+            "UUGGAGUA CACAACCUGUACA  CUCU UUC \r\n"
+            "..(((((..(((...)))..)))))...     ( -3.71 )\r\n";
     do_read_test(input);
 }
 
 TEST_F(read, options_truncate_ids)
 {
-    input = {"> S.cerevisiae_tRNA-PHE M10740/1-73\n"
-             "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
-             "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
-             "> example 2\n"
-             "UUGGAGUACACAACCUGUACACUCUUUC\n"
-             "..(((((..(((...)))..)))))... (-3.71)\n"};
+    input = "> S.cerevisiae_tRNA-PHE M10740/1-73\n"
+            "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
+            "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
+            "> example 2\n"
+            "UUGGAGUACACAACCUGUACACUCUUUC\n"
+            "..(((((..(((...)))..)))))... (-3.71)\n";
 
     options.truncate_ids = true;
     expected_id = {"S.cerevisiae_tRNA-PHE", "example"};
@@ -280,8 +280,8 @@ TEST_F(read_fail, wrong_id)
 
 TEST_F(read_fail, missing_seq)
 {
-    input = {"> S.cerevisiae_tRNA-PHE M10740/1-73\n"
-             "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"};
+    input = "> S.cerevisiae_tRNA-PHE M10740/1-73\n"
+            "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n";
     std::stringstream istream{input};
     seqan3::structure_file_input fin{istream, seqan3::format_vienna{}};
     EXPECT_THROW(fin.begin(), seqan3::parse_error);
@@ -289,10 +289,10 @@ TEST_F(read_fail, missing_seq)
 
 TEST_F(read_fail, missing_structure)
 {
-    input = {"> S.cerevisiae_tRNA-PHE M10740/1-73\n"
-             "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
-             "> example 2\n"
-             "UUGGAGUACACAACCUGUACACUCUUUC\n"};
+    input = "> S.cerevisiae_tRNA-PHE M10740/1-73\n"
+            "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
+            "> example 2\n"
+            "UUGGAGUACACAACCUGUACACUCUUUC\n";
     std::stringstream istream{input};
     seqan3::structure_file_input fin{istream, seqan3::format_vienna{}};
     EXPECT_THROW(fin.begin(), seqan3::parse_error);
@@ -300,8 +300,8 @@ TEST_F(read_fail, missing_structure)
 
 TEST_F(read_fail, missing_structure_and_id)
 {
-    input = {"GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
-             "UUGGAGUACACAACCUGUACACUCUUUC\n"};
+    input = "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
+            "UUGGAGUACACAACCUGUACACUCUUUC\n";
     std::stringstream istream{input};
     seqan3::structure_file_input fin{istream, seqan3::format_vienna{}};
     EXPECT_THROW(fin.begin(), seqan3::parse_error);
@@ -309,9 +309,9 @@ TEST_F(read_fail, missing_structure_and_id)
 
 TEST_F(read_fail, structure_too_long)
 {
-    input = {"> S.cerevisiae_tRNA-PHE M10740/1-73\n"
-             "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
-             "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))).. (-17.50)\n"};
+    input = "> S.cerevisiae_tRNA-PHE M10740/1-73\n"
+            "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
+            "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))).. (-17.50)\n";
     std::stringstream istream{input};
     seqan3::structure_file_input fin{istream, seqan3::format_vienna{}};
     EXPECT_THROW(fin.begin(), seqan3::parse_error);
@@ -319,9 +319,9 @@ TEST_F(read_fail, structure_too_long)
 
 TEST_F(read_fail, structure_too_short)
 {
-    input = {"> S.cerevisiae_tRNA-PHE M10740/1-73\n"
-             "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
-             "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))) (-17.50)\n"};
+    input = "> S.cerevisiae_tRNA-PHE M10740/1-73\n"
+            "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
+            "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))) (-17.50)\n";
     std::stringstream istream{input};
     seqan3::structure_file_input fin{istream, seqan3::format_vienna{}};
     EXPECT_THROW(fin.begin(), seqan3::parse_error);
@@ -329,9 +329,9 @@ TEST_F(read_fail, structure_too_short)
 
 TEST_F(read_fail, structure_too_long_structured_seq)
 {
-    input = {"> S.cerevisiae_tRNA-PHE M10740/1-73\n"
-             "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
-             "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))).. (-17.50)\n"};
+    input = "> S.cerevisiae_tRNA-PHE M10740/1-73\n"
+            "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
+            "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))).. (-17.50)\n";
     std::stringstream istream{input};
     seqan3::structure_file_input fin{istream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::structured_seq>{}};
     EXPECT_THROW(fin.begin(), seqan3::parse_error);
@@ -339,9 +339,9 @@ TEST_F(read_fail, structure_too_long_structured_seq)
 
 TEST_F(read_fail, structure_too_short_structured_seq)
 {
-    input = {"> S.cerevisiae_tRNA-PHE M10740/1-73\n"
-             "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
-             "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))) (-17.50)\n"};
+    input = "> S.cerevisiae_tRNA-PHE M10740/1-73\n"
+            "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
+            "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))) (-17.50)\n";
     std::stringstream istream{input};
     seqan3::structure_file_input fin{istream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::structured_seq>{}};
     EXPECT_THROW(fin.begin(), seqan3::parse_error);
@@ -349,9 +349,9 @@ TEST_F(read_fail, structure_too_short_structured_seq)
 
 TEST_F(read_fail, wrong_char)
 {
-    input = {"> S.cerevisiae_tRNA-PHE M10740/1-73\n"
-             "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUICUGUGUUCGAUCCACAGAAUUCGCA\n"
-             "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"};
+    input = "> S.cerevisiae_tRNA-PHE M10740/1-73\n"
+            "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUICUGUGUUCGAUCCACAGAAUUCGCA\n"
+            "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n";
     std::stringstream istream{input};
     seqan3::structure_file_input fin{istream, seqan3::format_vienna{}};
     EXPECT_THROW(fin.begin(), seqan3::parse_error);

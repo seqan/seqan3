@@ -37,7 +37,10 @@ template <size_t beg, template <typename...> typename tuple_t, size_t... Is, typ
     requires tuple_like<tuple_t<ts...>> && tuple_like<tuple_t<>>
 constexpr auto tuple_split(tuple_t<ts...> const & t, std::index_sequence<Is...> const & SEQAN3_DOXYGEN_ONLY(idx))
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-braces"
     return tuple_t<std::tuple_element_t<beg + Is, tuple_t<ts...>>...>{std::get<beg + Is>(t)...};
+#pragma GCC diagnostic pop
 }
 
 //!\copydoc seqan3::detail::tuple_split
@@ -45,7 +48,10 @@ template <size_t beg, template <typename...> typename tuple_t, size_t... Is, typ
     requires tuple_like<tuple_t<ts...>> && tuple_like<tuple_t<>>
 constexpr auto tuple_split(tuple_t<ts...> && t, std::index_sequence<Is...> const & SEQAN3_DOXYGEN_ONLY(idx))
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-braces"
     return tuple_t<std::tuple_element_t<beg + Is, tuple_t<ts...>>...>{std::move(std::get<beg + Is>(t))...};
+#pragma GCC diagnostic pop
 }
 } // namespace seqan3::detail
 
@@ -85,8 +91,11 @@ constexpr auto tuple_split(tuple_t<ts...> const & t)
 {
     static_assert(pivot_c <= sizeof...(ts));
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-braces"
     return tuple_t{detail::tuple_split<0>(t, std::make_index_sequence<pivot_c>{}),
                    detail::tuple_split<pivot_c>(t, std::make_index_sequence<sizeof...(ts) - pivot_c>{})};
+#pragma GCC diagnostic pop
 }
 
 //!\copydoc seqan3::tuple_split
@@ -95,9 +104,11 @@ template <size_t pivot_c, template <typename...> typename tuple_t, typename... t
 constexpr auto tuple_split(tuple_t<ts...> && t)
 {
     static_assert(pivot_c <= sizeof...(ts));
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-braces"
     return tuple_t{detail::tuple_split<0>(std::move(t), std::make_index_sequence<pivot_c>{}),
                    detail::tuple_split<pivot_c>(std::move(t), std::make_index_sequence<sizeof...(ts) - pivot_c>{})};
+#pragma GCC diagnostic pop
 }
 
 /*!\brief Splits a tuple like data structure at the first position of the given type.

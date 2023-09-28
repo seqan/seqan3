@@ -773,7 +773,7 @@ private:
                 {
                     if (argv_len <= i + 1)
                         throw too_few_arguments{"Option --export-help must be followed by a value."};
-                    export_format = {argv[i + 1]};
+                    export_format = argv[i + 1];
                 }
 
                 if (export_format == "html")
