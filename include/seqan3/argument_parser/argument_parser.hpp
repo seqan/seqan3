@@ -150,11 +150,11 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    argument_parser() = delete;                                     //!< Deleted.
-    argument_parser(argument_parser const &) = default;             //!< Defaulted.
-    argument_parser & operator=(argument_parser const &) = default; //!< Defaulted.
-    argument_parser(argument_parser &&) = default;                  //!< Defaulted.
-    argument_parser & operator=(argument_parser &&) = default;      //!< Defaulted.
+    argument_parser() = delete;                                    //!< Deleted.
+    argument_parser(argument_parser const &) = delete;             //!< Deleted. Holds std::future.
+    argument_parser & operator=(argument_parser const &) = delete; //!< Deleted. Holds std::future.
+    argument_parser(argument_parser &&) = default;                 //!< Defaulted.
+    argument_parser & operator=(argument_parser &&) = default;     //!< Defaulted.
 
     /*!\brief Initializes an seqan3::argument_parser object from the command line arguments.
      *

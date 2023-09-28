@@ -213,14 +213,14 @@ private:
     {
     public:
         /*!\name Constructors, destructor and assignment
-        * \brief Instances of this class are not copyable.
+        * \brief Instances of this class are not copyable and not movable.
         * \{
         */
         internal_state() = default;                                  //!< Defaulted.
         internal_state(internal_state const &) = delete;             //!< Deleted.
-        internal_state(internal_state &&) = default;                 //!< Defaulted.
+        internal_state(internal_state &&) = delete;                  //!< Deleted.
         internal_state & operator=(internal_state const &) = delete; //!< Deleted.
-        internal_state & operator=(internal_state &&) = default;     //!< Defaulted.
+        internal_state & operator=(internal_state &&) = delete;      //!< Deleted.
 
         //!\brief Waits for threads to finish.
         ~internal_state()
