@@ -289,7 +289,7 @@ class trace_matrix_full<trace_t>::iterator::column_proxy : public std::ranges::v
 {
 private:
     //!\brief The represented column.
-    matrix_column_type column{};
+    matrix_column_type column;
 
 public:
     /*!\name Constructor, assignment and destructor
