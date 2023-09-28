@@ -28,7 +28,7 @@ namespace seqan3::detail
 {
 // forward declaration
 template <typename search_configuration_t>
-    requires is_type_specialisation_of_v<search_configuration_t, configuration>
+    requires seqan3::detail::is_type_specialisation_of_v<search_configuration_t, configuration>
 struct policy_search_result_builder;
 } // namespace seqan3::detail
 
@@ -89,7 +89,7 @@ private:
 
     // Grant the policy access to private constructors.
     template <typename search_configuration_t>
-        requires detail::is_type_specialisation_of_v<search_configuration_t, configuration>
+        requires seqan3::detail::is_type_specialisation_of_v<search_configuration_t, configuration>
     friend struct detail::policy_search_result_builder;
 
 public:
