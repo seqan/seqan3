@@ -210,8 +210,8 @@ constexpr simd_t extract_half_avx2(simd_t const & src)
 template <uint8_t index, simd::simd_concept simd_t>
 constexpr simd_t extract_quarter_avx2(simd_t const & src)
 {
-    return reinterpret_cast<simd_t>(_mm256_castsi128_si256(
-        _mm_cvtsi64x_si128(_mm256_extract_epi64(reinterpret_cast<__m256i const &>(src), index))));
+    return reinterpret_cast<simd_t>(
+        _mm256_castsi128_si256(_mm_cvtsi64_si128(_mm256_extract_epi64(reinterpret_cast<__m256i const &>(src), index))));
 }
 
 template <uint8_t index, simd::simd_concept simd_t>
