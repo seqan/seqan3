@@ -172,7 +172,7 @@ public:
         return *x.parent_->current_ == std::ranges::end(x.parent_->base_) && x.parent_->remainder_ != 0;
     }
 
-    friend constexpr difference_type operator-(std::default_sentinel_t y, outer_iterator const & x)
+    friend constexpr difference_type operator-(std::default_sentinel_t, outer_iterator const & x)
         requires std::sized_sentinel_for<std::ranges::sentinel_t<V>, std::ranges::iterator_t<V>>
     {
         auto const dist = std::ranges::end(x.parent_->base_) - *x.parent_->current_;
@@ -269,7 +269,7 @@ public:
         return x.parent_->remainder_ == 0;
     }
 
-    friend constexpr difference_type operator-(std::default_sentinel_t y, inner_iterator const & x)
+    friend constexpr difference_type operator-(std::default_sentinel_t, inner_iterator const & x)
         requires std::sized_sentinel_for<std::ranges::sentinel_t<V>, std::ranges::iterator_t<V>>
     {
         std::ranges::min(x.parent_->remainder_, std::ranges::end(x.parent_->base_) - *x.parent_->current_);
@@ -571,7 +571,7 @@ public:
         return (x.current_ - y.current_ + x.missing_ - y.missing_) / x.n_;
     }
 
-    friend constexpr difference_type operator-(std::default_sentinel_t y, iterator const & x)
+    friend constexpr difference_type operator-(std::default_sentinel_t, iterator const & x)
         requires std::sized_sentinel_for<std::ranges::sentinel_t<Base>, std::ranges::iterator_t<Base>>
     {
         return seqan::stl::detail::chunk::div_ceil(x.end_ - x.current_, x.n_);

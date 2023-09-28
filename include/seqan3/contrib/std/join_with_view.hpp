@@ -88,10 +88,10 @@ private:
     Pattern pattern_{};
 
     template <bool Const>
-    struct iterator;
+    class iterator;
 
     template <bool Const>
-    struct sentinel;
+    class sentinel;
 
 public:
     join_with_view()

@@ -16,7 +16,8 @@
 
 #include <ranges>
 
-#ifdef __cpp_lib_ranges_zip
+// https://godbolt.org/z/YW7e785sd
+#if defined __cpp_lib_ranges_zip && !defined(__clang__)
 
 namespace seqan::stl::views
 {
@@ -541,7 +542,7 @@ struct zip_fn
 {
     template <seqan::stl::ranges::viewable_range... urng_ts>
         requires (sizeof...(urng_ts) == 0)
-    constexpr auto operator()(urng_ts &&... ranges) const
+    constexpr auto operator()(urng_ts &&...) const
     {
         return std::views::empty<seqan::stl::tuple<>>;
     }
