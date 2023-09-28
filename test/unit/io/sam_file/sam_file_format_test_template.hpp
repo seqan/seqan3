@@ -296,7 +296,7 @@ TYPED_TEST_P(sam_file_read, read_mate_but_not_ref_id_with_ref)
 
 TYPED_TEST_P(sam_file_read, read_mate_but_not_ref_id_without_ref)
 {
-    std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t> mate;
+    [[maybe_unused]] std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t> mate;
 
     { /*no reference information*/
         typename TestFixture::stream_type istream{this->simple_three_reads_input};

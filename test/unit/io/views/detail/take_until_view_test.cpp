@@ -132,9 +132,8 @@ TEST(view_take_until, concepts)
 
     // mutable adapters make the view lose const-iterability
     auto adapt2 = seqan3::detail::take_until(
-        [count = 0](char c) mutable
+        [](char c) mutable
         {
-            ++count;
             return c == '\n';
         });
     do_concepts(adapt2, false);

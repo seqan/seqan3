@@ -338,7 +338,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
         read_forward_range_field(string_buffer, value);
     };
 
-    auto print_cerr_of_unspported_tag = [&it](char const * const header_tag, std::array<char, 2> raw_tag)
+    auto print_cerr_of_unspported_tag = [](char const * const header_tag, std::array<char, 2> raw_tag)
     {
         std::cerr << "Unsupported SAM header tag in @" << header_tag << ": " << raw_tag[0] << raw_tag[1] << '\n';
     };

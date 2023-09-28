@@ -198,7 +198,6 @@ TEST(pipeable_config_element, special_cases)
 
 TEST(pipeable_config_element, multiple_elements)
 {
-    seqan3::configuration<bar> tmp{};
     bax b2{};
     {
         auto cfg = foo{} | bar{} | bax{};

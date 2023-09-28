@@ -33,7 +33,7 @@ using alignment_result_t = seqan3::alignment_result<seqan3::detail::alignment_re
 using nt_scheme = seqan3::nucleotide_scoring_scheme<int8_t>;
 
 // Needed for the on result config
-auto on_result_callback = []([[maybe_unused]] auto && res) {};
+[[maybe_unused]] auto on_result_callback = []([[maybe_unused]] auto && res) {};
 using callback_t = decltype(on_result_callback);
 
 // A list of config types to test, associated with their incompatible config classes defined as a taboo list.

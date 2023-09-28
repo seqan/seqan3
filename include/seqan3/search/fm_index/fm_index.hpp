@@ -235,6 +235,8 @@ private:
                                           uint8_t const rank = seqan3::to_rank(chr);
                                           if constexpr (sigma >= max_sigma)
                                               warn_if_rank_out_of_range(rank);
+                                          else
+                                              (void)warn_if_rank_out_of_range;
                                           return rank + 1;
                                       })
             .out;

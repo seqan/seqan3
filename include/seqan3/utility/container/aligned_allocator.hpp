@@ -193,6 +193,7 @@ public:
             ::operator delete(p, bytes_to_deallocate, static_cast<std::align_val_t>(alignment));
 #else  /*__cpp_sized_deallocation >= 201309*/
         // e.g. clang++
+        (void)bytes_to_deallocate;
         if constexpr (alignment <= __STDCPP_DEFAULT_NEW_ALIGNMENT__)
             ::operator delete(p);
         else // Use alignment aware deallocator function.

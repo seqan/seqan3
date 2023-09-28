@@ -233,7 +233,7 @@ bool basic_bz2_ostreambuf<
         std::streamsize buffer_size_
         )
 {
-    std::streamsize written_byte_size=0, total_written_byte_size = 0;
+    std::streamsize written_byte_size=0;
 
     m_bzip2_stream.next_in=(byte_buffer_type)buffer_;
     m_bzip2_stream.avail_in=buffer_size_*sizeof(char_type);
@@ -248,7 +248,6 @@ bool basic_bz2_ostreambuf<
         if (m_err == BZ_RUN_OK  || m_err == BZ_STREAM_END)
         {
             written_byte_size= static_cast<std::streamsize>(m_output_buffer.size()) - m_bzip2_stream.avail_out;
-            total_written_byte_size+=written_byte_size;
             // output buffer is full, dumping to ostream
             m_ostream.write(
                 (const char_type*) &(m_output_buffer[0]),

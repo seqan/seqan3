@@ -9,8 +9,6 @@
 
 #include <seqan3/utility/detail/bits_of.hpp>
 
-static constexpr size_t max_iterations = 1 << 15;
-
 TEST(bits_of, bits_of)
 {
     EXPECT_EQ(seqan3::detail::bits_of<int8_t>, 8);
