@@ -105,7 +105,7 @@ concept indexed_sequence_pair_range =
 //!\cond
 template <typename t>
 concept align_pairwise_single_input =
-    sequence_pair<std::remove_reference_t<t>> && std::is_lvalue_reference_v<t>
+    (sequence_pair<std::remove_reference_t<t>> && std::is_lvalue_reference_v<t>)
     || (std::ranges::viewable_range<std::tuple_element_t<0, std::remove_reference_t<t>>>
         && std::ranges::viewable_range<std::tuple_element_t<1, std::remove_reference_t<t>>>);
 //!\endcond
