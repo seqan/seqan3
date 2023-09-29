@@ -23,7 +23,7 @@ using search_result_t = seqan3::search_result<nil_t, nil_t, nil_t, nil_t>;
 using all_hit_configs_t =
     seqan3::type_list<cfg::hit, cfg::hit_all, cfg::hit_all_best, cfg::hit_single_best, cfg::hit_strata>;
 // Needed for the on result config
-auto on_result_callback = []([[maybe_unused]] auto && res) {};
+[[maybe_unused]] auto on_result_callback = []([[maybe_unused]] auto && res) {};
 using callback_t = decltype(on_result_callback);
 
 // A list of config types to test, associated with their incompatible config classes defined as a taboo list.

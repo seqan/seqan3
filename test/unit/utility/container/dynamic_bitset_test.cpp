@@ -423,7 +423,7 @@ constexpr bool shift_left_test()
 {
     seqan3::dynamic_bitset t1{0b1111'0001'0000'1100};
 
-    bool res = t1 << 3 == seqan3::dynamic_bitset{0b1000'1000'0110'0000};
+    bool res = (t1 << 3) == seqan3::dynamic_bitset{0b1000'1000'0110'0000};
     t1 <<= 4;
     res &= t1 == seqan3::dynamic_bitset{"0001000011000000"};
 
@@ -441,7 +441,7 @@ constexpr bool shift_right_test()
 {
     seqan3::dynamic_bitset t1{0b1111'0001'0000'1100};
 
-    bool res = t1 >> 3 == seqan3::dynamic_bitset{"0001111000100001"};
+    bool res = (t1 >> 3) == seqan3::dynamic_bitset{"0001111000100001"};
     t1 >>= 4;
     res &= t1 == seqan3::dynamic_bitset{"0000111100010000"};
 

@@ -55,7 +55,7 @@ class on_result : private seqan3::pipeable_config_element
 {
 public:
     //!\brief The stored callable which will be invoked with the search result.
-    seqan3::detail::copyable_wrapper_t<callback_t> callback{}; // Allows lambdas with capture blocks.
+    seqan3::detail::copyable_wrapper_t<callback_t> callback; // Allows lambdas with capture blocks.
 
     /*!\name Constructors, destructor and assignment
      * \{

@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <span>
 #include <utility>
 #include <variant>
 
@@ -27,6 +28,17 @@
 
 namespace seqan3::detail
 {
+
+//!\brief Helper to determine whether a type is a std::span.
+template <typename t, size_t extent = std::dynamic_extent>
+struct is_span : std::false_type
+{};
+
+//!\cond
+template <typename t, size_t extent>
+struct is_span<std::span<t, extent>> : std::true_type
+{};
+//!\endcond
 
 //!\brief Prevents wrong instantiations of std::alphabet_variant's constructors.
 template <typename other_t, typename... alternative_types>
@@ -193,7 +205,7 @@ public:
      * \stableapi{Since version 3.1.}
      */
     template <typename alternative_t>
-        requires (!std::same_as<alternative_t, alphabet_variant>)
+        requires (!std::same_as<alternative_t, alphabet_variant>) && (!detail::is_span<alternative_t>::value)
               && (!std::is_base_of_v<alphabet_variant, alternative_t>)
               && (!list_traits::contains<
                   alphabet_variant,
@@ -223,10 +235,11 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename indirect_alternative_t>
-        requires (
-            (detail::instantiate_if_v<detail::lazy<std::is_convertible, indirect_alternative_t, alternative_types>,
-                                      detail::variant_general_guard<indirect_alternative_t, alternative_types...>>
-             || ...))
+        requires (!detail::is_span<indirect_alternative_t>::value)
+              && ((
+                  detail::instantiate_if_v<detail::lazy<std::is_convertible, indirect_alternative_t, alternative_types>,
+                                           detail::variant_general_guard<indirect_alternative_t, alternative_types...>>
+                  || ...))
     constexpr alphabet_variant(indirect_alternative_t const rhs) noexcept
     {
         using alternative_predicate = detail::implicitly_convertible_from<indirect_alternative_t>;
@@ -403,10 +416,12 @@ public:
      * \stableapi{Since version 3.1.}
      */
     template <typename alphabet_variant_t, typename indirect_alternative_type>
-    friend constexpr auto
-    operator==(alphabet_variant_t const lhs, indirect_alternative_type const rhs) noexcept -> std::enable_if_t<
-        detail::variant_comparison_guard<alphabet_variant_t, indirect_alternative_type, false, alternative_types...>,
-        bool>
+        requires (!detail::is_span<alphabet_variant_t>::value)
+              && (detail::variant_comparison_guard<alphabet_variant_t,
+                                                   indirect_alternative_type,
+                                                   false,
+                                                   alternative_types...>)
+    friend constexpr bool operator==(alphabet_variant_t const lhs, indirect_alternative_type const rhs) noexcept
     {
         using alternative_predicate = detail::weakly_equality_comparable_with_<indirect_alternative_type>;
         constexpr auto alternative_position =
@@ -428,10 +443,12 @@ public:
 
     //!\copydoc operator==(alphabet_variant_t const lhs, indirect_alternative_type const rhs)
     template <typename alphabet_variant_t, typename indirect_alternative_type, typename = void>
-    friend constexpr auto operator==(indirect_alternative_type const lhs, alphabet_variant_t const rhs) noexcept
-        -> std::enable_if_t<
-            detail::variant_comparison_guard<alphabet_variant_t, indirect_alternative_type, true, alternative_types...>,
-            bool>
+        requires (!detail::is_span<alphabet_variant_t>::value)
+              && (detail::variant_comparison_guard<alphabet_variant_t,
+                                                   indirect_alternative_type,
+                                                   true,
+                                                   alternative_types...>)
+    friend constexpr bool operator==(indirect_alternative_type const lhs, alphabet_variant_t const rhs) noexcept
     {
         return rhs == lhs;
     }

@@ -51,18 +51,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    //!\brief Default constructor is defaulted.
-    sam_file_header() = default;
-    //!\brief Copy construction is defaulted.
-    sam_file_header(sam_file_header const &) = default;
-    //!\brief Copy assignment is defaulted.
-    sam_file_header & operator=(sam_file_header const &) = default;
-    //!\brief Move construction is defaulted.
-    sam_file_header(sam_file_header &&) = default;
-    //!\brief Move assignment is defaulted.
-    sam_file_header & operator=(sam_file_header &&) = default;
-    //!\brief Destructor is defaulted.
-    ~sam_file_header() = default;
+    sam_file_header() = default;                                   //!< Defaulted.
+    sam_file_header(sam_file_header const &) = delete;             //!< Deleted. Holds a unique_ptr.
+    sam_file_header & operator=(sam_file_header const &) = delete; //!< Deleted. Holds a unique_ptr.
+    sam_file_header(sam_file_header &&) = default;                 //!< Defaulted.
+    sam_file_header & operator=(sam_file_header &&) = default;     //!< Defaulted.
+    ~sam_file_header() = default;                                  //!< Defaulted.
 
     /*!\brief Construct from a range of reference ids which redirects the `ref_ids_ptr` member (non-owning).
      * \param[in] ref_ids The range over reference ids to redirect the pointer at.

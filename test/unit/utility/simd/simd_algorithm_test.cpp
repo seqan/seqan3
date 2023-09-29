@@ -211,7 +211,7 @@ TYPED_TEST(simd_algorithm_upcast, signed)
     using list = typename TestFixture::target_list_signed_t;
 
     seqan3::detail::for_each<list>(
-        [this](auto type_id)
+        [](auto type_id)
         {
             using target_type = typename decltype(type_id)::type;
             using src_simd_t = seqan3::simd::simd_type_t<TypeParam>;
@@ -231,7 +231,7 @@ TYPED_TEST(simd_algorithm_upcast, unsigned)
     using list = typename TestFixture::target_list_unsigned_t;
 
     seqan3::detail::for_each<list>(
-        [this](auto type_id)
+        [](auto type_id)
         {
             using target_type = typename decltype(type_id)::type;
             using src_simd_t = seqan3::simd::simd_type_t<TypeParam>;

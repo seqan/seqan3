@@ -31,6 +31,11 @@ jobs:
       fail-fast: true
       matrix:
         include:
+          - name: "clang17"
+            compiler: "clang-17"
+            build: unit
+            build_type: Release
+
           - name: "gcc13"
             compiler: "gcc-13"
             build: unit

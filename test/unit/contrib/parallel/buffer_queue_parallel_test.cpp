@@ -209,14 +209,14 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
                     }
 
                     // printf("start reader #%lu\n",  (long unsigned)tid);
-                    size_t chk_sum_local = 0, cnt = 0;
+                    size_t chk_sum_local = 0; //, cnt = 0;
                     for (;;)
                     {
                         try
                         {
                             size_t val = queue.value_pop();
                             chk_sum_local ^= val;
-                            ++cnt;
+                            // ++cnt;
                             // if ((cnt & 0xff) == 0)
                             //    printf("%ld ", tid);
                         }

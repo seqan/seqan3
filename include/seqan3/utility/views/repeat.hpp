@@ -81,7 +81,7 @@ private:
     //!\}
 
     //!\brief Befriend the following class s.t. iterator and const_iterator can be defined for this type.
-    template <typename parent_type, typename crtp_base>
+    template <typename range_type, template <typename...> typename derived_t_template, typename... args_t>
     friend class detail::random_access_iterator_base;
 
 public:
@@ -248,10 +248,15 @@ public:
     /*!\name Comparison operators
      * \{
      */
-    //!\brief Inherit the equality comparison (same type) from base type.
-    using base_t::operator==;
-    //!\brief Inherit the inequality comparison (same type) from base type.
-    using base_t::operator!=;
+    constexpr bool operator==(basic_iterator const & rhs) const noexcept
+    {
+        return base_t::operator==(rhs);
+    }
+
+    constexpr bool operator!=(basic_iterator const & rhs) const noexcept
+    {
+        return !(*this == rhs);
+    }
 
     //!\brief Equality comparison to the sentinel always returns false on an infinite view.
     constexpr bool operator==(std::default_sentinel_t const &) const noexcept

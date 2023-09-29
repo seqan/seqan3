@@ -149,7 +149,8 @@ public:
     {
         static_assert(N <= capacity_ + 1, "Length of string literal exceeds capacity of small_string.");
         assert(_lit[N - 1] == '\0');
-        assign(&_lit[0], &_lit[N - 1]);
+        base_t::assign(&_lit[0], &_lit[N - 1]);
+        data_[sz] = '\0';
     }
 
     /*!\brief Assign from pair of iterators.

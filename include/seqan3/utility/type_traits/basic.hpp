@@ -26,7 +26,11 @@
  * \ingroup utility_type_traits
  * \returns true or false.
  */
-#define SEQAN3_IS_CONSTEXPR(...) std::integral_constant<bool, __builtin_constant_p((__VA_ARGS__, 0))>::value
+#if defined(__clang__) // https://github.com/llvm/llvm-project/issues/58078
+#    define SEQAN3_IS_CONSTEXPR(...) true
+#else
+#    define SEQAN3_IS_CONSTEXPR(...) std::integral_constant<bool, __builtin_constant_p(((void)__VA_ARGS__, 0))>::value
+#endif
 //!\endcond
 
 namespace seqan3

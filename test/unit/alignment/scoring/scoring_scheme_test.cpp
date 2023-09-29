@@ -114,7 +114,7 @@ TYPED_TEST(generic, member_types)
 {
     using alph_t = typename TestFixture::alph_t;
 
-    TypeParam scheme{};
+    [[maybe_unused]] TypeParam scheme{};
 
     using score_t = typename TypeParam::score_type;
     using matrix_size_t = typename TypeParam::matrix_size_type;

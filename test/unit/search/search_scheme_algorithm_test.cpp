@@ -146,7 +146,6 @@ inline void test_search_hamming(auto index,
             return true;
 
         uint64_t lb = 0, rb = 0;
-        uint8_t total_errors = 0;
         for (uint8_t block = 0; block < search.blocks(); ++block)
         {
             rb += ordered_blocks_length[block];
@@ -157,7 +156,6 @@ inline void test_search_hamming(auto index,
                     ++errors;
                 else
                     errors += query[i] != text[hit + i];
-            total_errors += errors;
             if (errors != error_distribution[block])
                 return true;
             lb += ordered_blocks_length[block];

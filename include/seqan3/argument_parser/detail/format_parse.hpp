@@ -64,10 +64,9 @@ public:
     ~format_parse() = default;                                   //!< Defaulted.
 
     /*!\brief The constructor of the parse format.
-     * \param[in] argc_ The number of command line arguments.
      * \param[in] argv_ The command line arguments to parse.
      */
-    format_parse(int const argc_, std::vector<std::string> argv_) : argc{argc_ - 1}, argv{std::move(argv_)}
+    format_parse(int const, std::vector<std::string> argv_) : argv{std::move(argv_)}
     {}
     //!\}
 
@@ -822,8 +821,6 @@ private:
     std::vector<std::function<void()>> positional_option_calls;
     //!\brief Keeps track of the number of specified positional options.
     unsigned positional_option_count{0};
-    //!\brief Number of command line arguments.
-    int argc;
     //!\brief Vector of command line arguments.
     std::vector<std::string> argv;
     //!\brief Artificial end of argv if \-- was seen.

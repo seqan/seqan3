@@ -44,39 +44,39 @@ TYPED_TEST_SUITE(alphabet_variant_test, alphabet_variant_types, );
 
 TEST(alphabet_variant_test, initialise_from_component_alphabet)
 {
-    seqan3::dna5 l('A'_rna5);
+    [[maybe_unused]] seqan3::dna5 l('A'_rna5);
 
     using alphabet_t = seqan3::alphabet_variant<seqan3::dna4, seqan3::dna5, seqan3::gap>;
     using variant_t = std::variant<seqan3::dna4, seqan3::dna5, seqan3::gap>;
 
-    constexpr variant_t variant0{'A'_dna4};
+    [[maybe_unused]] constexpr variant_t variant0{'A'_dna4};
     constexpr alphabet_t letter0{'A'_dna4};
 
-    constexpr variant_t variant1 = 'C'_dna4;
+    [[maybe_unused]] constexpr variant_t variant1 = 'C'_dna4;
     constexpr alphabet_t letter1 = 'C'_dna4;
 
-    constexpr variant_t variant2 = {'G'_dna4};
+    [[maybe_unused]] constexpr variant_t variant2 = {'G'_dna4};
     constexpr alphabet_t letter2 = {'G'_dna4};
 
-    constexpr variant_t variant3 = static_cast<variant_t>('T'_dna4);
+    [[maybe_unused]] constexpr variant_t variant3 = static_cast<variant_t>('T'_dna4);
     constexpr alphabet_t letter3 = static_cast<alphabet_t>('T'_dna4);
 
-    constexpr variant_t variant4 = {static_cast<variant_t>('A'_dna5)};
+    [[maybe_unused]] constexpr variant_t variant4 = {static_cast<variant_t>('A'_dna5)};
     constexpr alphabet_t letter4 = {static_cast<alphabet_t>('A'_dna5)};
 
-    variant_t variant5{'C'_dna5};
+    [[maybe_unused]] variant_t variant5{'C'_dna5};
     alphabet_t letter5{'C'_dna5};
 
-    variant_t variant6 = 'G'_dna5;
+    [[maybe_unused]] variant_t variant6 = 'G'_dna5;
     alphabet_t letter6 = 'G'_dna5;
 
-    variant_t variant7 = {'N'_dna5};
+    [[maybe_unused]] variant_t variant7 = {'N'_dna5};
     alphabet_t letter7 = {'N'_dna5};
 
-    variant_t variant8 = static_cast<variant_t>('T'_dna5);
+    [[maybe_unused]] variant_t variant8 = static_cast<variant_t>('T'_dna5);
     alphabet_t letter8 = static_cast<alphabet_t>('T'_dna5);
 
-    variant_t variant9 = {static_cast<variant_t>(seqan3::gap{})};
+    [[maybe_unused]] variant_t variant9 = {static_cast<variant_t>(seqan3::gap{})};
     alphabet_t letter9 = {static_cast<alphabet_t>(seqan3::gap{})};
 
     EXPECT_EQ(letter0.to_rank(), 0);
@@ -96,31 +96,31 @@ TEST(alphabet_variant_test, initialise_from_component_alphabet_subtype)
     using alphabet_t = seqan3::alphabet_variant<seqan3::dna4, seqan3::dna5, seqan3::gap>;
     using variant_t = std::variant<seqan3::dna4, seqan3::dna5, seqan3::gap>;
 
-    variant_t variant0{'A'_rna4};
+    [[maybe_unused]] variant_t variant0{'A'_rna4};
     alphabet_t letter0{'A'_rna4};
 
-    variant_t variant1 = 'C'_rna4;
+    [[maybe_unused]] variant_t variant1 = 'C'_rna4;
     alphabet_t letter1 = 'C'_rna4;
 
-    variant_t variant2 = {'G'_rna4};
+    [[maybe_unused]] variant_t variant2 = {'G'_rna4};
     alphabet_t letter2 = {'G'_rna4};
 
-    variant_t variant3 = static_cast<variant_t>('T'_rna4);
+    [[maybe_unused]] variant_t variant3 = static_cast<variant_t>('T'_rna4);
     alphabet_t letter3 = static_cast<alphabet_t>('T'_rna4);
 
-    variant_t variant4 = {static_cast<variant_t>('A'_rna5)};
+    [[maybe_unused]] variant_t variant4 = {static_cast<variant_t>('A'_rna5)};
     alphabet_t letter4 = {static_cast<alphabet_t>('A'_rna5)};
 
-    variant_t variant5{'C'_rna5};
+    [[maybe_unused]] variant_t variant5{'C'_rna5};
     alphabet_t letter5{'C'_rna5};
 
-    variant_t variant6 = 'G'_rna5;
+    [[maybe_unused]] variant_t variant6 = 'G'_rna5;
     alphabet_t letter6 = 'G'_rna5;
 
-    variant_t variant7 = {'N'_rna5};
+    [[maybe_unused]] variant_t variant7 = {'N'_rna5};
     alphabet_t letter7 = {'N'_rna5};
 
-    variant_t variant8 = static_cast<variant_t>('T'_rna5);
+    [[maybe_unused]] variant_t variant8 = static_cast<variant_t>('T'_rna5);
     alphabet_t letter8 = static_cast<alphabet_t>('T'_rna5);
 
     EXPECT_EQ(letter0.to_rank(), 0);

@@ -742,7 +742,6 @@ private:
         // if traceback is enabled.
         if constexpr (traits_t::compute_sequence_alignment)
         {
-            auto trace_matrix_it = trace_debug_matrix.begin() + offset;
             std::ranges::copy(
                 column
                     | std::views::transform(

@@ -150,11 +150,11 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    argument_parser() = delete;                                     //!< Deleted.
-    argument_parser(argument_parser const &) = default;             //!< Defaulted.
-    argument_parser & operator=(argument_parser const &) = default; //!< Defaulted.
-    argument_parser(argument_parser &&) = default;                  //!< Defaulted.
-    argument_parser & operator=(argument_parser &&) = default;      //!< Defaulted.
+    argument_parser() = delete;                                    //!< Deleted.
+    argument_parser(argument_parser const &) = delete;             //!< Deleted. Holds std::future.
+    argument_parser & operator=(argument_parser const &) = delete; //!< Deleted. Holds std::future.
+    argument_parser(argument_parser &&) = default;                 //!< Defaulted.
+    argument_parser & operator=(argument_parser &&) = default;     //!< Defaulted.
 
     /*!\brief Initializes an seqan3::argument_parser object from the command line arguments.
      *
@@ -773,7 +773,7 @@ private:
                 {
                     if (argv_len <= i + 1)
                         throw too_few_arguments{"Option --export-help must be followed by a value."};
-                    export_format = {argv[i + 1]};
+                    export_format = argv[i + 1];
                 }
 
                 if (export_format == "html")

@@ -11,6 +11,9 @@
 
 #include <seqan3/utility/tuple/pod_tuple.hpp>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-braces"
+
 // default/zero construction
 TEST(pod_tuple_ctr, ctr)
 {
@@ -248,3 +251,5 @@ TEST(pod_tuple_cmp, cmp)
     EXPECT_GE(t2, t1);
     EXPECT_GT(t2, t1);
 }
+
+#pragma GCC diagnostic pop

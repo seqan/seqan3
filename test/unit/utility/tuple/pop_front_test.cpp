@@ -17,6 +17,10 @@
 #include <seqan3/utility/tuple/split.hpp>
 
 #include "my_tuple.hpp"
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-braces"
+
 struct bar : public seqan3::detail::strong_type<unsigned, bar>
 {
     using seqan3::detail::strong_type<unsigned, bar>::strong_type;
@@ -109,3 +113,5 @@ TYPED_TEST(tuple_pop_front, tuple_split_and_pop)
         EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(v)>, std::tuple<int>>));
     }
 }
+
+#pragma GCC diagnostic pop

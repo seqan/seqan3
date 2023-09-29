@@ -235,6 +235,8 @@ private:
                                           uint8_t const rank = seqan3::to_rank(chr);
                                           if constexpr (sigma >= max_sigma)
                                               warn_if_rank_out_of_range(rank);
+                                          else
+                                              (void)warn_if_rank_out_of_range;
                                           return rank + 1;
                                       })
             .out;
@@ -397,7 +399,7 @@ public:
     friend class fm_index_cursor;
 
     template <typename fm_index_t>
-    friend class detail::fm_index_cursor_node;
+    friend struct detail::fm_index_cursor_node;
 
     /*!\name Constructors, destructor and assignment
      * \{

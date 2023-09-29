@@ -700,5 +700,5 @@ TEST_F(bam_format, issue1201)
     std::istringstream stream{input};
     seqan3::sam_file_input fin{stream, seqan3::format_bam{}};
 
-    fin.header().format_version;
+    [[maybe_unused]] auto version = fin.header().format_version;
 }

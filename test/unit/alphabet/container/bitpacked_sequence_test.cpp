@@ -52,5 +52,5 @@ TEST(bitpacked_sequence_test, issue371)
     seqan3::bitpacked_sequence<alphabet_t> source{};
     auto it = source.begin();
     auto end = source.end();
-    it != end; // This line causes error.
+    [[maybe_unused]] bool result = it != end; // This line causes error.
 }

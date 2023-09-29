@@ -99,7 +99,7 @@ private:
     //!\}
 
     // Forward declare class' iterator type. See definition below.
-    struct iterator_type;
+    class iterator_type;
 
 public:
     /*!\name Constructors, destructor and assignment

@@ -111,12 +111,12 @@ public:
      * \{
      */
     // construction cannot be noexcept because this class has a std::string variable as a quality string buffer.
-    format_sam() = default;                               //!< Defaulted.
-    format_sam(format_sam const &) = default;             //!< Defaulted.
-    format_sam & operator=(format_sam const &) = default; //!< Defaulted.
-    format_sam(format_sam &&) = default;                  //!< Defaulted.
-    format_sam & operator=(format_sam &&) = default;      //!< Defaulted.
-    ~format_sam() = default;                              //!< Defaulted.
+    format_sam() = default;                              //!< Defaulted.
+    format_sam(format_sam const &) = delete;             //!< Deleted. Header holds a unique_ptr.
+    format_sam & operator=(format_sam const &) = delete; //!< Deleted. Header holds a unique_ptr.
+    format_sam(format_sam &&) = default;                 //!< Defaulted.
+    format_sam & operator=(format_sam &&) = default;     //!< Defaulted.
+    ~format_sam() = default;                             //!< Defaulted.
 
     //!\}
 
@@ -223,9 +223,6 @@ private:
 
     //!\brief The default header for the alignment format.
     sam_file_header<> default_header{};
-
-    //!\brief Tracks whether reference information (\@SR tag) were found in the SAM header
-    bool ref_info_present_in_header{false};
 
     //!\brief A buffer to store a raw record pointing into the stream buffer of the input.
     std::array<std::string_view, 11> raw_record{};

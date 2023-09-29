@@ -196,16 +196,8 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VER
     message (FATAL_ERROR "GCC < 10 is not supported. The detected compiler version is ${CMAKE_CXX_COMPILER_VERSION}.")
 endif ()
 
-option (SEQAN3_DISABLE_COMPILER_CHECK "Skips the check for supported compilers." OFF)
-
-if (NOT SEQAN3_DISABLE_COMPILER_CHECK)
-    if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-        message (FATAL_ERROR "Only GCC is supported. "
-                             "The detected compiler version is ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}. "
-                             "You can disable this error by passing -DSEQAN3_DISABLE_COMPILER_CHECK=ON to CMake.")
-    endif ()
-else ()
-    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_DISABLE_COMPILER_CHECK")
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 17)
+    message (FATAL_ERROR "Clang < 17 is not supported. The detected compiler version is ${CMAKE_CXX_COMPILER_VERSION}.")
 endif ()
 
 # ----------------------------------------------------------------------------

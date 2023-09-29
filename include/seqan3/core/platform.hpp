@@ -87,12 +87,20 @@
 #    endif     // SEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC
 
 // ============================================================================
+//  Compiler support Clang
+// ============================================================================
+
+#elif defined(__clang__)
+#    if __clang_major__ < 17
+#        error "Only Clang >= 17 is supported."
+#    endif
+
+// ============================================================================
 //  Compiler support other
 // ============================================================================
 
 #elif !defined(SEQAN3_DISABLE_COMPILER_CHECK)
-#    error                                                                                                             \
-        "Your compiler is not supported. Currently, only GCC is known to work. You can disable this error by setting -DSEQAN3_DISABLE_COMPILER_CHECK."
+#    error "Your compiler is not supported. You can disable this error by setting -DSEQAN3_DISABLE_COMPILER_CHECK."
 #endif // SEQAN3_COMPILER_IS_GCC
 
 // ============================================================================

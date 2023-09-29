@@ -218,7 +218,7 @@ public:
 
 private:
     //!\brief The underling range.
-    underlying_range_type u_range{};
+    underlying_range_type u_range;
     //!\brief The cached iterator pointing to the last element of the underlying range.
     std::ranges::iterator_t<underlying_range_type> back_iterator{};
 };
