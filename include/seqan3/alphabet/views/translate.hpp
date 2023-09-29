@@ -78,7 +78,7 @@ enum class translation_frames : uint8_t
 //!\brief Enable bitwise operators for enum translation_frames.
 //!\sa seqan3::enum_bitwise_operators enables combining enum values.
 template <>
-constexpr bool add_enum_bitwise_operators<translation_frames> = true;
+inline constexpr bool add_enum_bitwise_operators<translation_frames> = true;
 //!\endcond
 
 } // namespace seqan3
