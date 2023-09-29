@@ -54,7 +54,7 @@ namespace seqan3
 //!\ingroup alignment_matrix
 //!\sa seqan3::enum_bitwise_operators enables combining enum values.
 template <>
-constexpr bool add_enum_bitwise_operators<seqan3::detail::trace_directions> = true;
+inline constexpr bool add_enum_bitwise_operators<seqan3::detail::trace_directions> = true;
 //!\endcond
 
 /*!\brief All trace_directions can be printed as ascii or as utf8 to the seqan3::debug_stream.

@@ -66,7 +66,7 @@ namespace seqan3
 //!\ingroup core
 //!\sa seqan3::enum_bitwise_operators enables combining enum values.
 template <>
-constexpr bool add_enum_bitwise_operators<seqan3::detail::strong_type_skill> = true;
+inline constexpr bool add_enum_bitwise_operators<seqan3::detail::strong_type_skill> = true;
 //!\endcond
 } // namespace seqan3
 

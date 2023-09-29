@@ -94,7 +94,7 @@ enum class sam_flag : uint16_t
 //!\ingroup io_sam_file
 //!\sa seqan3::enum_bitwise_operators enables combining enum values.
 template <>
-constexpr bool add_enum_bitwise_operators<sam_flag> = true;
+inline constexpr bool add_enum_bitwise_operators<sam_flag> = true;
 //!\endcond
 
 /*!\brief Overload for the seqan3::sam_flags.

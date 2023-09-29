@@ -89,7 +89,7 @@ namespace seqan3
  * \include test/snippet/core/add_enum_bitwise_operators.cpp
  */
 template <typename t>
-constexpr bool add_enum_bitwise_operators = false;
+inline constexpr bool add_enum_bitwise_operators = false;
 
 /*!\name Binary operators for scoped enums
  * \brief Perform binary operations like on ints or weak enums. These overloads are available if

@@ -40,7 +40,7 @@ enum fmtflags2
 //!\brief Overload bitwise operators for seqan3::fmtflags2.
 //!\sa seqan3::enum_bitwise_operators enables combining enum values.
 template <>
-constexpr bool add_enum_bitwise_operators<fmtflags2> = true;
+inline constexpr bool add_enum_bitwise_operators<fmtflags2> = true;
 //!\endcond
 
 // ------------------------------------------------------------------
