@@ -24,6 +24,17 @@ The following API changes should be documented as such:
 If possible, provide tooling that performs the changes, e.g. a shell-script.
 -->
 
+# 3.3.1
+
+## New features
+
+## Notable Bug-fixes
+
+## API changes
+
+#### Dependencies
+  * We now use Doxygen version 1.9.8 to build our documentation ([\#3197](https://github.com/seqan/seqan3/pull/3197)).
+
 # 3.3.0
 
 ## New features

@@ -50,7 +50,7 @@ jobs:
       - name: Install Doxygen
         uses: seqan/actions/setup-doxygen@main
         with:
-          doxygen: 1.9.6
+          doxygen: 1.9.8
 
       - name: Configure tests
         run: |
