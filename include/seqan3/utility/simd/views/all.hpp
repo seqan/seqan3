@@ -6,19 +6,15 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \cond DEV \link utility_simd_views Utility / SIMD / Views submodule \endlink \endcond.
+ * \brief Meta-header for the \link utility_simd_views Utility / SIMD / Views submodule \endlink.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
-
-//!\cond DEV
 
 /*!\defgroup utility_simd_views Views
  * \brief SIMD related views.
  * \ingroup utility_simd
  * \see utility_simd
  */
-
-//!\endcond
 
 #pragma once
 

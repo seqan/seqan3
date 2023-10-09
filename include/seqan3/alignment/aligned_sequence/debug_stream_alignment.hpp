@@ -26,7 +26,7 @@ namespace seqan3::detail
 {
 
 /*!\brief               Create the formatted alignment output and add it to the provided debug_stream.
- * \ingroup             aligned_sequence
+ * \ingroup             alignment_aligned_sequence
  * \tparam alignment_t  The type of the alignment; must model seqan3::tuple_like.
  * \tparam idx          An index sequence.
  * \param[in] stream    The output stream that receives the formatted alignment.

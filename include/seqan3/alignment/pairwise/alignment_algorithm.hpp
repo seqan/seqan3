@@ -62,8 +62,8 @@ namespace seqan3::detail
  * using SIMD operations or scalar operations, computing the traceback or only the score etc.. These configurations
  * are inherited using so-called `alignment policies`. An alignment policy is a type that implements a specific
  * functionality through a common interface that is used by the alignment algorithm. These policies are also
- * the customisation points of the algorithm which will be used to implement a specific behaviour. You can read more
- * about the policies in \ref alignment_pairwise_policy.
+ * the customisation points of the algorithm which will be used to implement a specific behaviour. \if DEV You can read
+ * more about the policies in \ref alignment_pairwise_policy. \endif
  *
  * Since some of the policies are augmented with traits to further refine the policy execution during the configuration,
  * it is necessary to defer the template instantiation of the policies, which are modelled as CRTP-base classes.

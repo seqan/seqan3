@@ -155,7 +155,8 @@ RECURSIVE              = YES
 EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = */doc/*.cpp \
-                         */contrib/std/*.hpp
+                         */contrib/std/*.hpp \
+                         */utility/simd/*.hpp
 EXCLUDE_SYMBOLS        = seqan3::contrib \
                          ${SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS}
 EXAMPLE_PATH           = ${SEQAN3_DOXYGEN_SOURCE_DIR}
