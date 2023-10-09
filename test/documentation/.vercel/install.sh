@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -exo pipefail
 
-DOXYGEN_VERSION=1.9.6
+DOXYGEN_VERSION=1.9.8
 SOURCE_DIR=`pwd`
 CACHE_DIR="${SOURCE_DIR}/node_modules"
 

@@ -36,13 +36,13 @@ jobs:
       - name: Install Doxygen
         uses: seqan/actions/setup-doxygen@main
         with:
-          doxygen: 1.9.6
+          doxygen: 1.9.8
 
       - name: Load cached documentation
         uses: actions/cache@v3
         with:
           path: doc-build
-          key: ${{ runner.os }}-documentation-1.9.6
+          key: ${{ runner.os }}-documentation-1.9.8
 
       - name: Build documentation
         run: |
