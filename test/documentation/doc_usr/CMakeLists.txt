@@ -8,7 +8,8 @@
 message (STATUS "Configuring user doc.")
 
 set (SEQAN3_DOXYGEN_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
-set (SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS "")
+set (SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS "seqan3::detail seqan3::simd")
+set (SEQAN3_DOXYGEN_EXCLUDE_PATTERNS "*/utility/parallel/*.hpp */utility/simd/*.hpp */alignment/pairwise/policy/*.hpp")
 set (SEQAN3_DOXYGEN_PREDEFINED_NDEBUG "-NDEBUG") #/""
 set (SEQAN3_DOXYGEN_ENABLED_SECTIONS "") #/"DEV"
 set (SEQAN3_SHOW_DEV_DOCS "NO") #/"YES"

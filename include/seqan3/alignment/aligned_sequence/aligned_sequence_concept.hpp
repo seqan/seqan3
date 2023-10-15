@@ -85,7 +85,7 @@ namespace seqan3
 /*!\interface seqan3::aligned_sequence <>
  * \extends   seqan3::sequence
  * \brief     The generic concept for an aligned sequence.
- * \ingroup   aligned_sequence
+ * \ingroup   alignment_aligned_sequence
  *
  * This concept describes the requirements a sequence must fulfil in order to represent a sequence in an alignment.
  *
@@ -111,7 +111,7 @@ concept aligned_sequence = sequence<t> && std::equality_comparable_with<std::ran
  * \extends   seqan3::aligned_sequence
  * \extends   std::ranges::forward_range
  * \brief     The generic concept for an aligned sequence that is writable.
- * \ingroup   aligned_sequence
+ * \ingroup   alignment_aligned_sequence
  *
  * This concept describes the requirements a sequence must fulfill in order to be used inside of the alignment algorithm
  * to store the final alignment.
