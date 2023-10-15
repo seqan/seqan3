@@ -158,7 +158,7 @@ EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = */doc/*.cpp \
                          */contrib/std/*.hpp \
-                         */utility/simd/*.hpp
+                         ${SEQAN3_DOXYGEN_EXCLUDE_PATTERNS}
 EXCLUDE_SYMBOLS        = seqan3::contrib \
                          ${SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS}
 EXAMPLE_PATH           = ${SEQAN3_DOXYGEN_SOURCE_DIR}
