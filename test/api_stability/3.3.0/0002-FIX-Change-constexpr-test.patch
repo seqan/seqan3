@@ -1,0 +1,25 @@
+From e3eaa3f826fbab51db415d0dd6cbf8a93ecad153 Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Thu, 28 Sep 2023 19:35:57 +0200
+Subject: [PATCH 2/2] [FIX] Change constexpr test
+
+gcc11 complains suddenly
+---
+ .../core/range/detail/adaptor_for_view_without_args_test.cpp   | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/test/unit/core/range/detail/adaptor_for_view_without_args_test.cpp b/test/unit/core/range/detail/adaptor_for_view_without_args_test.cpp
+index 54bcb640c..460fab223 100644
+--- a/test/unit/core/range/detail/adaptor_for_view_without_args_test.cpp
++++ b/test/unit/core/range/detail/adaptor_for_view_without_args_test.cpp
+@@ -21,6 +21,5 @@ TEST(adaptor_combination, constexpr_combine)
+ {
+     constexpr auto adaptor1 = seqan3::detail::adaptor_for_view_without_args<dummy_view>{};
+     constexpr auto adaptor2 = seqan3::detail::adaptor_for_view_without_args<dummy_view>{};
+-
+-    EXPECT_TRUE((SEQAN3_IS_CONSTEXPR(adaptor1 | adaptor2)));
++    [[maybe_unused]] static constinit auto combined = adaptor1 | adaptor2;
+ }
+-- 
+2.42.0
+
