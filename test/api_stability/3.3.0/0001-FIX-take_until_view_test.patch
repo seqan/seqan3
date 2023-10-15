@@ -1,0 +1,31 @@
+From e89261cd4f2dfdffe982e8c95af1666acf9cfc47 Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Thu, 28 Sep 2023 21:28:37 +0200
+Subject: [PATCH 1/2] [FIX] take_until_view_test
+
+mutable refers to the capture
+---
+ test/unit/io/views/detail/take_until_view_test.cpp | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/test/unit/io/views/detail/take_until_view_test.cpp b/test/unit/io/views/detail/take_until_view_test.cpp
+index 970a3a1b1..8f34f7014 100644
+--- a/test/unit/io/views/detail/take_until_view_test.cpp
++++ b/test/unit/io/views/detail/take_until_view_test.cpp
+@@ -131,10 +131,11 @@ TEST(view_take_until, concepts)
+     do_concepts(adapt, true);
+ 
+     // mutable adapters make the view lose const-iterability
++    char c2 = 'a';
+     auto adapt2 = seqan3::detail::take_until(
+-        [count = 0](char c) mutable
++        [c2](char c) mutable
+         {
+-            ++count;
++            c2 = 'b';
+             return c == '\n';
+         });
+     do_concepts(adapt2, false);
+-- 
+2.42.0
+
