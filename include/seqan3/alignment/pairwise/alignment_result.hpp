@@ -49,17 +49,17 @@ template <typename sequence1_id_t,
           typename trace_debug_matrix_t = std::nullopt_t *>
 struct alignment_result_value_type
 {
-    //! \brief The alignment identifier for the first sequence.
+    //!\brief The alignment identifier for the first sequence.
     sequence1_id_t sequence1_id{};
-    //! \brief The alignment identifier for the second sequence.
+    //!\brief The alignment identifier for the second sequence.
     sequence2_id_t sequence2_id{};
-    //! \brief The alignment score.
+    //!\brief The alignment score.
     score_t score{};
-    //! \brief The end positions of the alignment.
+    //!\brief The end positions of the alignment.
     end_positions_t end_positions{};
-    //! \brief The begin positions of the alignment.
+    //!\brief The begin positions of the alignment.
     begin_positions_t begin_positions{};
-    //! \brief The alignment, i.e. the actual base pair matching.
+    //!\brief The alignment, i.e. the actual base pair matching.
     alignment_t alignment{};
 
     //!\brief The score matrix. Only accessible with seqan3::align_cfg::detail::debug.
@@ -72,20 +72,20 @@ struct alignment_result_value_type
  * \brief Type deduction for the different combinations of result types.
  * \{
  */
-//! \brief Type deduction for an empty object. It will always fail the compilation, if any field is accessed.
+//!\brief Type deduction for an empty object. It will always fail the compilation, if any field is accessed.
 alignment_result_value_type()->alignment_result_value_type<std::nullopt_t *, std::nullopt_t *, std::nullopt_t *>;
 
-//! \brief Type deduction for id and score only.
+//!\brief Type deduction for id and score only.
 template <typename sequence1_id_t, typename sequence2_id_t, typename score_t>
 alignment_result_value_type(sequence1_id_t, sequence2_id_t, score_t)
     -> alignment_result_value_type<sequence1_id_t, sequence2_id_t, score_t>;
 
-//! \brief Type deduction for id, score and end positions.
+//!\brief Type deduction for id, score and end positions.
 template <typename sequence1_id_t, typename sequence2_id_t, typename score_t, typename end_positions_t>
 alignment_result_value_type(sequence1_id_t, sequence2_id_t, score_t, end_positions_t)
     -> alignment_result_value_type<sequence1_id_t, sequence2_id_t, score_t, end_positions_t>;
 
-//! \brief Type deduction for id, score, end positions and begin positions.
+//!\brief Type deduction for id, score, end positions and begin positions.
 template <typename sequence1_id_t,
           typename sequence2_id_t,
           typename score_t,
@@ -94,7 +94,7 @@ template <typename sequence1_id_t,
 alignment_result_value_type(sequence1_id_t, sequence2_id_t, score_t, end_positions_t, begin_positions_t)
     -> alignment_result_value_type<sequence1_id_t, sequence2_id_t, score_t, end_positions_t, begin_positions_t>;
 
-//! \brief Type deduction for id, score, end positions, begin positions and alignment.
+//!\brief Type deduction for id, score, end positions, begin positions and alignment.
 template <typename sequence1_id_t,
           typename sequence2_id_t,
           typename score_t,
@@ -119,7 +119,7 @@ struct alignment_result_value_type_accessor;
 namespace seqan3
 {
 
-/*!\brief Stores the alignment results and gives access to score, alignment and the front and end positionss.
+/*!\brief Stores the alignment results and gives access to score, alignment and the front and end positions.
  * \ingroup alignment_pairwise
  * \tparam alignment_result_value_t The underlying value type containing the information from the alignment computation.
  *
@@ -147,24 +147,24 @@ template <typename alignment_result_value_t>
 class alignment_result
 {
 private:
-    //! \brief Object that stores the computed alignment results.
+    //!\brief Object that stores the computed alignment results.
     alignment_result_value_t data{};
 
     /*!\name Member types
      * \brief Local definition of the types contained in the `data` object.
      * \{
      */
-    //! \brief The type for the alignment identifier for the first sequence.
+    //!\brief The type for the alignment identifier for the first sequence.
     using sequence1_id_t = decltype(data.sequence1_id);
-    //! \brief The type for the alignment identifier for the second sequence.
+    //!\brief The type for the alignment identifier for the second sequence.
     using sequence2_id_t = decltype(data.sequence2_id);
-    //! \brief The type for the resulting score.
+    //!\brief The type for the resulting score.
     using score_t = decltype(data.score);
-    //! \brief The type for the end positions.
+    //!\brief The type for the end positions.
     using end_positions_t = decltype(data.end_positions);
-    //! \brief The type for the begin positions.
+    //!\brief The type for the begin positions.
     using begin_positions_t = decltype(data.begin_positions);
-    //! \brief The type for the alignment.
+    //!\brief The type for the alignment.
     using alignment_t = decltype(data.alignment);
     //!\}
 
