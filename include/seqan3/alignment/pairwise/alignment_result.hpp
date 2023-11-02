@@ -233,7 +233,15 @@ public:
     }
 
     /*!\brief Returns the end position of the first sequence of the alignment.
-     * \return The calculated alignment end of sequence 1 (inclusive).
+     * \return The calculated alignment end of sequence 1 (exclusive).
+     * \details
+     *
+     * \if DEV
+     * The return type (default: `size_t`) is deduced from
+     * seqan3::detail::alignment_result_value_type::end_positions_t::first.
+     * \else
+     * The return type is `size_t`.
+     * \endif
      *
      * \note This function is only available if the end position of the first sequence was requested via the
      * alignment configuration (see seqan3::align_cfg::output_end_position).
@@ -247,7 +255,15 @@ public:
     }
 
     /*!\brief Returns the end position of the second sequence of the alignment.
-     * \return A pair of positions in the respective sequences, where the calculated alignment ends (inclusive).
+     * \return The calculated alignment end of sequence 2 (exclusive).
+     * \details
+     *
+     * \if DEV
+     * The return type (default: `size_t`) is deduced from
+     * seqan3::detail::alignment_result_value_type::end_positions_t::second.
+     * \else
+     * The return type is `size_t`.
+     * \endif
      *
      * \note This function is only available if the end position of the second sequence was requested via the
      * alignment configuration (see seqan3::align_cfg::output_end_position).
@@ -261,9 +277,15 @@ public:
     }
 
     /*!\brief Returns the begin position of the first sequence of the alignment.
-     * \return  A pair of positions in the respective sequences, where the calculated alignment starts.
-     *
+     * \return The calculated alignment begin of sequence 1 (inclusive).
      * \details
+     *
+     * \if DEV
+     * The return type (default: `size_t`) is deduced from
+     * seqan3::detail::alignment_result_value_type::begin_positions_t::first.
+     * \else
+     * The return type is `size_t`.
+     * \endif
      *
      * Guaranteed to be smaller than or equal to `sequence1_end_position()`.
      *
@@ -279,9 +301,15 @@ public:
     }
 
     /*!\brief Returns the begin position of the second sequence of the alignment.
-     * \return  A pair of positions in the respective sequences, where the calculated alignment starts.
-     *
+     * \return The calculated alignment begin of sequence 2 (inclusive).
      * \details
+     *
+     * \if DEV
+     * The return type (default: `size_t`) is deduced from
+     * seqan3::detail::alignment_result_value_type::begin_positions_t::second.
+     * \else
+     * The return type is `size_t`.
+     * \endif
      *
      * Guaranteed to be smaller than or equal to `sequence2_end_position()`.
      *
