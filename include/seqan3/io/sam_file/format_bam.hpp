@@ -401,8 +401,8 @@ format_bam::read_alignment_record(stream_type & stream,
         ref_id = core.refID; // field::ref_id
     }
 
-    flag = core.flag; // field::flag
-    mapq = core.mapq; // field::mapq
+    flag = core.flag;                       // field::flag
+    mapq = static_cast<uint8_t>(core.mapq); // field::mapq
 
     if (core.pos > -1)         // [[likely]]
         ref_offset = core.pos; // field::ref_offset
