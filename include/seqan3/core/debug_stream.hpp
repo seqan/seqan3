@@ -21,7 +21,10 @@
 //!\cond
 namespace std
 {
+namespace
+{
 extern ostream cerr;
+}
 } // namespace std
 //!\endcond
 
