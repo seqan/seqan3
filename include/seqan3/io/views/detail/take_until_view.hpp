@@ -54,7 +54,7 @@ private:
     static_assert(std::invocable<fun_t, std::ranges::range_reference_t<urng_t>>,
                   "The functor type for detail::take_until must model"
                   "std::invocable<fun_t, std::ranges::range_reference_t<urng_t>>.");
-    static_assert(std::convertible_to<std::result_of_t<fun_t && (std::ranges::range_reference_t<urng_t>)>, bool>,
+    static_assert(std::convertible_to<std::invoke_result_t<fun_t &&, std::ranges::range_reference_t<urng_t>>, bool>,
                   "The result type of the functor for detail::take_until must be a boolean.");
 
     //!\brief The underlying range.
