@@ -11,17 +11,23 @@
 
 using seqan3::detail::proxy_reference;
 
-namespace std
+template <typename T>
+struct remove_reference
 {
+    using type = std::remove_reference_t<T>;
+};
+
 template <typename T>
 struct remove_reference<proxy_reference<T>>
 {
     using type = T;
 };
-} // namespace std
+
+template <typename T>
+using remove_reference_t = typename remove_reference<T>::type;
 
 template <typename reference_t>
-constexpr bool is_const_ref_v = std::is_const_v<std::remove_reference_t<reference_t>>;
+constexpr bool is_const_ref_v = std::is_const_v<remove_reference_t<reference_t>>;
 
 template <typename T>
 using reference_test = ::testing::Test;
