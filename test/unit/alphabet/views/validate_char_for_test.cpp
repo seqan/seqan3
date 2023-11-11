@@ -79,5 +79,5 @@ TEST(view_validate_char_for, exception)
     std::string foo = "ACGPTA";
 
     auto v = foo | seqan3::views::validate_char_for<seqan3::dna5>;
-    EXPECT_THROW((std::ranges::equal(v, "ACGNTA"sv)), seqan3::invalid_char_assignment);
+    EXPECT_THROW(static_cast<void>(std::ranges::equal(v, "ACGNTA"sv)), seqan3::invalid_char_assignment);
 }

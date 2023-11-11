@@ -79,5 +79,5 @@ TEST(view_char_strictly_to, exception)
     std::string foo = "ACGPTA";
 
     auto v = foo | seqan3::views::char_strictly_to<seqan3::dna5>;
-    EXPECT_THROW((std::ranges::equal(v, "ACGNTA"_dna5)), seqan3::invalid_char_assignment);
+    EXPECT_THROW(static_cast<void>(std::ranges::equal(v, "ACGNTA"_dna5)), seqan3::invalid_char_assignment);
 }
