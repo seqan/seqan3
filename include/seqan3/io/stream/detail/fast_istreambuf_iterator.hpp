@@ -229,6 +229,7 @@ public:
     reference operator*() const
     {
         assert(stream_buf != nullptr);
+        assert(stream_buf->gptr() != stream_buf->egptr());
         return *stream_buf->gptr();
     }
 

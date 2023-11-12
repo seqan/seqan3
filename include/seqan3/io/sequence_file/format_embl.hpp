@@ -105,11 +105,13 @@ protected:
                               id_type & id,
                               qual_type & SEQAN3_DOXYGEN_ONLY(qualities))
     {
+        // Store current position in buffer
+        // Must happen before constructing the view.
+        // With libc++, tellg invalidates the I/O buffer.
+        position_buffer = stream.tellg();
+
         auto stream_view = detail::istreambuf(stream);
         auto stream_it = std::ranges::begin(stream_view);
-
-        // Store current position in buffer.
-        position_buffer = stream.tellg();
 
         std::string idbuffer;
         std::ranges::copy(stream_view | detail::take_until_or_throw(is_cntrl || is_blank),
