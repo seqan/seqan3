@@ -227,6 +227,9 @@ TEST(aligned_allocator, in_list)
 
 TEST(aligned_allocator, in_map)
 {
+#ifdef _LIBCPP_VERSION
+    GTEST_SKIP() << "std::map not aligned in libc++";
+#else
     constexpr size_t alignment = 16;
     using key_type = char;
     using value_type = int;
@@ -251,4 +254,5 @@ TEST(aligned_allocator, in_map)
     EXPECT_EQ(memory_alignment(&*(++it), alignment), 0u);
     EXPECT_EQ(memory_alignment(&*(++it), alignment), 0u);
     EXPECT_EQ(++it, container.end());
+#endif
 }
