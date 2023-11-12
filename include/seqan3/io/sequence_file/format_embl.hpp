@@ -197,12 +197,10 @@ protected:
         }
         else
         {
-            detail::consume(stream_view | detail::take_until(is_end));
+            detail::consume(stream_view | detail::take_until_or_throw(is_end)); // consume until "//"
         }
-        //Jump over // and cntrl
-        ++stream_it;
-        ++stream_it;
-        ++stream_it;
+
+        std::ranges::advance(stream_it, 3u, std::ranges::end(stream_view)); // Skip `//` and potentially '\n'
     }
 
     //!\copydoc sequence_file_output_format::write_sequence_record
