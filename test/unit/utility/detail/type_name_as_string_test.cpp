@@ -43,7 +43,11 @@ class type_inspection : public ::testing::Test
                                           "short*",
                                           "double const* const",
                                           "foo::bar<char> const &",
+#ifdef _LIBCPP_VERSION
+                                          "foo::bar<foo::bar<char, double>>"};
+#else
                                           "foo::bar<foo::bar<char, double> >"};
+#endif
 
 public:
     // Returns the name of the type according to the list of names defined above.
