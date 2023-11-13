@@ -39,9 +39,7 @@ struct pod_tuple
  * actually enforces this on all types in the tuple (if you want to add non POD types, just use
  * std::tuple instead).
  *
- * It (only) supports [aggregate initialization](https://en.cppreference.com/w/cpp/language/aggregate_initialization),
- * i.e. you must use brace-initializiers and cannot
- * use paranthesis. You can use seqan3::get or std::get and also
+ * You can use seqan3::get or std::get and also
  * [structured bindings](https://en.cppreference.com/w/cpp/language/declarations#Structured_binding_declaration)
  * to access the elements in the tuple.
  *
@@ -57,6 +55,17 @@ struct pod_tuple<type0, types...>
     type0 _head;
     //!\brief The rest of the elements defined as a "recursive member".
     pod_tuple<types...> _tail;
+
+    constexpr pod_tuple() noexcept = default;                              //!< Defaulted.
+    constexpr pod_tuple(pod_tuple const &) noexcept = default;             //!< Defaulted.
+    constexpr pod_tuple & operator=(pod_tuple const &) noexcept = default; //!< Defaulted.
+    constexpr pod_tuple(pod_tuple &&) noexcept = default;                  //!< Defaulted.
+    constexpr pod_tuple & operator=(pod_tuple &&) noexcept = default;      //!< Defaulted.
+    constexpr ~pod_tuple() noexcept = default;                             //!< Defaulted.
+
+    //!\brief Construct from arguments.
+    constexpr pod_tuple(type0 v0, types... args) noexcept : _head{v0}, _tail{args...}
+    {}
     //!\endcond
 
     /*!\name Comparison operators
