@@ -47,41 +47,49 @@ void read_all(benchmark::State & state)
     }
 
     /* start benchmark */
-    char c{}; // prevents optimisation
     if constexpr (id == tag::std_stream_it)
     {
         for (auto _ : state)
         {
+            char c{};
             std::ifstream s{filename, std::ios::binary};
             std::istream_iterator<char> it{s};
             std::istream_iterator<char> e{};
 
             for (; it != e; ++it)
                 c += *it;
+
+            benchmark::DoNotOptimize(c);
         }
     }
     else if constexpr (id == tag::std_streambuf_it)
     {
         for (auto _ : state)
         {
+            char c{};
             std::ifstream s{filename, std::ios::binary};
             std::istreambuf_iterator<char> it{s};
             std::istreambuf_iterator<char> e{};
 
             for (; it != e; ++it)
                 c += *it;
+
+            benchmark::DoNotOptimize(c);
         }
     }
     else if constexpr (id == tag::seqan3_streambuf_it)
     {
         for (auto _ : state)
         {
+            char c{};
             std::ifstream s{filename, std::ios::binary};
             seqan3::detail::fast_istreambuf_iterator<char> it{*s.rdbuf()};
             std::default_sentinel_t e{};
 
             for (; it != e; ++it)
                 c += *it;
+
+            benchmark::DoNotOptimize(c);
         }
     }
 #ifdef SEQAN3_HAS_SEQAN2
@@ -89,11 +97,14 @@ void read_all(benchmark::State & state)
     {
         for (auto _ : state)
         {
+            char c{};
             std::ifstream s{filename, std::ios::binary};
             auto it = seqan2::Iter<std::ifstream, seqan2::StreamIterator<seqan2::Input>>{s};
 
             for (; !seqan2::atEnd(it); ++it)
                 c += *it;
+
+            benchmark::DoNotOptimize(c);
         }
     }
 #endif

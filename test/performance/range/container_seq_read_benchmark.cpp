@@ -30,17 +30,20 @@ using small_vec = seqan3::small_vector<t, 10'000>;
 //  sequential_read
 // ============================================================================
 
-template <template <typename> typename container_t, typename alphabet_t, bool const_qualified = false>
+template <template <typename, typename...> typename container_t,
+          typename alphabet_t,
+          bool const_qualified = false,
+          typename... args>
 void sequential_read(benchmark::State & state)
 {
-    container_t<alphabet_t> container = []()
+    container_t<alphabet_t, args...> container = []()
     {
         auto container = seqan3::test::generate_sequence<alphabet_t>(10'000, 0, 0);
-        return container_t<alphabet_t>(container.begin(), container.end());
+        return container_t<alphabet_t, args...>(container.begin(), container.end());
     }();
 
-    using container_reference_t =
-        std::conditional_t<const_qualified, container_t<alphabet_t> const &, container_t<alphabet_t> &>;
+    using container_reference_t = std::
+        conditional_t<const_qualified, container_t<alphabet_t, args...> const &, container_t<alphabet_t, args...> &>;
 
     container_reference_t container_reference{container};
 

@@ -98,7 +98,7 @@ void compute_minimisers(benchmark::State & state)
             // Use random seed to randomise order on forward strand.
             auto forward = seq | seqan3::views::kmer_hash(shape)
                          | std::views::transform(
-                               [seed](uint64_t const i)
+                               [](uint64_t const i)
                                {
                                    return i ^ seed;
                                });
@@ -107,7 +107,7 @@ void compute_minimisers(benchmark::State & state)
                          | std::views::reverse             // Reverse order.
                          | seqan3::views::kmer_hash(shape) // Get hash values.
                          | std::views::transform(
-                               [seed](uint64_t const i)
+                               [](uint64_t const i)
                                {
                                    return i ^ seed;
                                })               // Randomise.
@@ -131,7 +131,7 @@ void compute_minimisers(benchmark::State & state)
             while (subrange_end != end(both))
             {
                 ++subrange_end; // Extends the subrange to `w - shape.size()+1`
-                auto h = *std::min_element(subrange_begin, subrange_end);
+                auto h = *std::ranges::min_element(subrange_begin, subrange_end);
 
                 ++subrange_begin; // Move the beginning one forward
                 benchmark::DoNotOptimize(sum += h);

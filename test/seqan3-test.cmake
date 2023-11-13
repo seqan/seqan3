@@ -80,6 +80,8 @@ endif ()
 if (NOT TARGET seqan3::test::performance)
     add_library (seqan3_test_performance INTERFACE)
     target_link_libraries (seqan3_test_performance INTERFACE "seqan3::test" "benchmark_main" "benchmark")
+    # std::views::join is experimental in libc++
+    target_compile_definitions (seqan3_test_performance INTERFACE _LIBCPP_ENABLE_EXPERIMENTAL)
 
     if (SEQAN3_BENCHMARK_ALIGN_LOOPS)
         target_compile_options (seqan3_test_performance INTERFACE "-falign-loops=32")

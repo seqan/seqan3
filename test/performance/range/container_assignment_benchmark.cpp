@@ -86,7 +86,7 @@ static constexpr void resize(container_t & container,
 }
 #endif // SEQAN3_HAS_SEQAN2
 
-template <tag id, template <typename> typename container_t, typename alphabet_t>
+template <tag id, template <typename, typename...> typename container_t, typename alphabet_t, typename... args>
 static void assign(benchmark::State & state)
 {
     auto random_sequence = []() constexpr
@@ -99,10 +99,10 @@ static void assign(benchmark::State & state)
 #endif // SEQAN3_HAS_SEQAN2
     }();
 
-    container_t<alphabet_t> from{};
+    container_t<alphabet_t, args...> from{};
     resize(from, vector_size);
     std::copy(std::ranges::begin(random_sequence), std::ranges::end(random_sequence), std::ranges::begin(from));
-    container_t<alphabet_t> to{};
+    container_t<alphabet_t, args...> to{};
     resize(to, vector_size);
     assignment_functor<id> fn{};
 
