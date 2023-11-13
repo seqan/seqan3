@@ -286,3 +286,14 @@ TEST(debug_stream_test, byte)
     o.flush();
     EXPECT_EQ(o.str(), "40,244");
 }
+
+TEST(debug_stream_test, integers)
+{
+    std::ostringstream o{};
+    seqan3::debug_stream_type my_stream{o};
+
+    my_stream << uint8_t{1} << ',' << uint16_t{2} << ',' << uint32_t{3} << ',' << uint64_t{4} << ',' << size_t{5} << ','
+              << int8_t{6} << ',' << int16_t{7} << ',' << int32_t{8} << ',' << int64_t{9};
+    o.flush();
+    EXPECT_EQ(o.str(), "1,2,3,4,5,6,7,8,9");
+}

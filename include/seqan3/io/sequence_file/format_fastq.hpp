@@ -109,6 +109,11 @@ protected:
                               id_type & id,
                               qual_type & qualities)
     {
+        // Store current position in buffer
+        // Must happen before constructing the view.
+        // With libc++, tellg invalidates the I/O buffer.
+        position_buffer = stream.tellg();
+
         auto stream_view = detail::istreambuf(stream);
         auto stream_it = std::ranges::begin(stream_view);
 
@@ -117,7 +122,6 @@ protected:
         size_t sequence_size_after = 0;
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
             sequence_size_before = size(sequence);
-        position_buffer = stream.tellg();
 
         /* ID */
         if (*stream_it != '@') // [[unlikely]]

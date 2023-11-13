@@ -161,12 +161,19 @@ TEST(tuple, same_type_pass)
 
 TEST(tuple, same_type_fail)
 {
+#ifdef _LIBCPP_VERSION
+    char const * error_message = "Expected equality of these values:\n"
+                                 "  decltype(std::tuple{0, .0f, .0, 0u})\n"
+                                 "    Which is: \"std::__1::tuple<int, float, double, unsigned int>\"\n"
+                                 "  std::tuple<int, float, unsigned, double>\n"
+                                 "    Which is: \"std::__1::tuple<int, float, unsigned int, double>\"";
+#else
     char const * error_message = "Expected equality of these values:\n"
                                  "  decltype(std::tuple{0, .0f, .0, 0u})\n"
                                  "    Which is: \"std::tuple<int, float, double, unsigned int>\"\n"
                                  "  std::tuple<int, float, unsigned, double>\n"
                                  "    Which is: \"std::tuple<int, float, unsigned int, double>\"";
-
+#endif
     auto && expect_result =
         seqan3::test::expect_same_type{}("std::type_identity< decltype(std::tuple{0, .0f, .0, 0u})>{}",
                                          "std::type_identity< std::tuple<int, float, unsigned, double>>{}",

@@ -50,8 +50,7 @@ DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete
 ACCESSION   ID3
 ORIGIN
         1 ACGTTTA
-//
-)"};
+//)"};
 
     std::string illegal_alphabet_character_input{
         R"(LOCUS ID1

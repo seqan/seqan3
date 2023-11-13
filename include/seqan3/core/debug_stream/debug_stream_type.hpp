@@ -185,12 +185,17 @@ public:
         stream->unsetf(flag);
     }
 
+// fmtflags is an enum in libstdc++ and an unsigned in libc++
+#ifdef _LIBCPP_VERSION
+    static_assert(std::same_as<fmtflags, unsigned>);
+#else
     //!\copybrief setf()
     debug_stream_type & operator<<(fmtflags const flag)
     {
         setf(flag);
         return *this;
     }
+#endif
     //!\}
 
     /*!\name Format flags (seqan3::fmtflags2)

@@ -106,11 +106,13 @@ protected:
                               id_type & id,
                               qual_type & SEQAN3_DOXYGEN_ONLY(qualities))
     {
+        // Store current position in buffer
+        // Must happen before constructing the view.
+        // With libc++, tellg invalidates the I/O buffer.
+        position_buffer = stream.tellg();
+
         auto stream_view = detail::istreambuf(stream);
         auto stream_it = std::ranges::begin(stream_view);
-
-        // Store current position in buffer.
-        position_buffer = stream.tellg();
 
         if (!(std::ranges::equal(stream_view | detail::take_until_or_throw(is_cntrl || is_blank),
                                  std::string{"LOCUS"})))
@@ -162,8 +164,8 @@ protected:
         {
             constexpr auto is_legal_alph = char_is_valid_for<seq_legal_alph_type>;
             std::ranges::copy(
-                stream_view | std::views::filter(!(is_space || is_digit))
-                    | detail::take_until_or_throw_and_consume(is_end) // consume "//"
+                stream_view | std::views::filter(!(is_space || is_digit)) // ignore whitespace and numbers
+                    | detail::take_until_or_throw(is_end)                 // until //
                     | std::views::transform(
                         [is_legal_alph](char const c) // enforce legal alphabet
                         {
@@ -181,9 +183,10 @@ protected:
         }
         else
         {
-            detail::consume(stream_view | detail::take_until_or_throw_and_consume(is_end)); // consume until "//"
-            ++stream_it;                                                                    // consume "/n"
+            detail::consume(stream_view | detail::take_until_or_throw(is_end)); // consume until "//"
         }
+
+        std::ranges::advance(stream_it, 3u, std::ranges::end(stream_view)); // Skip `//` and potentially '\n'
     }
 
     //!\copydoc sequence_file_output_format::write_sequence_record
