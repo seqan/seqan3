@@ -120,6 +120,8 @@ if (NOT TARGET seqan3::test::header)
     add_library (seqan3_test_header INTERFACE)
     target_link_libraries (seqan3_test_header INTERFACE "seqan3::test::unit")
     target_link_libraries (seqan3_test_header INTERFACE "seqan3::test::performance")
+    target_compile_options (seqan3_test_header INTERFACE "-Wno-unused-const-variable" "-Wno-unused-variable"
+                                                         "-Wno-unused-function")
     target_compile_definitions (seqan3_test_header INTERFACE -DSEQAN3_DISABLE_DEPRECATED_WARNINGS)
     target_compile_definitions (seqan3_test_header INTERFACE -DSEQAN3_HEADER_TEST)
     add_library (seqan3::test::header ALIAS seqan3_test_header)

@@ -134,7 +134,7 @@ constexpr bool is_builtin_simd_v = is_builtin_simd<builtin_simd_t>::value;
  * seqan3::detail::builtin_simd types.
  */
 template <>
-constexpr auto default_simd_max_length<builtin_simd> = []()
+inline constexpr auto default_simd_max_length<builtin_simd> = []()
 {
 #if defined(__AVX512F__)
     return min_viable_uint_v<64u>;

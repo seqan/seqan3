@@ -84,7 +84,7 @@ macro (seqan3_header_test component header_base_path exclude_regex)
 
     file (WRITE "${PROJECT_BINARY_DIR}/${target}.cpp" "")
     add_executable (${target} ${PROJECT_BINARY_DIR}/${target}.cpp)
-    target_link_libraries (${target} seqan3::test::header)
+    target_link_libraries (${target} seqan3::test seqan3::test::header)
     add_test (NAME "header/${target}" COMMAND ${target})
 
     foreach (header ${header_files})
@@ -112,7 +112,10 @@ macro (seqan3_header_test component header_base_path exclude_regex)
                                         "${CMAKE_CURRENT_SOURCE_DIR}/generate_header_source.cmake")
 
             add_library (${header_target} OBJECT "${header_target_source}")
-            target_link_libraries (${header_target} seqan3::test::header)
+            # Link seqan3::test first, even though it is also linked by seqan3::test:header.
+            # Without this, the compile options of seqan3::test are appended, e.g.,
+            # `-Wno-error=... -Werror -Wall`, instead of `-Werror -Wall -Wno-error=...`
+            target_link_libraries (${header_target} seqan3::test seqan3::test::header)
             target_sources (${target} PRIVATE $<TARGET_OBJECTS:${header_target}>)
         endforeach ()
     endforeach ()
