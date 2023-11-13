@@ -31,6 +31,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - name: "Snippet clang17 libc++"
+            compiler: "clang-17"
+            build: snippet
+            build_type: Release
+            test_threads: 1 # snippets create and delete files and some separate tests create/delete the same files
+            cxx_flags: "-stdlib=libc++"
+
           - name: "Snippet gcc11"
             compiler: "gcc-11"
             build: snippet
