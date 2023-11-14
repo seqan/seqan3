@@ -221,7 +221,8 @@ struct debug_matrix_traits<seqan3::detail::debug_matrix<matrix_t, first_sequence
 
 #pragma GCC diagnostic push
 // Ignore bogus warnings in fortified gcc13 build
-#if defined(_FORTIFY_SOURCE) && (_FORTIFY_SOURCE == 2) // _FORTIFY_SOURCE=2 may cause conforming programs to fail
+// _FORTIFY_SOURCE=2 may cause conforming programs to fail
+#if not defined(__clang__) && defined(_FORTIFY_SOURCE) && (_FORTIFY_SOURCE == 2)
 #    pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #endif
 
