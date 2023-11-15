@@ -14,6 +14,7 @@
 
 #include <ios>
 #include <iterator>
+#include <ostream>
 
 #include <seqan3/core/debug_stream/debug_stream_type.hpp>
 

@@ -155,7 +155,7 @@ public:
     //!\}
 
     //!\brief This type is std::ios_base::fmtflags
-    using fmtflags = decltype(std::declval<std::basic_ostream<char_t>>().flags());
+    using fmtflags = typename std::basic_ostream<char_t>::fmtflags;
 
     /*!\name Format flags (std::ios_base::fmtflags)
      * \brief std::ios_base::fmtflags that modify the stream's behaviour.

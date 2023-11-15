@@ -43,6 +43,13 @@ jobs:
             build_type: Release
             test_threads: 2
 
+          - name: "Header clang17 libc++"
+            compiler: "clang-17"
+            build: header
+            build_type: Release
+            test_threads: 2
+            cxx_flags: "-stdlib=libc++"
+
           - name: "Header gcc13"
             compiler: "gcc-13"
             build: header
