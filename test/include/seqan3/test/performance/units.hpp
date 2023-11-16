@@ -38,12 +38,14 @@ inline benchmark::Counter bytes_per_second(size_t bytes)
 template <typename sequences_range_t>
 inline size_t pairwise_cell_updates(sequences_range_t const & sequences_range, [[maybe_unused]] auto && align_cfg)
 {
+    using config_t = std::remove_cvref_t<decltype(align_cfg)>;
+
     auto count_cells = [&](auto && seq1, auto && seq2)
     {
         size_t const columns = std::ranges::size(seq1) + 1;
         size_t const rows = std::ranges::size(seq2) + 1;
 
-        if constexpr (align_cfg.template exists<seqan3::align_cfg::band_fixed_size>())
+        if constexpr (config_t::template exists<seqan3::align_cfg::band_fixed_size>())
         {
             using std::get;
             auto const band_cfg = get<seqan3::align_cfg::band_fixed_size>(align_cfg);

@@ -30,13 +30,13 @@ using small_vec = seqan3::small_vector<t, 10'000>;
 //  sequential_write
 // ============================================================================
 
-template <template <typename> typename container_t, typename alphabet_t>
+template <template <typename, typename...> typename container_t, typename alphabet_t, typename... args>
 void sequential_write(benchmark::State & state)
 {
-    container_t<alphabet_t> container = []()
+    container_t<alphabet_t, args...> container = []()
     {
         auto container = seqan3::test::generate_sequence<alphabet_t>(10'000, 0, 0);
-        return container_t<alphabet_t>(container.begin(), container.end());
+        return container_t<alphabet_t, args...>(container.begin(), container.end());
     }();
 
     alphabet_t letter{};

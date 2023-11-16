@@ -37,6 +37,13 @@ jobs:
             build_type: Release
             test_threads: 1 # snippets create and delete files and some separate tests create/delete the same files
 
+          - name: "Performance clang17 libc++"
+            compiler: "clang-17"
+            build: performance
+            build_type: Release
+            test_threads: 2
+            cxx_flags: "-stdlib=libc++"
+
           - name: "Performance gcc11"
             compiler: "gcc-11"
             build: performance

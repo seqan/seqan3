@@ -88,7 +88,7 @@ struct for_loop_with_simd_add_benchmark
     void operator()(index_simd_t & count) const
     {
         index_simd_t simd_index{};
-        for (size_t index = 0; index < end_index; ++index, ++simd_index)
+        for (size_t index = 0; index < end_index; ++index, simd_index += 1)
             count += simd_index;
     }
 };

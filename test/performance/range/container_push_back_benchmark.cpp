@@ -29,14 +29,14 @@ using small_vec = seqan3::small_vector<t, 10'000>;
 //  push_back
 // ============================================================================
 
-template <template <typename> typename container_t, typename alphabet_t>
+template <template <typename, typename...> typename container_t, typename alphabet_t, typename... args>
 void push_back(benchmark::State & state)
 {
     alphabet_t letter{};
 
     for (auto _ : state)
     {
-        container_t<alphabet_t> container;
+        container_t<alphabet_t, args...> container;
         for (size_t i = 0; i < 10'000; ++i)
             container.push_back(letter);
         benchmark::DoNotOptimize(letter = container.back());

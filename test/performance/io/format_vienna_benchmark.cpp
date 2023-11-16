@@ -26,18 +26,18 @@
 
 inline constexpr size_t iterations_per_run = 1024;
 
-inline std::string const header{"seq foobar blobber"};
-inline auto const rna_sequence = seqan3::test::generate_sequence<seqan3::rna4>(474, 0, 0);
-auto const sequence = rna_sequence | seqan3::views::to_char | seqan3::ranges::to<std::string>();
+static std::string const header{"seq foobar blobber"};
+static inline auto const rna_sequence = seqan3::test::generate_sequence<seqan3::rna4>(474, 0, 0);
+static auto const sequence = rna_sequence | seqan3::views::to_char | seqan3::ranges::to<std::string>();
 
-inline std::string const structure{"(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))......."
+static std::string const structure{"(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))......."
                                    "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))......."
                                    "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))......."
                                    "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))......."
                                    "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))......."
                                    "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))......."};
 
-inline std::string const vienna_file = []()
+static std::string const vienna_file = []()
 {
     std::string file{};
     for (size_t idx = 0; idx < iterations_per_run; idx++)
