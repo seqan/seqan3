@@ -19,6 +19,7 @@
 #include <stdexcept>
 #include <string>
 
+#include <seqan3/utility/concept.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 
@@ -194,7 +195,21 @@ struct char_predicate_base
     constexpr bool operator()(value_t const val) const noexcept
         requires (sizeof(value_t) != 1)
     {
-        using char_trait = std::char_traits<value_t>;
+        // std::char_traits is only guaranteed to be defined for character types.
+        // libc++ deprecates other specialisations in llvm-17, and removes them in llvm-18.
+        // We map the non-character types to corresponding chracter types.
+        // For example, `seqan3::is_eof(EOF)` will call this function with `value_t == int`.
+        // clang-format off
+        using char_value_t = std::conditional_t<seqan3::builtin_character<value_t>, value_t,
+                             std::conditional_t<std::same_as<value_t, std::char_traits<char>::int_type>, char,
+                             std::conditional_t<std::same_as<value_t, std::char_traits<wchar_t>::int_type>, wchar_t,
+                             std::conditional_t<std::same_as<value_t, std::char_traits<char8_t>::int_type>, char8_t,
+                             std::conditional_t<std::same_as<value_t, std::char_traits<char16_t>::int_type>, char16_t,
+                             std::conditional_t<std::same_as<value_t, std::char_traits<char32_t>::int_type>, char32_t,
+                             void>>>>>>;
+        // clang-format on
+        static_assert(!std::same_as<char_value_t, void>, "There is no valid character representation.");
+        using char_trait = std::char_traits<char_value_t>;
         return (static_cast<std::make_unsigned_t<value_t>>(val) < 256) ? operator()(static_cast<uint8_t>(val))
              : (char_trait::eq_int_type(val, char_trait::eof()))       ? derived_t::data[256]
                                                                        : false;

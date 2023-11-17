@@ -41,7 +41,6 @@ int main()
                                                        seqan3::align_cfg::free_end_gaps_sequence1_trailing{false},
                                                        seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}};
         //! [method_global_free_end_gaps]
-        (void)config;
     }
 
     {
@@ -57,8 +56,6 @@ int main()
         aa_scheme.set_similarity_matrix(seqan3::aminoacid_similarity_matrix::blosum30);
         auto sc_aa = aa_scheme.score('M'_aa27, 'K'_aa27); // sc_aa == 2.
         //! [scoring_scheme]
-        (void)sc_nc;
-        (void)sc_aa;
     }
 
     {
@@ -71,8 +68,6 @@ int main()
         int open_score = affine_scheme.open_score;           // == -10
         int extension_score = affine_scheme.extension_score; // == -1
         //! [gap_cost_affine]
-        (void)open_score;
-        (void)extension_score;
     }
 
     {
@@ -81,7 +76,6 @@ int main()
         // Configure the alignment to only compute the score.
         auto cfg = seqan3::align_cfg::output_score{};
         //! [output]
-        (void)cfg;
     }
 
     {
@@ -91,7 +85,6 @@ int main()
         auto cfg = seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-4},
                                                       seqan3::align_cfg::upper_diagonal{4}};
         //! [band]
-        (void)cfg;
     }
 
     {
@@ -100,6 +93,5 @@ int main()
         // Configure an edit distance alignment.
         auto cfg = seqan3::align_cfg::method_global{} | seqan3::align_cfg::edit_scheme;
         //! [edit]
-        (void)cfg;
     }
 }

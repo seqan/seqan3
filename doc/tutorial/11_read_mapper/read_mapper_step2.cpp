@@ -46,19 +46,21 @@ void map_reads(std::filesystem::path const & query_path,
 
     seqan3::sequence_file_input query_file_in{query_path};
 
+    (void)sam_path; // Silence warning about unused parameter. We are not yet using `sam_path`.
+
     seqan3::configuration const search_config =
         seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{errors}}
         | seqan3::search_cfg::hit_all_best{};
 
     for (auto && record : query_file_in | std::views::take(20))
     {
+        (void)storage; // Silence warning about unused parameter. We are not yet using `storage`.
+
         seqan3::debug_stream << "Hits:" << '\n';
         for (auto && result : search(record.sequence(), index, search_config))
             seqan3::debug_stream << result << '\n';
         seqan3::debug_stream << "======================" << '\n';
     }
-    (void)sam_path; // prevent unused parameter warning
-    (void)storage;  // prevent unused parameter warning
 }
 
 void run_program(std::filesystem::path const & reference_path,

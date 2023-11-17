@@ -17,7 +17,7 @@ auto fn = [](auto value)
     else if constexpr (std::is_same_v<value_t, int>)
         return value == 3;
     else if constexpr (std::is_same_v<value_t, double>)
-        return std::abs(value - 1.2) < 0.00001;
+        return value - 1.2 < 0.00001;
     else
         return false;
 };
