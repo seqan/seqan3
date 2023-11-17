@@ -115,23 +115,6 @@ int main()
     std::set<seqan3::dna4> pyrimidines{'C'_dna4, 'T'_dna4};
     //! [containers]
 
-    // Prevent -Wunused-variable warnings.
-    (void)rank_a;
-    (void)rank_g;
-    (void)char_a;
-    (void)char_g;
-    (void)size1;
-    (void)size2;
-    (void)dna_sequence;
-    (void)alignment_column;
-    (void)pyrimidines;
-    (void)eq;
-    (void)neq;
-    (void)geq;
-    (void)gt;
-    (void)seq;
-    (void)st;
-
     //! [closing]
     return 0;
 }

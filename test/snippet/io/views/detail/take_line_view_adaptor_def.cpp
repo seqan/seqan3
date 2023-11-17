@@ -6,7 +6,7 @@
 int main()
 {
     //![usage]
-    std::views::take_while(
+    auto v = std::views::take_while(
         [](auto const & l)
         {
             return (l != '\r') && (l != '\n');
