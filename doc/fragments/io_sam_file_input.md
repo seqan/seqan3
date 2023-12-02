@@ -15,7 +15,7 @@ Passing reference information, e.g.
 - ref_sequences: The reference sequence information **in the same order as the ref_ids**.
 
 comes in handy once you want to convert the CIGAR string, read from your file, into an actual alignment.
-This will be covered in the section \ref transform_cigar "Transforming the CIGAR information into an actual alignment".
+This will be covered in the section "Transforming the CIGAR information into an actual alignment".
 
 In most cases the template parameters are deduced automatically:
 
@@ -82,7 +82,6 @@ of seqan3::sam_file_input::mapq_type.
 \note But beware: with structured bindings you do need to get the order of elements correctly!
 
 #### Transforming the CIGAR information into an actual alignment
-\anchor transform_cigar
 
 In SeqAn, we represent an alignment as a tuple of two `seqan3::aligned_sequence`s.
 
