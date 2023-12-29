@@ -26,6 +26,7 @@ namespace seqan3
  * \param[in] arg           This is std::nullopt.
  * \relates seqan3::debug_stream_type
  */
+#if 0
 template <typename char_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, std::nullopt_t SEQAN3_DOXYGEN_ONLY(arg))
 {
@@ -49,6 +50,34 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, opt
         s << "<VALUELESS_OPTIONAL>";
     return s;
 }
+#else
+template <typename T>
+    requires (!std::is_same_v<T, std::remove_cvref_t<T>>)
+struct optional_printer<T> : public optional_printer<std::remove_cvref_t<T>>
+{
+};
+
+template <>
+struct optional_printer<std::nullopt_t>
+{
+    constexpr static auto print = [](auto & s, std::nullopt_t SEQAN3_DOXYGEN_ONLY(arg))
+    {
+        s << "<VALUELESS_OPTIONAL>";
+    };
+};
+
+template <typename T>
+struct optional_printer<std::optional<T>>
+{
+    constexpr static auto print = [](auto & s, auto && arg)
+    {
+        if (arg.has_value())
+            s << *arg;
+        else
+            s << "<VALUELESS_OPTIONAL>";
+    };
+};
+#endif
 
 //!\}
 

@@ -15,6 +15,7 @@
 
 namespace seqan3
 {
+#if 0
 /*!\name Formatted output overloads
  * \{
  */
@@ -30,10 +31,22 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alp
 {
     return s << to_char(l);
 }
+#else
+template <typename alphabet_t>
+    requires alphabet<alphabet_t>
+struct alphabet_printer<alphabet_t>
+{
+    constexpr static auto print = [](auto & s, alphabet_t l)
+    {
+        s << to_char(l);
+    };
+};
+#endif
 
 // forward declare seqan3::mask
 class mask;
 
+#if 0
 /*!\brief Overload for the seqan3::mask alphabet.
  * \tparam char_t Type char type of the debug_stream.
  * \param s The seqan3::debug_stream.
@@ -48,5 +61,16 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alp
 }
 
 //!\}
+#else
+template <typename alphabet_t>
+    requires std::same_as<std::remove_cvref_t<alphabet_t>, mask>
+struct mask_printer<alphabet_t>
+{
+    constexpr static auto print = [](auto & s, alphabet_t const l)
+    {
+        s << (l == std::remove_cvref_t<alphabet_t>{} ? "UNMASKED" : "MASKED");
+    };
+};
+#endif
 
 } // namespace seqan3

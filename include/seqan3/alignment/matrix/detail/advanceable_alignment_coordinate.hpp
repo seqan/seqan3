@@ -304,13 +304,27 @@ namespace seqan3
  *
  * Prints the alignment coordinate as a tuple.
  */
+#if 0
 template <typename char_t, typename coordinate_type>
     requires detail::is_value_specialisation_of_v<std::remove_cvref_t<coordinate_type>,
                                                   detail::advanceable_alignment_coordinate>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, coordinate_type && c)
 {
+#else
+template <typename coordinate_type>
+    requires detail::is_value_specialisation_of_v<std::remove_cvref_t<coordinate_type>,
+                                                  detail::advanceable_alignment_coordinate>
+struct advanceable_alignment_coordinate_printer<coordinate_type>
+{
+    constexpr static auto print = [](auto & s, coordinate_type const & c)
+    {
     s << std::tie(c.first, c.second);
+    };
+};
+#endif
+#if 0
     return s;
 }
+#endif
 
 } // namespace seqan3
