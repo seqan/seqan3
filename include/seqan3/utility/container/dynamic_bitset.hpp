@@ -1936,6 +1936,7 @@ public:
      *
      * \experimentalapi{Experimental since version 3.1.}
      */
+#if 1
     template <typename char_t>
     friend debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, dynamic_bitset arg)
     {
@@ -1943,6 +1944,7 @@ public:
               | ranges::to<std::string>());
         return s;
     }
+#endif
     //!\}
 
     //!\cond DEV

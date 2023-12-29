@@ -15,6 +15,7 @@
 
 namespace seqan3
 {
+#if 1
 template <typename char_t, typename index_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, seqan3::fm_index_cursor<index_t> const &)
 {
@@ -27,6 +28,7 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s,
 {
     return s << ("bi_fm_index_cursor");
 }
+#endif
 
 template <typename result_range_t>
 std::vector<std::ranges::range_value_t<result_range_t>> uniquify(result_range_t && result_range)

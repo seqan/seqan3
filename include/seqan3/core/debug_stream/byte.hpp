@@ -25,6 +25,7 @@ namespace seqan3
  * \param[in] arg           The std::byte.
  * \relates seqan3::debug_stream_type
  */
+#if 1
 template <typename char_t, typename byte_type>
     requires std::same_as<std::remove_cvref_t<byte_type>, std::byte>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, byte_type && arg)
@@ -32,6 +33,7 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, byt
     s << std::to_integer<uint8_t>(arg);
     return s;
 }
+#endif
 
 //!\}
 

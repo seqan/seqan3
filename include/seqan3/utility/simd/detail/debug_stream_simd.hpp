@@ -20,6 +20,7 @@ namespace seqan3
 /*!\brief Overload for debug_stream for simd types.
  * \ingroup utility_simd
  */
+#if 1
 template <typename char_t, typename simd_t>
     requires simd::simd_concept<std::remove_cvref_t<simd_t>>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, simd_t && simd)
@@ -34,5 +35,6 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, sim
     s << array;
     return s;
 }
+#endif
 
 } // namespace seqan3

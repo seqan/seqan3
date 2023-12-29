@@ -472,12 +472,14 @@ private:
  *
  * \returns `stream_t &` A reference to the given stream.
  */
+#if 1
 template <typename char_t, derived_from_strong_type strong_type_t>
 debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, strong_type_t && value)
 {
     stream << value.get();
     return stream;
 }
+#endif
 //!\}
 
 } // namespace seqan3::detail

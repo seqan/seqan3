@@ -188,6 +188,7 @@ public:
  * \param result The search result to print.
  * \relates seqan3::debug_stream_type
  */
+#if 1
 template <typename char_t, typename search_result_t>
     requires detail::is_type_specialisation_of_v<std::remove_cvref_t<search_result_t>, search_result>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, search_result_t && result)
@@ -207,5 +208,6 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream
 
     return stream;
 }
+#endif
 
 } // namespace seqan3

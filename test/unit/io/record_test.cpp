@@ -21,12 +21,14 @@ using default_fields = seqan3::fields<seqan3::field::seq, seqan3::field::id, seq
 // This is needed for EXPECT_RANGE_EQ:
 namespace seqan3
 {
+#if 1
 template <typename char_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, field f)
 {
     stream << "<field: " << static_cast<size_t>(f) << ">";
     return stream;
 }
+#endif
 } // namespace seqan3
 
 // ----------------------------------------------------------------------------

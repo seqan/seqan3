@@ -219,6 +219,7 @@ concept argument_parser_compatible_option =
  * This searches the seqan3::enumeration_names of the respective type for the value \p op and prints the
  * respective string if found or '\<UNKNOWN_VALUE\>' if the value cannot be found in the map.
  */
+#if 1
 template <typename char_t, typename option_type>
     requires named_enumeration<std::remove_cvref_t<option_type>>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, option_type && op)
@@ -231,6 +232,7 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, opt
 
     return s << "<UNKNOWN_VALUE>";
 }
+#endif
 //!\}
 
 /*!\brief Used to further specify argument_parser options/flags.

@@ -10,8 +10,10 @@
 #pragma once
 
 #include <iosfwd>
+#include <stdexcept>
 
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
+#include <seqan3/core/debug_stream/default_printer.hpp>
 
 namespace seqan3
 {
@@ -121,7 +123,22 @@ public:
      */
     //!\brief Forwards to the underlying stream object.
     template <typename other_char_t, typename t>
+#if 0
     friend debug_stream_type<other_char_t> & operator<<(debug_stream_type<other_char_t> & s, t && v);
+#else
+    friend debug_stream_type<other_char_t> & operator<<(debug_stream_type<other_char_t> & s, t && v)
+    {
+        using t_ = std::remove_cvref_t<t>;
+
+        if constexpr(default_printer::is_printable<t_>) {
+            default_printer::print(s, v);
+        } else {
+            std::string const msg = std::string{"debug_stream has no print overload for type: "} + typeid(v).name();
+            throw std::runtime_error{msg};
+        }
+        return s;
+    }
+#endif
 
     //!\brief This overloads enables forwarding std::endl and other manipulators.
     debug_stream_type & operator<<(std::ostream & (*fp)(std::ostream &))
@@ -130,6 +147,7 @@ public:
         return *this;
     }
 
+#if 0
     //!\cond
     debug_stream_type & operator<<(int8_t const v)
     {
@@ -148,6 +166,15 @@ public:
             *stream << v;
         return *this;
     }
+#else
+
+    template<typename T>
+    friend struct debug_stream_printer;
+
+    template<typename T>
+    friend struct std_printer;
+
+#endif
     //!\endcond
     //!\}
 
@@ -186,6 +213,7 @@ public:
 #ifdef _LIBCPP_VERSION
     static_assert(std::same_as<fmtflags, unsigned>);
 #else
+#if 0
     //!\copybrief setf()
     debug_stream_type & operator<<(fmtflags const flag)
     {
@@ -194,6 +222,7 @@ public:
     }
 #endif
     //!\}
+#endif
 
     /*!\name Format flags (seqan3::fmtflags2)
      * \brief SeqAn specific debug flags for the debug stream.
@@ -224,6 +253,7 @@ public:
         flgs2 &= ~flag;
     }
 
+#if 0
     //!\copybrief setf()
     debug_stream_type & operator<<(fmtflags2 const flag)
     {
@@ -231,6 +261,7 @@ public:
         return *this;
     }
     //!\}
+#endif
 
 private:
     //!\brief Pointer to the output stream.
@@ -240,6 +271,41 @@ private:
     fmtflags2 flgs2{fmtflags2::default_};
 };
 
+template <typename value_t>
+    requires (std::is_same_v<std::remove_cvref_t<value_t>, int8_t> || std::is_same_v<std::remove_cvref_t<value_t>, uint8_t> || std::is_same_v<std::remove_cvref_t<value_t>, fmtflags2>)
+struct debug_stream_printer<value_t>
+{
+    struct print_fn
+    {
+        template <typename stream_t>
+        constexpr void operator()(stream_t & s, int8_t const v) const
+        {
+            if ((s.flags2() & fmtflags2::small_int_as_number) == fmtflags2::small_int_as_number)
+                *s.stream << static_cast<int>(v);
+            else
+                *s.stream << v;
+        }
+
+        template <typename stream_t>
+        constexpr void operator()(stream_t & s, uint8_t const v) const
+        {
+            if ((s.flags2() & fmtflags2::small_int_as_number) == fmtflags2::small_int_as_number)
+                *s.stream << static_cast<unsigned>(v);
+            else
+                *s.stream << v;
+        }
+
+        template <typename stream_t>
+        constexpr void operator()(stream_t & s, fmtflags2 const flag) const
+        {
+            s.setf(flag);
+        }
+    };
+
+    static constexpr print_fn print{};
+};
+
+#if 0
 //!\brief Forwards to the underlying stream object.
 template <typename char_t, typename t>
 debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, t && v)
@@ -247,5 +313,6 @@ debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, t && v)
     (*s.stream) << v;
     return s;
 }
+#endif
 
 } // namespace seqan3

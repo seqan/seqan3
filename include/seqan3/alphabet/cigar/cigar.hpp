@@ -207,6 +207,7 @@ public:
     //!\}
 };
 
+#if 1
 //!\brief Overload for the seqan3::debug_stream's operator.
 template <typename char_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, cigar const c)
@@ -214,6 +215,7 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, cig
     s << c.to_string();
     return s;
 }
+#endif
 
 inline namespace literals
 {
