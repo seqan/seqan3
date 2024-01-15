@@ -259,8 +259,13 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 #    endif
 #endif
 
-//!\brief Our char literals returning std::vector should be constexpr if constexpr std::vector is supported.
-#if defined(__cpp_lib_constexpr_vector) && __cpp_lib_constexpr_vector >= 201907L
+/*!\brief Our char literals returning std::vector should be constexpr if constexpr std::vector is supported.
+ *
+ * The _GLIBCXX_DEBUG statement is a workaround for a libstdc++ bug
+ * \see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=104748
+ * \see https://github.com/seqan/seqan3/issues/3221
+ **/
+#if defined(__cpp_lib_constexpr_vector) && __cpp_lib_constexpr_vector >= 201907L && !defined(_GLIBCXX_DEBUG)
 #    define SEQAN3_WORKAROUND_LITERAL constexpr
 #else
 #    define SEQAN3_WORKAROUND_LITERAL inline
