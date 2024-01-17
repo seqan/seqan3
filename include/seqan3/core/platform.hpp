@@ -264,6 +264,7 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
  * The _GLIBCXX_DEBUG statement is a workaround for a libstdc++ bug
  * \see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=104748
  * \see https://github.com/seqan/seqan3/issues/3221
+ * \see https://godbolt.org/z/159n8xrdo
  **/
 #if __cpp_lib_constexpr_vector >= 201907L && (defined(_LIBCPP_VERSION) || !defined(_GLIBCXX_DEBUG))
 #    define SEQAN3_WORKAROUND_LITERAL constexpr
