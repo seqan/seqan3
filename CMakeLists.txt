@@ -9,7 +9,7 @@
 # SeqAn3. To build tests, run cmake on one of the sub-folders in this directory
 # which contain a CMakeLists.txt.
 
-cmake_minimum_required (VERSION 3.4)
+cmake_minimum_required (VERSION 3.5)
 
 find_path (SEQAN3_MODULE_PATH "seqan3-config.cmake" HINTS "${CMAKE_CURRENT_LIST_DIR}/build_system/")
 list (APPEND CMAKE_MODULE_PATH "${SEQAN3_MODULE_PATH}")

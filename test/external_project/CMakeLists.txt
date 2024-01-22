@@ -5,7 +5,7 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 3.4)
+cmake_minimum_required (VERSION 3.5)
 project (seqan3_test_external_project CXX)
 
 include (../seqan3-test.cmake) # for SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS, SEQAN3_VERSION
@@ -21,9 +21,9 @@ endif ()
 option (SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE
         "Enable this option if you want to get a detailed list which paths were considered for find_package(...)" false)
 
-if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to install cmake 3.4.
+if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to install cmake 3.5.
     set (SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND "${CMAKE_COMMAND}")
-    include (use-cmake3.4.cmake) # ensure that seqan3 can be used with cmake 3.4
+    include (use-cmake3.5.cmake) # ensure that seqan3 can be used with cmake 3.5
 else ()
     set (SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND "${CMAKE_COMMAND}")
 endif ()
@@ -39,16 +39,16 @@ endif ()
 #    fetch_content
 #
 # If your current CMake version is >= 3.14, we
-#  * download CMake  3.4
-#  * test test/external_project/seqan3_submodule_add_subdirectory/CMakeLists.txt with CMake 3.4
-#  * test test/external_project/seqan3_submodule_find_package/CMakeLists.txt with CMake 3.4
-#  * test test/external_project/seqan3_installed/CMakeLists.txt with CMake 3.4
+#  * download CMake  3.5
+#  * test test/external_project/seqan3_submodule_add_subdirectory/CMakeLists.txt with CMake 3.5
+#  * test test/external_project/seqan3_submodule_find_package/CMakeLists.txt with CMake 3.5
+#  * test test/external_project/seqan3_installed/CMakeLists.txt with CMake 3.5
 #  * test test/external_project/seqan3_fetch_content_zip/CMakeLists.txt with your current CMake version
 
 # 1) This tests test/external_project/seqan3_submodule_add_subdirectory/CMakeLists.txt
 #    That means we use add_subdirectory directly on seqan3's top level CMakeLists.txt.
 #    This will automatically call find_package and expose our seqan3::seqan3 target.
-#    This is expected to work with CMake >= 3.4.
+#    This is expected to work with CMake >= 3.5.
 # (ExternalProject_Add simulates a fresh and separate invocation of cmake ../)
 ExternalProject_Add (
     seqan3_submodule_add_subdirectory
@@ -62,7 +62,7 @@ ExternalProject_Add (
 # 2) This tests test/external_project/seqan3_submodule_find_package/CMakeLists.txt
 #    We have a seqan3 checkout somewhere and we point CMAKE_PREFIX_PATH to <checkout>/seqan3/build_system
 #    and then use `find_package` to find `seqan3-config.cmake` which exposes our `seqan3::seqan3` target.
-#    This is expected to work with CMake >= 3.4.
+#    This is expected to work with CMake >= 3.5.
 # (ExternalProject_Add simulates a fresh and separate invocation of cmake ../)
 ExternalProject_Add (
     seqan3_submodule_find_package
@@ -82,7 +82,7 @@ ExternalProject_Add (
 #    https://github.com/seqan/seqan3/releases, and unzipping it to some folder and making
 #    that path globally accessible by CMAKE_SYSTEM_PREFIX_PATH.
 #    We need CMake >= 3.14 to be able to package seqan3, but we actually expect that this
-#    test works with CMake >= 3.4.
+#    test works with CMake >= 3.5.
 # (ExternalProject_Add simulates a fresh and separate invocation of cmake ../)
 if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to install seqan3.
     ExternalProject_Add (
