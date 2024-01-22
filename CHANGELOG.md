@@ -34,6 +34,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Dependencies
   * We now use Doxygen version 1.9.8 to build our documentation ([\#3197](https://github.com/seqan/seqan3/pull/3197)).
+  * We bumped the minimal CMake version to 3.5 ([\#3223](https://github.com/seqan/seqan3/pull/3223)).
 
 # 3.3.0
 

@@ -13,7 +13,7 @@ works.
 # Software
 Requirements:
   - gcc >= 11
-  - cmake >= 3.4
+  - cmake >= 3.5
   - git
 
 ## Installing GCC
