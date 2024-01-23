@@ -62,6 +62,12 @@ jobs:
             build: unit
             build_type: Release
 
+          - name: "IntelLLVM"
+            compiler: "intel"
+            build: unit
+            build_type: Release
+            cxx_flags: "-fp-model=strict"
+
     steps:
       - name: Checkout SeqAn3
         uses: actions/checkout@v4
@@ -84,6 +90,7 @@ jobs:
           ccache_size: 75M
 
       - name: Install CMake
+        if: contains(matrix.compiler, 'intel') == false
         uses: seqan/actions/setup-cmake@main
         with:
           cmake: 3.16.9
