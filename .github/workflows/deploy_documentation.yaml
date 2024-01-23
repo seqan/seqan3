@@ -39,7 +39,7 @@ jobs:
           doxygen: 1.9.8
 
       - name: Load cached documentation
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: doc-build
           key: ${{ runner.os }}-documentation-1.9.8
