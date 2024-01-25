@@ -62,7 +62,7 @@ jobs:
         with:
           flags: '-zr --delete --timeout=60 --omit-dir-times'
           src: 'doc-build/doc_usr/html/'
-          dest: '$REMOTE_USER@$REMOTE_HOST:$TARGET/3-master-user'
+          dest: '$REMOTE_USER@$REMOTE_HOST:$TARGET/main_user'
 
       - name: Deploy Developer Documentation
         uses: Pendect/action-rsyncer@v2.0.0
@@ -74,4 +74,4 @@ jobs:
         with:
           flags: '-zr --delete --timeout=60 --omit-dir-times'
           src: 'doc-build/doc_dev/html/'
-          dest: '$REMOTE_USER@$REMOTE_HOST:$TARGET/3-master-dev'
+          dest: '$REMOTE_USER@$REMOTE_HOST:$TARGET/main_dev'
