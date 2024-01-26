@@ -72,11 +72,6 @@ inline constexpr bool add_enum_bitwise_operators<seqan3::detail::trace_direction
  * | seqan3::detail::trace_directions::left_open | ←    | L     |
  * | seqan3::detail::trace_directions::left      | ⇠    | l     |
  */
-#if 0
-template <typename char_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, detail::trace_directions const trace)
-{
-#else
 template <typename trace_directions_t>
     requires std::is_same_v<std::remove_cvref_t<trace_directions_t>, detail::trace_directions>
 struct trace_directions_printer<trace_directions_t>
@@ -97,10 +92,5 @@ struct trace_directions_printer<trace_directions_t>
     s << trace_dir[static_cast<size_t>(trace)];
     };
 };
-#endif
-#if 0
-    return s;
-}
-#endif
 
 } // namespace seqan3

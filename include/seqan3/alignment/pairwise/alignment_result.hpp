@@ -409,12 +409,6 @@ namespace seqan3
  * \param[in] result The alignment result to print.
  * \relates seqan3::debug_stream_type
  */
-#if 0
-template <typename char_t, typename alignment_result_t>
-    requires detail::is_type_specialisation_of_v<std::remove_cvref_t<alignment_result_t>, alignment_result>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, alignment_result_t && result)
-{
-#else
 template <typename T>
     requires (!std::is_same_v<T, std::remove_cvref_t<T>>)
 struct alignment_result_printer<T> : public alignment_result_printer<std::remove_cvref_t<T>>
@@ -464,9 +458,5 @@ struct alignment_result_printer<alignment_result<result_value_t>>
 
     };
 };
-#endif
-#if 0
-    return stream;
-}
-#endif
+
 } // namespace seqan3

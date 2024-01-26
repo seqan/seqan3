@@ -123,9 +123,6 @@ public:
      */
     //!\brief Forwards to the underlying stream object.
     template <typename other_char_t, typename t>
-#if 0
-    friend debug_stream_type<other_char_t> & operator<<(debug_stream_type<other_char_t> & s, t && v);
-#else
     friend debug_stream_type<other_char_t> & operator<<(debug_stream_type<other_char_t> & s, t && v)
     {
         using t_ = std::remove_cvref_t<t>;
@@ -138,7 +135,6 @@ public:
         }
         return s;
     }
-#endif
 
     //!\brief This overloads enables forwarding std::endl and other manipulators.
     debug_stream_type & operator<<(std::ostream & (*fp)(std::ostream &))
@@ -147,36 +143,13 @@ public:
         return *this;
     }
 
-#if 0
-    //!\cond
-    debug_stream_type & operator<<(int8_t const v)
-    {
-        if ((flags2() & fmtflags2::small_int_as_number) == fmtflags2::small_int_as_number)
-            *stream << static_cast<int>(v);
-        else
-            *stream << v;
-        return *this;
-    }
-
-    debug_stream_type & operator<<(uint8_t const v)
-    {
-        if ((flags2() & fmtflags2::small_int_as_number) == fmtflags2::small_int_as_number)
-            *stream << static_cast<unsigned>(v);
-        else
-            *stream << v;
-        return *this;
-    }
-#else
+    //!\}
 
     template<typename T>
     friend struct debug_stream_printer;
 
     template<typename T>
     friend struct std_printer;
-
-#endif
-    //!\endcond
-    //!\}
 
     //!\brief This type is std::ios_base::fmtflags
     using fmtflags = typename std::basic_ostream<char_t>::fmtflags;
@@ -209,20 +182,7 @@ public:
         stream->unsetf(flag);
     }
 
-// fmtflags is an enum in libstdc++ and an unsigned in libc++
-#ifdef _LIBCPP_VERSION
-    static_assert(std::same_as<fmtflags, unsigned>);
-#else
-#if 0
-    //!\copybrief setf()
-    debug_stream_type & operator<<(fmtflags const flag)
-    {
-        setf(flag);
-        return *this;
-    }
-#endif
     //!\}
-#endif
 
     /*!\name Format flags (seqan3::fmtflags2)
      * \brief SeqAn specific debug flags for the debug stream.
@@ -253,15 +213,7 @@ public:
         flgs2 &= ~flag;
     }
 
-#if 0
-    //!\copybrief setf()
-    debug_stream_type & operator<<(fmtflags2 const flag)
-    {
-        setf(flag);
-        return *this;
-    }
     //!\}
-#endif
 
 private:
     //!\brief Pointer to the output stream.
@@ -304,15 +256,5 @@ struct debug_stream_printer<value_t>
 
     static constexpr print_fn print{};
 };
-
-#if 0
-//!\brief Forwards to the underlying stream object.
-template <typename char_t, typename t>
-debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, t && v)
-{
-    (*s.stream) << v;
-    return s;
-}
-#endif
 
 } // namespace seqan3

@@ -15,7 +15,6 @@
 
 namespace seqan3
 {
-#if 0
 /*!\name Formatted output overloads
  * \{
  */
@@ -25,13 +24,6 @@ namespace seqan3
  * \param l The alphabet letter.
  * \relates seqan3::debug_stream_type
  */
-template <typename char_t, alphabet alphabet_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alphabet_t && l)
-    requires (!output_stream_over<std::basic_ostream<char_t>, alphabet_t>)
-{
-    return s << to_char(l);
-}
-#else
 template <typename alphabet_t>
     requires alphabet<alphabet_t>
 struct alphabet_printer<alphabet_t>
@@ -41,27 +33,16 @@ struct alphabet_printer<alphabet_t>
         s << to_char(l);
     };
 };
-#endif
 
 // forward declare seqan3::mask
 class mask;
 
-#if 0
 /*!\brief Overload for the seqan3::mask alphabet.
  * \tparam char_t Type char type of the debug_stream.
  * \param s The seqan3::debug_stream.
  * \param l The mask alphabet letter.
  * \relates seqan3::debug_stream_type
  */
-template <typename char_t, seqan3::semialphabet alphabet_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alphabet_t && l)
-    requires std::same_as<std::remove_cvref_t<alphabet_t>, mask>
-{
-    return s << (l == alphabet_t{} ? "UNMASKED" : "MASKED");
-}
-
-//!\}
-#else
 template <typename alphabet_t>
     requires std::same_as<std::remove_cvref_t<alphabet_t>, mask>
 struct mask_printer<alphabet_t>
@@ -71,6 +52,7 @@ struct mask_printer<alphabet_t>
         s << (l == std::remove_cvref_t<alphabet_t>{} ? "UNMASKED" : "MASKED");
     };
 };
-#endif
+
+//!\}
 
 } // namespace seqan3
