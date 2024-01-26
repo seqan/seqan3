@@ -127,9 +127,12 @@ public:
     {
         using t_ = std::remove_cvref_t<t>;
 
-        if constexpr(default_printer::is_printable<t_>) {
+        if constexpr (default_printer::is_printable<t_>)
+        {
             default_printer::print(s, v);
-        } else {
+        }
+        else
+        {
             std::string const msg = std::string{"debug_stream has no print overload for type: "} + typeid(v).name();
             throw std::runtime_error{msg};
         }
@@ -145,10 +148,10 @@ public:
 
     //!\}
 
-    template<typename T>
+    template <typename T>
     friend struct debug_stream_printer;
 
-    template<typename T>
+    template <typename T>
     friend struct std_printer;
 
     //!\brief This type is std::ios_base::fmtflags
@@ -224,7 +227,9 @@ private:
 };
 
 template <typename value_t>
-    requires (std::is_same_v<std::remove_cvref_t<value_t>, int8_t> || std::is_same_v<std::remove_cvref_t<value_t>, uint8_t> || std::is_same_v<std::remove_cvref_t<value_t>, fmtflags2>)
+    requires (std::is_same_v<std::remove_cvref_t<value_t>, int8_t>
+              || std::is_same_v<std::remove_cvref_t<value_t>, uint8_t>
+              || std::is_same_v<std::remove_cvref_t<value_t>, fmtflags2>)
 struct debug_stream_printer<value_t>
 {
     struct print_fn

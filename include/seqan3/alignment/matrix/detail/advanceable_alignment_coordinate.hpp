@@ -309,9 +309,9 @@ template <typename coordinate_type>
                                                   detail::advanceable_alignment_coordinate>
 struct advanceable_alignment_coordinate_printer<coordinate_type>
 {
-    constexpr static auto print = [](auto & s, coordinate_type const & c)
+    static constexpr auto print = [](auto & s, coordinate_type const & c)
     {
-    s << std::tie(c.first, c.second);
+        s << std::tie(c.first, c.second);
     };
 };
 

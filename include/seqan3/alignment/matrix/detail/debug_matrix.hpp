@@ -480,13 +480,13 @@ template <typename alignment_matrix_t>
     requires detail::matrix<std::remove_cvref_t<alignment_matrix_t>>
 struct alignment_matrix_printer<alignment_matrix_t>
 {
-    constexpr static auto print = [](auto & s, auto && matrix)
+    static constexpr auto print = [](auto & s, auto && matrix)
     {
-    detail::debug_matrix debug{std::forward<alignment_matrix_t>(matrix)};
+        detail::debug_matrix debug{std::forward<alignment_matrix_t>(matrix)};
 
-    std::stringstream sstream{};
-    debug.stream_matrix(sstream, s.flags2());
-    s << sstream.str();
+        std::stringstream sstream{};
+        debug.stream_matrix(sstream, s.flags2());
+        s << sstream.str();
     };
 };
 

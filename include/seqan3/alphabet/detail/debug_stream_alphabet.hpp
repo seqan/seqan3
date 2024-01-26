@@ -28,7 +28,7 @@ template <typename alphabet_t>
     requires alphabet<alphabet_t>
 struct alphabet_printer<alphabet_t>
 {
-    constexpr static auto print = [](auto & s, alphabet_t l)
+    static constexpr auto print = [](auto & s, alphabet_t l)
     {
         s << to_char(l);
     };
@@ -47,7 +47,7 @@ template <typename alphabet_t>
     requires std::same_as<std::remove_cvref_t<alphabet_t>, mask>
 struct mask_printer<alphabet_t>
 {
-    constexpr static auto print = [](auto & s, alphabet_t const l)
+    static constexpr auto print = [](auto & s, alphabet_t const l)
     {
         s << (l == std::remove_cvref_t<alphabet_t>{} ? "UNMASKED" : "MASKED");
     };

@@ -24,8 +24,7 @@ namespace seqan3
 template <typename T>
     requires (!std::is_same_v<T, std::remove_cvref_t<T>>)
 struct optional_printer<T> : public optional_printer<std::remove_cvref_t<T>>
-{
-};
+{};
 
 /*!\brief Make std::nullopt_t printable.
  * \tparam    optional_type This is std::nullopt_t.
@@ -36,7 +35,7 @@ struct optional_printer<T> : public optional_printer<std::remove_cvref_t<T>>
 template <>
 struct optional_printer<std::nullopt_t>
 {
-    constexpr static auto print = [](auto & s, std::nullopt_t SEQAN3_DOXYGEN_ONLY(arg))
+    static constexpr auto print = [](auto & s, std::nullopt_t SEQAN3_DOXYGEN_ONLY(arg))
     {
         s << "<VALUELESS_OPTIONAL>";
     };
@@ -51,7 +50,7 @@ struct optional_printer<std::nullopt_t>
 template <typename T>
 struct optional_printer<std::optional<T>>
 {
-    constexpr static auto print = [](auto & s, auto && arg)
+    static constexpr auto print = [](auto & s, auto && arg)
     {
         if (arg.has_value())
             s << *arg;

@@ -76,20 +76,21 @@ template <typename trace_directions_t>
     requires std::is_same_v<std::remove_cvref_t<trace_directions_t>, detail::trace_directions>
 struct trace_directions_printer<trace_directions_t>
 {
-    constexpr static auto print = [](auto & s, detail::trace_directions const trace)
+    static constexpr auto print = [](auto & s, detail::trace_directions const trace)
     {
-    static char const * unicode[32]{"↺",   "↖",    "↑",   "↖↑",  "⇡",    "↖⇡",   "↑⇡",  "↖↑⇡",  "←",    "↖←",   "↑←",
-                                    "↖↑←", "⇡←",   "↖⇡←", "↑⇡←", "↖↑⇡←", "⇠",    "↖⇠",  "↑⇠",   "↖↑⇠",  "⇡⇠",   "↖⇡⇠",
-                                    "↑⇡⇠", "↖↑⇡⇠", "←⇠",  "↖←⇠", "↑←⇠",  "↖↑←⇠", "⇡←⇠", "↖⇡←⇠", "↑⇡←⇠", "↖↑⇡←⇠"};
+        static char const * unicode[32]{"↺",  "↖",   "↑",   "↖↑",   "⇡",   "↖⇡",   "↑⇡",   "↖↑⇡",
+                                        "←",  "↖←",  "↑←",  "↖↑←",  "⇡←",  "↖⇡←",  "↑⇡←",  "↖↑⇡←",
+                                        "⇠",  "↖⇠",  "↑⇠",  "↖↑⇠",  "⇡⇠",  "↖⇡⇠",  "↑⇡⇠",  "↖↑⇡⇠",
+                                        "←⇠", "↖←⇠", "↑←⇠", "↖↑←⇠", "⇡←⇠", "↖⇡←⇠", "↑⇡←⇠", "↖↑⇡←⇠"};
 
-    static char const * csv[32]{"N",   "D",    "U",   "DU",  "u",    "Du",   "Uu",  "DUu",  "L",    "DL",   "UL",
-                                "DUL", "uL",   "DuL", "UuL", "DUuL", "l",    "Dl",  "Ul",   "DUl",  "ul",   "Dul",
-                                "Uul", "DUul", "Ll",  "DLl", "ULl",  "DULl", "uLl", "DuLl", "UuLl", "DUuLl"};
+        static char const * csv[32]{"N",   "D",    "U",   "DU",  "u",    "Du",   "Uu",  "DUu",  "L",    "DL",   "UL",
+                                    "DUL", "uL",   "DuL", "UuL", "DUuL", "l",    "Dl",  "Ul",   "DUl",  "ul",   "Dul",
+                                    "Uul", "DUul", "Ll",  "DLl", "ULl",  "DULl", "uLl", "DuLl", "UuLl", "DUuLl"};
 
-    bool is_unicode = (s.flags2() & fmtflags2::utf8) == fmtflags2::utf8;
-    auto const & trace_dir = is_unicode ? unicode : csv;
+        bool is_unicode = (s.flags2() & fmtflags2::utf8) == fmtflags2::utf8;
+        auto const & trace_dir = is_unicode ? unicode : csv;
 
-    s << trace_dir[static_cast<size_t>(trace)];
+        s << trace_dir[static_cast<size_t>(trace)];
     };
 };
 

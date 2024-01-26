@@ -67,12 +67,12 @@ template <typename tuple_type>
     requires tuple_like<tuple_type>
 struct tuple_printer<tuple_type>
 {
-    constexpr static auto print = [](auto & s, auto && t)
+    static constexpr auto print = [](auto & s, auto && t)
     {
-    using tuple_t = decltype(t);
-    detail::print_tuple(s,
-                        std::forward<tuple_t>(t),
-                        std::make_index_sequence<std::tuple_size_v<std::remove_cvref_t<tuple_t>>>{});
+        using tuple_t = decltype(t);
+        detail::print_tuple(s,
+                            std::forward<tuple_t>(t),
+                            std::make_index_sequence<std::tuple_size_v<std::remove_cvref_t<tuple_t>>>{});
     };
 };
 
