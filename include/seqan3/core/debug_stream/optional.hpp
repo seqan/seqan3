@@ -20,43 +20,19 @@ namespace seqan3
 /*!\name Formatted output overloads
  * \{
  */
-/*!\brief Make std::nullopt_t printable.
- * \tparam    optional_type This is std::nullopt_t.
- * \param[in] s             The seqan3::debug_stream.
- * \param[in] arg           This is std::nullopt.
- * \relates seqan3::debug_stream_type
- */
-#if 0
-template <typename char_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, std::nullopt_t SEQAN3_DOXYGEN_ONLY(arg))
-{
-    s << "<VALUELESS_OPTIONAL>";
-    return s;
-}
 
-/*!\brief A std::optional can be printed by printing its value or nothing if valueless.
- * \tparam    optional_type The type of the optional.
- * \param[in] s             The seqan3::debug_stream.
- * \param[in] arg           The std::optional.
- * \relates seqan3::debug_stream_type
- */
-template <typename char_t, typename optional_type>
-    requires detail::is_type_specialisation_of_v<std::remove_cvref_t<optional_type>, std::optional>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, optional_type && arg)
-{
-    if (arg.has_value())
-        s << *arg;
-    else
-        s << "<VALUELESS_OPTIONAL>";
-    return s;
-}
-#else
 template <typename T>
     requires (!std::is_same_v<T, std::remove_cvref_t<T>>)
 struct optional_printer<T> : public optional_printer<std::remove_cvref_t<T>>
 {
 };
 
+/*!\brief Make std::nullopt_t printable.
+ * \tparam    optional_type This is std::nullopt_t.
+ * \param[in] s             The seqan3::debug_stream.
+ * \param[in] arg           This is std::nullopt.
+ * \relates seqan3::debug_stream_type
+ */
 template <>
 struct optional_printer<std::nullopt_t>
 {
@@ -66,6 +42,12 @@ struct optional_printer<std::nullopt_t>
     };
 };
 
+/*!\brief A std::optional can be printed by printing its value or nothing if valueless.
+ * \tparam    optional_type The type of the optional.
+ * \param[in] s             The seqan3::debug_stream.
+ * \param[in] arg           The std::optional.
+ * \relates seqan3::debug_stream_type
+ */
 template <typename T>
 struct optional_printer<std::optional<T>>
 {
@@ -77,7 +59,6 @@ struct optional_printer<std::optional<T>>
             s << "<VALUELESS_OPTIONAL>";
     };
 };
-#endif
 
 //!\}
 

@@ -57,18 +57,12 @@ std::ranges::input_range<tuple_t> && !alphabet<tuple_t> && // exclude alphabet_t
 namespace seqan3
 {
 
-#if 0
 /*!\brief All tuples can be printed by printing their elements separately.
  * \tparam tuple_t Type of the tuple to be printed; must model seqan3::tuple_like.
  * \param s The seqan3::debug_stream.
  * \param t The tuple.
  * \relates seqan3::debug_stream_type
  */
-template <typename char_t, typename tuple_t>
-    requires (detail::debug_streamable_tuple<tuple_t>)
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, tuple_t && t)
-{
-#else
 template <typename tuple_type>
     requires tuple_like<tuple_type>
 struct tuple_printer<tuple_type>
@@ -81,11 +75,6 @@ struct tuple_printer<tuple_type>
                         std::make_index_sequence<std::tuple_size_v<std::remove_cvref_t<tuple_t>>>{});
     };
 };
-#endif
-#if 0
-    return s;
-}
-#endif
 
 //!\}
 

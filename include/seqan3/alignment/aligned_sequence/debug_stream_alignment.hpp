@@ -101,13 +101,6 @@ namespace seqan3
  *
  * \return The given stream to which the alignment representation is appended.
  */
-#if 0
-template <typename char_t, typename alignment_t>
-    requires (detail::debug_streamable_tuple<alignment_t>
-              && detail::all_model_aligned_seq<detail::tuple_type_list_t<std::remove_cvref_t<alignment_t>>>)
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, alignment_t && alignment)
-{
-#else
 template <typename alignment_t>
     requires (tuple_like<std::remove_cvref_t<alignment_t>> && detail::all_model_aligned_seq<detail::tuple_type_list_t<std::remove_cvref_t<alignment_t>>>)
 struct alignment_printer<alignment_t>
@@ -121,10 +114,5 @@ struct alignment_printer<alignment_t>
     detail::stream_alignment(stream, alignment, std::make_index_sequence<sequence_count - 1>{});
     };
 };
-#endif
-#if 0
-    return stream;
-}
-#endif
 
 } // namespace seqan3

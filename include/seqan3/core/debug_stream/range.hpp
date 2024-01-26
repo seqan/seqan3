@@ -68,6 +68,11 @@ constexpr bool reference_type_is_streamable_v<rng_t, char_t> = true;
 
 namespace seqan3
 {
+
+// e.g. std::filesystem
+template <typename rng_t>
+concept nonrecursive_range = !std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<rng_t>>, std::remove_cvref_t<rng_t>>;
+
 /*!\name Formatted output overloads
  * \{
  */
@@ -90,27 +95,12 @@ namespace seqan3
  * to avoid ambiguous function calls.
  * \endif
  */
-#if 0
-template <typename char_t, std::ranges::input_range rng_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, rng_t && r)
-    requires detail::debug_stream_range_guard<rng_t>
-{
-#else
-
-// e.g. std::filesystem
-template <typename rng_t>
-concept nonrecursive_range = !std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<rng_t>>, std::remove_cvref_t<rng_t>>;
-
 template <typename rng_t>
     requires std::ranges::input_range<rng_t> && nonrecursive_range<rng_t>
 struct input_range_printer<rng_t>
 {
     constexpr static auto print = [](auto & s, auto && r)
     {
-#if 0
-    static_assert(detail::reference_type_is_streamable_v<rng_t, char_t>,
-                  "The reference type of the passed range cannot be streamed into the debug_stream.");
-#endif
 
     s << '[';
     auto b = std::ranges::begin(r);
@@ -129,12 +119,6 @@ struct input_range_printer<rng_t>
     s << ']';
     };
 };
-#endif
-#if 0
-
-    return s;
-}
-#endif
 
 /*!\brief All biological sequences can be printed to the seqan3::debug_stream.
  * \tparam sequence_t Type of the (biological) sequence to be printed; must model seqan3::sequence.
@@ -152,13 +136,6 @@ struct input_range_printer<rng_t>
  * to avoid ambiguous function calls.
  * \endif
  */
-#if 0
-template <typename char_t, sequence sequence_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, sequence_t && sequence)
-    requires detail::debug_stream_range_guard<sequence_t>
-          && (!detail::is_uint_adaptation_v<std::remove_cvref_t<std::ranges::range_reference_t<sequence_t>>>)
-{
-#else
 template <typename sequence_t>
     requires sequence<sequence_t>
 struct sequence_printer<sequence_t>
@@ -169,11 +146,6 @@ struct sequence_printer<sequence_t>
         s << chr;
     };
 };
-#endif
-#if 0
-    return s;
-}
-#endif
 
 // basically same as is_char_adaptation_v
 template <typename type>
