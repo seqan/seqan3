@@ -412,50 +412,55 @@ namespace seqan3
 template <typename T>
     requires (!std::is_same_v<T, std::remove_cvref_t<T>>)
 struct alignment_result_printer<T> : public alignment_result_printer<std::remove_cvref_t<T>>
-{
-};
+{};
 
 template <typename result_value_t>
 struct alignment_result_printer<alignment_result<result_value_t>>
 {
-    constexpr static auto print = [](auto & stream, alignment_result<result_value_t> const & result)
+    static constexpr auto print = [](auto & stream, alignment_result<result_value_t> const & result)
     {
-    using alignment_result_t = alignment_result<result_value_t>;
-    using disabled_t = std::nullopt_t *;
-    using result_data_t =
-        typename detail::alignment_result_value_type_accessor<std::remove_cvref_t<alignment_result_t>>::type;
+        using alignment_result_t = alignment_result<result_value_t>;
+        using disabled_t = std::nullopt_t *;
+        using result_data_t =
+            typename detail::alignment_result_value_type_accessor<std::remove_cvref_t<alignment_result_t>>::type;
 
-    constexpr bool has_sequence1_id = !std::is_same_v<decltype(std::declval<result_data_t>().sequence1_id), disabled_t>;
-    constexpr bool has_sequence2_id = !std::is_same_v<decltype(std::declval<result_data_t>().sequence2_id), disabled_t>;
-    constexpr bool has_score = !std::is_same_v<decltype(std::declval<result_data_t>().score), disabled_t>;
-    constexpr bool has_end_positions =
-        !std::is_same_v<decltype(std::declval<result_data_t>().end_positions), disabled_t>;
-    constexpr bool has_begin_positions =
-        !std::is_same_v<decltype(std::declval<result_data_t>().begin_positions), disabled_t>;
-    constexpr bool has_alignment = !std::is_same_v<decltype(std::declval<result_data_t>().alignment), disabled_t>;
+        constexpr bool has_sequence1_id =
+            !std::is_same_v<decltype(std::declval<result_data_t>().sequence1_id), disabled_t>;
+        constexpr bool has_sequence2_id =
+            !std::is_same_v<decltype(std::declval<result_data_t>().sequence2_id), disabled_t>;
+        constexpr bool has_score = !std::is_same_v<decltype(std::declval<result_data_t>().score), disabled_t>;
+        constexpr bool has_end_positions =
+            !std::is_same_v<decltype(std::declval<result_data_t>().end_positions), disabled_t>;
+        constexpr bool has_begin_positions =
+            !std::is_same_v<decltype(std::declval<result_data_t>().begin_positions), disabled_t>;
+        constexpr bool has_alignment = !std::is_same_v<decltype(std::declval<result_data_t>().alignment), disabled_t>;
 
-    bool prepend_comma = false;
-    auto append_to_stream = [&](auto &&... args)
-    {
-        ((stream << (prepend_comma ? std::string{", "} : std::string{})) << ... << std::forward<decltype(args)>(args));
-        prepend_comma = true;
-    };
+        bool prepend_comma = false;
+        auto append_to_stream = [&](auto &&... args)
+        {
+            ((stream << (prepend_comma ? std::string{", "} : std::string{}))
+             << ... << std::forward<decltype(args)>(args));
+            prepend_comma = true;
+        };
 
-    stream << '{';
-    if constexpr (has_sequence1_id)
-        append_to_stream("sequence1 id: ", result.sequence1_id());
-    if constexpr (has_sequence2_id)
-        append_to_stream("sequence2 id: ", result.sequence2_id());
-    if constexpr (has_score)
-        append_to_stream("score: ", result.score());
-    if constexpr (has_begin_positions)
-        append_to_stream("begin: (", result.sequence1_begin_position(), ",", result.sequence2_begin_position(), ")");
-    if constexpr (has_end_positions)
-        append_to_stream("end: (", result.sequence1_end_position(), ",", result.sequence2_end_position(), ")");
-    if constexpr (has_alignment)
-        append_to_stream("\nalignment:\n", result.alignment());
-    stream << '}';
-
+        stream << '{';
+        if constexpr (has_sequence1_id)
+            append_to_stream("sequence1 id: ", result.sequence1_id());
+        if constexpr (has_sequence2_id)
+            append_to_stream("sequence2 id: ", result.sequence2_id());
+        if constexpr (has_score)
+            append_to_stream("score: ", result.score());
+        if constexpr (has_begin_positions)
+            append_to_stream("begin: (",
+                             result.sequence1_begin_position(),
+                             ",",
+                             result.sequence2_begin_position(),
+                             ")");
+        if constexpr (has_end_positions)
+            append_to_stream("end: (", result.sequence1_end_position(), ",", result.sequence2_end_position(), ")");
+        if constexpr (has_alignment)
+            append_to_stream("\nalignment:\n", result.alignment());
+        stream << '}';
     };
 };
 

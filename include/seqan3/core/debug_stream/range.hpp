@@ -71,7 +71,8 @@ namespace seqan3
 
 // e.g. std::filesystem
 template <typename rng_t>
-concept nonrecursive_range = !std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<rng_t>>, std::remove_cvref_t<rng_t>>;
+concept nonrecursive_range = !
+std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<rng_t>>, std::remove_cvref_t<rng_t>>;
 
 /*!\name Formatted output overloads
  * \{
@@ -99,24 +100,23 @@ template <typename rng_t>
     requires std::ranges::input_range<rng_t> && nonrecursive_range<rng_t>
 struct input_range_printer<rng_t>
 {
-    constexpr static auto print = [](auto & s, auto && r)
+    static constexpr auto print = [](auto & s, auto && r)
     {
-
-    s << '[';
-    auto b = std::ranges::begin(r);
-    auto e = std::ranges::end(r);
-    if (b != e)
-    {
-        s << *b;
-        ++b;
-    }
-    while (b != e)
-    {
-        s << ',';
-        s << *b;
-        ++b;
-    }
-    s << ']';
+        s << '[';
+        auto b = std::ranges::begin(r);
+        auto e = std::ranges::end(r);
+        if (b != e)
+        {
+            s << *b;
+            ++b;
+        }
+        while (b != e)
+        {
+            s << ',';
+            s << *b;
+            ++b;
+        }
+        s << ']';
     };
 };
 
@@ -140,36 +140,38 @@ template <typename sequence_t>
     requires sequence<sequence_t>
 struct sequence_printer<sequence_t>
 {
-    constexpr static auto print = [](auto & s, auto && sequence)
+    static constexpr auto print = [](auto & s, auto && sequence)
     {
-    for (auto && chr : sequence)
-        s << chr;
+        for (auto && chr : sequence)
+            s << chr;
     };
 };
 
 // basically same as is_char_adaptation_v
 template <typename type>
-static constexpr bool is_char_type_v = std::same_as<type, char> || std::same_as<type, char16_t> || std::same_as<type, char32_t> || std::same_as<type, wchar_t>;
+static constexpr bool is_char_type_v = std::same_as<type, char> || std::same_as<type, char16_t>
+                                    || std::same_as<type, char32_t> || std::same_as<type, wchar_t>;
 
 template <typename char_sequence_t>
-    requires std::ranges::input_range<char_sequence_t> && (is_char_type_v<std::remove_cvref_t<std::ranges::range_reference_t<char_sequence_t>>>)
+    requires std::ranges::input_range<char_sequence_t>
+          && (is_char_type_v<std::remove_cvref_t<std::ranges::range_reference_t<char_sequence_t>>>)
 struct char_sequence_printer<char_sequence_t>
 {
-    constexpr static auto print = [](auto & s, auto && sequence)
+    static constexpr auto print = [](auto & s, auto && sequence)
     {
-    if constexpr(std::is_pointer_v<std::decay_t<char_sequence_t>>)
-        return std_printer<char_sequence_t>::print(s, sequence);
+        if constexpr (std::is_pointer_v<std::decay_t<char_sequence_t>>)
+            return std_printer<char_sequence_t>::print(s, sequence);
 
-    for (auto && chr : sequence)
-        s << chr;
+        for (auto && chr : sequence)
+            s << chr;
     };
 };
 
 template <typename integer_sequence_t>
-    requires std::ranges::input_range<integer_sequence_t> && std::integral<std::remove_cvref_t<std::ranges::range_reference_t<integer_sequence_t>>>
+    requires std::ranges::input_range<integer_sequence_t>
+          && std::integral<std::remove_cvref_t<std::ranges::range_reference_t<integer_sequence_t>>>
 struct integer_sequence_printer<integer_sequence_t> : public input_range_printer<integer_sequence_t>
-{
-};
+{};
 
 //!\}
 

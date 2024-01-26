@@ -102,16 +102,17 @@ namespace seqan3
  * \return The given stream to which the alignment representation is appended.
  */
 template <typename alignment_t>
-    requires (tuple_like<std::remove_cvref_t<alignment_t>> && detail::all_model_aligned_seq<detail::tuple_type_list_t<std::remove_cvref_t<alignment_t>>>)
+    requires (tuple_like<std::remove_cvref_t<alignment_t>>
+              && detail::all_model_aligned_seq<detail::tuple_type_list_t<std::remove_cvref_t<alignment_t>>>)
 struct alignment_printer<alignment_t>
 {
-    constexpr static auto print = [](auto & stream, auto && alignment)
+    static constexpr auto print = [](auto & stream, auto && alignment)
     {
-    constexpr size_t sequence_count = std::tuple_size_v<std::remove_cvref_t<alignment_t>>;
+        constexpr size_t sequence_count = std::tuple_size_v<std::remove_cvref_t<alignment_t>>;
 
-    static_assert(sequence_count >= 2, "An alignment requires at least two sequences.");
+        static_assert(sequence_count >= 2, "An alignment requires at least two sequences.");
 
-    detail::stream_alignment(stream, alignment, std::make_index_sequence<sequence_count - 1>{});
+        detail::stream_alignment(stream, alignment, std::make_index_sequence<sequence_count - 1>{});
     };
 };
 
