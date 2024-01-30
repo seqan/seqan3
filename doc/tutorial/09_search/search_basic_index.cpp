@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-License-Identifier: CC0-1.0
+
 #include <seqan3/search/fm_index/bi_fm_index.hpp> // for using the bi_fm_index
 #include <seqan3/search/fm_index/fm_index.hpp>    // for using the fm_index
 

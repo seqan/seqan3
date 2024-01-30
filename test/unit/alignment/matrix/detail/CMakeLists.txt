@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
+# SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+# SPDX-License-Identifier: CC0-1.0
+
 seqan3_test (advanceable_alignment_coordinate_test.cpp)
 seqan3_test (affine_cell_proxy_test.cpp)
 seqan3_test (aligned_sequence_builder_test.cpp)

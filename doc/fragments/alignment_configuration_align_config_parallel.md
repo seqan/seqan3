@@ -1,3 +1,8 @@
+<!-- SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
+     SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+     SPDX-License-Identifier: CC-BY-4.0
+-->
+
 SeqAn's pairwise sequence alignment algorithm is internally accelerated using multi-threading. The parallel execution
 can be selected by specifying the seqan3::align_cfg::parallel configuration element. This will enable the asynchronous
 execution of the alignments in the backend. For the user interface nothing changes as the returned

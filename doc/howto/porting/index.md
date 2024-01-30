@@ -1,3 +1,8 @@
+<!-- SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
+     SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+     SPDX-License-Identifier: CC-BY-4.0
+-->
+
 # Porting from SeqAn2 {#howto_porting}
 
 SeqAn3 is a completely new library so there is no easy or automated way of porting applications from SeqAn2.

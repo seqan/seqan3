@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2023 jothepro
+// SPDX-License-Identifier: MIT
 /**
 
 Doxygen Awesome

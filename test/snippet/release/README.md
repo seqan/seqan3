@@ -1,3 +1,8 @@
+<!-- SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
+     SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+     SPDX-License-Identifier: CC-BY-4.0
+-->
+
 Snippets contained in this folder are part of our release announcement.
 
 If anything breaks in here, please mark the existing snippets in the release announcement as out-dated and link to the

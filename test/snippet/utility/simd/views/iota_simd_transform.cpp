@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-License-Identifier: CC0-1.0
+
 #include <ranges>
 
 #include <seqan3/core/debug_stream.hpp>
@@ -9,7 +13,7 @@ using uint16x8_t = seqan3::simd_type_t<uint16_t, 8>;
 
 int main()
 {
-    // Generate ascending simd index using a iota view in combination with a transfor view.
+    // Generate ascending simd index using a iota view in combination with a transform view.
     auto simd_iota_view = std::views::iota(0, 10)
                         | std::views::transform(
                               [](uint16_t const idx)

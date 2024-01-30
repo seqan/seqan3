@@ -1,3 +1,8 @@
+<!-- SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
+     SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+     SPDX-License-Identifier: CC-BY-4.0
+-->
+
 SeqAn offers the computation of banded alignments to reduce the running time of the algorithm. This can be helpful if
 the region in which the optimal alignment exists is known a priori. To specify the banded alignment the developer can
 use the seqan3::align_cfg::band_fixed_size option.<br>

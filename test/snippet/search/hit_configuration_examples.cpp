@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-License-Identifier: CC0-1.0
+
 #include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/search/configuration/max_error.hpp>
