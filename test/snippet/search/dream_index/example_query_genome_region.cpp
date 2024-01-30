@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: CC0-1.0
 
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/dream_index/interleaved_bloom_filter.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/utility/views/chunk.hpp>
 #include <seqan3/search/views/kmer_hash.hpp>
+#include <seqan3/utility/views/chunk.hpp>
 
 using namespace seqan3::literals;
 
