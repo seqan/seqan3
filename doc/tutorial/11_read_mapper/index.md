@@ -1,9 +1,9 @@
+# Implementing your own read mapper with SeqAn {#tutorial_read_mapper}
+
 <!-- SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
      SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
      SPDX-License-Identifier: CC-BY-4.0
 -->
-
-# Implementing your own read mapper with SeqAn {#tutorial_read_mapper}
 
 <b>Learning Objective:</b><br>
 In this tutorial, you will learn how to combine the components of previous tutorials to create your very first

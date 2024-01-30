@@ -24,7 +24,7 @@ namespace seqan3
 /*!\brief The 15 letter RNA alphabet, containing all IUPAC smybols minus the gap.
  * \implements seqan3::nucleotide_alphabet
  * \implements seqan3::writable_alphabet
- * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
+ * \implements seqan3::detail::writable_constexpr_alphabet
  * \implements seqan3::trivially_copyable
  * \implements seqan3::standard_layout
  * \implements std::regular

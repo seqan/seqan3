@@ -19,7 +19,7 @@ namespace seqan3
 /*!\brief Implementation of a masked composite, which extends a given alphabet with a mask.
  * \ingroup alphabet_mask
  * \implements seqan3::writable_alphabet
- * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
+ * \implements seqan3::detail::writable_constexpr_alphabet
  *
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::writable_alphabet and std::regular.
  *

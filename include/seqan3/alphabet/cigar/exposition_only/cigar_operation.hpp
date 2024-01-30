@@ -20,7 +20,7 @@ namespace seqan3::exposition_only
 
 /*!\brief The actual implementation of seqan3::cigar::operation for documentation purposes only.
  * \implements seqan3::writable_alphabet
- * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
+ * \implements seqan3::detail::writable_constexpr_alphabet
  * \implements seqan3::trivially_copyable
  * \implements seqan3::standard_layout
  * \implements std::regular
