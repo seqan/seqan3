@@ -36,8 +36,8 @@ Most of them are compilable as-is, but some are only valid in their context,
 e.g. they depend on other code snippets given before/after the current one or
 other statements implied by the text. You can **copy'n'paste** freely from these examples,
 this implies no copyright-obligations (however distributing SeqAn or an application
-using it does, see [Copyright](https://docs.seqan.de/seqan/3-master-user/about_copyright.html) and
-[Citing](https://docs.seqan.de/seqan/3-master-user/about_citing.html)).
+using it does, see [Copyright](https://docs.seqan.de/seqan3/main_user/about_copyright.html) and
+[Citing](https://docs.seqan.de/seqan3/main_user/about_citing.html)).
 
 You may ask why we do not use std::cout or std::cerr for console output.
 Actually, for the given text it does not make a difference since seqan3::debug_stream prints to std::cerr as well.
@@ -61,7 +61,7 @@ so don't worry too much if your solution is different from ours.
 # API documentation
 
 While the tutorials provide you with a walkthrough of some of our modules, the
-[API documentation](https://docs.seqan.de/seqan/3-master-user/modules.html) will be the go-to reference when you start
+[API documentation](https://docs.seqan.de/seqan3/main_user/modules.html) will be the go-to reference when you start
 developing code with SeqAn.
 
 Some helpful tips when browsing our documentation:
@@ -69,11 +69,11 @@ Some helpful tips when browsing our documentation:
 * You can search for seqan3 entities with the **search bar** in the top-right corner.
   E.g., start typing `debug_str` and the pop-up will suggest the `debug_stream` for you.
 * If you don't have a specific entity you are searching for, the **landing pages** of each module are always a good
-  start. E.g., the [Alphabet landing page](https://docs.seqan.de/seqan/3-master-user/group__alphabet.html) first lists
+  start. E.g., the [Alphabet landing page](https://docs.seqan.de/seqan3/main_user/group__alphabet.html) first lists
   all submodules (Adaptation, Aminoacid, ...) and general alphabet-related seqan3 entities, followed by a detailed
   description of our alphabet module. Searching for keywords on this page might point you in the right direction.
 * If you know you've seen some code snippet somewhere but don't remember where, have a look at our
-  [cookbook](https://docs.seqan.de/seqan/3-master-user/cookbook.html). It is not structured and huge, but works
+  [cookbook](https://docs.seqan.de/seqan3/main_user/cookbook.html). It is not structured and huge, but works
   well if you do a key word search with `Ctrl+F`.
 
 We recommend you to open the API documentation in separate browser tab s.t. you can easily switch back to the tutorial.
@@ -85,10 +85,10 @@ of SeqAn on [Github](https://github.com/seqan/seqan3/issues/new/choose) and ask 
 
 Modules structure the SeqAn library into logical units. There are, for instance,
 
-* [`alphabet`](https://docs.seqan.de/seqan/3-master-user/group__alphabet.html): `seqan3::dna4` etc.
-* [`io`](http://docs.seqan.de/seqan/3-master-user/group__io.html): read/write FASTA, SAM, ...
-* [`alignment`](http://docs.seqan.de/seqan/3-master-user/group__alignment.html): compute pairwise alignments etc.
-* [`search`](http://docs.seqan.de/seqan/3-master-user/group__search.html): search via an FM-Index etc.
+* [`alphabet`](https://docs.seqan.de/seqan3/main_user/group__alphabet.html): `seqan3::dna4` etc.
+* [`io`](http://docs.seqan.de/seqan3/main_user/group__io.html): read/write FASTA, SAM, ...
+* [`alignment`](http://docs.seqan.de/seqan3/main_user/group__alignment.html): compute pairwise alignments etc.
+* [`search`](http://docs.seqan.de/seqan3/main_user/group__search.html): search via an FM-Index etc.
 
 and some more.
 
@@ -104,7 +104,7 @@ compile time measurably.
 \assignment{Assignment 2: Modules and API documentation}
 In your program of assignment 1, initialise a vector of `seqan3::dna4` instead of `int`.
 The vector shall store the DNA string `ACTG`.
-Check the [API documentation](http://docs.seqan.de/seqan/3-master-user/modules.html) for which header you need to include.
+Check the [API documentation](http://docs.seqan.de/seqan3/main_user/modules.html) for which header you need to include.
 Additionally, browse the documentation for `seqan3::dna4` on how to initialise a `seqan3::dna4` letter.
 \endassignment
 \solution

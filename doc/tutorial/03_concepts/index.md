@@ -245,10 +245,10 @@ The class `seqan3::bitpacked_sequence<alphabet_type>` behaves just like `std::ve
 values are packed into a single byte/word to save space. Also analog to `std::vector`, not every `alphabet_type` can
 be used. To avoid misuse and weird error messages, the type is constrained.
 
-Have a look at the documentation of [`seqan3::bitpacked_sequence`](http://docs.seqan.de/seqan/3-master-user/classseqan3_1_1bitpacked__sequence.html).
+Have a look at the documentation of [`seqan3::bitpacked_sequence`](http://docs.seqan.de/seqan3/main_user/classseqan3_1_1bitpacked__sequence.html).
 It has one constrained template parameter.
 Do you understand the requirements imposed on `alphabet_type` when using the
-[`seqan3::bitpacked_sequence`](http://docs.seqan.de/seqan/3-master-user/classseqan3_1_1bitpacked__sequence.html)?
+[`seqan3::bitpacked_sequence`](http://docs.seqan.de/seqan3/main_user/classseqan3_1_1bitpacked__sequence.html)?
 
 \hint
 In order to use the `seqan3::bitpacked_sequence` the  `alphabet_type` must model the following:

@@ -7,8 +7,8 @@
 # Usage check_include_order.pl <file1> [<file2>] [<file3>] ....
 # Will output the names of the files that have incorrect include order.
 #
-# Usage example: `check_include_order.pl $(git diff --name-only HEAD origin/master)`
-# Checks all files that have been touch since last master for any incorrect include ordering
+# Usage example: `check_include_order.pl $(git diff --name-only HEAD origin/main)`
+# Checks all files that have been touch since last main for any incorrect include ordering
 #
 # Usage example: `check_include_order.pl $(find include -type f)
 # Checks all files of seqan3 for incorrect include ordering

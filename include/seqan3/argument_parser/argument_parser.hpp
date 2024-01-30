@@ -166,7 +166,7 @@ public:
      * The application name must only contain alpha-numeric characters, `_` or `-`,
      * i.e. the following regex must evaluate to true: `"^[a-zA-Z0-9_-]+$"`.
      *
-     * See the [argument parser tutorial](https://docs.seqan.de/seqan/3-master-dev/tutorial_argument_parser.html)
+     * See the [argument parser tutorial](https://docs.seqan.de/seqan3/main_dev/tutorial_argument_parser.html)
      * for more information about the version check functionality.
      */
     argument_parser(std::string const app_name,

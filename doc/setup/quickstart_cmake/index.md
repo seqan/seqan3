@@ -193,7 +193,7 @@ cmake_minimum_required (VERSION 3.14)
 
 project (my_app LANGUAGES CXX VERSION 1.0.0)
 
-set (seqan3_git_tag "#.#.#") # adapt as needed, e.g. "3.2.0" or "master"
+set (seqan3_git_tag "#.#.#") # adapt as needed, e.g. "3.2.0" or "main"
 
 message (STATUS "Fetching SeqAn3 ${seqan3_git_tag}:")
 

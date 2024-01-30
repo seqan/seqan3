@@ -7,7 +7,7 @@ name: Deploy documentation (https://docs.seqan.de/)
 on:
   push:
     branches:
-      - master
+      - 'main'
   # Enables a manual trigger, may run on any branch
   workflow_dispatch:
 

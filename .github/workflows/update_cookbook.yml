@@ -7,7 +7,7 @@ name: Cookbook
 on:
   push:
     branches:
-      - 'master'
+      - 'main'
 
 env:
   TZ: Europe/Berlin

@@ -9,11 +9,11 @@ assignees: ''
 
 - [ ] Update copyright year.
 - [ ] Create at least one pre-release s.t. our package maintainers can try out a new release of our library. ([Instructions](#prerelease))
-- [ ] Check that the [directory structure](https://github.com/seqan/seqan3/blob/master/doc/setup/quickstart_cmake/index.md) is valid.
+- [ ] Check that the [directory structure](https://github.com/seqan/seqan3/blob/main/doc/setup/quickstart_cmake/index.md) is valid.
 - [ ] Check for critical performance regressions (see [here](https://github.com/seqan/seqan3/wiki/cmp_benchmarks:-Example-Usage)).
 - [ ] Check [Nightlies](https://cdash.seqan.de/index.php?project=SeqAn3) for critical build failures.
 - [ ] Check workarounds in `platform.hpp`. Are they still valid, or can they be limited to specific compiler versions?
-- [ ] Check the [Changelog.md](https://github.com/seqan/seqan3/blob/master/CHANGELOG.md) for completeness (including changed headers). ([Instructions](#changelog))
+- [ ] Check the [Changelog.md](https://github.com/seqan/seqan3/blob/main/CHANGELOG.md) for completeness (including changed headers). ([Instructions](#changelog))
 - [ ] Update the index from cppreference.com so that up-to-date documentation links are generated. ([Instructions](#cppreference))
 
 ---
@@ -127,7 +127,7 @@ Note: Do not use `git clone --recurse-submodules https://github.com/seqan/seqan3
 <a name="changelog"></a>
 <details><summary>Checking the changelog</summary><br>
 
-- List all supported compiler, also add to https://docs.seqan.de/seqan/3-master-user/about_api.html#autotoc_md35.
+- List all supported compiler, also add to https://docs.seqan.de/seqan3/main_user/about_api.html#autotoc_md35.
 - Check that all links are consistent, e.g., `[\#2540](https://github.com/seqan/seqan3/pull/2538)`:
   - Search `(\[\\#)(\d+)(\]\(.+?)(\d+)(\))` and replace `$1$2$3$2$5` (i.e., replace link issue-id by the displayed id).
 
@@ -164,8 +164,8 @@ You can find a comprehensive list of the changes in our [changelog](https://docs
 <a name="version-bump"></a>
 <details><summary>Bumping the version</summary><br>
 
-- Bump succeeding version number in the master branch: [include/seqan3/version.hpp](https://github.com/seqan/seqan3/blob/3.0.2/include/seqan3/version.hpp#L19-L24).
+- Bump succeeding version number in the main branch: [include/seqan3/version.hpp](https://github.com/seqan/seqan3/blob/3.0.2/include/seqan3/version.hpp#L19-L24).
 - The `SEQAN3_RELEASE_CANDIDATE` must be set to `1` as `0` indicates a stable release.
-- Bump the latest stable version number of the API-Stability test in master: [test/api_stability/CMakeLists.txt](https://github.com/seqan/seqan3/blob/3.0.3/test/api_stability/CMakeLists.txt#L10).
+- Bump the latest stable version number of the API-Stability test in main: [test/api_stability/CMakeLists.txt](https://github.com/seqan/seqan3/blob/3.0.3/test/api_stability/CMakeLists.txt#L10).
 
 </details>

@@ -56,7 +56,7 @@ Checks if any new snippets are to be added to the Cookbook. Will push a new comm
 
 ## cron_api.yml
 
-Runs the [API-Stability](https://github.com/seqan/seqan3/blob/master/test/api_stability/README.md) test.
+Runs the [API-Stability](https://github.com/seqan/seqan3/blob/main/test/api_stability/README.md) test.
 
 In case of failure, creates an issue containing error logs.
 
