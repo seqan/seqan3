@@ -10,6 +10,7 @@
 #pragma once
 
 #include <array>
+#include <bit>
 #include <span>
 #include <string>
 #include <type_traits>
@@ -17,7 +18,6 @@
 
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/utility/concept.hpp>
-#include <seqan3/utility/detail/to_little_endian.hpp>
 #include <seqan3/utility/type_pack/traits.hpp>
 
 namespace seqan3::detail
@@ -97,14 +97,16 @@ struct bgzf_compression
         static_assert(std::equality_comparable_with<char_t, char>,
                       "The given char type of the span must be comparable with char.");
 
-        return (header[0] == magic_header[0] &&                                                           // GZ_ID1
-                header[1] == magic_header[1] &&                                                           // GZ_ID2
-                header[2] == magic_header[2] &&                                                           // GZ_CM
-                (header[3] & magic_header[3]) != 0 &&                                                     // FLG_FEXTRA
-                to_little_endian(*reinterpret_cast<uint16_t const *>(&header[10])) == magic_header[10] && // BGZF_ID1
-                header[12] == magic_header[12] &&                                                         // BGZF_ID2
-                header[13] == magic_header[13] &&                                                         // BGZF_SLEN
-                to_little_endian(*reinterpret_cast<uint16_t const *>(&header[14])) == magic_header[14]);  // BGZF_XLEN
+        static constexpr auto id1_pos = std::endian::native == std::endian::little ? 10 : 11;
+
+        return (header[0] == magic_header[0] &&           // GZ_ID1
+                header[1] == magic_header[1] &&           // GZ_ID2
+                header[2] == magic_header[2] &&           // GZ_CM
+                (header[3] & magic_header[3]) != 0 &&     // FLG_FEXTRA
+                header[id1_pos] == magic_header[10] &&    // BGZF_ID1
+                header[12] == magic_header[12] &&         // BGZF_ID2
+                header[13] == magic_header[13] &&         // BGZF_SLEN
+                header[id1_pos + 4] == magic_header[14]); // BGZF_XLEN
     }
 };
 

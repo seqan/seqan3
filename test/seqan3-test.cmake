@@ -11,6 +11,7 @@ cmake_minimum_required (VERSION 3.10)
 # require SeqAn3 package
 find_package (SeqAn3 REQUIRED HINTS ${CMAKE_CURRENT_LIST_DIR}/../build_system)
 
+include (CheckCXXCompilerFlag)
 include (CheckCXXSourceCompiles)
 include (FindPackageHandleStandardArgs)
 include (FindPackageMessage)
@@ -80,7 +81,8 @@ if (NOT TARGET seqan3::test::performance)
     # std::views::join is experimental in libc++
     target_compile_definitions (seqan3_test_performance INTERFACE _LIBCPP_ENABLE_EXPERIMENTAL)
 
-    if (SEQAN3_BENCHMARK_ALIGN_LOOPS)
+    check_cxx_compiler_flag ("-falign-loops=32" SEQAN3_HAS_FALIGN_LOOPS)
+    if (SEQAN3_BENCHMARK_ALIGN_LOOPS AND SEQAN3_HAS_FALIGN_LOOPS)
         target_compile_options (seqan3_test_performance INTERFACE "-falign-loops=32")
     endif ()
 

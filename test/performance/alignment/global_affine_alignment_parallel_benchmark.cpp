@@ -157,8 +157,8 @@ void seqan2_affine_dna4_parallel(benchmark::State & state)
 BENCHMARK_TEMPLATE(seqan2_affine_dna4_parallel, score)->UseRealTime();
 #endif // SEQAN3_HAS_SEQAN2
 
-// Crashes with libc++
-#if defined(SEQAN3_HAS_SEQAN2) && defined(_OPENMP) && !defined(_LIBCPP_VERSION)
+// Crashes with libc++ or IntelLLVM
+#if defined(SEQAN3_HAS_SEQAN2) && defined(_OPENMP) && !defined(_LIBCPP_VERSION) && !defined(__INTEL_LLVM_COMPILER)
 template <typename result_t>
 void seqan2_affine_dna4_omp_for(benchmark::State & state)
 {
@@ -199,7 +199,7 @@ void seqan2_affine_dna4_omp_for(benchmark::State & state)
 
 BENCHMARK_TEMPLATE(seqan2_affine_dna4_omp_for, score)->UseRealTime();
 BENCHMARK_TEMPLATE(seqan2_affine_dna4_omp_for, trace)->UseRealTime();
-#endif // defined(SEQAN3_HAS_SEQAN2) && defined(_OPENMP) && !defined(_LIBCPP_VERSION)
+#endif // defined(SEQAN3_HAS_SEQAN2) && defined(_OPENMP) && !defined(_LIBCPP_VERSION) && !defined(__INTEL_LLVM_COMPILER)
 
 // ============================================================================
 //  instantiate tests
