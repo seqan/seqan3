@@ -1,5 +1,5 @@
 <!--
-Please see https://github.com/seqan/seqan3/blob/master/CONTRIBUTING.md for a general overview.
+Please see https://github.com/seqan/seqan3/blob/main/CONTRIBUTING.md for a general overview.
 
 Please allow edits from maintainers:
 https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork#enabling-repository-maintainer-permissions-on-existing-pull-requests

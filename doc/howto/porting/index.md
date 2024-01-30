@@ -46,7 +46,7 @@ SeqAn2 and SeqAn3 can coexist in the same application, however certain care shou
 
 ## Versions
 
-There are some incompatibilities between SeqAn-2.4 and SeqAn3, please update to the master-branch of SeqAn2 or
+There are some incompatibilities between SeqAn-2.4 and SeqAn3, please update to the main branch of SeqAn2 or
 use the 2.5 release (when available).
 
 ## Paths and Namespaces
