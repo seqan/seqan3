@@ -1,8 +1,12 @@
+// SPDX-FileCopyrightText: 2006-2023, Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2023, Knut Reinert & MPI für molekulare Genetik
+// SPDX-License-Identifier: CC0-1.0
+
 // This example illustrates how we can reduce the usage of templates (or the amount of different instantiations) via
 // type erasure. Having only one function generated for `algorithm()` is the only benefit of using `semialphabet_any`
 // here. Of course this only makes sense for your application if the part of the program that is agnostic of the
 // character representation (your equivalent of `algorithm()`) is substantially larger than the specific parts – and
-// if compile-time and/or size of the exectuble are a concern.
+// if compile-time and/or size of the executable are a concern.
 
 #include <iostream>
 
@@ -29,7 +33,7 @@ void algorithm(std::vector<seqan3::semialphabet_any<10>> & r, bool is_murphy)
         if (seqan3::to_rank(v) == 0)
             seqan3::assign_rank_to(1, v);
 
-    // Here we reify the type for printing
+    // Here we verify the type for printing
     if (is_murphy)
         print(r
               | std::views::transform(

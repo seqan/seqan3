@@ -1,3 +1,8 @@
+<!-- SPDX-FileCopyrightText: 2006-2023, Knut Reinert & Freie Universität Berlin
+     SPDX-FileCopyrightText: 2016-2023, Knut Reinert & MPI für molekulare Genetik
+     SPDX-License-Identifier: CC-BY-4.0
+-->
+
 Normally, we do not allow implicit conversion of single argument constructors, but in this case we make an exception,
 because seqan3::dna4 and seqan3::rna4 are interchangeable as they behave nearly the same (e.g. same ranks, same
 char to rank conversion).

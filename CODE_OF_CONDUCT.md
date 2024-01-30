@@ -1,3 +1,9 @@
+<!--
+    SPDX-FileCopyrightText: 2006-2023, Knut Reinert & Freie Universität Berlin
+    SPDX-FileCopyrightText: 2016-2023, Knut Reinert & MPI für molekulare Genetik
+    SPDX-License-Identifier: CC-BY-4.0
+-->
+
 # Code of Conduct {#about_code_of_conduct}
 
 The SeqAn project adheres to the [Berlin Code of Conduct](https://berlincodeofconduct.org/). From the code of conduct:

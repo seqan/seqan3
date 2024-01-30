@@ -1,3 +1,9 @@
+<!--
+    SPDX-FileCopyrightText: 2006-2023, Knut Reinert & Freie Universität Berlin
+    SPDX-FileCopyrightText: 2016-2023, Knut Reinert & MPI für molekulare Genetik
+    SPDX-License-Identifier: CC-BY-4.0
+-->
+
 ## g++_ram.sh
 
 `VERSION` needs to be replaced with the gcc version. When `DO_TIME` is `0`, this is just a wrapper for gcc that does

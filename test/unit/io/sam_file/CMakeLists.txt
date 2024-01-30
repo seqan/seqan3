@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2006-2023, Knut Reinert & Freie Universität Berlin
+# SPDX-FileCopyrightText: 2016-2023, Knut Reinert & MPI für molekulare Genetik
+# SPDX-License-Identifier: CC0-1.0
+
 seqan3_test (format_bam_test.cpp CYCLIC_DEPENDING_INCLUDES include-seqan3-io-sam_file-format_sam.hpp)
 seqan3_test (format_sam_test.cpp CYCLIC_DEPENDING_INCLUDES include-seqan3-io-sam_file-format_bam.hpp)
 seqan3_test (sam_file_input_test.cpp)

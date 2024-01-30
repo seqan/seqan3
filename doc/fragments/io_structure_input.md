@@ -1,3 +1,8 @@
+<!-- SPDX-FileCopyrightText: 2006-2023, Knut Reinert & Freie Universität Berlin
+     SPDX-FileCopyrightText: 2016-2023, Knut Reinert & MPI für molekulare Genetik
+     SPDX-License-Identifier: CC-BY-4.0
+-->
+
 ### Reading structure files
 
 Structured sequence files contain intra-molecular interactions of RNA or protein. Usually, but not necessarily, they

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2006-2023, Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2023, Knut Reinert & MPI für molekulare Genetik
+// SPDX-License-Identifier: CC0-1.0
+
 // this macro will rename the `main` function below as `sam_file_filename_construction`.
 // we just want to show that the syntax does compile.
 // We do this to show the usage of std::cin within a copyable snippet while being able to execute this snippet

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2003 Jonathan de Halleux
+// SPDX-License-Identifier: Zlib
+
 // zipstream Library License:
 // --------------------------
 //

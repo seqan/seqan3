@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2006-2023, Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2023, Knut Reinert & MPI für molekulare Genetik
+// SPDX-License-Identifier: CC0-1.0
+
 #include <seqan3/alignment/pairwise/all.hpp>  // for seqan3::align_cfg and seqan3::align_pairwise
 #include <seqan3/alignment/scoring/all.hpp>   // for seqan3::aminoacid_scoring_scheme and
                                               //     seqan3::aminoacid_similarity_matrix

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2006-2023, Knut Reinert & Freie Universität Berlin
+# SPDX-FileCopyrightText: 2016-2023, Knut Reinert & MPI für molekulare Genetik
+# SPDX-License-Identifier: CC0-1.0
+
 seqan3_benchmark (global_affine_alignment_banded_simd_benchmark.cpp)
 seqan3_benchmark (global_affine_alignment_benchmark.cpp)
 seqan3_benchmark (global_affine_alignment_parallel_benchmark.cpp)

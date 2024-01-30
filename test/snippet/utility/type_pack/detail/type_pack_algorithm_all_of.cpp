@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2006-2023, Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2023, Knut Reinert & MPI für molekulare Genetik
+// SPDX-License-Identifier: CC0-1.0
+
 #include <type_traits>
 
 #include <seqan3/utility/type_pack/detail/type_pack_algorithm.hpp>
@@ -22,5 +26,5 @@ auto fn = [](auto value)
         return false;
 };
 
-static_assert(seqan3::detail::all_of(fn, 3, 1.2, false));                    // evalates to true
-static_assert(!seqan3::detail::all_of(fn, 3, 1.2, false, "something else")); // evalates to false
+static_assert(seqan3::detail::all_of(fn, 3, 1.2, false));                    // evaluates to true
+static_assert(!seqan3::detail::all_of(fn, 3, 1.2, false, "something else")); // evaluates to false

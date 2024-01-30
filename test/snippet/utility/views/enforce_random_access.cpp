@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2006-2023, Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2023, Knut Reinert & MPI für molekulare Genetik
+// SPDX-License-Identifier: CC0-1.0
+
 #include <string>
 
 #include <seqan3/alignment/decorator/gap_decorator.hpp>
@@ -13,7 +17,7 @@ int main()
     auto seq = "ACGTACGACT"_dna4;
     seqan3::gap_decorator aligned_seq{seq};
 
-    // It does not fulfil random access semantics because it does not allow constant time access to aribtrary
+    // It does not fulfill random access semantics because it does not allow constant time access to arbitrary
     // elements in the range. Thus, it is only a bidirectional range by default.
     static_assert(std::ranges::bidirectional_range<decltype(aligned_seq)>);
     static_assert(!std::ranges::random_access_range<decltype(aligned_seq)>);

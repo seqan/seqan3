@@ -1,3 +1,8 @@
+<!-- SPDX-FileCopyrightText: 2006-2023, Knut Reinert & Freie Universität Berlin
+     SPDX-FileCopyrightText: 2016-2023, Knut Reinert & MPI für molekulare Genetik
+     SPDX-License-Identifier: CC-BY-4.0
+-->
+
 # Parsing command line arguments with Sharg {#tutorial_argument_parser}
 
 We have separated the feature of parsing command line arguments to its own project:
