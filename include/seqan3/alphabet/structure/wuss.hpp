@@ -29,7 +29,7 @@ namespace seqan3
  *              It determines the allowed pseudoknot depth by adding characters AaBb..Zz to the alphabet.
  * \implements seqan3::rna_structure_alphabet
  * \implements seqan3::writable_alphabet
- * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
+ * \implements seqan3::detail::writable_constexpr_alphabet
  * \implements seqan3::trivially_copyable
  * \implements seqan3::standard_layout
  * \implements std::regular

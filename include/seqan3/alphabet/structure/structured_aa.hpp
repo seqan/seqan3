@@ -20,7 +20,7 @@ namespace seqan3
 /*!\brief A seqan3::alphabet_tuple_base that joins an aminoacid alphabet with a protein structure alphabet.
  * \ingroup alphabet_structure
  * \implements seqan3::writable_alphabet
- * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
+ * \implements seqan3::detail::writable_constexpr_alphabet
  * \implements seqan3::trivially_copyable
  * \implements seqan3::standard_layout
  * \tparam sequence_alphabet_t Type of the first aminoacid letter; must model seqan3::writable_alphabet,

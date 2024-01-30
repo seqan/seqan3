@@ -21,7 +21,7 @@ namespace seqan3
  * \tparam sequence_alphabet_t Type of the alphabet; must satisfy seqan3::writable_alphabet.
  * \tparam quality_alphabet_t  Type of the quality; must satisfy seqan3::writable_quality_alphabet.
  * \implements seqan3::writable_quality_alphabet
- * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
+ * \implements seqan3::detail::writable_constexpr_alphabet
  * \implements seqan3::trivially_copyable
  * \implements seqan3::standard_layout
  * \implements std::regular
