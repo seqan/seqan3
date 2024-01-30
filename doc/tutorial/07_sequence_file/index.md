@@ -1,9 +1,9 @@
+# Sequence File Input and Output {#tutorial_sequence_file}
+
 <!-- SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
      SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
      SPDX-License-Identifier: CC-BY-4.0
 -->
-
-# Sequence File Input and Output {#tutorial_sequence_file}
 
 <b>Learning Objective:</b> <br/>
 You will get an overview of how Input/Output files are handled in SeqAn and learn how to read and write

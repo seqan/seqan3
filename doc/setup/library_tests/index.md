@@ -1,9 +1,9 @@
+# Setting up library tests {#setup_tests}
+
 <!-- SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
      SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
      SPDX-License-Identifier: CC-BY-4.0
 -->
-
-# Setting up library tests {#setup_tests}
 
 <b>Learning Objective:</b><br>
 In this guide you will learn to set up SeqAn3's library tests to make sure that your contributions don't break anything.
