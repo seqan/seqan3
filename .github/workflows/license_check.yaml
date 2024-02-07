@@ -1,22 +1,41 @@
 # SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
 # SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
 # SPDX-License-Identifier: CC0-1.0
-name: REUSE Compliance Check
+
+name: License
 
 on:
   push:
     branches:
       - 'main'
-      - 'main'
   pull_request:
+    types:
+      - unlabeled
   workflow_dispatch:
 
+concurrency:
+  group: license-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'push' }}
+
+env:
+  TZ: Europe/Berlin
+
+defaults:
+  run:
+    shell: bash -Eexuo pipefail {0}
+
 jobs:
-  license_check:
-    runs-on: ubuntu-latest
+  check:
+    name: REUSE Compliance
+    runs-on: ubuntu-22.04
+    timeout-minutes: 120
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'lint'
     steps:
-    - uses: actions/checkout@v4
-    - name: REUSE Compliance Check
-      uses: fsfe/reuse-action@v2
-      with:
-        args: --suppress-deprecation lint
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: REUSE Compliance Check
+        uses: fsfe/reuse-action@v2
+
+      - name: Check Markdown files for doxygen
+        run: ${{ github.workspace }}/test/scripts/check_markdown_doxygen.sh ${{ github.workspace }}
