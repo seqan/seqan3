@@ -40,13 +40,9 @@ function addVersionSelection(arr)
 {
     // add HTMLs
     var version_select = document.createElement("select");
-    var version_div = document.createElement("div");
-
     version_select.setAttribute("id","version_select");
-    version_div.setAttribute("style","vertical-align:middle; text-align:right;");
-    version_div.appendChild(document.createTextNode("Version: "));
-    version_div.appendChild(version_select);
-    document.getElementById("list_bottom_right").appendChild(version_div);
+    version_select.setAttribute("style","color: var(--page-foreground-color);");
+    document.getElementById("list_bottom_right").appendChild(version_select);
 
     version_select.addEventListener("change", function(){changeVersion(this.id);}, false);
 

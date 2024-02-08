@@ -5,10 +5,13 @@
 <!-- HTML footer for doxygen 1.9.8-->
 <!-- start footer part -->
 <!--BEGIN GENERATE_TREEVIEW-->
+<!--Doxygen adds <a href="doxygen_crawl.html"/>; which would overwrite version selector.-->
+<a href="doxygen_crawl.html"><div style="display: none;">Hide me</div></a>
 <script type="text/javascript" charset="utf-8" src="api-stability.js"></script>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <div id="list_bottom_right" style="text-align:right; float:left; color:black; padding: 0px 0px 0px 10px"></div> <!-- div for version.js -->
+    <!-- li for version.js -->
+    <li id="list_bottom_right" class="footer" style="float:left; font-size: 12pt; color: var(--page-foreground-color); font-weight: normal;">Version: <li>
     <script type="text/javascript" charset="utf-8" src="version.js"></script>
     $navpath
     ${SEQAN3_FOOTER_HTML_OPTION_POWERED_BY_VERCEL}
