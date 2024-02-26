@@ -354,7 +354,8 @@ PREDEFINED             = CEREAL_SERIALIZE_FUNCTION_NAME=serialize \
                          __cpp_lib_three_way_comparison=1 \
                          SEQAN3_WORKAROUND_LITERAL=constexpr
 EXPAND_AS_DEFINED      = SEQAN3_CPO_OVERLOAD_BODY \
-                         SEQAN3_CPO_OVERLOAD
+                         SEQAN3_CPO_OVERLOAD \
+                         SEQAN3_WORKAROUND_GCC_114013
 SKIP_FUNCTION_MACROS   = NO
 #---------------------------------------------------------------------------
 # Configuration options related to external references
