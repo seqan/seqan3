@@ -72,8 +72,8 @@ enum struct search_config_id : uint8_t
  * determined by the enum value `SIZE` of seqan3::detail::search_config_id.
  */
 template <>
-inline constexpr std::array<std::array<bool, static_cast<uint8_t>(search_config_id::SIZE)>,
-                            static_cast<uint8_t>(search_config_id::SIZE)>
+SEQAN3_WORKAROUND_GCC_114013 std::array<std::array<bool, static_cast<uint8_t>(search_config_id::SIZE)>,
+                                        static_cast<uint8_t>(search_config_id::SIZE)>
     compatibility_table<search_config_id> = {{
         // max_error_total,
         // |  max_error_substitution,
