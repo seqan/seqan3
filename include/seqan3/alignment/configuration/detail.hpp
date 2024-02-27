@@ -50,8 +50,8 @@ enum struct align_config_id : uint8_t
  *                           this table to allow validation checks.
  */
 template <>
-inline constexpr std::array<std::array<bool, static_cast<uint8_t>(align_config_id::SIZE)>,
-                            static_cast<uint8_t>(align_config_id::SIZE)>
+SEQAN3_WORKAROUND_GCC_114013 std::array<std::array<bool, static_cast<uint8_t>(align_config_id::SIZE)>,
+                                        static_cast<uint8_t>(align_config_id::SIZE)>
     compatibility_table<align_config_id>{{
         //band
         //|  debug
