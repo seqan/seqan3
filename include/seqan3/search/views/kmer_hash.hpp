@@ -709,7 +709,7 @@ namespace seqan3::views
  *
  * \attention
  * For the alphabet size \f$\sigma\f$ of the alphabet of `urange` and the number of 1s \f$s\f$ of `shape` it must hold
- * that \f$s>\frac{64}{\log_2\sigma}\f$, i.e. hashes resulting from the shape/alphabet combination can be represented
+ * that \f$s \le \frac{64}{\log_2\sigma}\f$, i.e. hashes resulting from the shape/alphabet combination can be represented
  * in an `uint64_t`.
  *
  * ### View properties
