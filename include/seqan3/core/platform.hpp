@@ -238,17 +238,6 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 #    endif
 #endif
 
-/*!\brief Workaround for variable template specialisations not being emitted.
- * \see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=114013
- */
-#ifndef SEQAN3_WORKAROUND_GCC_114013
-#    if SEQAN3_COMPILER_IS_GCC && (__GNUC__ == 14)
-#        define SEQAN3_WORKAROUND_GCC_114013 constexpr
-#    else
-#        define SEQAN3_WORKAROUND_GCC_114013 inline constexpr
-#    endif
-#endif
-
 /*!\brief This is needed to support CentOS 7 or RHEL 7; Newer CentOS's include a more modern default-gcc version making
  *        this macro obsolete.
  *
