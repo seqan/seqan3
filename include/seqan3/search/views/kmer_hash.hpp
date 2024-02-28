@@ -49,6 +49,33 @@ private:
     template <bool const_range>
     class basic_iterator;
 
+    //!\brief The maximum shape count for the given alphabet.
+    static inline int max_shape_count = 64 / std::log2(alphabet_size<std::ranges::range_reference_t<urng_t>>);
+
+    //!\brief Throws the exception for validate_shape().
+    [[noreturn]] void shape_too_long_error() const
+    {
+        std::string message{"The shape is too long for the given alphabet.\n"};
+        message += "Alphabet: ";
+        // Note: Since we want the alphabet type name, std::ranges::range_value_t is the better choice.
+        // For seqan3::bitpacked_sequence<seqan3::dna4>:
+        // reference_t: seqan3::bitpacked_sequence<seqan3::dna4>::reference_proxy_type
+        // value_t: seqan3::dna4
+        message += detail::type_name_as_string<std::remove_cvref_t<std::ranges::range_value_t<urng_t>>>;
+        message += "\nMaximum shape count: ";
+        message += std::to_string(max_shape_count);
+        message += "\nGiven shape count: ";
+        message += std::to_string(shape_.count());
+        throw std::invalid_argument{message};
+    }
+
+    //!\brief Checks that the shape is not too long for the given alphabet.
+    inline void validate_shape() const
+    {
+        if (shape_.count() > max_shape_count)
+            shape_too_long_error();
+    }
+
 public:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -68,11 +95,7 @@ public:
      */
     explicit kmer_hash_view(urng_t urange_, shape const & s_) : urange{std::move(urange_)}, shape_{s_}
     {
-        if (shape_.count() > (64 / std::log2(alphabet_size<std::ranges::range_reference_t<urng_t>>)))
-        {
-            throw std::invalid_argument{"The chosen shape/alphabet combination is not valid. "
-                                        "The alphabet or shape size must be reduced."};
-        }
+        validate_shape();
     }
 
     /*!\brief Construct from a non-view that can be view-wrapped and a given shape.
@@ -86,11 +109,7 @@ public:
         urange{std::views::all(std::forward<rng_t>(urange_))},
         shape_{s_}
     {
-        if (shape_.count() > (64 / std::log2(alphabet_size<std::ranges::range_reference_t<urng_t>>)))
-        {
-            throw std::invalid_argument{"The chosen shape/alphabet combination is not valid. "
-                                        "The alphabet or shape size must be reduced."};
-        }
+        validate_shape();
     }
     //!\}
 

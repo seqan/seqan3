@@ -14,6 +14,7 @@
 #include <seqan3/alphabet/views/complement.hpp>
 #include <seqan3/search/views/kmer_hash.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
+#include <seqan3/test/expect_throw_msg.hpp>
 #include <seqan3/utility/views/repeat_n.hpp>
 
 #include "../../range/iterator_test_template.hpp"
@@ -149,22 +150,43 @@ TYPED_TEST(kmer_hash_gapped_test, concepts)
 
 TYPED_TEST(kmer_hash_ungapped_test, invalid_sizes)
 {
-    TypeParam text1{'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4};
-    EXPECT_NO_THROW(text1 | seqan3::views::kmer_hash(seqan3::ungapped{32}));
-    EXPECT_THROW(text1 | seqan3::views::kmer_hash(seqan3::ungapped{33}), std::invalid_argument);
-    if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
+    auto expected_error_message =
+        [](std::string_view const alphabet, size_t const max_shape_count, size_t const given_shape_count)
     {
-        EXPECT_NO_THROW(text1 | std::views::reverse | seqan3::views::kmer_hash(seqan3::ungapped{32}));
-        EXPECT_THROW(text1 | std::views::reverse | seqan3::views::kmer_hash(seqan3::ungapped{33}),
-                     std::invalid_argument);
+        std::string message{"The shape is too long for the given alphabet.\n"};
+        message += "Alphabet: ";
+        message += alphabet;
+        message += "\nMaximum shape count: ";
+        message += std::to_string(max_shape_count);
+        message += "\nGiven shape count: ";
+        message += std::to_string(given_shape_count);
+        return message;
+    };
+
+    TypeParam text{};
+    EXPECT_NO_THROW(text | seqan3::views::kmer_hash(seqan3::ungapped{32}));
+    EXPECT_THROW_MSG(text | seqan3::views::kmer_hash(seqan3::ungapped{33}),
+                     std::invalid_argument,
+                     expected_error_message("seqan3::dna4", 32, 33));
+
+    if constexpr (std::ranges::bidirectional_range<TypeParam>)
+    {
+        EXPECT_NO_THROW(text | std::views::reverse | seqan3::views::kmer_hash(seqan3::ungapped{32}));
+        EXPECT_THROW_MSG(text | std::views::reverse | seqan3::views::kmer_hash(seqan3::ungapped{33}),
+                         std::invalid_argument,
+                         expected_error_message("seqan3::dna4", 32, 33));
     }
 
-    EXPECT_NO_THROW(text1 | seqan3::views::kmer_hash(0xFFFFFFFE001_shape));                      // size=44, count=32
-    EXPECT_THROW(text1 | seqan3::views::kmer_hash(0xFFFFFFFFE009_shape), std::invalid_argument); // size=44, count=33
+    EXPECT_NO_THROW(text | seqan3::views::kmer_hash(0xFFFFFFFE001_shape));  // size=48, count=32
+    EXPECT_THROW_MSG(text | seqan3::views::kmer_hash(0xFFFFFFFE0009_shape), // size=48, count=33
+                     std::invalid_argument,
+                     expected_error_message("seqan3::dna4", 32, 33));
 
     std::vector<seqan3::dna5> dna5_text{};
     EXPECT_NO_THROW(dna5_text | seqan3::views::kmer_hash(seqan3::ungapped{27}));
-    EXPECT_THROW(dna5_text | seqan3::views::kmer_hash(seqan3::ungapped{28}), std::invalid_argument);
+    EXPECT_THROW_MSG(dna5_text | seqan3::views::kmer_hash(seqan3::ungapped{28}),
+                     std::invalid_argument,
+                     expected_error_message("seqan3::dna5", 27, 28));
 }
 
 // https://github.com/seqan/seqan3/issues/1614
