@@ -21,6 +21,7 @@
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/sam_file/detail/cigar.hpp>
 #include <seqan3/io/sam_file/header.hpp>
+#include <seqan3/io/sam_file/input_options.hpp>
 #include <seqan3/io/sam_file/output_format_concept.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/views/repeat_n.hpp>
@@ -82,10 +83,11 @@ protected:
     template <arithmetic arithmetic_target_type>
     void read_arithmetic_field(std::string_view const & str, arithmetic_target_type & arithmetic_target);
 
-    template <typename stream_view_type, typename ref_ids_type, typename ref_seqs_type>
+    template <typename stream_view_type, typename ref_ids_type, typename ref_seqs_type, typename seq_legal_alph_type>
     void read_header(stream_view_type && stream_view,
                      sam_file_header<ref_ids_type> & hdr,
-                     ref_seqs_type & /*ref_id_to_pos_map*/);
+                     ref_seqs_type & /*ref_id_to_pos_map*/,
+                     sam_file_input_options<seq_legal_alph_type> const & options);
 
     template <typename stream_t, typename header_type>
     void write_header(stream_t & stream, sam_file_output_options const & options, header_type & header);
@@ -270,10 +272,11 @@ inline void format_sam_base::read_arithmetic_field(std::string_view const & str,
  * not in a correct state (e.g. required fields are not given), but throwing might occur downstream of the actual
  * error.
  */
-template <typename stream_view_type, typename ref_ids_type, typename ref_seqs_type>
+template <typename stream_view_type, typename ref_ids_type, typename ref_seqs_type, typename seq_legal_alph_type>
 inline void format_sam_base::read_header(stream_view_type && stream_view,
                                          sam_file_header<ref_ids_type> & hdr,
-                                         ref_seqs_type & /*ref_id_to_pos_map*/)
+                                         ref_seqs_type & /*ref_id_to_pos_map*/,
+                                         sam_file_input_options<seq_legal_alph_type> const & options)
 {
     auto it = std::ranges::begin(stream_view);
     auto end = std::ranges::end(stream_view);
@@ -335,9 +338,13 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
         read_forward_range_field(string_buffer, value);
     };
 
-    auto print_cerr_of_unspported_tag = [](char const * const header_tag, std::array<char, 2> raw_tag)
+    auto print_cerr_of_unspported_tag = [&options](char const * const header_tag, std::array<char, 2> raw_tag)
     {
-        std::cerr << "Unsupported SAM header tag in @" << header_tag << ": " << raw_tag[0] << raw_tag[1] << '\n';
+        if (options.stream_warnings_to == nullptr)
+            return;
+
+        *options.stream_warnings_to << "Unsupported SAM header tag in @" << header_tag << ": " << raw_tag[0]
+                                    << raw_tag[1] << '\n';
     };
 
     while (it != end && is_char<'@'>(*it))
