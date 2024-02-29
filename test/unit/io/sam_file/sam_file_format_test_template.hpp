@@ -19,6 +19,7 @@
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 #include <seqan3/test/streambuf.hpp>
+#include <seqan3/test/tmp_directory.hpp>
 
 using seqan3::operator""_cigar_operation;
 using seqan3::operator""_dna5;
@@ -354,6 +355,67 @@ TYPED_TEST_P(sam_file_read, issue2423)
 
     EXPECT_EQ(fin.header().ref_id_info.size(), 64u);
     EXPECT_EQ(fin.header().ref_dict.size(), 64u);
+}
+
+TYPED_TEST_P(sam_file_read, unknown_header_tag)
+{
+    // Default: Warnings to cerr
+    {
+        typename TestFixture::stream_type istream{this->unknown_tag_header};
+        seqan3::sam_file_input fin{istream, TypeParam{}};
+        testing::internal::CaptureStdout();
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(fin.begin());
+        EXPECT_EQ(testing::internal::GetCapturedStdout(), "");
+        EXPECT_EQ(testing::internal::GetCapturedStderr(), "Unsupported SAM header tag in @HD: pb\n");
+    }
+    // Redirect to cout
+    {
+        typename TestFixture::stream_type istream{this->unknown_tag_header};
+        seqan3::sam_file_input fin{istream, TypeParam{}};
+        fin.options.stream_warnings_to = std::addressof(std::cout);
+        testing::internal::CaptureStdout();
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(fin.begin());
+        EXPECT_EQ(testing::internal::GetCapturedStdout(), "Unsupported SAM header tag in @HD: pb\n");
+        EXPECT_EQ(testing::internal::GetCapturedStderr(), "");
+    }
+    // Redirect to file
+    {
+        seqan3::test::tmp_directory tmp{};
+        auto filename = tmp.path() / "warnings.txt";
+
+        // Scope for ofstream-RAII
+        {
+            std::ofstream warning_file{filename};
+            ASSERT_TRUE(warning_file.good());
+
+            typename TestFixture::stream_type istream{this->unknown_tag_header};
+            seqan3::sam_file_input fin{istream, TypeParam{}};
+            fin.options.stream_warnings_to = std::addressof(warning_file);
+            testing::internal::CaptureStdout();
+            testing::internal::CaptureStderr();
+            EXPECT_NO_THROW(fin.begin());
+            EXPECT_EQ(testing::internal::GetCapturedStdout(), "");
+            EXPECT_EQ(testing::internal::GetCapturedStderr(), "");
+        }
+
+        std::ifstream warning_file{filename};
+        ASSERT_TRUE(warning_file.good());
+        std::string content{std::istreambuf_iterator<char>(warning_file), std::istreambuf_iterator<char>()};
+        EXPECT_EQ(content, "Unsupported SAM header tag in @HD: pb\n");
+    }
+    // Silence
+    {
+        typename TestFixture::stream_type istream{this->unknown_tag_header};
+        seqan3::sam_file_input fin{istream, TypeParam{}};
+        fin.options.stream_warnings_to = nullptr;
+        testing::internal::CaptureStdout();
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(fin.begin());
+        EXPECT_EQ(testing::internal::GetCapturedStdout(), "");
+        EXPECT_EQ(testing::internal::GetCapturedStderr(), "");
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -703,7 +765,8 @@ REGISTER_TYPED_TEST_SUITE_P(sam_file_read,
                             cigar_vector,
                             format_error_ref_id_not_in_reference_information,
                             format_error_uneven_hexadecimal_tag,
-                            issue2423);
+                            issue2423,
+                            unknown_header_tag);
 
 REGISTER_TYPED_TEST_SUITE_P(sam_file_write,
                             no_records,
