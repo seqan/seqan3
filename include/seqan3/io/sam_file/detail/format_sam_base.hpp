@@ -269,9 +269,11 @@ inline void format_sam_base::read_arithmetic_field(std::string_view const & str,
  * Reading the header format is done according to the official
  * [SAM format specifications](https://samtools.github.io/hts-specs/SAMv1.pdf).
  *
- * The function throws a seqan3::format_error if any unknown tag was encountered. It will also fail if the format is
- * not in a correct state (e.g. required fields are not given), but throwing might occur downstream of the actual
- * error.
+ * The function throws a seqan3::format_error if the format is not in a correct state (e.g. required fields are not
+ * given), but throwing might occur downstream of the actual error.
+ *
+ * If any unknown tag was encountered, a warning will be emitted to std::cerr. This can be configured with
+ * seqan3::sam_file_input_options::stream_warnings_to.
  */
 template <typename stream_view_type, typename ref_ids_type, typename ref_seqs_type, typename seq_legal_alph_type>
 inline void format_sam_base::read_header(stream_view_type && stream_view,
