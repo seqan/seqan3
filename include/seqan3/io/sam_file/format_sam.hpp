@@ -165,7 +165,7 @@ protected:
               typename e_value_type,
               typename bit_score_type>
     void read_alignment_record(stream_type & stream,
-                               sam_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
+                               sam_file_input_options<seq_legal_alph_type> const & options,
                                ref_seqs_type & ref_seqs,
                                sam_file_header<ref_ids_type> & header,
                                stream_pos_type & position_buffer,

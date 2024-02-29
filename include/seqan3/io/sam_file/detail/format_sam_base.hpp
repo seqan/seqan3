@@ -260,6 +260,7 @@ inline void format_sam_base::read_arithmetic_field(std::string_view const & str,
  * \tparam stream_view_type     The type of the stream as a view.
  * \param[in, out] stream_view  The stream view to iterate over.
  * \param[in, out] hdr          The header (as a pointer) to store the parsed values.
+ * \param[in] options           The options to alter the parsing process.
  *
  * \throws seqan3::format_error if any unexpected character or format is encountered.
  *
