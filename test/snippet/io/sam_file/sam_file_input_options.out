@@ -1,2 +1,10 @@
-Written to cout: Unsupported SAM header tag in @HD: pb
-Written to file: Unsupported SAM header tag in @HD: pb
+### defaults_to_cerr ###
+### redirect_to_cout ###
+Unsupported tag found in SAM header @HD: "pb:5.0.0"
+Unsupported tag found in SAM header @HD: "ot:ter"
+### redirect_to_file ###
+File content:
+Unsupported tag found in SAM header @HD: "pb:5.0.0"
+Unsupported tag found in SAM header @HD: "ot:ter"
+### silence_warnings ###
+### filter ###
