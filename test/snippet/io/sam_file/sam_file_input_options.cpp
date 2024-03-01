@@ -31,7 +31,7 @@ struct temporary_file
     }
 };
 
-static constexpr auto sam_file_raw = R"(@HD	VN:1.6	pb:5.0.0
+static constexpr auto sam_file_raw = R"(@HD	VN:1.6	pb:5.0.0	ot:ter
 @SQ	SN:ref	LN:34
 )";
 
@@ -43,16 +43,14 @@ static auto get_sam_file_input()
 void defaults_to_cerr()
 {
     auto fin = get_sam_file_input();
-    std::cerr << "Written to cerr: ";
-    auto it = fin.begin(); // Prints to cerr: "Unsupported SAM header tag in @HD: pb"
+    auto it = fin.begin();
 }
 
 void redirect_to_cout()
 {
     auto fin = get_sam_file_input();
     fin.options.stream_warnings_to = std::addressof(std::cout); // Equivalent to `= &std::cout;`
-    std::cout << "Written to cout: ";
-    auto it = fin.begin(); // Prints to cout: "Unsupported SAM header tag in @HD: pb"
+    auto it = fin.begin();
 }
 
 void redirect_to_file()
@@ -63,23 +61,54 @@ void redirect_to_file()
     { // Inner scope to close file before reading
         std::ofstream warning_file{tmp_file.path};
         fin.options.stream_warnings_to = std::addressof(warning_file); // Equivalent to `= &warning_file;`
-        auto it = fin.begin(); // Prints to file: "Unsupported SAM header tag in @HD: pb"
+        auto it = fin.begin();
     }
 
-    std::cout << "Written to file: " << tmp_file.read_content();
+    std::cout << "File content:\n" << tmp_file.read_content();
 }
 
 void silence_warnings()
 {
     auto fin = get_sam_file_input();
     fin.options.stream_warnings_to = nullptr;
-    auto it = fin.begin(); // No warning emitted
+    auto it = fin.begin();
+}
+
+void filter()
+{
+    auto fin = get_sam_file_input();
+    std::stringstream stream{};
+    fin.options.stream_warnings_to = std::addressof(stream); // Equivalent to `= &stream;`
+    auto it = fin.begin();
+
+    for (std::string line{}; std::getline(stream, line);)
+    {
+        // If "pb" is not found in the warning, print it to cerr.
+        if (line.find("pb") == std::string::npos) // C++23: `!line.contains("pb")`
+            std::cerr << line << '\n';
+    }
+}
+
+void print_section(std::string_view const section)
+{
+    std::cout << "### " << section << " ###\n";
+    std::cerr << "### " << section << " ###\n";
 }
 
 int main()
 {
+    print_section("defaults_to_cerr");
     defaults_to_cerr();
+
+    print_section("redirect_to_cout");
     redirect_to_cout();
+
+    print_section("redirect_to_file");
     redirect_to_file();
+
+    print_section("silence_warnings");
     silence_warnings();
+
+    print_section("filter");
+    filter();
 }

@@ -341,13 +341,18 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
         read_forward_range_field(string_buffer, value);
     };
 
-    auto print_cerr_of_unspported_tag = [&options](char const * const header_tag, std::array<char, 2> raw_tag)
+    auto consume_unsupported_tag_and_print_warning =
+        [&](char const * const header_tag, std::array<char, 2> const raw_tag)
     {
+        // Not using `copy_next_tag_value_into_buffer` because we do not care whether the tag is valid.
+        // E.g., `pb5.0.0` instead of `pb:5.0.0`, would break the parsing if we used `copy_next_tag_value_into_buffer`.
+        take_until_predicate(is_char<'\t'> || is_char<'\n'>);
+
         if (options.stream_warnings_to == nullptr)
             return;
 
-        *options.stream_warnings_to << "Unsupported SAM header tag in @" << header_tag << ": " << raw_tag[0]
-                                    << raw_tag[1] << '\n';
+        *options.stream_warnings_to << "Unsupported tag found in SAM header @" << header_tag << ": \"" << raw_tag[0]
+                                    << raw_tag[1] << string_buffer << "\"\n";
     };
 
     while (it != end && is_char<'@'>(*it))
@@ -388,7 +393,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                 }
                 default: // unsupported header tag
                 {
-                    print_cerr_of_unspported_tag("HD", raw_tag);
+                    consume_unsupported_tag_and_print_warning("HD", raw_tag);
                 }
                 }
 
@@ -397,8 +402,6 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                     copy_next_tag_value_into_buffer();
                     read_forward_range_field(string_buffer, *header_entry);
                 }
-                else
-                    skip_until_predicate(is_char<'\t'> || is_char<'\n'>);
             }
             ++it; // skip newline
 
@@ -562,7 +565,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                 }
                 default: // unsupported header tag
                 {
-                    print_cerr_of_unspported_tag("PG", raw_tag);
+                    consume_unsupported_tag_and_print_warning("PG", raw_tag);
                 }
                 }
 
@@ -571,8 +574,6 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                     copy_next_tag_value_into_buffer();
                     read_forward_range_field(string_buffer, *program_info_entry);
                 }
-                else
-                    skip_until_predicate(is_char<'\t'> || is_char<'\n'>);
             }
             ++it; // skip newline
 
