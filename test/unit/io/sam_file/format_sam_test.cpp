@@ -20,9 +20,12 @@ struct sam_file_read<seqan3::format_sam> : public sam_file_data
 @SQ	SN:ref	LN:34
 )"};
 
+    // "otter" is not valid because a user-defined/local tag must have the format [TAG]:[VALUE].
+    // However, encountering such a tag should not break the parsing.
     std::string unknown_tag_header{
-        R"(@HD	VN:1.6	pb:5.0.0
+        R"(@HD	VN:1.6	pb:5.0.0	otter
 @SQ	SN:ref	LN:34
+@PG	ID:novoalign	pb:5.0.0	otter
 )"};
 
     std::string big_header_input{
@@ -176,16 +179,17 @@ TEST_F(sam_format, header_errors)
             "@SQ\tSN:ref2\tLN:243199373\tSB:user_tag\tLB:user_tag\tpb:user_tag\n"
             "@RG\tID:U0a_A2_L1\tIB:user_tag\tpb:user_tag\n"
             "@PG\tID:qc\tIB:user_tag\tPB:user_tag\tCB:user_tag\tDB:user_tag\tVB:user_tag\tpb:user_tag\n"};
-        std::string expected_cerr{"Unsupported SAM header tag in @HD: VB\n"
-                                  "Unsupported SAM header tag in @HD: SB\n"
-                                  "Unsupported SAM header tag in @HD: GB\n"
-                                  "Unsupported SAM header tag in @HD: pb\n"
-                                  "Unsupported SAM header tag in @PG: IB\n"
-                                  "Unsupported SAM header tag in @PG: PB\n"
-                                  "Unsupported SAM header tag in @PG: CB\n"
-                                  "Unsupported SAM header tag in @PG: DB\n"
-                                  "Unsupported SAM header tag in @PG: VB\n"
-                                  "Unsupported SAM header tag in @PG: pb\n"};
+        std::string expected_cerr{"Unsupported tag found in SAM header @HD: \"VB:user_tag\"\n"
+                                  "Unsupported tag found in SAM header @HD: \"SB:user_tag\"\n"
+                                  "Unsupported tag found in SAM header @HD: \"GB:user_tag\"\n"
+                                  "Unsupported tag found in SAM header @HD: \"pb:user_tag\"\n"
+                                  "Unsupported tag found in SAM header @PG: \"IB:user_tag\"\n"
+                                  "Unsupported tag found in SAM header @PG: \"PB:user_tag\"\n"
+                                  "Unsupported tag found in SAM header @PG: \"CB:user_tag\"\n"
+                                  "Unsupported tag found in SAM header @PG: \"DB:user_tag\"\n"
+                                  "Unsupported tag found in SAM header @PG: \"VB:user_tag\"\n"
+                                  "Unsupported tag found in SAM header @PG: \"pb:user_tag\"\n"};
+
         std::istringstream istream(header_str);
         seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
 

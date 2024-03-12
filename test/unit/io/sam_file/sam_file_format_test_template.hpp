@@ -359,6 +359,10 @@ TYPED_TEST_P(sam_file_read, issue2423)
 
 TYPED_TEST_P(sam_file_read, unknown_header_tag)
 {
+    constexpr std::string_view expected_warning = "Unsupported tag found in SAM header @HD: \"pb:5.0.0\"\n"
+                                                  "Unsupported tag found in SAM header @HD: \"otter\"\n"
+                                                  "Unsupported tag found in SAM header @PG: \"pb:5.0.0\"\n"
+                                                  "Unsupported tag found in SAM header @PG: \"otter\"\n";
     // Default: Warnings to cerr
     {
         typename TestFixture::stream_type istream{this->unknown_tag_header};
@@ -367,7 +371,7 @@ TYPED_TEST_P(sam_file_read, unknown_header_tag)
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(fin.begin());
         EXPECT_EQ(testing::internal::GetCapturedStdout(), "");
-        EXPECT_EQ(testing::internal::GetCapturedStderr(), "Unsupported SAM header tag in @HD: pb\n");
+        EXPECT_EQ(testing::internal::GetCapturedStderr(), expected_warning);
     }
     // Redirect to cout
     {
@@ -377,7 +381,7 @@ TYPED_TEST_P(sam_file_read, unknown_header_tag)
         testing::internal::CaptureStdout();
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(fin.begin());
-        EXPECT_EQ(testing::internal::GetCapturedStdout(), "Unsupported SAM header tag in @HD: pb\n");
+        EXPECT_EQ(testing::internal::GetCapturedStdout(), expected_warning);
         EXPECT_EQ(testing::internal::GetCapturedStderr(), "");
     }
     // Redirect to file
@@ -403,7 +407,7 @@ TYPED_TEST_P(sam_file_read, unknown_header_tag)
         std::ifstream warning_file{filename};
         ASSERT_TRUE(warning_file.good());
         std::string content{std::istreambuf_iterator<char>(warning_file), std::istreambuf_iterator<char>()};
-        EXPECT_EQ(content, "Unsupported SAM header tag in @HD: pb\n");
+        EXPECT_EQ(content, expected_warning);
     }
     // Silence
     {
