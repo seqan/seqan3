@@ -72,22 +72,26 @@ inline constexpr bool add_enum_bitwise_operators<seqan3::detail::trace_direction
  * | seqan3::detail::trace_directions::left_open | ←    | L     |
  * | seqan3::detail::trace_directions::left      | ⇠    | l     |
  */
-template <typename char_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, detail::trace_directions const trace)
+template <typename trace_directions_t>
+    requires std::is_same_v<std::remove_cvref_t<trace_directions_t>, detail::trace_directions>
+struct trace_directions_printer<trace_directions_t>
 {
-    static char const * unicode[32]{"↺",   "↖",    "↑",   "↖↑",  "⇡",    "↖⇡",   "↑⇡",  "↖↑⇡",  "←",    "↖←",   "↑←",
-                                    "↖↑←", "⇡←",   "↖⇡←", "↑⇡←", "↖↑⇡←", "⇠",    "↖⇠",  "↑⇠",   "↖↑⇠",  "⇡⇠",   "↖⇡⇠",
-                                    "↑⇡⇠", "↖↑⇡⇠", "←⇠",  "↖←⇠", "↑←⇠",  "↖↑←⇠", "⇡←⇠", "↖⇡←⇠", "↑⇡←⇠", "↖↑⇡←⇠"};
+    static constexpr auto print = [](auto & s, detail::trace_directions const trace)
+    {
+        static char const * unicode[32]{"↺",  "↖",   "↑",   "↖↑",   "⇡",   "↖⇡",   "↑⇡",   "↖↑⇡",
+                                        "←",  "↖←",  "↑←",  "↖↑←",  "⇡←",  "↖⇡←",  "↑⇡←",  "↖↑⇡←",
+                                        "⇠",  "↖⇠",  "↑⇠",  "↖↑⇠",  "⇡⇠",  "↖⇡⇠",  "↑⇡⇠",  "↖↑⇡⇠",
+                                        "←⇠", "↖←⇠", "↑←⇠", "↖↑←⇠", "⇡←⇠", "↖⇡←⇠", "↑⇡←⇠", "↖↑⇡←⇠"};
 
-    static char const * csv[32]{"N",   "D",    "U",   "DU",  "u",    "Du",   "Uu",  "DUu",  "L",    "DL",   "UL",
-                                "DUL", "uL",   "DuL", "UuL", "DUuL", "l",    "Dl",  "Ul",   "DUl",  "ul",   "Dul",
-                                "Uul", "DUul", "Ll",  "DLl", "ULl",  "DULl", "uLl", "DuLl", "UuLl", "DUuLl"};
+        static char const * csv[32]{"N",   "D",    "U",   "DU",  "u",    "Du",   "Uu",  "DUu",  "L",    "DL",   "UL",
+                                    "DUL", "uL",   "DuL", "UuL", "DUuL", "l",    "Dl",  "Ul",   "DUl",  "ul",   "Dul",
+                                    "Uul", "DUul", "Ll",  "DLl", "ULl",  "DULl", "uLl", "DuLl", "UuLl", "DUuLl"};
 
-    bool is_unicode = (s.flags2() & fmtflags2::utf8) == fmtflags2::utf8;
-    auto const & trace_dir = is_unicode ? unicode : csv;
+        bool is_unicode = (s.flags2() & fmtflags2::utf8) == fmtflags2::utf8;
+        auto const & trace_dir = is_unicode ? unicode : csv;
 
-    s << trace_dir[static_cast<size_t>(trace)];
-    return s;
-}
+        s << trace_dir[static_cast<size_t>(trace)];
+    };
+};
 
 } // namespace seqan3

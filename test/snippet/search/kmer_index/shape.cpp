@@ -9,6 +9,22 @@
 
 using namespace seqan3::literals;
 
+#if 1
+// this case is fun, as seqan3::shape has no explicit std::cout/debug_stream overload.
+// * if we have
+//   printer_order<debug_stream_printer, std_printer, input_range_printer>
+//   the std::cout overload of seqan3::dynamic_bitset will win as it is the most specific
+//   seqan3::debug_stream << s0; will print 11111
+// * if we have
+//   printer_order<debug_stream_printer, input_range_printer, std_printer>
+//   the input_range_printer will win since seqan3::dynamic_bitset is an input_range
+//   seqan3::debug_stream << s0; will print [1,1,1,1,1]
+//
+// Interestingly seqan3::dynamic_bitset has also an debug_stream overload, but this one will
+// only be active if the type is seqan3::dynamic_bitset
+// seqan3::debug_stream << (seqan3::dynamic_bitset<58>&)s0; will print 1'1111
+#endif
+
 int main()
 {
     seqan3::shape s0{seqan3::ungapped{5}};                 // represents "11111", i.e. ungapped 5-mer

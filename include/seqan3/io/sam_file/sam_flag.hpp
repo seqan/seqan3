@@ -100,10 +100,12 @@ inline constexpr bool add_enum_bitwise_operators<sam_flag> = true;
  * \param flag The flag to print.
  * \relates seqan3::debug_stream_type
  */
+#if 1
 template <typename char_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, sam_flag const flag)
 {
     return stream << static_cast<int16_t>(flag);
 }
+#endif
 
 } // namespace seqan3
