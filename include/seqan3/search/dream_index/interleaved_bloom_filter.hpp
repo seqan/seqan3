@@ -189,7 +189,7 @@ public:
 
     class membership_agent_type; // documented upon definition below
 
-    template <std::integral value_t>
+    template <typename value_t>
     class counting_agent_type; // documented upon definition below
 
     /*!\name Constructors, destructor and assignment
@@ -960,10 +960,12 @@ private:
  * \include test/snippet/search/dream_index/counting_agent.cpp
  */
 template <data_layout data_layout_mode>
-template <std::integral value_t>
+template <typename value_t>
 class interleaved_bloom_filter<data_layout_mode>::counting_agent_type
 {
 private:
+    static_assert(std::integral<value_t>, "The value type must model std::integral.");
+
     //!\brief The type of the augmented seqan3::interleaved_bloom_filter.
     using ibf_t = interleaved_bloom_filter<data_layout_mode>;
 
