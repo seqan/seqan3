@@ -4,3 +4,4 @@
 
 add_subdirectories ()
 seqan3_test (scoring_scheme_test.cpp)
+seqan3_test (hamming_scoring_scheme_test.cpp)
