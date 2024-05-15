@@ -324,17 +324,18 @@ public:
             {
                 auto method_global_cfg = get<seqan3::align_cfg::method_global>(config_with_result_type);
                 // and ...
-                if (gap_cost.open_score == 0 && gap_cost.extension_score == -1 && // gap open score is not set and extension is -1,
+                if (gap_cost.open_score == 0 && gap_cost.extension_score == -1
+                    && // gap open score is not set and extension is -1,
                     !(method_global_cfg.free_end_gaps_sequence2_leading
-                    || method_global_cfg.free_end_gaps_sequence2_trailing)
+                      || method_global_cfg.free_end_gaps_sequence2_trailing)
                     && // none of the free end gaps are set for second seq,
                     (method_global_cfg.free_end_gaps_sequence1_leading
-                    == method_global_cfg
+                     == method_global_cfg
                             .free_end_gaps_sequence1_trailing)) // free ends for leading and trailing gaps are equal in first seq.
                 {
 
                     return std::pair{configure_edit_distance<function_wrapper_t>(config_with_result_type),
-                                        config_with_result_type};
+                                     config_with_result_type};
                 }
             }
         }

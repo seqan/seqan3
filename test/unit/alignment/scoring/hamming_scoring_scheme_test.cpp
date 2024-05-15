@@ -19,7 +19,6 @@ TEST(hamming_scoring_scheme_test, default_constructor)
     EXPECT_EQ(scheme.score('A', 'T'), -1);
 }
 
-
 TEST(hamming_scoring_scheme_test, models_scoring_scheme)
 {
     EXPECT_TRUE((seqan3::scoring_scheme_for<seqan3::hamming_scoring_scheme, seqan3::dna4, seqan3::dna4>));

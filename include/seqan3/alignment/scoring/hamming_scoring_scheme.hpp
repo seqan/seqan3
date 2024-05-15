@@ -30,7 +30,6 @@ namespace seqan3
 class hamming_scoring_scheme
 {
 public:
-
     //!\privatesection
     //!\brief The alphabet type of the scoring scheme. This type is only used for the alignment configuration machinery.
     using alphabet_type = char;
