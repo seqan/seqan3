@@ -11,7 +11,7 @@
 
 #include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
-#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/hamming_scoring_scheme.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
 
 namespace seqan3::align_cfg
@@ -46,6 +46,6 @@ namespace seqan3::align_cfg
  * first sequence.
  */
 inline constexpr configuration edit_scheme =
-    scoring_scheme{nucleotide_scoring_scheme{}} | gap_cost_affine{open_score{0}, extension_score{-1}};
+    scoring_scheme{hamming_scoring_scheme{}} | gap_cost_affine{open_score{0}, extension_score{-1}};
 
 } // namespace seqan3::align_cfg
