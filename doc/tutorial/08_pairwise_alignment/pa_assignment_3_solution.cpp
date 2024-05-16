@@ -32,8 +32,8 @@ int main()
                                                    seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
                                                    seqan3::align_cfg::free_end_gaps_sequence1_trailing{false},
                                                    seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}}
-                | seqan3::align_cfg::scoring_scheme{
-                    seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum62}}
+                | seqan3::align_cfg::scoring_scheme{seqan3::aminoacid_scoring_scheme{
+                    seqan3::aminoacid_similarity_matrix::blosum62}}
                 | seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
                                                      seqan3::align_cfg::extension_score{-1}};
 
