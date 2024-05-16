@@ -40,7 +40,7 @@ Let us first have a look at an example of computing a global alignment in SeqAn.
 \includelineno doc/tutorial/08_pairwise_alignment/pairwise_alignment_first_global.cpp
 
 In the above example, we want to compute the similarity of two seqan3::dna4 sequences using a global alignment.
-For this, we need to import the dna4 alphabet, the seqan3::nucleotide_scoring_scheme and the seqan3::align_pairwise in
+For this, we need to import the dna4 alphabet, the seqan3::hamming_scoring_scheme and the seqan3::align_pairwise in
 the beginning of our file. We also import the seqan3::debug_stream which allows us to print various types in a nice
 formatted manner.
 
@@ -48,7 +48,8 @@ At the beginning of the file, we are defining our two DNA sequences `s1` and `s2
 If you feel puzzled about what the `_dna4` suffix does, we recommend reading the \ref tutorial_alphabets and
 \ref tutorial_ranges before.
 In line 16-17 we configure the alignment job with the most simplistic configuration possible.
-In this case, it is a global alignment with edit distance.
+In this case, it is a global alignment with edit distance, i.e. mismatches, insertions and deletions are scored with `-1`
+and matches are scored with `0`.
 Later in this tutorial we will give a more detailed description of the \ref alignment_configurations "configuration" and
 how it can be used.
 The minimum requirement for computing a pairwise alignment is to specify the alignment method
@@ -156,30 +157,36 @@ for sequence 1 set to `true`, and those for sequence 2 with `false`.
 ## Scoring schemes and gap schemes
 
 A scoring scheme can be queried to get the score for substituting two alphabet values using the `score` member function.
-Currently, SeqAn supports two scoring schemes: seqan3::nucleotide_scoring_scheme and
-seqan3::aminoacid_scoring_scheme. You can import them with the following includes:
+Currently, SeqAn supports three scoring schemes. Besides seqan3::hamming_scoring_scheme there is the
+seqan3::nucleotide_scoring_scheme used for aligning nucleotide sequences and
+seqan3::aminoacid_scoring_scheme used for aligning amino acid sequences.
+You can import them with the following includes:
 
 \snippet doc/tutorial/08_pairwise_alignment/configurations.cpp include_scoring_scheme
 
-As the names suggests, you need to use the former when scoring \ref alphabet_nucleotide "nucleotides" and the latter
-when working with \ref alphabet_aminoacid "aminoacids". You have already used the seqan3::nucleotide_scoring_scheme in
-the assignments before.
-The scoring scheme was default initialised using the
-[Hamming Distance](https://en.wikipedia.org/wiki/Hamming_distance). The scoring schemes can also be configured by either
+In many biological applications using the seqan3::hamming_scoring_scheme
+([Hamming Distance](https://en.wikipedia.org/wiki/Hamming_distance)) is not enough, as it completely ignores the biological
+background of sequence alignments.
+If required, you can use the nucleotide scoring scheme when aligning \ref alphabet_nucleotide "nucleotides" and the
+the amino acid scoring scheme when working with \ref alphabet_aminoacid "aminoacids".
+These scoring schemes allow a finer control of scoring two aligned letters.
+For example, you can set different match and mismatch scores for different pairs of aligned letters.
+By default, the scoring schemes are initialised by
 setting a \ref seqan3::scoring_scheme_base::set_simple_scheme "simple scheme" consisting of seqan3::match_score and
-seqan3::mismatch_score or by providing a \ref seqan3::scoring_scheme_base::set_custom_matrix "custom matrix".
+seqan3::mismatch_score.
+But it is also possible to provide a \ref seqan3::scoring_scheme_base::set_custom_matrix "custom matrix".
 The amino acid scoring scheme can additionally be \ref seqan3::aminoacid_scoring_scheme::set_similarity_matrix
 "initialised" with a predefined substitution matrix that can be accessed via the seqan3::aminoacid_similarity_matrix
 enumeration class.
 
 \snippet doc/tutorial/08_pairwise_alignment/configurations.cpp scoring_scheme
 
-\note You can also provide your own scoring scheme implementation if it models seqan3::scoring_scheme.
+\note You can also provide your own scoring scheme implementation. It only has to model the seqan3::scoring_scheme_for concept.
 
-Similarly to the scoring scheme, you can use the seqan3::align_cfg::gap_cost_affine to set the gap penalties used for
+Similarly to the scoring scheme, you can use the seqan3::align_cfg::gap_cost_affine to customise the gap penalties used for
 the alignment computation. The default initialised seqan3::align_cfg::gap_cost_affine sets the score for a gap to `-1`
 and for a gap opening to `0`. Note that the gap open score is added to the gap score when a gap is opened within the
-alignment computation. Therefore setting the gap open score to `0` disables affine gaps.
+alignment computation. Therefore setting the gap open score to `0` disables affine gaps altogether.
 You can pass a seqan3::align_cfg::extension_score and a seqan3::align_cfg::open_score object to initialise the scheme
 with custom gap penalties. The penalties can be changed later by using the respective member variables
 `extension_score` and `open_score`.
@@ -291,8 +298,7 @@ edits necessary to transform one sequence into the other. The cost model for the
 the match score is `0` and the scores for a mismatch and a gap is `-1`. Due to the special metric, a fast
 [bitvector](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.332.9395&rep=rep1&type=pdf) implementation can be
 used to compute the edit distance. This happens in SeqAn automatically if the respective configurations are used.
-To do so, you need a scoring scheme initialised with Manhattan distance (at the moment only
-seqan3::nucleotide_scoring_scheme supports this) and a gap scheme initialised with `-1` for a gap and `0`
+To do so, you need to explicitly set seqan3::hamming_scoring_scheme and the default gap scheme initialised with `-1` for a gap and `0`
 for a gap open score and computing a seqan3::global_alignment.
 To make the configuration easier, we added a shortcut called seqan3::align_cfg::edit_scheme.
 

@@ -26,9 +26,10 @@
  *
  * \include doc/tutorial/08_pairwise_alignment/pairwise_alignment_first_global.cpp
  *
- * In this snippet a global alignment over two nucleotide sequences is computed. Here the helper function std::tie
- * is used to pass the two sequences as a tuple to the alignment algorithm. The special interface of std::tie allows
- * to forward the two sequences as lvalue references such that no copy of the data is involved.
+ * In this snippet a global alignment over two nucleotide sequences using an edit scoring scheme is computed.
+ * Here the helper function std::tie is used to pass the two sequences as a tuple to the alignment algorithm.
+ * The special interface of std::tie allows to forward the two sequences as lvalue references such that no copy of the
+ * data is involved.
  *
  * There are a lot of applications that need to compute many pairwise sequence alignments. Accordingly, the
  * seqan3::align_pairwise interface offers an overload for ranges over sequence pairs. The following snippet shows
