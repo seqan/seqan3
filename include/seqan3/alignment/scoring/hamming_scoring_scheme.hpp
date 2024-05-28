@@ -43,12 +43,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    hamming_scoring_scheme() noexcept = default; //!< Defaulted.
-    hamming_scoring_scheme(hamming_scoring_scheme const &) = default; //!< Defaulted.
-    hamming_scoring_scheme(hamming_scoring_scheme &&) noexcept = default; //!< Defaulted.
-    hamming_scoring_scheme & operator=(hamming_scoring_scheme const &) = default; //!< Defaulted.
+    hamming_scoring_scheme() noexcept = default;                                      //!< Defaulted.
+    hamming_scoring_scheme(hamming_scoring_scheme const &) = default;                 //!< Defaulted.
+    hamming_scoring_scheme(hamming_scoring_scheme &&) noexcept = default;             //!< Defaulted.
+    hamming_scoring_scheme & operator=(hamming_scoring_scheme const &) = default;     //!< Defaulted.
     hamming_scoring_scheme & operator=(hamming_scoring_scheme &&) noexcept = default; //!< Defaulted.
-    ~hamming_scoring_scheme() = default; //!< Defaulted.
+    ~hamming_scoring_scheme() = default;                                              //!< Defaulted.
     //!\}
 
     /*!\name Accessors
