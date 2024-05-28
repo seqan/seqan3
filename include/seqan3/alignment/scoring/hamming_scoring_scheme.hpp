@@ -16,13 +16,13 @@
 namespace seqan3
 {
 
-/*!\brief A scoring scheme that assigns a score of 0 to matching letters and -1 to mismatching letters.
+/*!\brief A scoring scheme that assigns a score of `0` to matching letters and `-1` to mismatching letters.
  * \ingroup alignment_scoring
  *
  * \details
  *
- * This stateless scoring scheme is equivalent to the Hamming distance and assigns a score of 0 to matching letters and -1 to
- * mismatching letters.
+ * This stateless scoring scheme is equivalent to the Hamming distance and assigns a score of `0` to matching letters
+ * and `-1` to mismatching letters.
  * This scheme is independent of the alphabet type and can be used whenever the two compared alphabets model the
  * std::equality_comparable_with concept.
  * Use this scheme if you want to use the use the more efficient bitparallel alignment algorithm often used in the
@@ -44,6 +44,11 @@ public:
      * \{
      */
     hamming_scoring_scheme() noexcept = default; //!< Defaulted.
+    hamming_scoring_scheme(hamming_scoring_scheme const &) = default; //!< Defaulted.
+    hamming_scoring_scheme(hamming_scoring_scheme &&) noexcept = default; //!< Defaulted.
+    hamming_scoring_scheme & operator=(hamming_scoring_scheme const &) = default; //!< Defaulted.
+    hamming_scoring_scheme & operator=(hamming_scoring_scheme &&) noexcept = default; //!< Defaulted.
+    ~hamming_scoring_scheme() = default; //!< Defaulted.
     //!\}
 
     /*!\name Accessors
@@ -58,14 +63,14 @@ public:
      *
      * \details
      *
-     * This function returns 0 if the two letters are equal and -1 otherwise. Note both the alphabet types of the
-     * compared letters must model the std::equality_comparable_with concept, otherwise no overload of this function
+     * This function returns `0` if the two letters are equal and `-1` otherwise. Note that both alphabet types of the
+     * compared letters must model the std::equality_comparable_with concept or no overload of this function
      * is available.
      *
-     * \returns The score of the two letters. 0 if the letters are equal, -1 otherwise.
+     * \returns The score of the two letters. `0` if the letters are equal, `-1` otherwise.
      */
     template <typename alph1_t, typename alph2_t>
-        requires std::equality_comparable_with<std::remove_reference_t<alph1_t>, std::remove_reference_t<alph2_t>>
+        requires std::equality_comparable_with<alph1_t, alph2_t>
     constexpr score_type score(alph1_t const alph1, alph2_t const alph2) const noexcept
     {
         return alph1 == alph2 ? 0 : -1;

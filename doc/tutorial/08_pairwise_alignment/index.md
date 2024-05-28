@@ -157,15 +157,15 @@ for sequence 1 set to `true`, and those for sequence 2 with `false`.
 ## Scoring schemes and gap schemes
 
 A scoring scheme can be queried to get the score for substituting two alphabet values using the `score` member function.
-Currently, SeqAn supports three scoring schemes. Besides seqan3::hamming_scoring_scheme there is the
+Currently, SeqAn supports three scoring schemes. Besides seqan3::hamming_scoring_scheme, there is the
 seqan3::nucleotide_scoring_scheme used for aligning nucleotide sequences and
 seqan3::aminoacid_scoring_scheme used for aligning amino acid sequences.
 You can import them with the following includes:
 
 \snippet doc/tutorial/08_pairwise_alignment/configurations.cpp include_scoring_scheme
 
-In many biological applications using the seqan3::hamming_scoring_scheme
-([Hamming Distance](https://en.wikipedia.org/wiki/Hamming_distance)) is not enough, as it completely ignores the biological
+In many biological applications, using the seqan3::hamming_scoring_scheme
+([Hamming Distance](https://en.wikipedia.org/wiki/Hamming_distance)) is not enough as it entirely ignores the biological
 background of sequence alignments.
 If required, you can use the nucleotide scoring scheme when aligning \ref alphabet_nucleotide "nucleotides" and the
 the amino acid scoring scheme when working with \ref alphabet_aminoacid "aminoacids".
@@ -186,7 +186,7 @@ enumeration class.
 Similarly to the scoring scheme, you can use the seqan3::align_cfg::gap_cost_affine to customise the gap penalties used for
 the alignment computation. The default initialised seqan3::align_cfg::gap_cost_affine sets the score for a gap to `-1`
 and for a gap opening to `0`. Note that the gap open score is added to the gap score when a gap is opened within the
-alignment computation. Therefore setting the gap open score to `0` disables affine gaps altogether.
+alignment computation. Therefore, setting the gap open score to `0` disables affine gaps altogether.
 You can pass a seqan3::align_cfg::extension_score and a seqan3::align_cfg::open_score object to initialise the scheme
 with custom gap penalties. The penalties can be changed later by using the respective member variables
 `extension_score` and `open_score`.
@@ -298,8 +298,8 @@ edits necessary to transform one sequence into the other. The cost model for the
 the match score is `0` and the scores for a mismatch and a gap is `-1`. Due to the special metric, a fast
 [bitvector](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.332.9395&rep=rep1&type=pdf) implementation can be
 used to compute the edit distance. This happens in SeqAn automatically if the respective configurations are used.
-To do so, you need to explicitly set seqan3::hamming_scoring_scheme and the default gap scheme initialised with `-1` for a gap and `0`
-for a gap open score and computing a seqan3::global_alignment.
+To do so, you need to explicitly use the seqan3::hamming_scoring_scheme as well as the default gap scheme
+initialised with `-1` for a gap and `0` for a gap open score while computing a seqan3::global_alignment.
 To make the configuration easier, we added a shortcut called seqan3::align_cfg::edit_scheme.
 
 \snippet doc/tutorial/08_pairwise_alignment/configurations.cpp include_edit
