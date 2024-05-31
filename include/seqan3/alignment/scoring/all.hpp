@@ -16,6 +16,7 @@
 #pragma once
 
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/hamming_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_base.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_concept.hpp>

@@ -320,27 +320,20 @@ public:
         if constexpr (config_t::template exists<seqan3::align_cfg::method_global>())
         {
             // Only use edit distance if ...
-            auto method_global_cfg = get<seqan3::align_cfg::method_global>(config_with_result_type);
-            // Only use edit distance if ...
-            if (gap_cost.open_score == 0 && // gap open score is not set,
-                !(method_global_cfg.free_end_gaps_sequence2_leading
-                  || method_global_cfg.free_end_gaps_sequence2_trailing)
-                && // none of the free end gaps are set for second seq,
-                (method_global_cfg.free_end_gaps_sequence1_leading
-                 == method_global_cfg
-                        .free_end_gaps_sequence1_trailing)) // free ends for leading and trailing gaps are equal in first seq.
+            if constexpr (std::same_as<std::remove_cvref_t<decltype(scoring_scheme)>, hamming_scoring_scheme>)
             {
-                // TODO: Instead of relying on nucleotide scoring schemes we need to be able to determine the edit distance
-                //       option via the scheme.
-                if constexpr (is_type_specialisation_of_v<std::remove_cvref_t<decltype(scoring_scheme)>,
-                                                          nucleotide_scoring_scheme>)
+                auto method_global_cfg = get<seqan3::align_cfg::method_global>(config_with_result_type);
+
+                bool const has_edit_distance_gaps = gap_cost.open_score == 0 && gap_cost.extension_score == -1;
+                bool const has_no_free_end_gaps_sequence2 = !method_global_cfg.free_end_gaps_sequence2_leading
+                                                         && !method_global_cfg.free_end_gaps_sequence2_trailing;
+                bool const has_equal_free_end_gaps_sequence1 = method_global_cfg.free_end_gaps_sequence1_leading
+                                                            == method_global_cfg.free_end_gaps_sequence1_trailing;
+
+                if (has_edit_distance_gaps && has_no_free_end_gaps_sequence2 && has_equal_free_end_gaps_sequence1)
                 {
-                    if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0)
-                        && (scoring_scheme.score('A'_dna15, 'C'_dna15)) == -1)
-                    {
-                        return std::pair{configure_edit_distance<function_wrapper_t>(config_with_result_type),
-                                         config_with_result_type};
-                    }
+                    return std::pair{configure_edit_distance<function_wrapper_t>(config_with_result_type),
+                                     config_with_result_type};
                 }
             }
         }

@@ -6,14 +6,18 @@
 
 #include <seqan3/alignment/configuration/align_config_edit.hpp>
 #include <seqan3/alignment/configuration/align_config_method.hpp>
+#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/nucleotide/dna15.hpp>
 
 TEST(align_cfg_edit, is_hamming)
 {
     auto scheme = seqan3::get<seqan3::align_cfg::scoring_scheme>(seqan3::align_cfg::edit_scheme).scheme;
 
-    for (unsigned i = 0; i < decltype(scheme)::matrix_size; ++i)
+    constexpr uint32_t dna15_size_v = seqan3::alphabet_size<seqan3::dna15>;
+
+    for (uint32_t i = 0; i < dna15_size_v; ++i)
     {
-        for (unsigned j = 0; j < decltype(scheme)::matrix_size; ++j)
+        for (uint32_t j = 0; j < dna15_size_v; ++j)
         {
             if (i == j)
                 EXPECT_EQ((scheme.score(seqan3::assign_rank_to(i, seqan3::dna15{}),
