@@ -21,7 +21,6 @@
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/sam_file/detail/cigar.hpp>
 #include <seqan3/io/sam_file/header.hpp>
-#include <seqan3/io/sam_file/input_options.hpp>
 #include <seqan3/io/sam_file/output_format_concept.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/views/repeat_n.hpp>
@@ -83,11 +82,10 @@ protected:
     template <arithmetic arithmetic_target_type>
     void read_arithmetic_field(std::string_view const & str, arithmetic_target_type & arithmetic_target);
 
-    template <typename stream_view_type, typename ref_ids_type, typename ref_seqs_type, typename seq_legal_alph_type>
+    template <typename stream_view_type, typename ref_ids_type, typename ref_seqs_type>
     void read_header(stream_view_type && stream_view,
                      sam_file_header<ref_ids_type> & hdr,
-                     ref_seqs_type & /*ref_id_to_pos_map*/,
-                     sam_file_input_options<seq_legal_alph_type> const & options);
+                     ref_seqs_type & /*ref_id_to_pos_map*/);
 
     template <typename stream_t, typename header_type>
     void write_header(stream_t & stream, sam_file_output_options const & options, header_type & header);
@@ -260,7 +258,6 @@ inline void format_sam_base::read_arithmetic_field(std::string_view const & str,
  * \tparam stream_view_type     The type of the stream as a view.
  * \param[in, out] stream_view  The stream view to iterate over.
  * \param[in, out] hdr          The header (as a pointer) to store the parsed values.
- * \param[in] options           The options to alter the parsing process.
  *
  * \throws seqan3::format_error if any unexpected character or format is encountered.
  *
@@ -275,11 +272,10 @@ inline void format_sam_base::read_arithmetic_field(std::string_view const & str,
  * If any unknown tag was encountered, a warning will be emitted to std::cerr. This can be configured with
  * seqan3::sam_file_input_options::stream_warnings_to.
  */
-template <typename stream_view_type, typename ref_ids_type, typename ref_seqs_type, typename seq_legal_alph_type>
+template <typename stream_view_type, typename ref_ids_type, typename ref_seqs_type>
 inline void format_sam_base::read_header(stream_view_type && stream_view,
                                          sam_file_header<ref_ids_type> & hdr,
-                                         ref_seqs_type & /*ref_id_to_pos_map*/,
-                                         sam_file_input_options<seq_legal_alph_type> const & options)
+                                         ref_seqs_type & /*ref_id_to_pos_map*/)
 {
     auto it = std::ranges::begin(stream_view);
     auto end = std::ranges::end(stream_view);

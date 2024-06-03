@@ -1,8 +1,0 @@
-### defaults_to_cerr ###
-Unsupported tag found in SAM header @HD: "pb:5.0.0"
-Unsupported tag found in SAM header @HD: "ot:ter"
-### redirect_to_cout ###
-### redirect_to_file ###
-### silence_warnings ###
-### filter ###
-Unsupported tag found in SAM header @HD: "ot:ter"
