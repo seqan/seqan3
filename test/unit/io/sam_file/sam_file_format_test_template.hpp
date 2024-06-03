@@ -358,7 +358,16 @@ TYPED_TEST_P(sam_file_read, issue2423)
 }
 
 TYPED_TEST_P(sam_file_read, unknown_header_tag)
-{}
+{
+    typename TestFixture::stream_type istream{this->unknown_tag_header};
+    seqan3::sam_file_input fin{istream, TypeParam{}};
+    ASSERT_NO_THROW(fin.begin());
+
+    EXPECT_EQ(fin.header().user_tags, "pb:5.0.0\totter");                        // HD
+    EXPECT_EQ(std::get<1>(fin.header().ref_id_info.front()), "pb:5.0.0\totter"); // SQ
+    EXPECT_EQ(std::get<1>(fin.header().read_groups.front()), "pb:5.0.0\totter"); // RG
+    EXPECT_EQ(fin.header().program_infos.front().user_tags, "pb:5.0.0\totter");  // PG
+}
 
 // ----------------------------------------------------------------------------
 // sam_file_write
@@ -510,11 +519,12 @@ TYPED_TEST_P(sam_file_write, with_header)
     seqan3::sam_file_header header{std::vector<std::string>{this->ref_id}};
     header.sorting = "unknown";
     header.grouping = "none";
-    header.ref_id_info.push_back({this->ref_seq.size(), "AN:other_name"});
+    header.ref_id_info.push_back({this->ref_seq.size(), "AN:other_name\tpb:5.0.0\totter"});
     header.ref_dict[this->ref_id] = 0;
-    header.program_infos.push_back({"prog1", "cool_program", "./prog1", "a", "b", "c"});
-    header.read_groups.emplace_back("group1", "DS:more info");
+    header.program_infos.push_back({"prog1", "cool_program", "./prog1", "a", "b", "c", "pb:5.0.0\totter"});
+    header.read_groups.emplace_back("group1", "DS:more info\tpb:5.0.0\totter");
     header.comments.push_back("This is a comment.");
+    header.user_tags = "pb:5.0.0\totter";
 
     {
         seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
