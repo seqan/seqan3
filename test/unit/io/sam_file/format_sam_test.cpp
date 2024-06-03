@@ -173,29 +173,19 @@ TEST_F(sam_format, header_errors)
         seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
         EXPECT_NO_THROW(fin.begin());
     }
-    { // user defined tags should not trigger errors, but print warnings to cerr
+    { // user defined tags should not trigger errors
         std::string header_str{
             "@HD\tVN:1.6\tVB:user_tag\tSB:user_tag\tGB:user_tag\tpb:user_tag\n"
             "@SQ\tSN:ref2\tLN:243199373\tSB:user_tag\tLB:user_tag\tpb:user_tag\n"
             "@RG\tID:U0a_A2_L1\tIB:user_tag\tpb:user_tag\n"
             "@PG\tID:qc\tIB:user_tag\tPB:user_tag\tCB:user_tag\tDB:user_tag\tVB:user_tag\tpb:user_tag\n"};
-        std::string expected_cerr{"Unsupported tag found in SAM header @HD: \"VB:user_tag\"\n"
-                                  "Unsupported tag found in SAM header @HD: \"SB:user_tag\"\n"
-                                  "Unsupported tag found in SAM header @HD: \"GB:user_tag\"\n"
-                                  "Unsupported tag found in SAM header @HD: \"pb:user_tag\"\n"
-                                  "Unsupported tag found in SAM header @PG: \"IB:user_tag\"\n"
-                                  "Unsupported tag found in SAM header @PG: \"PB:user_tag\"\n"
-                                  "Unsupported tag found in SAM header @PG: \"CB:user_tag\"\n"
-                                  "Unsupported tag found in SAM header @PG: \"DB:user_tag\"\n"
-                                  "Unsupported tag found in SAM header @PG: \"VB:user_tag\"\n"
-                                  "Unsupported tag found in SAM header @PG: \"pb:user_tag\"\n"};
 
         std::istringstream istream(header_str);
         seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
 
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(fin.begin());
-        EXPECT_EQ(testing::internal::GetCapturedStderr(), expected_cerr);
+        EXPECT_EQ(testing::internal::GetCapturedStderr(), "");
     }
     { // missing VN tag in @HD
         std::string header_str{"@HD\n"};
