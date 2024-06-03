@@ -24,7 +24,8 @@ struct sam_file_read<seqan3::format_sam> : public sam_file_data
     // However, encountering such a tag should not break the parsing.
     std::string unknown_tag_header{
         R"(@HD	VN:1.6	pb:5.0.0	otter
-@SQ	SN:ref	LN:34
+@SQ	SN:ref	LN:34	pb:5.0.0	otter
+@RG	ID:R1	pb:5.0.0	otter
 @PG	ID:novoalign	pb:5.0.0	otter
 )"};
 
@@ -87,10 +88,10 @@ read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
     // -----------------------------------------------------------------------------------------------------------------
 
     std::string verbose_output{
-        R"(@HD	VN:1.6	SO:unknown	GO:none
-@SQ	SN:ref	LN:34	AN:other_name
-@RG	ID:group1	DS:more info
-@PG	ID:prog1	PN:cool_program	CL:./prog1	PP:a	DS:b	VN:c
+        R"(@HD	VN:1.6	SO:unknown	GO:none	pb:5.0.0	otter
+@SQ	SN:ref	LN:34	AN:other_name	pb:5.0.0	otter
+@RG	ID:group1	DS:more info	pb:5.0.0	otter
+@PG	ID:prog1	PN:cool_program	CL:./prog1	PP:a	DS:b	VN:c	pb:5.0.0	otter
 @CO	This is a comment.
 read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	CC:i:300	NM:i:-7	aa:A:c	cc:i:-300	ff:f:3.1	zz:Z:str
 read2	42	ref	2	62	1H7M1D1M1S2H	ref	10	300	AGGCTGNAG	!##$&'()*	bC:B:C,3,200	bI:B:I,294967296	bS:B:S,300,40,500	bc:B:c,-3	bf:B:f,3.5,0.1,43.8	bi:B:i,-3,200,-66000	bs:B:s,-3,200,-300
