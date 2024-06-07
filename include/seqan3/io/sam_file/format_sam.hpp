@@ -295,11 +295,12 @@ inline void format_sam::read_sequence_record(stream_type & stream,
         if (std::ranges::distance(sequence) == 0)
             throw parse_error{"The sequence information must not be empty."};
     if constexpr (!detail::decays_to_ignore_v<id_type>)
+    {
         if (std::ranges::distance(id) == 0)
             throw parse_error{"The id information must not be empty."};
-
-    if (options.truncate_ids)
-        id = id | detail::take_until_and_consume(is_space) | ranges::to<id_type>();
+        if (options.truncate_ids)
+            id = id | detail::take_until_and_consume(is_space) | ranges::to<id_type>();
+    }
 }
 
 //!\copydoc sequence_file_output_format::write_sequence_record
