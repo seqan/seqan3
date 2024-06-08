@@ -135,11 +135,8 @@ struct is_type_specialisation_of : public std::false_type
 {};
 
 //!\overload
-template <typename source_t, template <typename...> typename target_template>
-    requires (
-        !std::same_as<transformation_trait_or_t<transfer_template_args_onto<source_t, target_template>, void>, void>)
-struct is_type_specialisation_of<source_t, target_template> :
-    std::is_same<source_t, transfer_template_args_onto_t<source_t, target_template>>
+template <template <typename...> typename source_t, typename... source_args>
+struct is_type_specialisation_of<source_t<source_args...>, source_t> : public std::true_type
 {};
 
 /*!\brief Helper variable template for seqan3::detail::is_type_specialisation_of (unary_type_trait shortcut).
@@ -169,11 +166,8 @@ struct is_value_specialisation_of : std::false_type
  * \see seqan3::detail::is_type_specialisation_of
  * \see seqan3::detail::is_value_specialisation_of_v
  */
-template <typename source_t, template <auto...> typename target_template>
-    requires (
-        !std::same_as<transformation_trait_or_t<transfer_template_vargs_onto<source_t, target_template>, void>, void>)
-struct is_value_specialisation_of<source_t, target_template> :
-    std::is_same<source_t, transfer_template_vargs_onto_t<source_t, target_template>>
+template <template <auto...> typename source_t, auto... source_args>
+struct is_value_specialisation_of<source_t<source_args...>, source_t> : public std::true_type
 {};
 
 /*!\brief Helper variable template for seqan3::detail::is_value_specialisation_of (unary_type_trait shortcut).

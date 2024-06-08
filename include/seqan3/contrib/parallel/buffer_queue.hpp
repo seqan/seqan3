@@ -15,6 +15,7 @@
 #include <cassert>
 #include <cmath>
 #include <concepts>
+#include <exception>
 #include <mutex>
 #include <ranges>
 #include <seqan3/std/new>
@@ -334,15 +335,15 @@ private:
     }
 
     template <typename value2_t>
-        requires (std::convertible_to<value2_t, value_t>) && (buffer_policy == buffer_queue_policy::fixed) bool
-    overflow(value2_t &&)
+        requires (std::convertible_to<value2_t, value_t>) && (buffer_policy == buffer_queue_policy::fixed)
+    bool overflow(value2_t &&)
     {
         return false;
     }
 
     template <typename value2_t>
-        requires (std::convertible_to<value2_t, value_t>) && (buffer_policy == buffer_queue_policy::dynamic) bool
-    overflow(value2_t && value);
+        requires (std::convertible_to<value2_t, value_t>) && (buffer_policy == buffer_queue_policy::dynamic)
+    bool overflow(value2_t && value);
 
     //!\brief The buffer that is used as ring buffer.
     buffer_t buffer;
