@@ -34,6 +34,7 @@ struct sam_file_program_info_t
     std::string previous;          //!< The id of the previous program if program calls were chained.
     std::string description;       //!< A description of the program and/or program call.
     std::string version;           //!< The program/tool version.
+    std::string user_tags;         //!< Additional user-defined tags.
 };
 
 /*!\brief Stores the header information of SAM/BAM files.
@@ -213,6 +214,8 @@ public:
      * * **SM:** Sample. Use pool name where a pool is being sequenced.
      */
     std::vector<std::pair<std::string, std::string>> read_groups;
+
+    std::string user_tags; //!< Additional user-defined tags.
 };
 
 } // namespace seqan3
