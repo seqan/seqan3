@@ -125,11 +125,9 @@ public:
     template <typename other_char_t, typename t>
     friend debug_stream_type<other_char_t> & operator<<(debug_stream_type<other_char_t> & s, t && v)
     {
-        using t_ = std::remove_cvref_t<t>;
-
-        if constexpr (default_printer::is_printable<t_>)
+        if constexpr (std::invocable<default_printer, decltype(s), t>)
         {
-            default_printer::print(s, v);
+            std::invoke(default_printer{}, s, std::forward<t>(v));
         }
         else
         {
