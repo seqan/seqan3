@@ -28,12 +28,6 @@ template <typename alphabet_t>
     requires alphabet<alphabet_t>
 struct alphabet_printer<alphabet_t>
 {
-    static constexpr auto print = [](auto & s, alphabet_t l)
-    {
-        alphabet_printer<alphabet_t> printer{};
-        std::invoke(printer, s, l);
-    };
-
     template <typename stream_t>
     constexpr void operator()(stream_t & stream, alphabet_t const letter) const noexcept
     {
@@ -54,12 +48,6 @@ template <typename alphabet_t>
     requires std::same_as<std::remove_cvref_t<alphabet_t>, mask>
 struct mask_printer<alphabet_t>
 {
-    static constexpr auto print = [](auto & s, alphabet_t const l)
-    {
-        mask_printer<alphabet_t> printer{};
-        std::invoke(printer, s, l);
-    };
-
     template <typename stream_t>
     constexpr void operator()(stream_t & stream, alphabet_t const letter) const noexcept
     {

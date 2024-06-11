@@ -106,12 +106,6 @@ template <typename alignment_t>
               && detail::all_model_aligned_seq<detail::tuple_type_list_t<std::remove_cvref_t<alignment_t>>>)
 struct alignment_printer<alignment_t>
 {
-    static constexpr auto print = [](auto & stream, auto && alignment)
-    {
-        alignment_printer<alignment_t> printer{};
-        std::invoke(printer, stream, alignment);
-    };
-
     template <typename stream_t>
     constexpr void operator()(stream_t & stream, alignment_t const & alignment) const
     {

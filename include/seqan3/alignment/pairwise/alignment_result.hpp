@@ -417,12 +417,6 @@ struct alignment_result_printer<T> : public alignment_result_printer<std::remove
 template <typename result_value_t>
 struct alignment_result_printer<alignment_result<result_value_t>>
 {
-    static constexpr auto print = [](auto & stream, alignment_result<result_value_t> const & result)
-    {
-        alignment_result_printer<alignment_result<result_value_t>> printer{};
-        std::invoke(printer, stream, result);
-    };
-
     template <typename stream_t>
     constexpr void operator()(stream_t & stream, alignment_result<result_value_t> const & result) const noexcept
     {

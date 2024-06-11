@@ -89,12 +89,6 @@ private:
 
 public:
 
-    static constexpr auto print = [](auto & s, detail::trace_directions const trace)
-    {
-        trace_directions_printer<trace_directions_t> printer{};
-        std::invoke(printer, s, trace);
-    };
-
     template <typename stream_t>
         requires requires (stream_t & s) { {s.flags2()} -> std::same_as<fmtflags2>; }
     constexpr void operator()(stream_t & stream, detail::trace_directions const trace) const

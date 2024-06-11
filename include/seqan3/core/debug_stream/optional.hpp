@@ -35,12 +35,6 @@ struct optional_printer<T> : public optional_printer<std::remove_cvref_t<T>>
 template <>
 struct optional_printer<std::nullopt_t>
 {
-    static constexpr auto print = [](auto & s, std::nullopt_t SEQAN3_DOXYGEN_ONLY(arg))
-    {
-        optional_printer<std::nullopt_t> printer{};
-        std::invoke(printer, s, std::nullopt);
-    };
-
     template <typename stream_t>
     constexpr void operator()(stream_t & stream, std::nullopt_t const SEQAN3_DOXYGEN_ONLY(arg)) const
     {
@@ -57,12 +51,6 @@ struct optional_printer<std::nullopt_t>
 template <typename T>
 struct optional_printer<std::optional<T>>
 {
-    static constexpr auto print = [](auto & s, auto && arg)
-    {
-        optional_printer<std::optional<T>> printer{};
-        std::invoke(printer, s, std::forward<decltype(arg)>(arg));
-    };
-
     template <typename stream_t>
     constexpr void operator()(stream_t & stream, std::optional<T> const & arg) const
     {

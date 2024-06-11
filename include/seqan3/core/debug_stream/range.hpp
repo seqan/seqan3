@@ -100,12 +100,6 @@ template <typename rng_t>
     requires std::ranges::input_range<rng_t> && nonrecursive_range<rng_t>
 struct input_range_printer<rng_t>
 {
-    static constexpr auto print = [](auto & s, auto && r)
-    {
-        input_range_printer<rng_t> printer{};
-        std::invoke(printer, s, r);
-    };
-
     template <typename stream_t>
     constexpr void operator()(stream_t & stream, rng_t const & r) const
     {
@@ -147,12 +141,6 @@ template <typename sequence_t>
     requires sequence<sequence_t>
 struct sequence_printer<sequence_t>
 {
-    static constexpr auto print = [](auto & s, auto && sequence)
-    {
-        sequence_printer<sequence_t> printer{};
-        std::invoke(printer, s, sequence);
-    };
-
     template <typename stream_t>
     constexpr void operator()(stream_t & stream, sequence_t const & sequence) const
     {
@@ -171,17 +159,11 @@ template <typename char_sequence_t>
           && (is_char_type_v<std::remove_cvref_t<std::ranges::range_reference_t<char_sequence_t>>>)
 struct char_sequence_printer<char_sequence_t>
 {
-    static constexpr auto print = [](auto & s, auto && sequence)
-    {
-        char_sequence_printer<char_sequence_t> printer{};
-        std::invoke(printer, s, sequence);
-    };
-
     template <typename stream_t>
     constexpr void operator()(stream_t & stream, char_sequence_t const & sequence) const
     {
         if constexpr (std::is_pointer_v<std::decay_t<char_sequence_t>>)
-            return std_printer<char_sequence_t>::print(stream, sequence);
+            return std::invoke(std_printer<char_sequence_t>{}, stream, sequence);
 
         for (auto && chr : sequence)
             stream << chr;

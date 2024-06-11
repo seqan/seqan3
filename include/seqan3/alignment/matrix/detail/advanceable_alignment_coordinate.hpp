@@ -309,12 +309,6 @@ template <typename coordinate_type>
                                                   detail::advanceable_alignment_coordinate>
 struct advanceable_alignment_coordinate_printer<coordinate_type>
 {
-    static constexpr auto print = [](auto & s, coordinate_type const & c)
-    {
-        advanceable_alignment_coordinate_printer<coordinate_type> printer{};
-        std::invoke(printer, s, c);
-    };
-
     template <typename stream_t>
     constexpr void operator()(stream_t & stream, coordinate_type const & coordinate) const
     {

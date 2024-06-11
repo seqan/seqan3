@@ -49,14 +49,9 @@ template <typename type_t>
              }
 struct std_printer<type_t>
 {
-    static constexpr auto print = [](auto & s, auto && value)
-    {
-        std_printer<type_t> printer{};
-        std::invoke(printer, s, value);
-    };
-
-    template <typename stream_type>
-    constexpr void operator()(stream_type & stream, type_t const & value) const
+    template <typename stream_t>
+        requires requires (stream_t & stream) { stream.stream; }
+    constexpr void operator()(stream_t & stream, type_t const & value) const
     {
         *stream.stream << value;
     }
@@ -66,12 +61,6 @@ template <typename integral_t>
     requires std::integral<std::remove_cvref_t<integral_t>>
 struct integral_printer<integral_t>
 {
-    static constexpr auto print = [](auto & s, auto const value)
-    {
-        integral_printer<std::remove_cvref_t<integral_t>> printer{};
-        std::invoke(printer, s, value);
-    };
-
     template <typename stream_t>
     constexpr void operator()(stream_t & stream, integral_t const value) const
     {
@@ -134,8 +123,7 @@ public:
     constexpr void operator()(stream_t & stream, arg_t && arg) const
     {
         using printer_t = printer_for_t<stream_t &, arg_t>;
-        printer_t printer{};
-        std::invoke(printer, stream, std::forward<arg_t>(arg));
+        std::invoke(printer_t{}, stream, std::forward<arg_t>(arg));
     }
 };
 

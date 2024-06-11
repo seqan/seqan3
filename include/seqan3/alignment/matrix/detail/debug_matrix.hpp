@@ -480,12 +480,6 @@ template <typename alignment_matrix_t>
     requires detail::matrix<std::remove_cvref_t<alignment_matrix_t>>
 struct alignment_matrix_printer<alignment_matrix_t>
 {
-    static constexpr auto print = [](auto & s, auto && matrix)
-    {
-        alignment_matrix_printer<alignment_matrix_t> printer{};
-        std::invoke(printer, s, matrix);
-    };
-
     template <typename stream_t>
         requires requires (stream_t & s) { {s.flags2()} -> std::same_as<fmtflags2>; }
     constexpr void operator()(stream_t & stream, alignment_matrix_t const & matrix) const

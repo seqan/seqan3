@@ -67,12 +67,6 @@ template <typename tuple_t>
     requires tuple_like<std::remove_cvref_t<tuple_t>>
 struct tuple_printer<tuple_t>
 {
-    static constexpr auto print = [](auto & s, auto && t)
-    {
-        tuple_printer<tuple_t> printer{};
-        std::invoke(printer, s, t);
-    };
-
     template <typename stream_t>
     constexpr void operator()(stream_t & stream, tuple_t const & obj) const
     {

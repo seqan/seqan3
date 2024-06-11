@@ -230,35 +230,6 @@ template <typename value_t>
               || std::is_same_v<std::remove_cvref_t<value_t>, fmtflags2>)
 struct debug_stream_printer<value_t>
 {
-    struct print_fn
-    {
-        template <typename stream_t>
-        constexpr void operator()(stream_t & s, int8_t const v) const
-        {
-            if ((s.flags2() & fmtflags2::small_int_as_number) == fmtflags2::small_int_as_number)
-                *s.stream << static_cast<int>(v);
-            else
-                *s.stream << v;
-        }
-
-        template <typename stream_t>
-        constexpr void operator()(stream_t & s, uint8_t const v) const
-        {
-            if ((s.flags2() & fmtflags2::small_int_as_number) == fmtflags2::small_int_as_number)
-                *s.stream << static_cast<unsigned>(v);
-            else
-                *s.stream << v;
-        }
-
-        template <typename stream_t>
-        constexpr void operator()(stream_t & s, fmtflags2 const flag) const
-        {
-            s.setf(flag);
-        }
-    };
-
-    static constexpr print_fn print{};
-
     template <typename char_t>
     constexpr void operator()(debug_stream_type<char_t> & stream, int8_t const v) const
     {
