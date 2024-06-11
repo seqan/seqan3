@@ -46,7 +46,7 @@ concept printable = requires () {
                     };
 
 template <typename type_t>
-    requires requires (std::ostream & cout, type_t value) {
+    requires requires (std::ostream & cout, type_t const & value) {
                  {
                      cout << value
                  };
@@ -55,8 +55,15 @@ struct std_printer<type_t>
 {
     static constexpr auto print = [](auto & s, auto && value)
     {
-        *s.stream << std::forward<decltype(value)>(value);
+        std_printer<type_t> printer{};
+        std::invoke(printer, s, value);
     };
+
+    template <typename stream_type>
+    constexpr void operator()(stream_type & stream, type_t const & value) const
+    {
+        *stream.stream << value;
+    }
 };
 
 template <typename integral_t>
@@ -65,14 +72,21 @@ struct integral_printer<integral_t>
 {
     static constexpr auto print = [](auto & s, auto const value)
     {
+        integral_printer<std::remove_cvref_t<integral_t>> printer{};
+        std::invoke(printer, s, value);
+    };
+
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, integral_t const value) const
+    {
         // note that we assume here that we always can print all std::integral's,
         // but this is not correct since std::cout << char32_t{5}; is not possible.
         // since char32_t is also an alphabet, we avoid infinite recursion here.
         if constexpr (printable<std_printer<integral_t>>)
-            std_printer<integral_t>::print(s, value);
+            std_printer<integral_t>::print(stream, value);
         else
             static_assert(std::same_as<integral_t, void>, "This type is not printable.");
-    };
+    }
 };
 
 template <template <typename> typename... printers_t>

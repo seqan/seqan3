@@ -76,22 +76,48 @@ template <typename trace_directions_t>
     requires std::is_same_v<std::remove_cvref_t<trace_directions_t>, detail::trace_directions>
 struct trace_directions_printer<trace_directions_t>
 {
+private:
+
+    static constexpr char const * unicode[32]{"↺",  "↖",   "↑",   "↖↑",   "⇡",   "↖⇡",   "↑⇡",   "↖↑⇡",
+                                              "←",  "↖←",  "↑←",  "↖↑←",  "⇡←",  "↖⇡←",  "↑⇡←",  "↖↑⇡←",
+                                              "⇠",  "↖⇠",  "↑⇠",  "↖↑⇠",  "⇡⇠",  "↖⇡⇠",  "↑⇡⇠",  "↖↑⇡⇠",
+                                              "←⇠", "↖←⇠", "↑←⇠", "↖↑←⇠", "⇡←⇠", "↖⇡←⇠", "↑⇡←⇠", "↖↑⇡←⇠"};
+
+    static constexpr char const * csv[32]{"N",   "D",    "U",   "DU",  "u",    "Du",   "Uu",  "DUu",  "L",    "DL",   "UL",
+                                          "DUL", "uL",   "DuL", "UuL", "DUuL", "l",    "Dl",  "Ul",   "DUl",  "ul",   "Dul",
+                                          "Uul", "DUul", "Ll",  "DLl", "ULl",  "DULl", "uLl", "DuLl", "UuLl", "DUuLl"};
+
+public:
+
     static constexpr auto print = [](auto & s, detail::trace_directions const trace)
     {
-        static char const * unicode[32]{"↺",  "↖",   "↑",   "↖↑",   "⇡",   "↖⇡",   "↑⇡",   "↖↑⇡",
-                                        "←",  "↖←",  "↑←",  "↖↑←",  "⇡←",  "↖⇡←",  "↑⇡←",  "↖↑⇡←",
-                                        "⇠",  "↖⇠",  "↑⇠",  "↖↑⇠",  "⇡⇠",  "↖⇡⇠",  "↑⇡⇠",  "↖↑⇡⇠",
-                                        "←⇠", "↖←⇠", "↑←⇠", "↖↑←⇠", "⇡←⇠", "↖⇡←⇠", "↑⇡←⇠", "↖↑⇡←⇠"};
+        trace_directions_printer<trace_directions_t> printer{};
+        std::invoke(printer, s, trace);
+    };
 
-        static char const * csv[32]{"N",   "D",    "U",   "DU",  "u",    "Du",   "Uu",  "DUu",  "L",    "DL",   "UL",
-                                    "DUL", "uL",   "DuL", "UuL", "DUuL", "l",    "Dl",  "Ul",   "DUl",  "ul",   "Dul",
-                                    "Uul", "DUul", "Ll",  "DLl", "ULl",  "DULl", "uLl", "DuLl", "UuLl", "DUuLl"};
+    template <typename stream_t>
+        requires requires (stream_t & s) { {s.flags2()} -> std::same_as<fmtflags2>; }
+    constexpr void operator()(stream_t & stream, detail::trace_directions const trace) const
+    {
+        print_impl(stream, stream.flags2(), trace);
+    }
 
-        bool is_unicode = (s.flags2() & fmtflags2::utf8) == fmtflags2::utf8;
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, detail::trace_directions const trace) const
+    {
+        print_impl(stream, fmtflags2::none, trace);
+    }
+
+private:
+
+    template <typename stream_t>
+    constexpr void print_impl(stream_t & stream, fmtflags2 const flag, detail::trace_directions const trace) const
+    {
+        bool is_unicode = (flag & fmtflags2::utf8) == fmtflags2::utf8;
         auto const & trace_dir = is_unicode ? unicode : csv;
 
-        s << trace_dir[static_cast<size_t>(trace)];
-    };
+        stream << trace_dir[static_cast<size_t>(trace)];
+    }
 };
 
 } // namespace seqan3

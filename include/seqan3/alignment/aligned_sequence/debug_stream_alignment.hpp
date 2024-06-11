@@ -108,12 +108,19 @@ struct alignment_printer<alignment_t>
 {
     static constexpr auto print = [](auto & stream, auto && alignment)
     {
+        alignment_printer<alignment_t> printer{};
+        std::invoke(printer, stream, alignment);
+    };
+
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, alignment_t const & alignment) const
+    {
         constexpr size_t sequence_count = std::tuple_size_v<std::remove_cvref_t<alignment_t>>;
 
         static_assert(sequence_count >= 2, "An alignment requires at least two sequences.");
 
         detail::stream_alignment(stream, alignment, std::make_index_sequence<sequence_count - 1>{});
-    };
+    }
 };
 
 } // namespace seqan3

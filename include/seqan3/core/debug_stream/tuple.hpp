@@ -63,17 +63,21 @@ namespace seqan3
  * \param t The tuple.
  * \relates seqan3::debug_stream_type
  */
-template <typename tuple_type>
-    requires tuple_like<tuple_type>
-struct tuple_printer<tuple_type>
+template <typename tuple_t>
+    requires tuple_like<std::remove_cvref_t<tuple_t>>
+struct tuple_printer<tuple_t>
 {
     static constexpr auto print = [](auto & s, auto && t)
     {
-        using tuple_t = decltype(t);
-        detail::print_tuple(s,
-                            std::forward<tuple_t>(t),
-                            std::make_index_sequence<std::tuple_size_v<std::remove_cvref_t<tuple_t>>>{});
+        tuple_printer<tuple_t> printer{};
+        std::invoke(printer, s, t);
     };
+
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, tuple_t const & obj) const
+    {
+        detail::print_tuple(stream, obj, std::make_index_sequence<std::tuple_size_v<std::remove_cvref_t<tuple_t>>>{});
+    }
 };
 
 //!\}

@@ -260,6 +260,30 @@ struct debug_stream_printer<value_t>
     };
 
     static constexpr print_fn print{};
+
+    template <typename char_t>
+    constexpr void operator()(debug_stream_type<char_t> & stream, int8_t const v) const
+    {
+        if ((stream.flags2() & fmtflags2::small_int_as_number) == fmtflags2::small_int_as_number)
+            *stream.stream << static_cast<int>(v);
+        else
+            *stream.stream << v;
+    }
+
+    template <typename char_t>
+    constexpr void operator()(debug_stream_type<char_t> & stream, uint8_t const v) const
+    {
+        if ((stream.flags2() & fmtflags2::small_int_as_number) == fmtflags2::small_int_as_number)
+            *stream.stream << static_cast<unsigned>(v);
+        else
+            *stream.stream << v;
+    }
+
+    template <typename char_t>
+    constexpr void operator()(debug_stream_type<char_t> & stream, fmtflags2 const flag) const
+    {
+        stream.setf(flag);
+    }
 };
 
 } // namespace seqan3

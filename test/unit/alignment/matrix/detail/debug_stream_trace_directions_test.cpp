@@ -40,3 +40,20 @@ TEST(debug_stream_test, unicode)
 
     EXPECT_EQ(s.str(), "↺;↖;↑;←;↖↑;↖←;↑←;↖↑←;⇡;⇠;↖⇡;↖⇡⇠;↖↑⇡←⇠");
 }
+
+TEST(trace_directions_printer_test, std_stream)
+{
+    std::stringstream s{};
+    seqan3::trace_directions_printer<seqan3::detail::trace_directions> printer{};
+    printer(s, N);
+    s << ';';
+    printer(s, D);
+    s << ';';
+    printer(s, L);
+    s << ';';
+    printer(s, U);
+    s << ';';
+    printer(s, D | U | u | L | l);
+
+    EXPECT_EQ(s.str(), "N;D;L;U;DUuLl");
+}

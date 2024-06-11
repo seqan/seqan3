@@ -37,8 +37,15 @@ struct optional_printer<std::nullopt_t>
 {
     static constexpr auto print = [](auto & s, std::nullopt_t SEQAN3_DOXYGEN_ONLY(arg))
     {
-        s << "<VALUELESS_OPTIONAL>";
+        optional_printer<std::nullopt_t> printer{};
+        std::invoke(printer, s, std::nullopt);
     };
+
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, std::nullopt_t const SEQAN3_DOXYGEN_ONLY(arg)) const
+    {
+        stream << "<VALUELESS_OPTIONAL>";
+    }
 };
 
 /*!\brief A std::optional can be printed by printing its value or nothing if valueless.
@@ -52,11 +59,18 @@ struct optional_printer<std::optional<T>>
 {
     static constexpr auto print = [](auto & s, auto && arg)
     {
-        if (arg.has_value())
-            s << *arg;
-        else
-            s << "<VALUELESS_OPTIONAL>";
+        optional_printer<std::optional<T>> printer{};
+        std::invoke(printer, s, std::forward<decltype(arg)>(arg));
     };
+
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, std::optional<T> const & arg) const
+    {
+        if (arg.has_value())
+            stream << *arg;
+        else
+            stream << "<VALUELESS_OPTIONAL>";
+    }
 };
 
 //!\}

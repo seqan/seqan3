@@ -102,22 +102,29 @@ struct input_range_printer<rng_t>
 {
     static constexpr auto print = [](auto & s, auto && r)
     {
-        s << '[';
-        auto b = std::ranges::begin(r);
-        auto e = std::ranges::end(r);
-        if (b != e)
-        {
-            s << *b;
-            ++b;
-        }
-        while (b != e)
-        {
-            s << ',';
-            s << *b;
-            ++b;
-        }
-        s << ']';
+        input_range_printer<rng_t> printer{};
+        std::invoke(printer, s, r);
     };
+
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, rng_t const & r) const
+    {
+        stream << '[';
+        auto first = std::ranges::begin(r);
+        auto last = std::ranges::end(r);
+        if (first != last)
+        {
+            stream << *first;
+            ++first;
+        }
+        while (first != last)
+        {
+            stream << ',';
+            stream << *first;
+            ++first;
+        }
+        stream << ']';
+    }
 };
 
 /*!\brief All biological sequences can be printed to the seqan3::debug_stream.
@@ -142,9 +149,16 @@ struct sequence_printer<sequence_t>
 {
     static constexpr auto print = [](auto & s, auto && sequence)
     {
-        for (auto && chr : sequence)
-            s << chr;
+        sequence_printer<sequence_t> printer{};
+        std::invoke(printer, s, sequence);
     };
+
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, sequence_t const & sequence) const
+    {
+        for (auto && chr : sequence)
+            stream << chr;
+    }
 };
 
 // basically same as is_char_adaptation_v
@@ -159,12 +173,19 @@ struct char_sequence_printer<char_sequence_t>
 {
     static constexpr auto print = [](auto & s, auto && sequence)
     {
+        char_sequence_printer<char_sequence_t> printer{};
+        std::invoke(printer, s, sequence);
+    };
+
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, char_sequence_t const & sequence) const
+    {
         if constexpr (std::is_pointer_v<std::decay_t<char_sequence_t>>)
-            return std_printer<char_sequence_t>::print(s, sequence);
+            return std_printer<char_sequence_t>::print(stream, sequence);
 
         for (auto && chr : sequence)
-            s << chr;
-    };
+            stream << chr;
+    }
 };
 
 template <typename integer_sequence_t>

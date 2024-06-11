@@ -482,12 +482,34 @@ struct alignment_matrix_printer<alignment_matrix_t>
 {
     static constexpr auto print = [](auto & s, auto && matrix)
     {
-        detail::debug_matrix debug{std::forward<alignment_matrix_t>(matrix)};
+        alignment_matrix_printer<alignment_matrix_t> printer{};
+        std::invoke(printer, s, matrix);
+    };
+
+    template <typename stream_t>
+        requires requires (stream_t & s) { {s.flags2()} -> std::same_as<fmtflags2>; }
+    constexpr void operator()(stream_t & stream, alignment_matrix_t const & matrix) const
+    {
+        print_impl(stream, stream.flags2(), matrix);
+    }
+
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, alignment_matrix_t const & matrix) const
+    {
+        print_impl(stream, fmtflags2::none, matrix);
+    }
+
+private:
+
+    template <typename stream_t>
+    constexpr void print_impl(stream_t & stream, fmtflags2 const flags, alignment_matrix_t const & matrix) const
+    {
+        detail::debug_matrix debug{matrix};
 
         std::stringstream sstream{};
-        debug.stream_matrix(sstream, s.flags2());
-        s << sstream.str();
-    };
+        debug.stream_matrix(sstream, flags);
+        stream << sstream.str();
+    }
 };
 
 } // namespace seqan3

@@ -419,6 +419,13 @@ struct alignment_result_printer<alignment_result<result_value_t>>
 {
     static constexpr auto print = [](auto & stream, alignment_result<result_value_t> const & result)
     {
+        alignment_result_printer<alignment_result<result_value_t>> printer{};
+        std::invoke(printer, stream, result);
+    };
+
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, alignment_result<result_value_t> const & result) const noexcept
+    {
         using alignment_result_t = alignment_result<result_value_t>;
         using disabled_t = std::nullopt_t *;
         using result_data_t =
@@ -461,7 +468,7 @@ struct alignment_result_printer<alignment_result<result_value_t>>
         if constexpr (has_alignment)
             append_to_stream("\nalignment:\n", result.alignment());
         stream << '}';
-    };
+    }
 };
 
 } // namespace seqan3

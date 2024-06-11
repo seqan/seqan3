@@ -30,8 +30,15 @@ struct alphabet_printer<alphabet_t>
 {
     static constexpr auto print = [](auto & s, alphabet_t l)
     {
-        s << to_char(l);
+        alphabet_printer<alphabet_t> printer{};
+        std::invoke(printer, s, l);
     };
+
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, alphabet_t const letter) const noexcept
+    {
+        stream << to_char(letter);
+    }
 };
 
 // forward declare seqan3::mask
@@ -49,8 +56,15 @@ struct mask_printer<alphabet_t>
 {
     static constexpr auto print = [](auto & s, alphabet_t const l)
     {
-        s << (l == std::remove_cvref_t<alphabet_t>{} ? "UNMASKED" : "MASKED");
+        mask_printer<alphabet_t> printer{};
+        std::invoke(printer, s, l);
     };
+
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, alphabet_t const letter) const noexcept
+    {
+        stream << (letter == std::remove_cvref_t<alphabet_t>{} ? "UNMASKED" : "MASKED");
+    }
 };
 
 //!\}
