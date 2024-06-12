@@ -169,9 +169,9 @@ struct sequence_printer<sequence_t>
  * \ingroup core_debug_stream
  */
 template <typename type>
-static constexpr bool is_char_type_v = std::same_as<type, char> || std::same_as<type, char8_t> ||
-                                       std::same_as<type, char16_t> || std::same_as<type, char32_t> ||
-                                       std::same_as<type, wchar_t>;
+static constexpr bool is_char_type_v =
+    std::same_as<type, char> || std::same_as<type, char8_t> || std::same_as<type, char16_t>
+    || std::same_as<type, char32_t> || std::same_as<type, wchar_t>;
 
 /*!
  * \brief A printer for character sequences.

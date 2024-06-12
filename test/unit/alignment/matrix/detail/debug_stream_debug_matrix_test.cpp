@@ -453,4 +453,3 @@ TEST_F(debug_matrix_printer_test, score_matrix_unicode_debug_stream)
 
     EXPECT_EQ(stream.str(), score_matrix_unicode);
 }
-

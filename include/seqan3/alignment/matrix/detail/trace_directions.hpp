@@ -76,20 +76,17 @@ template <typename trace_directions_t>
 struct trace_directions_printer<trace_directions_t>
 {
 private:
-
     //!\brief The unicode representation of the trace directions.
-    static constexpr char const * unicode[32]{"↺",  "↖",   "↑",   "↖↑",   "⇡",   "↖⇡",   "↑⇡",   "↖↑⇡",
-                                              "←",  "↖←",  "↑←",  "↖↑←",  "⇡←",  "↖⇡←",  "↑⇡←",  "↖↑⇡←",
-                                              "⇠",  "↖⇠",  "↑⇠",  "↖↑⇠",  "⇡⇠",  "↖⇡⇠",  "↑⇡⇠",  "↖↑⇡⇠",
-                                              "←⇠", "↖←⇠", "↑←⇠", "↖↑←⇠", "⇡←⇠", "↖⇡←⇠", "↑⇡←⇠", "↖↑⇡←⇠"};
+    static constexpr char const * unicode[32]{
+        "↺", "↖",  "↑",  "↖↑",  "⇡",  "↖⇡",  "↑⇡",  "↖↑⇡",  "←",  "↖←",  "↑←",  "↖↑←",  "⇡←",  "↖⇡←",  "↑⇡←",  "↖↑⇡←",
+        "⇠", "↖⇠", "↑⇠", "↖↑⇠", "⇡⇠", "↖⇡⇠", "↑⇡⇠", "↖↑⇡⇠", "←⇠", "↖←⇠", "↑←⇠", "↖↑←⇠", "⇡←⇠", "↖⇡←⇠", "↑⇡←⇠", "↖↑⇡←⇠"};
 
     //!\brief The ascii representation of the trace directions.
-    static constexpr char const * csv[32]{"N",   "D",    "U",   "DU",  "u",    "Du",   "Uu",  "DUu",  "L",    "DL",   "UL",
-                                          "DUL", "uL",   "DuL", "UuL", "DUuL", "l",    "Dl",  "Ul",   "DUl",  "ul",   "Dul",
-                                          "Uul", "DUul", "Ll",  "DLl", "ULl",  "DULl", "uLl", "DuLl", "UuLl", "DUuLl"};
+    static constexpr char const * csv[32]{
+        "N", "D",  "U",  "DU",  "u",  "Du",  "Uu",  "DUu",  "L",  "DL",  "UL",  "DUL",  "uL",  "DuL",  "UuL",  "DUuL",
+        "l", "Dl", "Ul", "DUl", "ul", "Dul", "Uul", "DUul", "Ll", "DLl", "ULl", "DULl", "uLl", "DuLl", "UuLl", "DUuLl"};
 
 public:
-
     /*!
      * \brief Prints the trace directions into the given stream.
      *
@@ -102,7 +99,11 @@ public:
      * \param trace The trace directions to print.
      */
     template <typename stream_t>
-        requires requires (stream_t & s) { {s.flags2()} -> std::same_as<fmtflags2>; }
+        requires requires (stream_t & s) {
+                     {
+                         s.flags2()
+                         } -> std::same_as<fmtflags2>;
+                 }
     constexpr void operator()(stream_t & stream, detail::trace_directions const trace) const
     {
         print_impl(stream, stream.flags2(), trace);
@@ -125,7 +126,6 @@ public:
     }
 
 private:
-
     /*!
      * \brief Prints the trace directions
      * \tparam stream_t The type of the stream; must model seqan3::output_stream.

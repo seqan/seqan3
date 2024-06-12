@@ -491,7 +491,11 @@ struct alignment_matrix_printer<alignment_matrix_t>
      * \param matrix The alignment matrix to print
      */
     template <typename stream_t>
-        requires requires (stream_t & s) { {s.flags2()} -> std::same_as<fmtflags2>; }
+        requires requires (stream_t & s) {
+                     {
+                         s.flags2()
+                         } -> std::same_as<fmtflags2>;
+                 }
     constexpr void operator()(stream_t & stream, alignment_matrix_t const & matrix) const
     {
         print_impl(stream, stream.flags2(), matrix);
@@ -514,7 +518,6 @@ struct alignment_matrix_printer<alignment_matrix_t>
     }
 
 private:
-
     /*!
      * \brief Prints the alignment matrix into the given formatted output stream.
      * \tparam stream_t The type of the stream.

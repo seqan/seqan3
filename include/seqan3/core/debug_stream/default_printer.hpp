@@ -149,7 +149,8 @@ protected:
     static constexpr std::ptrdiff_t find_index()
     {
         std::ptrdiff_t i = 0;
-        return ((printable_with<printers_t, stream_t, arg_t> ? false : ++i) && ...) ? sizeof...(printer_templates_t) : i;
+        return ((printable_with<printers_t, stream_t, arg_t> ? false : ++i) && ...) ? sizeof...(printer_templates_t)
+                                                                                    : i;
     }
 
     /*!
@@ -162,11 +163,12 @@ protected:
      * \tparam i The index of the printer that can print the argument (default initialised to the index of the printer
      * in the list that can print the argument to the stream).
      */
-    template <typename stream_t, typename arg_t,
+    template <typename stream_t,
+              typename arg_t,
               std::ptrdiff_t i = find_index<stream_t, arg_t, printer_templates_t<arg_t>...>()>
     using printer_for_t =
-    // first: the index of the printer that can print the arguments or sizeof...(printers_t) if no printer was found
-    // second: the tuple of instantiated printers extended with no_printer_found
+        // first: the index of the printer that can print the arguments or sizeof...(printers_t) if no printer was found
+        // second: the tuple of instantiated printers extended with no_printer_found
         std::tuple_element_t<i, std::tuple<printer_templates_t<arg_t>..., no_printer_found>>;
 };
 
@@ -181,28 +183,27 @@ protected:
  */
 struct default_printer :
     public printer_order<
-            debug_stream_printer,
-            alignment_result_printer,                 // type seqan3::alignment_result<>
-            alignment_printer,                        // concept seqan3::tuple_like<>
-            advanceable_alignment_coordinate_printer, // type seqan3::detail::advanceable_alignment_coordinate<>
-            alignment_matrix_printer,                 // concept seqan3::detail::matrix<>
-            trace_directions_printer,                 // type seqan3::detail::trace_directions
-            mask_printer,                             // type seqan3::mask
-            integral_printer,                         // concept std::integral
-            // NOTE: alphabet_printer needs the integral_printer overload, otherwise it might have infinite recursion due to
-            // char and uint being an alphabet
-            alphabet_printer,         // concept seqan3::alphabet
-            char_sequence_printer,    // concept std::range::input_range<> with char value_type
-            integer_sequence_printer, // concept std::range::input_range<> with std::integral value_type
-            sequence_printer, // concept seqan3::sequence<>, i.e. std::range::input_range<> with seqan3::alphabet value_type
-            input_range_printer, // concept std::range::input_range<>
-            optional_printer,    // type std::optional<> or std::nullopt_t
-            tuple_printer,       // concept seqan3::tuple_like<>
-            std_printer          // anything that can be printed by std::ostream
-    >
+        debug_stream_printer,
+        alignment_result_printer,                 // type seqan3::alignment_result<>
+        alignment_printer,                        // concept seqan3::tuple_like<>
+        advanceable_alignment_coordinate_printer, // type seqan3::detail::advanceable_alignment_coordinate<>
+        alignment_matrix_printer,                 // concept seqan3::detail::matrix<>
+        trace_directions_printer,                 // type seqan3::detail::trace_directions
+        mask_printer,                             // type seqan3::mask
+        integral_printer,                         // concept std::integral
+        // NOTE: alphabet_printer needs the integral_printer overload, otherwise it might have infinite recursion due to
+        // char and uint being an alphabet
+        alphabet_printer,         // concept seqan3::alphabet
+        char_sequence_printer,    // concept std::range::input_range<> with char value_type
+        integer_sequence_printer, // concept std::range::input_range<> with std::integral value_type
+        sequence_printer, // concept seqan3::sequence<>, i.e. std::range::input_range<> with seqan3::alphabet value_type
+        input_range_printer, // concept std::range::input_range<>
+        optional_printer,    // type std::optional<> or std::nullopt_t
+        tuple_printer,       // concept seqan3::tuple_like<>
+        std_printer          // anything that can be printed by std::ostream
+        >
 {
 public:
-
     /*!
      * \brief The function call operator that is only defined if the type is printable.
      * \tparam stream_t The type of the stream.
