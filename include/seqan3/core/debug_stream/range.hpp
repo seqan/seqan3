@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <functional>
 #include <ranges>
 
 #include <seqan3/alphabet/adaptation/char.hpp>
