@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <functional>
 #include <iosfwd>
 #include <tuple>
 #include <utility>
