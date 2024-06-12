@@ -15,19 +15,24 @@
 
 namespace seqan3
 {
-/*!\name Formatted output overloads
- * \{
- */
-/*!\brief All alphabets can be printed to the seqan3::debug_stream by their char representation.
- * \tparam alphabet_t Type of the alphabet to be printed; must model seqan3::alphabet.
- * \param s The seqan3::debug_stream.
- * \param l The alphabet letter.
- * \relates seqan3::debug_stream_type
+
+/*!
+ * \brief The printer used for formatted output of seqan3::alphabet types.
+ *
+ * Prints the char representation of the given alphabet letter.
+ *
+ * \tparam alphabet_t The type of the alphabet to be printed.
+ * \ingroup alphabet
  */
 template <typename alphabet_t>
     requires alphabet<alphabet_t>
 struct alphabet_printer<alphabet_t>
 {
+    /*!\brief Print the alphabet to the stream
+     * \tparam stream_t The type of the stream.
+     * \param[in,out] stream The stream to print to.
+     * \param[in] letter The alphabet letter.
+     */
     template <typename stream_t>
     constexpr void operator()(stream_t & stream, alphabet_t const letter) const noexcept
     {
@@ -38,23 +43,28 @@ struct alphabet_printer<alphabet_t>
 // forward declare seqan3::mask
 class mask;
 
-/*!\brief Overload for the seqan3::mask alphabet.
- * \tparam char_t Type char type of the debug_stream.
- * \param s The seqan3::debug_stream.
- * \param l The mask alphabet letter.
- * \relates seqan3::debug_stream_type
+/*!
+ * \brief The printer used for formatted output of seqan3::mask alphabet.
+ *
+ * Prints "MASKED" if the letter is masked and "UNMASKED" otherwise.
+ *
+ * \tparam alphabet_t The type of the alphabet to be printed.
+ * \ingroup alphabet_mask
  */
 template <typename alphabet_t>
     requires std::same_as<std::remove_cvref_t<alphabet_t>, mask>
 struct mask_printer<alphabet_t>
 {
+    /*!\brief Print the mask alphabet to the stream
+     * \tparam stream_t The type of the stream.
+     * \param[in,out] stream The stream to print to.
+     * \param[in] letter The mask alphabet letter.
+     */
     template <typename stream_t>
     constexpr void operator()(stream_t & stream, alphabet_t const letter) const noexcept
     {
         stream << (letter == std::remove_cvref_t<alphabet_t>{} ? "UNMASKED" : "MASKED");
     }
 };
-
-//!\}
 
 } // namespace seqan3

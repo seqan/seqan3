@@ -125,7 +125,7 @@ public:
     template <typename other_char_t, typename t>
     friend debug_stream_type<other_char_t> & operator<<(debug_stream_type<other_char_t> & s, t && v)
     {
-        if constexpr (std::invocable<default_printer, decltype(s), t>)
+        if constexpr (printable_with<default_printer, decltype(s), t>)
         {
             std::invoke(default_printer{}, s, std::forward<t>(v));
         }
@@ -224,12 +224,33 @@ private:
     fmtflags2 flgs2{fmtflags2::default_};
 };
 
+/*!
+ * \brief A struct that provides a debug stream printer for a specific value type.
+ *
+ * This struct provides operator() overloads for printing values of type int8_t, uint8_t, and seqan3::fmtflags2
+ * to a debug stream. The operator() overloads handle the formatting of the values based on the
+ * fmtflags2 settings of the debug stream.
+ *
+ * \tparam value_t The type of the value to be printed.
+ * \ingroup core_debug_stream
+ */
 template <typename value_t>
     requires (std::is_same_v<std::remove_cvref_t<value_t>, int8_t>
               || std::is_same_v<std::remove_cvref_t<value_t>, uint8_t>
               || std::is_same_v<std::remove_cvref_t<value_t>, fmtflags2>)
 struct debug_stream_printer<value_t>
 {
+    /*!
+     * \brief Prints an int8_t value to the debug stream.
+     *
+     * \tparam char_t The character type of the debug stream.
+     * \param stream The debug stream to print to.
+     * \param v The int8_t value to be printed.
+     *
+     * This function prints the int8_t value to the debug stream, taking into account the
+     * fmtflags2 settings of the stream. If the fmtflags2::small_int_as_number flag is set,
+     * the value is printed as an int, otherwise it is printed as is.
+     */
     template <typename char_t>
     constexpr void operator()(debug_stream_type<char_t> & stream, int8_t const v) const
     {
@@ -239,6 +260,17 @@ struct debug_stream_printer<value_t>
             *stream.stream << v;
     }
 
+    /*!
+     * \brief Prints a uint8_t value to the debug stream.
+     *
+     * \tparam char_t The character type of the debug stream.
+     * \param stream The debug stream to print to.
+     * \param v The uint8_t value to be printed.
+     *
+     * This function prints the uint8_t value to the debug stream, taking into account the
+     * fmtflags2 settings of the stream. If the fmtflags2::small_int_as_number flag is set,
+     * the value is printed as an unsigned int, otherwise it is printed as is.
+     */
     template <typename char_t>
     constexpr void operator()(debug_stream_type<char_t> & stream, uint8_t const v) const
     {
@@ -248,6 +280,15 @@ struct debug_stream_printer<value_t>
             *stream.stream << v;
     }
 
+    /*!
+     * \brief Sets the fmtflags2 of the debug stream.
+     *
+     * \tparam char_t The character type of the debug stream.
+     * \param stream The debug stream to set the fmtflags2 for.
+     * \param flag The fmtflags2 value to set.
+     *
+     * This function sets the fmtflags2 of the debug stream to the specified flag value.
+     */
     template <typename char_t>
     constexpr void operator()(debug_stream_type<char_t> & stream, fmtflags2 const flag) const
     {

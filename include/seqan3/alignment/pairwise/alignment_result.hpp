@@ -400,23 +400,32 @@ struct alignment_result_value_type_accessor<alignment_result<result_value_t>>
 
 namespace seqan3
 {
-/*!\brief Streams the seqan3::alignment_result to the seqan3::debug_stream.
- *
- * \tparam char_t The underlying character type of the seqan3::debug_stream_type.
- * \tparam alignment_result_t A type specialisation of seqan3::alignment_result.
- *
- * \param[in,out] stream The output stream.
- * \param[in] result The alignment result to print.
- * \relates seqan3::debug_stream_type
- */
+
+//!\cond
 template <typename T>
     requires (!std::is_same_v<T, std::remove_cvref_t<T>>)
 struct alignment_result_printer<T> : public alignment_result_printer<std::remove_cvref_t<T>>
 {};
+//!\endcond
 
+/*!
+ * \brief The printer used for formatted output of the alignment result.
+ *
+ * The type of the printer must be a seqan3::alignment_result type.
+ *
+ * \tparam result_value_t The type of the alignment result value.
+ * \ingroup alignment_pairwise
+ */
 template <typename result_value_t>
 struct alignment_result_printer<alignment_result<result_value_t>>
 {
+
+    /*!
+     * \brief Prints the formatted output of the alignment result to the stream.
+     * \tparam stream_t The type of the stream.
+     * \param[in,out] stream The output stream.
+     * \param[in] result The alignment result to print.
+     */
     template <typename stream_t>
     constexpr void operator()(stream_t & stream, alignment_result<result_value_t> const & result) const noexcept
     {
