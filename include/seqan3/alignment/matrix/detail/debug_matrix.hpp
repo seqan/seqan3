@@ -526,7 +526,7 @@ private:
      * \param matrix The alignment matrix to print.
      */
     template <typename stream_t>
-    constexpr void print_impl(stream_t & stream, fmtflags2 const flags, alignment_matrix_t const & matrix) const
+    void print_impl(stream_t & stream, fmtflags2 const flags, alignment_matrix_t const & matrix) const
     {
         detail::debug_matrix debug{matrix};
 
