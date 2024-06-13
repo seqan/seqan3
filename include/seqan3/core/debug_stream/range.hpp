@@ -106,12 +106,14 @@ struct input_range_printer<rng_t>
      * \brief Prints the elements of a sequence to an output stream.
      *
      * \tparam stream_t The type of the output stream.
+     * \tparam range_t The type of the range to be printed; must be the same type as `rng_t` after .
      *
      * \param[in,out] stream The output stream to print to.
      * \param[in] r The range to be printed.
      */
-    template <typename stream_t>
-    constexpr void operator()(stream_t & stream, rng_t const & r) const
+    template <typename stream_t, typename range_t>
+        requires std::same_as<std::remove_cvref_t<range_t>, std::remove_cvref_t<rng_t>>
+    constexpr void operator()(stream_t & stream, range_t && r) const
     {
         stream << '[';
         auto first = std::ranges::begin(r);
@@ -148,12 +150,14 @@ struct sequence_printer<sequence_t>
      * \brief Prints the elements of a sequence to an output stream.
      *
      * \tparam stream_t The type of the output stream.
+     * \tparam range_t The type of the sequence to be printed; must be the same type as `sequence_t`.
      *
      * \param[in,out] stream The output stream to print to.
      * \param[in] sequence The sequence to be printed.
      */
-    template <typename stream_t>
-    constexpr void operator()(stream_t & stream, sequence_t const & sequence) const
+    template <typename stream_t, typename range_t>
+        requires std::same_as<std::remove_cvref_t<range_t>, std::remove_cvref_t<sequence_t>>
+    constexpr void operator()(stream_t & stream, range_t && sequence) const
     {
         for (auto && chr : sequence)
             stream << chr;
@@ -193,14 +197,15 @@ struct char_sequence_printer<char_sequence_t>
      * \brief Prints the character sequence to the given stream.
      *
      * \tparam stream_t The type of the stream.
+     * \tparam range_t The type of the character sequence; must be the same type as `char_sequence_t`.
      * \param stream The stream to print to.
      * \param sequence The character sequence to print.
      */
-    template <typename stream_t>
-    constexpr void operator()(stream_t & stream, char_sequence_t const & sequence) const
+    template <typename stream_t, typename range_t>
+    constexpr void operator()(stream_t & stream, range_t && sequence) const
     {
         if constexpr (std::is_pointer_v<std::decay_t<char_sequence_t>>)
-            return std::invoke(std_printer<char_sequence_t>{}, stream, sequence);
+            return std::invoke(std_printer<char_sequence_t>{}, stream, std::forward<char_sequence_t &&>(sequence));
 
         for (auto && chr : sequence)
             stream << chr;
