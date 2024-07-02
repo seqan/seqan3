@@ -207,8 +207,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -220,8 +219,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -233,8 +231,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -246,8 +243,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -259,8 +255,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -272,8 +267,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -285,8 +279,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -298,8 +291,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -317,8 +309,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -330,8 +321,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -343,8 +333,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -356,8 +345,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -369,8 +357,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -382,8 +369,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -395,8 +381,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -408,8 +393,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -427,8 +411,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -440,8 +423,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -453,8 +435,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -466,8 +447,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -479,8 +459,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -492,8 +471,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -505,8 +483,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -518,8 +495,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -537,8 +513,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -550,8 +525,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -563,8 +537,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -576,8 +549,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -589,8 +561,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -602,8 +573,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -615,8 +585,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
@@ -628,8 +597,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             ((std::get<N>(*this) = std::get<N>(other)), ...);
-        }
-        (std::index_sequence_for<Types...>{});
+        }(std::index_sequence_for<Types...>{});
 
         return *this;
     }
