@@ -466,33 +466,74 @@ debug_matrix(matrix_t &&, first_sequence_t &&, second_sequence_t &&)
 
 namespace seqan3
 {
-/*!\brief An alignment matrix can be printed to the seqan3::debug_stream.
- * \tparam alignment_matrix_t Type of the alignment matrix to be printed; must model seqan3::detail::matrix.
- * \param s The seqan3::debug_stream.
- * \param matrix The alignment matrix.
- * \relates seqan3::debug_stream_type
+
+/*!
+ * \brief The printer for alignment scoring and trace matrices.
  *
- * \details
+ * Prints the alignment matrix to the given formatted ouput stream.
  *
- * This prints out an alignment matrix which can be a score matrix or a trace matrix.
+ * \tparam alignment_matrix_t The type of the alignment matrix; must model seqan3::detail::matrix.
+ * \ingroup alignment_matrix
  */
-template <typename char_t, detail::matrix alignment_matrix_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alignment_matrix_t && matrix)
+template <typename alignment_matrix_t>
+    requires detail::matrix<std::remove_cvref_t<alignment_matrix_t>>
+struct alignment_matrix_printer<alignment_matrix_t>
 {
-    detail::debug_matrix debug{std::forward<alignment_matrix_t>(matrix)};
+    /*!
+     * \brief Prints the alignment matrix into the given stream using formatting specified by seqan3::fmtflags2.
+     *
+     * This overload is selected if the stream has a `flags2()` member function that returns a seqan3::fmtflags2 object.
+     * Using the flags2() member function allows to print the matrix with unicode characters if seqan3::fmtflags2::utf8
+     * is set to the seqan3::debug_stream.
+     *
+     * \tparam stream_t The type of the stream; must model seqan3::output_stream.
+     * \param stream The stream to print to.
+     * \param matrix The alignment matrix to print
+     */
+    template <typename stream_t>
+        requires requires (stream_t & s) {
+                     {
+                         s.flags2()
+                         } -> std::same_as<fmtflags2>;
+                 }
+    constexpr void operator()(stream_t & stream, alignment_matrix_t const & matrix) const
+    {
+        print_impl(stream, stream.flags2(), matrix);
+    }
 
-    std::stringstream sstream{};
-    debug.stream_matrix(sstream, s.flags2());
-    s << sstream.str();
-    return s;
-}
+    /*!
+     * \brief Prints the alignment matrix into the given stream using ascii formatting.
+     *
+     * This overload is selected if the stream has no `flags2()` member function and always prints
+     * with seqan3::fmtflags2::none.
+     *
+     * \tparam stream_t The type of the stream; must model seqan3::output_stream.
+     * \param stream The stream to print to.
+     * \param matrix The alignment matrix to print.
+     */
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, alignment_matrix_t const & matrix) const
+    {
+        print_impl(stream, fmtflags2::none, matrix);
+    }
 
-//!\overload
-template <typename char_t, std::ranges::input_range alignment_matrix_t>
-    requires detail::debug_stream_range_guard<alignment_matrix_t> && detail::matrix<alignment_matrix_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alignment_matrix_t && matrix)
-{
-    return s << detail::debug_matrix{std::forward<alignment_matrix_t>(matrix)};
-}
+private:
+    /*!
+     * \brief Prints the alignment matrix into the given formatted output stream.
+     * \tparam stream_t The type of the stream.
+     * \param stream The stream to print to.
+     * \param flags The flags to modify the way the matrix is printed.
+     * \param matrix The alignment matrix to print.
+     */
+    template <typename stream_t>
+    void print_impl(stream_t & stream, fmtflags2 const flags, alignment_matrix_t const & matrix) const
+    {
+        detail::debug_matrix debug{matrix};
+
+        std::stringstream sstream{};
+        debug.stream_matrix(sstream, flags);
+        stream << sstream.str();
+    }
+};
 
 } // namespace seqan3

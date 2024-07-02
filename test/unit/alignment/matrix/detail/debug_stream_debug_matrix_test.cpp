@@ -183,6 +183,7 @@ struct debug_matrix_stream_test : public ::testing::Test
 
 using typename seqan3::detail::debug_matrix_stream_test;
 using debug_stream_test = seqan3::detail::debug_matrix_stream_test;
+using debug_matrix_printer_test = seqan3::detail::debug_matrix_stream_test;
 
 TEST_F(debug_matrix_stream_test, unicode_str_length)
 {
@@ -428,4 +429,27 @@ TEST_F(debug_stream_test, trace_matrix_unicode_with_sequences)
     debug_stream << seqan3::fmtflags2::utf8 << matrix;
 
     EXPECT_EQ(stream.str(), trace_matrix_unicode_with_sequences);
+}
+
+TEST_F(debug_matrix_printer_test, score_matrix_ascii_std_stream)
+{
+    seqan3::detail::debug_matrix matrix{score_matrix};
+    seqan3::alignment_matrix_printer<decltype(matrix)> printer;
+
+    std::stringstream stream;
+    printer(stream, matrix);
+
+    EXPECT_EQ(stream.str(), score_matrix_ascii);
+}
+
+TEST_F(debug_matrix_printer_test, score_matrix_unicode_debug_stream)
+{
+    seqan3::detail::debug_matrix matrix{score_matrix};
+    seqan3::alignment_matrix_printer<decltype(matrix)> printer;
+
+    std::stringstream stream;
+    seqan3::debug_stream_type debug_stream{stream};
+    printer(debug_stream << seqan3::fmtflags2::utf8, matrix);
+
+    EXPECT_EQ(stream.str(), score_matrix_unicode);
 }

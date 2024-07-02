@@ -294,23 +294,30 @@ public:
 namespace seqan3
 {
 
-/*!\brief A seqan3::detail::advanceable_alignment_coordinate can be printed to the seqan3::debug_stream.
- * \tparam    coordinate_type The alignment coordinate type.
- * \param[in] s               The seqan3::debug_stream.
- * \param[in] c               The alignment coordinate to print.
- * \relates seqan3::debug_stream_type
+/*!
+ * \brief The printer for seqan3::detail::advanceable_alignment_coordinate.
  *
- * \details
+ * Prints the alignment coordinate as a tuple of the column and row index.
  *
- * Prints the alignment coordinate as a tuple.
+ * \tparam coordinate_type The type of the coordinate to print. Must be of type detail::advanceable_alignment_coordinate.
+ * \ingroup alignment_matrix
  */
-template <typename char_t, typename coordinate_type>
+template <typename coordinate_type>
     requires detail::is_value_specialisation_of_v<std::remove_cvref_t<coordinate_type>,
                                                   detail::advanceable_alignment_coordinate>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, coordinate_type && c)
+struct advanceable_alignment_coordinate_printer<coordinate_type>
 {
-    s << std::tie(c.first, c.second);
-    return s;
-}
+    /*!
+     * \brief The function call operator that prints the coordinate to the given stream.
+     * \tparam stream_t The type of the stream.
+     * \param[in,out] stream The stream to print to.
+     * \param[in] coordinate The alignment coordinate to print.
+     */
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, coordinate_type const & coordinate) const
+    {
+        stream << std::tie(coordinate.first, coordinate.second);
+    }
+};
 
 } // namespace seqan3
