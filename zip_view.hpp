@@ -1,9 +1,6 @@
-// -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2023, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2023, Knut Reinert & MPI für molekulare Genetik
-// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan-std/blob/main/LICENSE
-// -----------------------------------------------------------------------------------------------------
+// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-License-Identifier: BSD-3-Clause
 
 /*!\file
  * \author Enrico Seiler <enrico.seiler AT fu-berlin.de>
@@ -35,6 +32,7 @@ using std::ranges::views::zip;
 #    include "concepts.hpp"
 #    include "detail/compiler_definitions.hpp"
 #    include "detail/exposition_only.hpp"
+#    include "pair.hpp"
 #    include "tuple.hpp"
 
 namespace seqan::stl::detail::zip
@@ -120,11 +118,10 @@ constexpr t abs(t && v) noexcept
 
 // https://eel.is/c++draft/range.zip#concept:zip-is-common
 template <typename... range_ts>
-concept zip_is_common = (sizeof...(range_ts) == 1 && (std::ranges::common_range<range_ts> && ...))
-                     || (!(std::ranges::bidirectional_range<range_ts> && ...)
-                         && (std::ranges::common_range<range_ts> && ...))
-                     || ((std::ranges::random_access_range<range_ts> && ...)
-                         && (std::ranges::sized_range<range_ts> && ...));
+concept zip_is_common =
+    (sizeof...(range_ts) == 1 && (std::ranges::common_range<range_ts> && ...))
+    || (!(std::ranges::bidirectional_range<range_ts> && ...) && (std::ranges::common_range<range_ts> && ...))
+    || ((std::ranges::random_access_range<range_ts> && ...) && (std::ranges::sized_range<range_ts> && ...));
 
 } // namespace seqan::stl::detail::zip
 
@@ -358,8 +355,7 @@ public:
             return [&]<size_t... N>(std::integer_sequence<size_t, N...>)
             {
                 return ((std::get<N>(x.current_) == std::get<N>(y.current_)) || ...);
-            }
-            (std::index_sequence_for<Views...>{});
+            }(std::index_sequence_for<Views...>{});
         }
     }
 
@@ -432,8 +428,7 @@ public:
                 {
                     return seqan::stl::detail::zip::abs(b) < seqan::stl::detail::zip::abs(a);
                 });
-        }
-        (std::index_sequence_for<Views...>{});
+        }(std::index_sequence_for<Views...>{});
     }
 
     friend constexpr auto iter_move(iterator const & i) noexcept(
@@ -458,8 +453,7 @@ public:
         [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             (std::ranges::iter_swap(std::get<N>(l.current_), std::get<N>(r.current)), ...);
-        }
-        (std::index_sequence_for<Views...>{});
+        }(std::index_sequence_for<Views...>{});
     }
 };
 
@@ -501,8 +495,7 @@ public:
         return [&]<size_t... N>(std::integer_sequence<size_t, N...>)
         {
             return ((std::get<N>(x.current_) == std::get<N>(y.end_)) || ...);
-        }
-        (std::index_sequence_for<Views...>{});
+        }(std::index_sequence_for<Views...>{});
     }
 
     template <bool OtherConst>
@@ -522,8 +515,7 @@ public:
                                     {
                                         return seqan::stl::detail::zip::abs(b) < seqan::stl::detail::zip::abs(a);
                                     });
-        }
-        (std::index_sequence_for<Views...>{});
+        }(std::index_sequence_for<Views...>{});
     }
 
     template <bool OtherConst>

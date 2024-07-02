@@ -1,9 +1,6 @@
-// -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2023, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2023, Knut Reinert & MPI für molekulare Genetik
-// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan-std/blob/main/LICENSE
-// -----------------------------------------------------------------------------------------------------
+// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-License-Identifier: BSD-3-Clause
 
 /*!\file
  * \brief Provides seqan::stl::pair.
@@ -579,9 +576,9 @@ struct common_type<seqan::stl::pair<T1, T2>, std::pair<U1, U2>>
 
 template <class T1, class T2, class U1, class U2, template <class> class TQual, template <class> class UQual>
     requires requires {
-                 typename seqan::stl::pair<std::common_reference_t<TQual<T1>, UQual<U1>>,
-                                           std::common_reference_t<TQual<T2>, UQual<U2>>>;
-             }
+        typename seqan::stl::pair<std::common_reference_t<TQual<T1>, UQual<U1>>,
+                                  std::common_reference_t<TQual<T2>, UQual<U2>>>;
+    }
 struct basic_common_reference<seqan::stl::pair<T1, T2>, seqan::stl::pair<U1, U2>, TQual, UQual>
 {
     using type =
@@ -590,9 +587,9 @@ struct basic_common_reference<seqan::stl::pair<T1, T2>, seqan::stl::pair<U1, U2>
 
 template <class T1, class T2, class U1, class U2, template <class> class TQual, template <class> class UQual>
     requires requires {
-                 typename seqan::stl::pair<std::common_reference_t<TQual<T1>, UQual<U1>>,
-                                           std::common_reference_t<TQual<T2>, UQual<U2>>>;
-             }
+        typename seqan::stl::pair<std::common_reference_t<TQual<T1>, UQual<U1>>,
+                                  std::common_reference_t<TQual<T2>, UQual<U2>>>;
+    }
 struct basic_common_reference<std::pair<T1, T2>, seqan::stl::pair<U1, U2>, TQual, UQual>
 {
     using type =
@@ -601,9 +598,9 @@ struct basic_common_reference<std::pair<T1, T2>, seqan::stl::pair<U1, U2>, TQual
 
 template <class T1, class T2, class U1, class U2, template <class> class TQual, template <class> class UQual>
     requires requires {
-                 typename seqan::stl::pair<std::common_reference_t<TQual<T1>, UQual<U1>>,
-                                           std::common_reference_t<TQual<T2>, UQual<U2>>>;
-             }
+        typename seqan::stl::pair<std::common_reference_t<TQual<T1>, UQual<U1>>,
+                                  std::common_reference_t<TQual<T2>, UQual<U2>>>;
+    }
 struct basic_common_reference<seqan::stl::pair<T1, T2>, std::pair<U1, U2>, TQual, UQual>
 {
     using type =
