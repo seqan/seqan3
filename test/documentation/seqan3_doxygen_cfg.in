@@ -161,7 +161,7 @@ RECURSIVE              = YES
 EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = */doc/*.cpp \
-                         */contrib/std/*.hpp \
+                         */contrib/std/* \
                          ${SEQAN3_DOXYGEN_EXCLUDE_PATTERNS}
 EXCLUDE_SYMBOLS        = seqan3::contrib \
                          ${SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS}
