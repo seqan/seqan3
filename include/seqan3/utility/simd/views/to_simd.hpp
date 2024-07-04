@@ -69,7 +69,7 @@ private:
     /*!\name Auxiliary types
      * \{
      */
-    using inner_range_type = std::ranges::range_value_t<urng_t>;        //!< The inner range type.
+    using inner_range_type = std::ranges::range_reference_t<urng_t>;    //!< The inner range type.
     using chunk_type = std::array<simd_t, simd_traits<simd_t>::length>; //!< The underlying type to hold the chunks.
     using scalar_type = typename simd_traits<simd_t>::scalar_type;      //!< The scalar type.
     //!\brief The SIMD type with maximal number of lanes for the current arch.
