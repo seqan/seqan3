@@ -356,3 +356,17 @@ TYPED_TEST(view_to_simd_test, issue_1941)
 
     EXPECT_TRUE((std::common_with<value_t, reference_t>));
 }
+
+TYPED_TEST(view_to_simd_test, const_sequences)
+{
+    using simd_t = typename TestFixture::simd_t;
+
+    auto v = std::as_const(this->sequences) | seqan3::views::to_simd<simd_t>;
+    this->compare(v, this->transformed_simd_vec);
+
+    if constexpr (seqan3::simd::simd_traits<simd_t>::length > 1)
+    {
+        EXPECT_EQ(v.empty(), false);
+        EXPECT_EQ(v.size(), 64u);
+    }
+}
