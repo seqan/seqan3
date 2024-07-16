@@ -5,7 +5,6 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
-
 #include <seqan3/core/debug_stream.hpp>
 
 #include "fixture/global_affine_banded.hpp"
@@ -76,22 +75,20 @@ TEST(banded_alignment_issue3266_test, wrong_begin_and_end_position)
     using namespace seqan3;
     using namespace seqan3::literals;
 
-    const auto configGeneral =
-        align_cfg::scoring_scheme{nucleotide_scoring_scheme{match_score{1}, mismatch_score{-1}}} |
-        align_cfg::gap_cost_affine{align_cfg::open_score{0}, align_cfg::extension_score{-1}} |
-         align_cfg::method_global{
-            align_cfg::free_end_gaps_sequence1_leading{true},
-            align_cfg::free_end_gaps_sequence2_leading{true},
-            align_cfg::free_end_gaps_sequence1_trailing{true},
-            align_cfg::free_end_gaps_sequence2_trailing{true}};
+    auto const configGeneral = align_cfg::scoring_scheme{nucleotide_scoring_scheme{match_score{1}, mismatch_score{-1}}}
+                             | align_cfg::gap_cost_affine{align_cfg::open_score{0}, align_cfg::extension_score{-1}}
+                             | align_cfg::method_global{align_cfg::free_end_gaps_sequence1_leading{true},
+                                                        align_cfg::free_end_gaps_sequence2_leading{true},
+                                                        align_cfg::free_end_gaps_sequence1_trailing{true},
+                                                        align_cfg::free_end_gaps_sequence2_trailing{true}};
 
-    const auto configBanded = configGeneral | align_cfg::band_fixed_size{align_cfg::lower_diagonal{-40},
-                                                                         align_cfg::upper_diagonal{-20}};
+    auto const configBanded =
+        configGeneral | align_cfg::band_fixed_size{align_cfg::lower_diagonal{-40}, align_cfg::upper_diagonal{-20}};
 
-                              //0         1         2         3         4
-                              //01234567890123456789012345678901234567890
+    //0         1         2         3         4
+    //01234567890123456789012345678901234567890
     std::pair p{"CGTCTA"_dna4, "AAACCCGGGTTTAAACCCGGGTTTCGTGTACCCCCCCCCCC"_dna4};
-                                //                      CGTCTA
+    //                      CGTCTA
 
     auto general_results = align_pairwise(p, configGeneral);
     auto general_res = *std::ranges::begin(general_results);

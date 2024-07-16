@@ -140,9 +140,8 @@ private:
     * band starts in the origin and ends in the sink.
     */
     template <typename sequence1_t, typename sequence2_t>
-    constexpr auto slice_sequences(sequence1_t & sequence1,
-                                   sequence2_t & sequence2,
-                                   align_cfg::band_fixed_size const & band) noexcept
+    constexpr auto
+    slice_sequences(sequence1_t & sequence1, sequence2_t & sequence2, align_cfg::band_fixed_size const & band) noexcept
     {
         size_t seq1_size = std::ranges::distance(sequence1);
         size_t seq2_size = std::ranges::distance(sequence2);
@@ -200,7 +199,8 @@ private:
      *
      * Only changes the position if the sequence was sliced due to band configuration.
      */
-    constexpr size_t to_original_sequence1_position(size_t position) const noexcept {
+    constexpr size_t to_original_sequence1_position(size_t position) const noexcept
+    {
         return position + seq1_slice_offset;
     }
 
@@ -212,7 +212,8 @@ private:
      *
      * Only changes the position if the sequence was sliced due to band configuration.
      */
-    constexpr size_t to_original_sequence2_position(size_t position) const noexcept {
+    constexpr size_t to_original_sequence2_position(size_t position) const noexcept
+    {
         return position + seq2_slice_offset;
     }
 

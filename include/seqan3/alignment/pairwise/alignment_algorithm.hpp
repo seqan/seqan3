@@ -618,7 +618,8 @@ private:
             res.end_positions = alignment_coordinate_t{column_index_type{this->alignment_state.optimum.column_index},
                                                        row_index_type{this->alignment_state.optimum.row_index}};
             // At some point this needs to be refactored so that it is not necessary to adapt the coordinate.
-            if constexpr (traits_t::is_banded) {
+            if constexpr (traits_t::is_banded)
+            {
                 res.end_positions.second += res.end_positions.first - this->trace_matrix.band_col_index;
                 res.end_positions.first = this->to_original_sequence1_position(res.end_positions.first);
                 res.end_positions.second = this->to_original_sequence2_position(res.end_positions.second);
