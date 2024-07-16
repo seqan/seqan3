@@ -6,6 +6,8 @@
 
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 
+#include <seqan3/core/debug_stream.hpp>
+
 #include "fixture/global_affine_banded.hpp"
 #include "pairwise_alignment_single_test_template.hpp"
 
@@ -67,4 +69,38 @@ TEST_F(pairwise_global_affine_banded, invalid_band_last_cell_not_covered)
     auto result_range = align_pairwise(std::tie(fixture.sequence1, fixture.sequence2),
                                        fixture.config | seqan3::align_cfg::output_score{});
     EXPECT_THROW(result_range.begin(), seqan3::invalid_alignment_configuration);
+}
+
+TEST(banded_alignment_issue3266_test, wrong_begin_and_end_position)
+{
+    using namespace seqan3;
+    using namespace seqan3::literals;
+
+    const auto configGeneral =
+        align_cfg::scoring_scheme{nucleotide_scoring_scheme{match_score{1}, mismatch_score{-1}}} |
+        align_cfg::gap_cost_affine{align_cfg::open_score{0}, align_cfg::extension_score{-1}} |
+         align_cfg::method_global{
+            align_cfg::free_end_gaps_sequence1_leading{true},
+            align_cfg::free_end_gaps_sequence2_leading{true},
+            align_cfg::free_end_gaps_sequence1_trailing{true},
+            align_cfg::free_end_gaps_sequence2_trailing{true}};
+
+    const auto configBanded = configGeneral | align_cfg::band_fixed_size{align_cfg::lower_diagonal{-40},
+                                                                         align_cfg::upper_diagonal{-20}};
+
+                              //0         1         2         3         4
+                              //01234567890123456789012345678901234567890
+    std::pair p{"CGTCTA"_dna4, "AAACCCGGGTTTAAACCCGGGTTTCGTGTACCCCCCCCCCC"_dna4};
+                                //                      CGTCTA
+
+    auto general_results = align_pairwise(p, configGeneral);
+    auto general_res = *std::ranges::begin(general_results);
+    auto banded_results = align_pairwise(p, configBanded);
+    auto banded_res = *std::ranges::begin(banded_results);
+
+    EXPECT_EQ(general_res.score(), banded_res.score());
+    EXPECT_EQ(general_res.sequence1_begin_position(), banded_res.sequence1_begin_position());
+    EXPECT_EQ(general_res.sequence2_begin_position(), banded_res.sequence2_begin_position());
+    EXPECT_EQ(general_res.sequence1_end_position(), banded_res.sequence1_end_position());
+    EXPECT_EQ(general_res.sequence2_end_position(), banded_res.sequence2_end_position());
 }
