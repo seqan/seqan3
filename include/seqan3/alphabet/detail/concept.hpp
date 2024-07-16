@@ -66,9 +66,7 @@ concept weakly_ordered_with =
 //!\cond
 template <typename from_t, typename to_t>
 concept convertable_to_through_char_representation =
-    alphabet<from_t> &&
-    alphabet<to_t> &&
-    std::default_initializable<from_t>;
+    alphabet<from_t> && alphabet<to_t> && std::default_initializable<from_t>;
 //!\endcond
 
 } // namespace seqan3::detail

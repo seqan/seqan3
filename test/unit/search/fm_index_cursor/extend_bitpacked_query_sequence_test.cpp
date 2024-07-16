@@ -9,7 +9,8 @@
 
 #include "../helper.hpp"
 
-TEST(fm_index_cursor_test, extend_right_with_bitpacked_sequence) {
+TEST(fm_index_cursor_test, extend_right_with_bitpacked_sequence)
+{
     using namespace seqan3::literals;
     using result_t = std::vector<std::pair<uint64_t, uint64_t>>;
 
