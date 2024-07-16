@@ -13,7 +13,7 @@
 
 #include <array>
 
-#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/detail/concept.hpp>
 
 // ============================================================================
 // conversion to/from char/rank types
@@ -25,11 +25,12 @@ namespace seqan3::detail
 // clang-format off
 /*!\brief A precomputed conversion table for two alphabets based on their char representations.
  * \ingroup alphabet
- * \tparam in_t The type of the input, must satisfy seqan3::alphabet.
+ * \tparam in_t The type of the input, must satisfy seqan3::alphabet and must be default initializable.
  * \tparam out_t The type of the output, must satisfy seqan3::alphabet.
  * \hideinitializer
  */
-template <alphabet in_t, alphabet out_t>
+template <typename in_t, typename out_t>
+    requires convertable_to_through_char_representation<in_t, out_t>
 constexpr std::array<out_t, alphabet_size<in_t>> convert_through_char_representation
 {
     []() constexpr {
