@@ -140,25 +140,24 @@ private:
     * band starts in the origin and ends in the sink.
     */
     template <typename sequence1_t, typename sequence2_t>
-    constexpr auto slice_sequences(sequence1_t & sequence1,
-                                   sequence2_t & sequence2,
-                                   align_cfg::band_fixed_size const & band) const noexcept
+    constexpr auto
+    slice_sequences(sequence1_t & sequence1, sequence2_t & sequence2, align_cfg::band_fixed_size const & band) noexcept
     {
         size_t seq1_size = std::ranges::distance(sequence1);
         size_t seq2_size = std::ranges::distance(sequence2);
 
         auto trim_sequence1 = [&]() constexpr
         {
-            size_t begin_pos = std::max<std::ptrdiff_t>(band.lower_diagonal - 1, 0);
+            seq1_slice_offset = std::max<std::ptrdiff_t>(band.lower_diagonal - 1, 0);
             size_t end_pos = std::min<std::ptrdiff_t>(band.upper_diagonal + seq2_size, seq1_size);
-            return sequence1 | views::slice(begin_pos, end_pos);
+            return sequence1 | views::slice(seq1_slice_offset, end_pos);
         };
 
         auto trim_sequence2 = [&]() constexpr
         {
-            size_t begin_pos = std::abs(std::min<std::ptrdiff_t>(band.upper_diagonal + 1, 0));
+            seq2_slice_offset = std::abs(std::min<std::ptrdiff_t>(band.upper_diagonal + 1, 0));
             size_t end_pos = std::min<std::ptrdiff_t>(seq1_size - band.lower_diagonal, seq2_size);
-            return sequence2 | views::slice(begin_pos, end_pos);
+            return sequence2 | views::slice(seq2_slice_offset, end_pos);
         };
 
         return std::tuple{trim_sequence1(), trim_sequence2()};
@@ -192,10 +191,37 @@ private:
         ++trace_matrix_iter;
     }
 
+    /*!\brief Converts a sliced position in the alignment matrix to the corresponding position in the original sequence 1.
+     *
+     * \param position The position in the sliced alignment matrix.
+     * \return The corresponding position in the original sequence 1.
+     *
+     * Only changes the position if the sequence was sliced due to band configuration.
+     */
+    constexpr size_t to_original_sequence1_position(size_t position) const noexcept
+    {
+        return position + seq1_slice_offset;
+    }
+
+    /*!\brief Converts a sliced position in the alignment matrix to the corresponding position in the original sequence 2.
+     *
+     * \param position The position in the sliced alignment matrix.
+     * \return The corresponding position in the original sequence 2.
+     *
+     * Only changes the position if the sequence was sliced due to band configuration.
+     */
+    constexpr size_t to_original_sequence2_position(size_t position) const noexcept
+    {
+        return position + seq2_slice_offset;
+    }
+
     score_matrix_t score_matrix{}; //!< The scoring matrix.
     trace_matrix_t trace_matrix{}; //!< The trace matrix if needed.
 
     typename score_matrix_t::iterator score_matrix_iter{}; //!< The matrix iterator over the score matrix.
     typename trace_matrix_t::iterator trace_matrix_iter{}; //!< The matrix iterator over the trace matrix.
+
+    size_t seq1_slice_offset{}; //!< The offset of the first sequence slice.
+    size_t seq2_slice_offset{}; //!< The offset of the second sequence slice;
 };
 } // namespace seqan3::detail
