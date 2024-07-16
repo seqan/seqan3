@@ -5,7 +5,6 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
-#include <seqan3/core/debug_stream.hpp>
 
 #include "fixture/global_affine_banded.hpp"
 #include "pairwise_alignment_single_test_template.hpp"

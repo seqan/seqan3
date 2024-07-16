@@ -191,8 +191,7 @@ private:
         ++trace_matrix_iter;
     }
 
-    /*!
-     * \brief Converts a sliced position in the alignment matrix to the corresponding position in the original sequence 1.
+    /*!\brief Converts a sliced position in the alignment matrix to the corresponding position in the original sequence 1.
      *
      * \param position The position in the sliced alignment matrix.
      * \return The corresponding position in the original sequence 1.
@@ -204,8 +203,7 @@ private:
         return position + seq1_slice_offset;
     }
 
-    /*!
-     * \brief Converts a sliced position in the alignment matrix to the corresponding position in the original sequence 2.
+    /*!\brief Converts a sliced position in the alignment matrix to the corresponding position in the original sequence 2.
      *
      * \param position The position in the sliced alignment matrix.
      * \return The corresponding position in the original sequence 2.
