@@ -11,6 +11,7 @@
 
 #include <concepts>
 
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/platform.hpp>
 
 namespace seqan3::detail
@@ -52,6 +53,20 @@ concept weakly_ordered_with =
         requires std::convertible_to<decltype(v2 > v1), bool>;
         requires std::convertible_to<decltype(v2 >= v1), bool>;
     };
+//!\endcond
+
+/*!\interface seqan3::detail::convertable_to_through_char_representation <>
+ * \ingroup alphabet
+ * \tparam from_t The type to convert from.
+ * \tparam to_t   The type to convert to.
+ * \brief Checks whether `from_t` can be converted through `to_t` using their char representation.
+ *
+ * Requires that both `from_t` and `to_t` are alphabets and additionally, that `from_t` is default constructible.
+ */
+//!\cond
+template <typename from_t, typename to_t>
+concept convertable_to_through_char_representation =
+    alphabet<from_t> && alphabet<to_t> && std::default_initializable<from_t>;
 //!\endcond
 
 } // namespace seqan3::detail

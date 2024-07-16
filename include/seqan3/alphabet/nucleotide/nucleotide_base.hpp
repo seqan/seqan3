@@ -10,6 +10,7 @@
 #pragma once
 
 #include <seqan3/alphabet/alphabet_base.hpp>
+#include <seqan3/alphabet/detail/concept.hpp>
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/utility/char_operations/transform.hpp>
@@ -77,6 +78,7 @@ public:
     template <typename other_nucl_type>
         requires (!std::same_as<nucleotide_base, other_nucl_type>)
               && (!std::same_as<derived_type, other_nucl_type>) && nucleotide_alphabet<other_nucl_type>
+              && detail::convertable_to_through_char_representation<other_nucl_type, derived_type>
     explicit constexpr nucleotide_base(other_nucl_type const & other) noexcept
     {
         static_cast<derived_type &>(*this) =
