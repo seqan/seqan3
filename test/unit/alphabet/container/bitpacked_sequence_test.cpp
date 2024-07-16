@@ -4,6 +4,8 @@
 
 #include <gtest/gtest.h>
 
+#include <vector>
+
 #include <seqan3/alphabet/composite/alphabet_variant.hpp>
 #include <seqan3/alphabet/container/bitpacked_sequence.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
@@ -50,4 +52,15 @@ TEST(bitpacked_sequence_test, issue371)
     auto it = source.begin();
     auto end = source.end();
     [[maybe_unused]] bool result = it != end; // This line causes error.
+}
+
+// https://github.com/seqan/seqan3/issues/3264
+TEST(bitpacked_sequence_test, issue3264)
+{
+    using namespace seqan3::literals;
+
+    seqan3::bitpacked_sequence<seqan3::dna4> source{"ACGGTCAGGTTC"_dna4};
+    auto it = source.begin();
+    seqan3::dna4 val = static_cast<seqan3::dna4>(*it); // this line caused the compiler error
+    EXPECT_EQ(val, 'A'_dna4);
 }
