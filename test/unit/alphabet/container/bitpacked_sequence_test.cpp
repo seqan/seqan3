@@ -4,8 +4,6 @@
 
 #include <gtest/gtest.h>
 
-#include <vector>
-
 #include <seqan3/alphabet/composite/alphabet_variant.hpp>
 #include <seqan3/alphabet/container/bitpacked_sequence.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
