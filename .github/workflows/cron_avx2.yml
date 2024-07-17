@@ -64,7 +64,6 @@ jobs:
           mkdir seqan3-build
           cd seqan3-build
           cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=Release \
-                                                   -DSEQAN3_VERBOSE_TESTS=OFF \
                                                    -DSEQAN3_BENCHMARK_MIN_TIME=0.01 \
                                                    -DCMAKE_CXX_FLAGS="-mavx2"
           case "${{ matrix.build }}" in

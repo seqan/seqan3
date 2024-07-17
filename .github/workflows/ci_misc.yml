@@ -69,7 +69,6 @@ jobs:
           mkdir build && cd build
           cmake ../test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=Release \
                                             -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
-                                            -DSEQAN3_VERBOSE_TESTS=OFF \
                                             -DSEQAN3_BENCHMARK_MIN_TIME=0.01
           case "${{ matrix.build }}" in
             snippet) make gtest_build;;

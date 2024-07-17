@@ -70,8 +70,7 @@ jobs:
           mkdir seqan3-build
           cd seqan3-build
           cmake ../seqan3/test/unit -DCMAKE_BUILD_TYPE=Release \
-                                    -DCMAKE_CXX_FLAGS="${{ github.event.inputs.cxx_flags }}" \
-                                    -DSEQAN3_VERBOSE_TESTS=OFF
+                                    -DCMAKE_CXX_FLAGS="${{ github.event.inputs.cxx_flags }}"
 
       - name: Update gcc wrapper
         run: sed -i "s/DO_TIME=0/DO_TIME=1/" g++.sh

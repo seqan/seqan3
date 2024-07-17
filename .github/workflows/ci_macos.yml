@@ -55,8 +55,7 @@ jobs:
       - name: Configure tests
         run: |
           mkdir build && cd build
-          cmake ../test/unit -DCMAKE_BUILD_TYPE=Release \
-                             -DSEQAN3_VERBOSE_TESTS=OFF
+          cmake ../test/unit -DCMAKE_BUILD_TYPE=Release
           make gtest_build
 
       - name: Build tests

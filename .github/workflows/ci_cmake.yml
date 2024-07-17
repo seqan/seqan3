@@ -65,7 +65,6 @@ jobs:
         run: |
           mkdir build && cd build
           cmake ../test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=Debug \
-                                            -DSEQAN3_VERBOSE_TESTS=OFF \
                                             -DCMAKE_DEPENDS_USE_COMPILER="${{ matrix.cmake_depends_use_compiler }}" \
                                             -DSEQAN3_USE_INCLUDE_DEPENDENCIES="${{ matrix.use_include_dependencies }}"
           case "${{ matrix.build }}" in

@@ -68,7 +68,6 @@ jobs:
         run: |
           mkdir build && cd build
           cmake ../test/coverage -DCMAKE_BUILD_TYPE=Coverage \
-                                 -DSEQAN3_VERBOSE_TESTS=OFF \
                                  -DSEQAN3_COVERAGE_PARALLEL_LEVEL=$(nproc)
           make gtest_build
 

@@ -68,8 +68,7 @@ jobs:
           $CXX --version || true
           mkdir build && cd build
           cmake ../test/unit -DCMAKE_BUILD_TYPE=Release \
-                             -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
-                             -DSEQAN3_VERBOSE_TESTS=OFF
+                             -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}"
           make gtest_build
 
       - name: Build tests
