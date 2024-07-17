@@ -67,8 +67,7 @@ jobs:
       - name: Configure tests
         run: |
           mkdir build && cd build
-          cmake ../test/coverage -DCMAKE_BUILD_TYPE=Coverage \
-                                 -DSEQAN3_COVERAGE_PARALLEL_LEVEL=$(nproc)
+          cmake ../test/coverage -DCMAKE_BUILD_TYPE=Coverage
           make gtest_build
 
       - name: Build tests
@@ -77,6 +76,27 @@ jobs:
           ccache -z
           make -k
           ccache -svvx
+
+      - name: Run tests
+        working-directory: build
+        run: ctest . -j --output-on-failure
+
+      - name: Generate coverage report
+        run: |
+          gcovr --root ${GITHUB_WORKSPACE}/test/coverage \
+                ${GITHUB_WORKSPACE}/build \
+                --filter ${GITHUB_WORKSPACE}/include/seqan3 \
+                --filter ${GITHUB_WORKSPACE}/test/include/seqan3/test \
+                --exclude ${GITHUB_WORKSPACE}/include/seqan3/contrib \
+                --exclude ${GITHUB_WORKSPACE}/include/seqan3/std \
+                --exclude-lines-by-pattern '^\s*$' \
+                --exclude-lines-by-pattern '^\s*};$' \
+                --exclude-unreachable-branches \
+                --exclude-throw-branches \
+                --exclude-noncode-lines \
+                -j \
+                --cobertura \
+                --output ${GITHUB_WORKSPACE}/build/coverage_report.xml
 
       - name: Submit coverage build
         uses: codecov/codecov-action@v3.1.5
