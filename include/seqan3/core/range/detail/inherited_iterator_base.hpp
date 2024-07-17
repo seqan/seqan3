@@ -206,16 +206,18 @@ public:
     //!\cond
     template <typename base_t_ = base_t>
     //!\endcond
-    constexpr derived_t
-    operator++(int) noexcept(noexcept(std::declval<base_t &>()++) && noexcept(derived_t(std::declval<base_t &>())))
+    constexpr derived_t operator++(int) noexcept(noexcept(std::declval<base_t &>()++)
+                                                 && std::is_nothrow_copy_constructible_v<derived_t>)
         requires requires (base_t_ i) {
                      i++;
                      {
                          i++
                          } -> std::same_as<base_t_>;
-                 } && std::constructible_from<derived_t, base_t_>
+                 } && std::copy_constructible<derived_t>
     {
-        return derived_t{as_base()++};
+        derived_t tmp = *this_derived();
+        ++as_base();
+        return tmp;
     }
 
     //!\brief Pre-decrement, return updated iterator.
@@ -233,11 +235,13 @@ public:
     //!\cond
     template <typename base_t_ = base_t>
     //!\endcond
-    constexpr derived_t
-    operator--(int) noexcept(noexcept(std::declval<base_t &>()--) && noexcept(derived_t{std::declval<base_t &>()}))
-        requires requires (base_t_ i) { i--; } && std::constructible_from<derived_t, base_t_>
+    constexpr derived_t operator--(int) noexcept(noexcept(std::declval<base_t &>()--)
+                                                 && std::is_nothrow_copy_constructible_v<derived_t>)
+        requires requires (base_t_ i) { i--; } && std::copy_constructible<derived_t>
     {
-        return derived_t{as_base()--};
+        derived_t tmp = *this_derived();
+        --as_base();
+        return tmp;
     }
 
     //!\brief Move iterator to the right.
@@ -256,11 +260,12 @@ public:
     template <typename base_t_ = base_t>
     //!\endcond
     constexpr derived_t operator+(difference_type const skip) const
-        noexcept(noexcept(std::declval<base_t &>() + skip) && noexcept(derived_t{std::declval<base_t &>()}))
-        requires requires (base_t_ const i, difference_type const n) { i + n; }
-              && std::constructible_from<derived_t, base_t_>
+        noexcept(noexcept(std::declval<base_t &>() + skip) && std::is_nothrow_copy_constructible_v<derived_t>)
+        requires requires (base_t_ const i, difference_type const n) { i + n; } && std::copy_constructible<derived_t>
     {
-        return derived_t{as_base() + skip};
+        derived_t tmp = *this_derived();
+        tmp.as_base() += skip;
+        return tmp;
     }
 
     //!\brief Non-member operator+ delegates to non-friend operator+.
@@ -294,10 +299,12 @@ public:
     template <typename base_t_ = base_t>
     //!\endcond
     constexpr derived_t operator-(difference_type const skip) const
-        noexcept(noexcept(std::declval<base_t const &>() - skip) && noexcept(derived_t(std::declval<base_t &>())))
-        requires requires (base_t_ i, difference_type const n) { i - n; } && std::constructible_from<derived_t, base_t_>
+        noexcept(noexcept(std::declval<base_t const &>() - skip) && std::is_nothrow_copy_constructible_v<derived_t>)
+        requires requires (base_t_ i, difference_type const n) { i - n; } && std::copy_constructible<derived_t>
     {
-        return derived_t{as_base() - skip};
+        derived_t tmp = *this_derived();
+        tmp.as_base() -= skip;
+        return tmp;
     }
 
     //!\brief Return offset between this and remote iterator's position.
