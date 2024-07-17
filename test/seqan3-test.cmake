@@ -101,7 +101,7 @@ endif ()
 # needed for coverage test cases in seqan3/test/coverage
 if (NOT TARGET seqan3::test::coverage)
     add_library (seqan3_test_coverage INTERFACE)
-    target_compile_options (seqan3_test_coverage INTERFACE "--coverage" "-fprofile-arcs" "-ftest-coverage")
+    target_compile_options (seqan3_test_coverage INTERFACE "--coverage" "-fprofile-arcs" "-ftest-coverage" "-fprofile-update=atomic")
     # -fprofile-abs-path requires at least gcc8, it forces gcov to report absolute instead of relative paths.
     # gcovr has trouble detecting the headers otherwise.
     # ccache is not aware of this option, so it needs to be skipped with `--ccache-skip`.
