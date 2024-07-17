@@ -227,11 +227,11 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 #    endif
 #endif
 
-/*!\brief Workaround bogus memcpy errors in GCC 12 and 13. (Wrestrict and Wstringop-overflow)
+/*!\brief Workaround bogus memcpy errors in GCC > 12. (Wrestrict and Wstringop-overflow)
  * \see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105545
  */
 #ifndef SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#    if SEQAN3_COMPILER_IS_GCC && (__GNUC__ == 12 || __GNUC__ == 13)
+#    if SEQAN3_COMPILER_IS_GCC && (__GNUC__ == 12 || __GNUC__ == 13 || __GNUC__ == 14)
 #        define SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY 1
 #    else
 #        define SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY 0
