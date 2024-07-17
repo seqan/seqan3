@@ -18,13 +18,6 @@ endif ()
 option (SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE
         "Enable this option if you want to get a detailed list which paths were considered for find_package(...)" false)
 
-if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to install cmake 3.5.
-    set (SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND "${CMAKE_COMMAND}")
-    include (use-cmake3.5.cmake) # ensure that seqan3 can be used with cmake 3.5
-else ()
-    set (SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND "${CMAKE_COMMAND}")
-endif ()
-
 # Here is an explanation of what happens:
 #
 # If your current CMake version is < 3.14, we
@@ -51,7 +44,6 @@ ExternalProject_Add (
     seqan3_submodule_add_subdirectory
     PREFIX seqan3_submodule_add_subdirectory
     SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_submodule_add_subdirectory"
-    CMAKE_COMMAND "${SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND}"
     CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
                "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}" #
                "-DSEQAN3_ROOT=${SEQAN3_ROOT}")
@@ -65,7 +57,6 @@ ExternalProject_Add (
     seqan3_submodule_find_package
     PREFIX seqan3_submodule_find_package
     SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_submodule_find_package"
-    CMAKE_COMMAND "${SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND}"
     CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
                "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
                "-DCMAKE_PREFIX_PATH=${SEQAN3_ROOT}/build_system")
@@ -86,7 +77,6 @@ if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to in
         seqan3_installed
         PREFIX seqan3_installed
         SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_installed"
-        CMAKE_COMMAND "${SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND}"
         CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
                    "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
                    "-DCMAKE_SYSTEM_PREFIX_PATH=${SEQAN3_SYSTEM_PREFIX}")
@@ -117,7 +107,6 @@ ExternalProject_Add (
     seqan3_setup_tutorial
     PREFIX seqan3_setup_tutorial
     SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_setup_tutorial"
-    CMAKE_COMMAND "${SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND}"
     CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
                "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}")
 
@@ -136,7 +125,6 @@ ExternalProject_Add (
     seqan3_setup_tutorial_with_sharg_installed
     PREFIX seqan3_setup_tutorial_with_sharg_installed
     SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_setup_tutorial_with_sharg_installed"
-    CMAKE_COMMAND "${SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND}"
     CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
                "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
                "-DCMAKE_SYSTEM_PREFIX_PATH=${SEQAN3_SYSTEM_PREFIX}")
