@@ -23,33 +23,16 @@ env:
 
 defaults:
   run:
-    shell: bash -Eexuo pipefail {0}
+    shell: bash -Eeuxo pipefail {0}
 
 jobs:
   build:
     name: Documentation
-    runs-on: ubuntu-22.04
-    timeout-minutes: 120
+    runs-on: ubuntu-latest
     if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'lint'
     steps:
-      - name: Checkout SeqAn3
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          path: seqan3
-          fetch-depth: 1
-          submodules: true
-
-      - name: Checkout SeqAn2
-        uses: actions/checkout@v4
-        with:
-          repository: seqan/seqan
-          path: seqan3/submodules/seqan
-          fetch-depth: 1
-
-      - name: Install CMake
-        uses: seqan/actions/setup-cmake@main
-        with:
-          cmake: 3.16.9
 
       - name: Install Doxygen
         uses: seqan/actions/setup-doxygen@main
@@ -58,12 +41,10 @@ jobs:
 
       - name: Configure tests
         run: |
-          mkdir seqan3-build
-          cd seqan3-build
-          cmake ../seqan3/test/documentation
-          make -j2 download-cppreference-doxygen-web-tag
+          mkdir build && cd build
+          cmake ../test/documentation
+          make download-cppreference-doxygen-web-tag
 
       - name: Run tests
-        run: |
-          cd seqan3-build
-          ctest . -j2 --output-on-failure
+        working-directory: build
+        run: ctest . -j --output-on-failure
