@@ -8,7 +8,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
-PROJECT_NAME           = SeqAn3
+PROJECT_NAME           = ThisIsATest
 PROJECT_NUMBER         = ${SEQAN3_VERSION}
 PROJECT_BRIEF          = "The Modern C++ library for sequence analysis."
 PROJECT_LOGO           = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan_logo.svg
