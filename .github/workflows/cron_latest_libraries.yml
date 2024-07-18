@@ -88,7 +88,6 @@ jobs:
           cd seqan3-build
           cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=Release \
                                                    -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
-                                                   -DSEQAN3_VERBOSE_TESTS=OFF \
                                                    -DSEQAN3_BENCHMARK_MIN_TIME=0.01
           case "${{ matrix.build }}" in
             unit) make -j2 gtest_build;;

@@ -28,74 +28,55 @@ defaults:
 jobs:
   build:
     name: ${{ matrix.name }}
-    runs-on: ubuntu-22.04
-    timeout-minutes: 120
+    runs-on: ubuntu-latest
     if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'lint'
     strategy:
       fail-fast: false
       matrix:
         include:
           - name: "Non-cyclic tests"
-            compiler: "gcc-13"
+            compiler: "gcc-14"
             build: unit
-            build_type: Debug
             use_include_dependencies: "ON"
+            cmake_depends_use_compiler: "OFF"
 
           - name: "External project"
-            compiler: "gcc-13"
+            compiler: "gcc-14"
             build: external_project
-            build_type: Debug
-
+            use_include_dependencies: "OFF"
+            cmake_depends_use_compiler: "ON"
+    container:
+      image: ghcr.io/seqan/${{ matrix.compiler }}
+      volumes:
+        - /home/runner:/home/runner
     steps:
-      - name: Checkout SeqAn3
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          path: seqan3
-          fetch-depth: 1
           submodules: true
 
       - name: Checkout SeqAn2
         uses: actions/checkout@v4
         with:
           repository: seqan/seqan
-          path: seqan3/submodules/seqan
-          fetch-depth: 1
-
-      - name: Install CMake
-        uses: seqan/actions/setup-cmake@main
-        with:
-          cmake: 3.16.9
-
-      - name: Install CMake dependency
-        if: matrix.build == 'external_project'
-        run: |
-          mkdir -p /tmp/libidn11-download
-          wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=/tmp/libidn11-download/ http://ftp.de.debian.org/debian/pool/main/libi/libidn/libidn11_1.33-3_amd64.deb
-          sudo dpkg -i /tmp/libidn11-download/libidn11_1.33-3_amd64.deb
-
-      - name: Setup compiler
-        uses: seqan/actions/setup-compiler@main
-        with:
-          compiler: ${{ matrix.compiler }}
+          path: submodules/seqan
 
       - name: Configure tests
         run: |
-          mkdir seqan3-build
-          cd seqan3-build
-          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-                                                   -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
-                                                   -DSEQAN3_VERBOSE_TESTS=OFF \
-                                                   -DSEQAN3_USE_INCLUDE_DEPENDENCIES="${{ matrix.use_include_dependencies }}"
+          mkdir build && cd build
+          cmake ../test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=Debug \
+                                            -DCMAKE_DEPENDS_USE_COMPILER="${{ matrix.cmake_depends_use_compiler }}" \
+                                            -DSEQAN3_USE_INCLUDE_DEPENDENCIES="${{ matrix.use_include_dependencies }}"
           case "${{ matrix.build }}" in
-            unit) make -j${{ matrix.build_threads }} gtest_build;;
-            external_project) make -j${{ matrix.build_threads }} seqan3_test_prerequisite sharg_test_prerequisite;;
+            unit) make gtest_build;;
+            external_project) make seqan3_test_prerequisite sharg_test_prerequisite;;
           esac
 
       - name: Build tests
+        working-directory: build
         run: |
-          cd seqan3-build
           case "${{ matrix.build }}" in
-            unit) make -k -j2 all_dependencies; cmake .;;
-            external_project) make -k -j1;;
+            unit) make -k all_dependencies; cmake .;;
+            external_project) make -k;;
           esac
 

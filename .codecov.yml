@@ -4,6 +4,7 @@
 
 # See https://docs.codecov.io/docs/codecovyml-reference
 codecov:
+  token: a75b1e95-134c-4ada-adac-5846045f188
   require_ci_to_pass: no  # codecov reports its results independent of whether CI passed
   notify:
     wait_for_ci: no       # codecov has not to wait until the CI is finished to post its results
@@ -19,3 +20,7 @@ coverage:
         if_ci_failed: success # per default, codecov would fail if any CI fails
         informational: true   # the codecov/patch status is never "fail"
         only_pulls: true      # only post codecov/patch status on PRs
+
+parsers:
+  cobertura:
+    partials_as_hits: true

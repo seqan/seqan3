@@ -23,54 +23,28 @@ env:
 
 defaults:
   run:
-    shell: bash -Eexuo pipefail {0}
+    shell: bash -Eeuxo pipefail {0}
 
 jobs:
   build:
-    name: ${{ matrix.name }}
+    name: ${{ matrix.compiler }}
     runs-on: macos-12
-    timeout-minutes: 120
     if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'lint'
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
-        include:
-          - name: "clang17"
-            compiler: "clang-17"
-            build: unit
-            build_type: Release
-            cxx_flags: "-stdlib=libc++" # For verbosity. This is already the default.
-
-          - name: "gcc13"
-            compiler: "gcc-13"
-            build: unit
-            build_type: Release
-            cxx_flags: "-std=c++23"
-
-          - name: "gcc12"
-            compiler: "gcc-12"
-            build: unit
-            build_type: Release
-
-          - name: "gcc11"
-            compiler: "gcc-11"
-            build: unit
-            build_type: Release
-
+        compiler: ["clang-18", "clang-17", "gcc-14", "gcc-13", "gcc-12", "gcc-11"]
     steps:
-      - name: Checkout SeqAn3
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          path: seqan3
-          fetch-depth: 1
           submodules: true
 
       - name: Checkout SeqAn2
         uses: actions/checkout@v4
         with:
           repository: seqan/seqan
-          path: seqan3/submodules/seqan
-          fetch-depth: 1
+          path: submodules/seqan
 
       - name: Setup toolchain
         uses: seqan/actions/setup-toolchain@main
@@ -78,28 +52,19 @@ jobs:
           compiler: ${{ matrix.compiler }}
           ccache_size: 75M
 
-      - name: Install CMake
-        uses: seqan/actions/setup-cmake@main
-        with:
-          cmake: 3.16.9
-
       - name: Configure tests
         run: |
-          mkdir seqan3-build
-          cd seqan3-build
-          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-                                                   -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
-                                                   -DSEQAN3_VERBOSE_TESTS=OFF
-          make -j3 gtest_build
+          mkdir build && cd build
+          cmake ../test/unit -DCMAKE_BUILD_TYPE=Release
+          make gtest_build
 
       - name: Build tests
+        working-directory: build
         run: |
           ccache -z
-          cd seqan3-build
-          make -k -j3
-          ccache -sv
+          make -k
+          ccache -svvx
 
       - name: Run tests
-        run: |
-          cd seqan3-build
-          ctest . -j3 --output-on-failure
+        working-directory: build
+        run: ctest . -j --output-on-failure

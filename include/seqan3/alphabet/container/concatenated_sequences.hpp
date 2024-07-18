@@ -977,9 +977,17 @@ public:
         auto placeholder =
             views::repeat_n(std::ranges::range_value_t<rng_type>{}, count * value_len) | std::views::common;
         // insert placeholder so the tail is moved once:
+#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wstringop-overread"
+#    pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
         data_values.insert(data_values.begin() + data_delimiters[pos_as_num],
                            std::ranges::begin(placeholder),
                            std::ranges::end(placeholder));
+#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#    pragma GCC diagnostic pop
+#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
 
         // assign the actual values to the placeholder:
         size_t i = data_delimiters[pos_as_num];

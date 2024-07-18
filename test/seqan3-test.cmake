@@ -97,24 +97,6 @@ if (NOT TARGET seqan3::test::unit)
     add_library (seqan3::test::unit ALIAS seqan3_test_unit)
 endif ()
 
-# seqan3::test::coverage specifies required flags, includes and libraries
-# needed for coverage test cases in seqan3/test/coverage
-if (NOT TARGET seqan3::test::coverage)
-    add_library (seqan3_test_coverage INTERFACE)
-    target_compile_options (seqan3_test_coverage INTERFACE "--coverage" "-fprofile-arcs" "-ftest-coverage")
-    # -fprofile-abs-path requires at least gcc8, it forces gcov to report absolute instead of relative paths.
-    # gcovr has trouble detecting the headers otherwise.
-    # ccache is not aware of this option, so it needs to be skipped with `--ccache-skip`.
-    find_program (CCACHE_PROGRAM ccache)
-    if (CCACHE_PROGRAM)
-        target_compile_options (seqan3_test_coverage INTERFACE "--ccache-skip" "-fprofile-abs-path")
-    else ()
-        target_compile_options (seqan3_test_coverage INTERFACE "-fprofile-abs-path")
-    endif ()
-    target_link_libraries (seqan3_test_coverage INTERFACE "seqan3::test::unit" "gcov")
-    add_library (seqan3::test::coverage ALIAS seqan3_test_coverage)
-endif ()
-
 # seqan3::test::header specifies required flags, includes and libraries
 # needed for header test cases in seqan3/test/header
 if (NOT TARGET seqan3::test::header)

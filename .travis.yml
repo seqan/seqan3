@@ -59,7 +59,6 @@ before_script:
   - |
     cmake ../seqan3/test/${BUILD} -DCMAKE_BUILD_TYPE=Release \
                                   -DCMAKE_CXX_FLAGS="-Wno-psabi" \
-                                  -DSEQAN3_VERBOSE_TESTS=OFF \
                                   -DSEQAN3_BENCHMARK_MIN_TIME=0.01
   - |
     case "${BUILD}" in

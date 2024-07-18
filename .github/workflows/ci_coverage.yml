@@ -27,78 +27,79 @@ defaults:
 
 jobs:
   build:
-    name: ${{ matrix.name }}
-    runs-on: ubuntu-22.04
-    timeout-minutes: 120
+    runs-on: ubuntu-latest
+    name: ${{ matrix.compiler }}
     if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'lint'
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
-        include:
-          - name: "gcc13"
-            compiler: "gcc-13"
-            build: coverage
-            build_type: Debug
-
+        compiler: ["gcc-14"]
+    container:
+      image: ghcr.io/seqan/${{ matrix.compiler }}
+      volumes:
+        - /home/runner:/home/runner
     steps:
-      # How many commits do we need to fetch to also fetch the branch point?
-      - name: Get fetch depth
-        id: fetch_depth
-        run: echo "depth=$(( ${{ github.event.pull_request.commits }} + 2 ))" >> $GITHUB_OUTPUT
-
-      - name: Checkout SeqAn3
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          path: seqan3
-          fetch-depth: ${{ steps.fetch_depth.outputs.depth }}
           submodules: true
+          fetch-depth: 0
 
       - name: Checkout SeqAn2
         uses: actions/checkout@v4
         with:
           repository: seqan/seqan
-          path: seqan3/submodules/seqan
-          fetch-depth: 1
+          path: submodules/seqan
 
-      - name: Setup toolchain
-        uses: seqan/actions/setup-toolchain@main
+      - name: Load ccache
+        uses: actions/cache@v4
         with:
-          compiler: ${{ matrix.compiler }}
-          ccache_size: 525M
+          path: /home/runner/.ccache
+          save-always: true
+          key: ccache-${{ runner.os }}-${{ github.workflow }}-${{ matrix.compiler }}-${{ github.ref }}-${{ github.run_id }}
+          restore-keys: |
+            ccache-${{ runner.os }}-${{ github.workflow }}-${{ matrix.compiler }}-${{ github.ref }}
+            ccache-${{ runner.os }}-${{ github.workflow }}-${{ matrix.compiler }}
 
-      - name: Install CMake
-        uses: seqan/actions/setup-cmake@main
-        with:
-          cmake: 3.16.9
-
-      - name: Install gcovr
-        run: |
-          sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/${CC/gcc/gcov} 100
-          pip install gcovr==6.0
+      - name: Increase ccache size
+        run: echo "CCACHE_MAXSIZE=300M" >> "${GITHUB_ENV}"
 
       - name: Configure tests
         run: |
-          mkdir seqan3-build
-          cd seqan3-build
-          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-                                                   -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
-                                                   -DSEQAN3_VERBOSE_TESTS=OFF \
-                                                   -DSEQAN3_BENCHMARK_MIN_TIME=0.01 \
-                                                   -DSEQAN3_COVERAGE_PARALLEL_LEVEL=2
-          make -j2 gtest_build
+          mkdir build && cd build
+          cmake ../test/coverage -DCMAKE_BUILD_TYPE=Coverage
+          make gtest_build
 
       - name: Build tests
-        env:
-          GCOV: ${{ github.workspace }}/seqan3/.github/workflows/scripts/gcov.sh
+        working-directory: build
         run: |
           ccache -z
-          cd seqan3-build
-          make -k -j2
-          ccache -sv
+          make -k
+          ccache -svvx
+
+      - name: Run tests
+        working-directory: build
+        run: ctest . -j --output-on-failure
+
+      - name: Generate coverage report
+        run: |
+          gcovr --root ${GITHUB_WORKSPACE}/test/coverage \
+                ${GITHUB_WORKSPACE}/build \
+                --filter ${GITHUB_WORKSPACE}/include/seqan3 \
+                --filter ${GITHUB_WORKSPACE}/test/include/seqan3/test \
+                --exclude ${GITHUB_WORKSPACE}/include/seqan3/contrib \
+                --exclude ${GITHUB_WORKSPACE}/include/seqan3/std \
+                --exclude-lines-by-pattern '^\s*$' \
+                --exclude-lines-by-pattern '^\s*};$' \
+                --exclude-unreachable-branches \
+                --exclude-throw-branches \
+                --exclude-noncode-lines \
+                -j \
+                --cobertura \
+                --output ${GITHUB_WORKSPACE}/build/coverage_report.xml
 
       - name: Submit coverage build
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v3.1.5
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ${{ github.workspace }}/seqan3-build/seqan3_coverage.xml
-          root_dir: ${{ github.workspace }}/seqan3
+          files: build/coverage_report.xml
+          fail_ci_if_error: false

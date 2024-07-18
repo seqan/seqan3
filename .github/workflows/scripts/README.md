@@ -11,12 +11,6 @@ nothing additionial. This mode might be necessary for CMake to properly detect Z
 When `DO_TIME` is `1`, every call will generate a `ram_usage.*` file with an unique extension containing the output
 of `time -v`.
 
-## gcov.sh
-
-We use `gcovr` to create our coverage reports. We do not want to report branch coverage, but only line coverage.
-However, when `gcovr` calls `gcov`, the arguments enabling branch coverage reporting are always added.
-`gcov.sh` will remove those arguments and pass the remaining arguments to `gcov`.
-
 ## process_compiler_error_log.py
 
 Processes the output of compiling tests (`make`) and extracts errors.
