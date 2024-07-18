@@ -84,6 +84,8 @@ else ()
 endif ()
 
 ### TEST HELPER
+add_test (NAME cppreference-doxygen-web-tag COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target
+                                                    download-cppreference-doxygen-web-tag)
 
 # doxygen does not show any warnings (doxygen prints warnings / errors to cerr)
 set (SEQAN3_TEST_DOXYGEN_FAIL_ON_WARNINGS
