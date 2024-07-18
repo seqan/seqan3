@@ -9,6 +9,10 @@ on:
     branches:
       - 'main'
 
+concurrency:
+  group: update-cookbook-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   TZ: Europe/Berlin
 
@@ -19,10 +23,8 @@ defaults:
 jobs:
   update-cookbook:
     name: Update Cookbook
-    concurrency:
-      group: update-cookbook-${{ github.ref }}
-      cancel-in-progress: true
     runs-on: ubuntu-22.04
+    if: github.repository_owner == 'seqan'
     timeout-minutes: 15
     steps:
       - name: Checkout SeqAn3
