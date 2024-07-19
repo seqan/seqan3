@@ -159,10 +159,8 @@ namespace seqan3
  */
 template <typename option_type>
     requires requires {
-                 {
-                     detail::adl_only::enumeration_names_cpo<option_type>{}()
-                 };
-             }
+        { detail::adl_only::enumeration_names_cpo<option_type>{}() };
+    }
 inline auto const enumeration_names = detail::adl_only::enumeration_names_cpo<option_type>{}();
 //!\}
 
@@ -181,10 +179,8 @@ inline auto const enumeration_names = detail::adl_only::enumeration_names_cpo<op
 //!\cond
 template <typename option_type>
 concept named_enumeration = requires {
-                                {
-                                    seqan3::enumeration_names<option_type>
-                                };
-                            };
+    { seqan3::enumeration_names<option_type> };
+};
 //!\endcond
 
 /*!\interface seqan3::argument_parser_compatible_option <>

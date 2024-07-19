@@ -94,33 +94,33 @@ struct simple_three_verbose_reads_fixture
                                                        return tags;
                                                    }()}};
 
-    record_type record2{
-        /*.id =*/"read2",
-        /*.sequence =*/"AGGCTGNAG"_dna5,
-        /*.base_qualities =*/"!##$&'()*"_phred42,
-        /*.alignment =*/alignment_t{"CTGATCGAG"_gapped_dna5, "AGGCTGN-A"_gapped_dna5},
-        /*.reference_id =*/0, // "ref"
-        /*.reference_position =*/1,
-        /*.header_ptr =*/&header,
-        /*.flag =*/seqan3::sam_flag{42u},
-        {/*.mate_reference_id =*/0, /*.mate_position =*/9, /*.template_length =*/300},
-        /*.mapping_quality =*/62u,
-        /*.cigar_sequence =*/"1H7M1D1M1S"_cigar,
-        /*.tags =*/
-        seqan3::sam_tag_dictionary{
-            []()
-            {
-                seqan3::sam_tag_dictionary tags{};
-                tags["bc"_tag] = std::vector<int8_t>{-3};
-                tags["bC"_tag] = std::vector<uint8_t>{3u, 200u};
-                tags["bs"_tag] = std::vector<int16_t>{-3, 200, -300};
-                tags["bS"_tag] = std::vector<uint16_t>{300u, 40u, 500u};
-                tags["bi"_tag] = std::vector<int32_t>{-3, 200, -66000};
-                tags["bI"_tag] = std::vector<uint32_t>{294967296u};
-                tags["bf"_tag] = std::vector<float>{3.5f, 0.1f, 43.8f};
-                tags["bH"_tag] = std::vector<std::byte>{std::byte{0x1A}, std::byte{0xE3}, std::byte{0x01}};
-                return tags;
-            }()}};
+    record_type record2{/*.id =*/"read2",
+                        /*.sequence =*/"AGGCTGNAG"_dna5,
+                        /*.base_qualities =*/"!##$&'()*"_phred42,
+                        /*.alignment =*/alignment_t{"CTGATCGAG"_gapped_dna5, "AGGCTGN-A"_gapped_dna5},
+                        /*.reference_id =*/0, // "ref"
+                        /*.reference_position =*/1,
+                        /*.header_ptr =*/&header,
+                        /*.flag =*/seqan3::sam_flag{42u},
+                        {/*.mate_reference_id =*/0, /*.mate_position =*/9, /*.template_length =*/300},
+                        /*.mapping_quality =*/62u,
+                        /*.cigar_sequence =*/"1H7M1D1M1S"_cigar,
+                        /*.tags =*/
+                        seqan3::sam_tag_dictionary{[]()
+                                                   {
+                                                       seqan3::sam_tag_dictionary tags{};
+                                                       tags["bc"_tag] = std::vector<int8_t>{-3};
+                                                       tags["bC"_tag] = std::vector<uint8_t>{3u, 200u};
+                                                       tags["bs"_tag] = std::vector<int16_t>{-3, 200, -300};
+                                                       tags["bS"_tag] = std::vector<uint16_t>{300u, 40u, 500u};
+                                                       tags["bi"_tag] = std::vector<int32_t>{-3, 200, -66000};
+                                                       tags["bI"_tag] = std::vector<uint32_t>{294'967'296u};
+                                                       tags["bf"_tag] = std::vector<float>{3.5f, 0.1f, 43.8f};
+                                                       tags["bH"_tag] = std::vector<std::byte>{std::byte{0x1A},
+                                                                                               std::byte{0xE3},
+                                                                                               std::byte{0x01}};
+                                                       return tags;
+                                                   }()}};
 
     record_type record3{/*.id =*/"read3",
                         /*.sequence =*/"GGAGTATA"_dna5,

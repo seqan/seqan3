@@ -73,7 +73,7 @@ struct minimiser_hash_fn
     constexpr auto operator()(urng_t && urange,
                               shape const & shape,
                               window_size const window_size,
-                              seed const seed = seqan3::seed{0x8F3F73B5CF1C9ADE}) const
+                              seed const seed = seqan3::seed{0x8F'3F'73'B5'CF'1C'9A'DE}) const
     {
         static_assert(std::ranges::viewable_range<urng_t>,
                       "The range parameter to views::minimiser_hash cannot be a temporary of a non-view range.");

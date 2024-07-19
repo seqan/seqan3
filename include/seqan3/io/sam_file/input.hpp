@@ -107,44 +107,41 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-concept sam_file_input_traits =
-    requires (t v) {
-        // field::seq
-        requires writable_alphabet<typename t::sequence_alphabet>;
-        requires writable_alphabet<typename t::sequence_legal_alphabet>;
-        requires explicitly_convertible_to<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
-        requires sequence_container<typename t::template sequence_container<typename t::sequence_alphabet>>;
+concept sam_file_input_traits = requires (t v) {
+    // field::seq
+    requires writable_alphabet<typename t::sequence_alphabet>;
+    requires writable_alphabet<typename t::sequence_legal_alphabet>;
+    requires explicitly_convertible_to<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
+    requires sequence_container<typename t::template sequence_container<typename t::sequence_alphabet>>;
 
-        // field::id
-        requires sequence_container<typename t::template id_container<char>>;
+    // field::id
+    requires sequence_container<typename t::template id_container<char>>;
 
-        // field::qual
-        requires writable_quality_alphabet<typename t::quality_alphabet>;
-        requires sequence_container<typename t::template quality_container<typename t::quality_alphabet>>;
+    // field::qual
+    requires writable_quality_alphabet<typename t::quality_alphabet>;
+    requires sequence_container<typename t::template quality_container<typename t::quality_alphabet>>;
 
-        // field::ref_seq
-        // either ref_info_not_given or a range over ranges over alphabet (e.g. std::vector<dna4_vector>)
-        requires std::same_as<typename t::ref_sequences, ref_info_not_given>
-                     || requires () {
-                            requires alphabet<std::ranges::range_reference_t<
-                                std::ranges::range_reference_t<typename t::ref_sequences>>>;
-                        };
-
-        // field::ref_id
-        requires alphabet<std::ranges::range_reference_t<std::ranges::range_reference_t<typename t::ref_ids>>>
-                     && (!std::same_as<typename t::ref_sequences, ref_info_not_given>
-                         || writable_alphabet<
-                             std::ranges::range_reference_t<std::ranges::range_reference_t<typename t::ref_ids>>>);
-        requires std::ranges::forward_range<std::ranges::range_reference_t<typename t::ref_ids>>;
-        requires std::ranges::forward_range<typename t::ref_ids>;
-
-        // field::ref_offset is fixed to std::optional<int32_t>
-        // field::flag is fixed to seqan3::sam_flag
-        // field::mapq is fixed to uint8_t
-        // field::evalue is fixed to double
-        // field::bitscore is fixed to double
-        // field::mate is fixed to std::tuple<ref_id_container<ref_id_alphabet>, ref_offset_type, int32_t>
+    // field::ref_seq
+    // either ref_info_not_given or a range over ranges over alphabet (e.g. std::vector<dna4_vector>)
+    requires std::same_as<typename t::ref_sequences, ref_info_not_given> || requires () {
+        requires alphabet<std::ranges::range_reference_t<std::ranges::range_reference_t<typename t::ref_sequences>>>;
     };
+
+    // field::ref_id
+    requires alphabet<std::ranges::range_reference_t<std::ranges::range_reference_t<typename t::ref_ids>>>
+                 && (!std::same_as<typename t::ref_sequences, ref_info_not_given>
+                     || writable_alphabet<
+                         std::ranges::range_reference_t<std::ranges::range_reference_t<typename t::ref_ids>>>);
+    requires std::ranges::forward_range<std::ranges::range_reference_t<typename t::ref_ids>>;
+    requires std::ranges::forward_range<typename t::ref_ids>;
+
+    // field::ref_offset is fixed to std::optional<int32_t>
+    // field::flag is fixed to seqan3::sam_flag
+    // field::mapq is fixed to uint8_t
+    // field::evalue is fixed to double
+    // field::bitscore is fixed to double
+    // field::mate is fixed to std::tuple<ref_id_container<ref_id_alphabet>, ref_offset_type, int32_t>
+};
 //!\endcond
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -923,10 +920,11 @@ sam_file_input(std::filesystem::path path, ref_ids_t &, ref_sequences_t &, selec
 
 //!\brief Deduce ref_sequences_t and ref_ids_t, default the rest.
 template <std::ranges::forward_range ref_ids_t, std::ranges::forward_range ref_sequences_t>
-sam_file_input(std::filesystem::path path, ref_ids_t &, ref_sequences_t &) -> sam_file_input<
-    sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>, std::remove_reference_t<ref_ids_t>>,
-    typename sam_file_input<>::selected_field_ids, // actually use the default
-    typename sam_file_input<>::valid_formats>;     // actually use the default
+sam_file_input(std::filesystem::path path, ref_ids_t &, ref_sequences_t &)
+    -> sam_file_input<
+        sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>, std::remove_reference_t<ref_ids_t>>,
+        typename sam_file_input<>::selected_field_ids, // actually use the default
+        typename sam_file_input<>::valid_formats>;     // actually use the default
 
 //!\brief Deduce selected fields, ref_sequences_t and ref_ids_t, and file format.
 template <input_stream stream_type,
@@ -957,20 +955,22 @@ template <input_stream stream_type,
           std::ranges::forward_range ref_ids_t,
           std::ranges::forward_range ref_sequences_t,
           sam_file_input_format file_format>
-sam_file_input(stream_type && stream, ref_ids_t &, ref_sequences_t &, file_format const &) -> sam_file_input<
-    sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>, std::remove_reference_t<ref_ids_t>>,
-    typename sam_file_input<>::selected_field_ids, // actually use the default
-    type_list<file_format>>;
+sam_file_input(stream_type && stream, ref_ids_t &, ref_sequences_t &, file_format const &)
+    -> sam_file_input<
+        sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>, std::remove_reference_t<ref_ids_t>>,
+        typename sam_file_input<>::selected_field_ids, // actually use the default
+        type_list<file_format>>;
 
 //!\brief Deduce selected fields, ref_sequences_t and ref_ids_t, and file format.
 template <input_stream stream_type,
           std::ranges::forward_range ref_ids_t,
           std::ranges::forward_range ref_sequences_t,
           sam_file_input_format file_format>
-sam_file_input(stream_type & stream, ref_ids_t &, ref_sequences_t &, file_format const &) -> sam_file_input<
-    sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>, std::remove_reference_t<ref_ids_t>>,
-    typename sam_file_input<>::selected_field_ids, // actually use the default
-    type_list<file_format>>;
+sam_file_input(stream_type & stream, ref_ids_t &, ref_sequences_t &, file_format const &)
+    -> sam_file_input<
+        sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>, std::remove_reference_t<ref_ids_t>>,
+        typename sam_file_input<>::selected_field_ids, // actually use the default
+        type_list<file_format>>;
 //!\}
 
 } // namespace seqan3

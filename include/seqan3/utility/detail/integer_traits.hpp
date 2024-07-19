@@ -31,7 +31,7 @@ using min_viable_uint_t = std::conditional_t<
                        uint8_t,
                        std::conditional_t<value <= 65535ull,
                                           uint16_t,
-                                          std::conditional_t<value <= 4294967295ull, uint32_t, uint64_t>>>>;
+                                          std::conditional_t<value <= 4'294'967'295ull, uint32_t, uint64_t>>>>;
 
 //!\brief Given a value, cast the value as the smallest unsigned integer that can hold it.
 //!\ingroup utility

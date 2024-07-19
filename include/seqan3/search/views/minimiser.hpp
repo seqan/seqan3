@@ -475,8 +475,9 @@ minimiser_view(rng1_t &&, size_t const window_size) -> minimiser_view<std::views
 
 //!\brief A deduction guide for the view class template.
 template <std::ranges::viewable_range rng1_t, std::ranges::viewable_range rng2_t>
-minimiser_view(rng1_t &&, rng2_t &&, size_t const window_size)
-    -> minimiser_view<std::views::all_t<rng1_t>, std::views::all_t<rng2_t>>;
+minimiser_view(rng1_t &&,
+               rng2_t &&,
+               size_t const window_size) -> minimiser_view<std::views::all_t<rng1_t>, std::views::all_t<rng2_t>>;
 
 // ---------------------------------------------------------------------------------------------------------------------
 // minimiser_fn (adaptor definition)

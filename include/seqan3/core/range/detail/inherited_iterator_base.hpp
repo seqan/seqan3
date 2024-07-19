@@ -77,16 +77,16 @@ public:
      * \brief The exception specification is explicitly "inherited" to also work for pointers as base.
      * \{
      */
-    constexpr inherited_iterator_base() noexcept(std::is_nothrow_default_constructible_v<base_t>) =
-        default; //!< Defaulted.
-    constexpr inherited_iterator_base(inherited_iterator_base const & rhs) noexcept(
-        std::is_nothrow_copy_constructible_v<base_t>) = default; //!< Defaulted.
-    constexpr inherited_iterator_base(inherited_iterator_base && rhs) noexcept(
-        std::is_nothrow_move_constructible_v<base_t>) = default; //!< Defaulted.
-    constexpr inherited_iterator_base & operator=(inherited_iterator_base const & rhs) noexcept(
-        std::is_nothrow_copy_assignable_v<base_t>) = default; //!< Defaulted.
-    constexpr inherited_iterator_base & operator=(inherited_iterator_base && rhs) noexcept(
-        std::is_nothrow_move_assignable_v<base_t>) = default;                              //!< Defaulted.
+    constexpr inherited_iterator_base()
+        noexcept(std::is_nothrow_default_constructible_v<base_t>) = default; //!< Defaulted.
+    constexpr inherited_iterator_base(inherited_iterator_base const & rhs)
+        noexcept(std::is_nothrow_copy_constructible_v<base_t>) = default; //!< Defaulted.
+    constexpr inherited_iterator_base(inherited_iterator_base && rhs)
+        noexcept(std::is_nothrow_move_constructible_v<base_t>) = default; //!< Defaulted.
+    constexpr inherited_iterator_base & operator=(inherited_iterator_base const & rhs)
+        noexcept(std::is_nothrow_copy_assignable_v<base_t>) = default; //!< Defaulted.
+    constexpr inherited_iterator_base & operator=(inherited_iterator_base && rhs)
+        noexcept(std::is_nothrow_move_assignable_v<base_t>) = default;                     //!< Defaulted.
     ~inherited_iterator_base() noexcept(std::is_nothrow_destructible_v<base_t>) = default; //!< Defaulted.
 
     //!\brief Delegate to base class if inheriting from non-pointer iterator.
@@ -195,9 +195,9 @@ public:
     //!\endcond
     constexpr auto operator++(int) noexcept(noexcept(std::declval<base_t &>()++))
         requires requires (base_t_ i) {
-                     i++;
-                     requires !std::same_as<decltype(i++), base_t_>;
-                 }
+            i++;
+            requires !std::same_as<decltype(i++), base_t_>;
+        }
     {
         return as_base()++;
     }
@@ -206,14 +206,12 @@ public:
     //!\cond
     template <typename base_t_ = base_t>
     //!\endcond
-    constexpr derived_t operator++(int) noexcept(noexcept(std::declval<base_t &>()++)
-                                                 && std::is_nothrow_copy_constructible_v<derived_t>)
+    constexpr derived_t operator++(int)
+        noexcept(noexcept(std::declval<base_t &>()++) && std::is_nothrow_copy_constructible_v<derived_t>)
         requires requires (base_t_ i) {
-                     i++;
-                     {
-                         i++
-                         } -> std::same_as<base_t_>;
-                 } && std::copy_constructible<derived_t>
+            i++;
+            { i++ } -> std::same_as<base_t_>;
+        } && std::copy_constructible<derived_t>
     {
         derived_t tmp = *this_derived();
         ++as_base();
@@ -235,8 +233,8 @@ public:
     //!\cond
     template <typename base_t_ = base_t>
     //!\endcond
-    constexpr derived_t operator--(int) noexcept(noexcept(std::declval<base_t &>()--)
-                                                 && std::is_nothrow_copy_constructible_v<derived_t>)
+    constexpr derived_t operator--(int)
+        noexcept(noexcept(std::declval<base_t &>()--) && std::is_nothrow_copy_constructible_v<derived_t>)
         requires requires (base_t_ i) { i--; } && std::copy_constructible<derived_t>
     {
         derived_t tmp = *this_derived();
@@ -275,8 +273,8 @@ public:
     // to be evaluated in the first pass, where derived_t is incomplete.
     template <typename base_t_ = base_t>
     //!\endcond
-    constexpr friend derived_t operator+(difference_type const skip,
-                                         derived_t const & it) noexcept(noexcept(skip + std::declval<base_t const &>()))
+    constexpr friend derived_t operator+(difference_type const skip, derived_t const & it)
+        noexcept(noexcept(skip + std::declval<base_t const &>()))
         requires requires (base_t const i, difference_type const n) { n + i; }
               && std::constructible_from<derived_t, base_t>
     {
@@ -351,8 +349,8 @@ public:
     //!\cond
     template <typename base_t_ = base_t>
     //!\endcond
-    constexpr decltype(auto)
-    operator[](std::make_signed_t<difference_type> const n) noexcept(noexcept(std::declval<base_t &>()[0]))
+    constexpr decltype(auto) operator[](std::make_signed_t<difference_type> const n)
+        noexcept(noexcept(std::declval<base_t &>()[0]))
         requires requires (base_t_ i, difference_type const n) { i[n]; }
     {
         return as_base()[n];

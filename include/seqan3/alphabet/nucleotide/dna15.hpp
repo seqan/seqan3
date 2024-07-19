@@ -129,31 +129,27 @@ private:
         return char_to_rank_table[static_cast<index_t>(chr)];
     }
 
-    // clang-format off
     //!\copydoc seqan3::dna4::char_to_rank
-    static constexpr std::array<rank_type, 256> char_to_rank_table
-    {
-        []() constexpr {
-            std::array<rank_type, 256> ret{};
+    static constexpr std::array<rank_type, 256> char_to_rank_table{[]() constexpr
+                                                                   {
+                                                                       std::array<rank_type, 256> ret{};
 
-            ret.fill(8u); // initialize with UNKNOWN ('N')
+                                                                       ret.fill(8u); // initialize with UNKNOWN ('N')
 
-            // reverse mapping for characters and their lowercase
-            for (size_t rnk = 0u; rnk < alphabet_size; ++rnk)
-            {
-                ret[rank_to_char_table[rnk]] = rnk;
-                ret[to_lower(rank_to_char_table[rnk])] = rnk;
-            }
+                                                                       // reverse mapping for characters and their lowercase
+                                                                       for (size_t rnk = 0u; rnk < alphabet_size; ++rnk)
+                                                                       {
+                                                                           ret[rank_to_char_table[rnk]] = rnk;
+                                                                           ret[to_lower(rank_to_char_table[rnk])] = rnk;
+                                                                       }
 
-            // set U equal to T
-            ret['U'] = ret['T'];
-            ret['u'] = ret['t'];
+                                                                       // set U equal to T
+                                                                       ret['U'] = ret['T'];
+                                                                       ret['u'] = ret['t'];
 
-            return ret;
-        }()
-    };
+                                                                       return ret;
+                                                                   }()};
 };
-// clang-format on
 
 // ------------------------------------------------------------------
 // containers

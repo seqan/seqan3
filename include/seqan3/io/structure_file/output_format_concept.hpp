@@ -66,69 +66,68 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-concept structure_file_output_format =
-    requires (detail::structure_file_output_format_exposer<t> & v,
-              std::ofstream & f,
-              structure_file_output_options & options,
-              rna5_vector & seq,
-              std::string & id,
-              std::vector<std::set<std::pair<double, size_t>>> & bpp,
-              std::vector<wuss51> & structure,
-              std::vector<structured_rna<rna5, wuss51>> & structured_seq,
-              double energy,
-              double react,
-              double react_err,
-              std::string & comment,
-              size_t offset) {
-        t::file_extensions;
+concept structure_file_output_format = requires (detail::structure_file_output_format_exposer<t> & v,
+                                                 std::ofstream & f,
+                                                 structure_file_output_options & options,
+                                                 rna5_vector & seq,
+                                                 std::string & id,
+                                                 std::vector<std::set<std::pair<double, size_t>>> & bpp,
+                                                 std::vector<wuss51> & structure,
+                                                 std::vector<structured_rna<rna5, wuss51>> & structured_seq,
+                                                 double energy,
+                                                 double react,
+                                                 double react_err,
+                                                 std::string & comment,
+                                                 size_t offset) {
+    t::file_extensions;
 
-        {
-            v.write_structure_record(f, options, seq, id, bpp, structure, energy, react, react_err, comment, offset)
-            } -> std::same_as<void>;
+    {
+        v.write_structure_record(f, options, seq, id, bpp, structure, energy, react, react_err, comment, offset)
+    } -> std::same_as<void>;
 
-        {
-            v.write_structure_record(f,
-                                     options,
-                                     seq,
-                                     id,
-                                     bpp,
-                                     std::ignore,
-                                     std::ignore,
-                                     std::ignore,
-                                     std::ignore,
-                                     std::ignore,
-                                     std::ignore)
-            } -> std::same_as<void>;
+    {
+        v.write_structure_record(f,
+                                 options,
+                                 seq,
+                                 id,
+                                 bpp,
+                                 std::ignore,
+                                 std::ignore,
+                                 std::ignore,
+                                 std::ignore,
+                                 std::ignore,
+                                 std::ignore)
+    } -> std::same_as<void>;
 
-        {
-            v.write_structure_record(f,
-                                     options,
-                                     structured_seq,
-                                     id,
-                                     std::ignore,
-                                     structured_seq,
-                                     energy,
-                                     std::ignore,
-                                     std::ignore,
-                                     std::ignore,
-                                     std::ignore)
-            } -> std::same_as<void>;
+    {
+        v.write_structure_record(f,
+                                 options,
+                                 structured_seq,
+                                 id,
+                                 std::ignore,
+                                 structured_seq,
+                                 energy,
+                                 std::ignore,
+                                 std::ignore,
+                                 std::ignore,
+                                 std::ignore)
+    } -> std::same_as<void>;
 
-        {
-            v.write_structure_record(f,
-                                     options,
-                                     std::ignore,
-                                     std::ignore,
-                                     std::ignore,
-                                     std::ignore,
-                                     std::ignore,
-                                     std::ignore,
-                                     std::ignore,
-                                     std::ignore,
-                                     std::ignore)
-            } -> std::same_as<void>;
-        // the last is required to be compile time valid, but should always throw at run-time.
-    };
+    {
+        v.write_structure_record(f,
+                                 options,
+                                 std::ignore,
+                                 std::ignore,
+                                 std::ignore,
+                                 std::ignore,
+                                 std::ignore,
+                                 std::ignore,
+                                 std::ignore,
+                                 std::ignore,
+                                 std::ignore)
+    } -> std::same_as<void>;
+    // the last is required to be compile time valid, but should always throw at run-time.
+};
 //!\endcond
 
 // Workaround for https://github.com/doxygen/doxygen/issues/9379

@@ -48,8 +48,8 @@ public:
     {}
 
     //!\brief Copy assignment for non-copyable wrapped types.
-    constexpr copyable_wrapper &
-    operator=(copyable_wrapper const & other) noexcept(std::is_nothrow_copy_constructible_v<t>)
+    constexpr copyable_wrapper & operator=(copyable_wrapper const & other)
+        noexcept(std::is_nothrow_copy_constructible_v<t>)
         requires (!std::copyable<t>)
     {
         if (this != std::addressof(other))
@@ -178,8 +178,8 @@ public:
     //!\brief Construct from argument pack. Part of the std::optional API.
     template <typename... args_t>
         requires std::constructible_from<t, args_t...>
-    constexpr explicit copyable_wrapper(std::in_place_t,
-                                        args_t... args) noexcept(std::is_nothrow_constructible_v<t, args_t...>) :
+    constexpr explicit copyable_wrapper(std::in_place_t, args_t... args)
+        noexcept(std::is_nothrow_constructible_v<t, args_t...>) :
         value{std::forward<args_t>(args)...}
     {}
 

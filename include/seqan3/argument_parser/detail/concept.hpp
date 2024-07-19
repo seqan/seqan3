@@ -37,14 +37,11 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename option_type>
-concept is_container_option = !
-std::is_same_v<std::remove_cvref_t<option_type>, std::string> && requires (
-    option_type container,
-    typename std::remove_reference_t<option_type>::value_type value) {
-                                                                     {
-                                                                         container.push_back(value)
-                                                                     };
-                                                                 };
+concept is_container_option =
+    !std::is_same_v<std::remove_cvref_t<option_type>, std::string>
+    && requires (option_type container, typename std::remove_reference_t<option_type>::value_type value) {
+           { container.push_back(value) };
+       };
 //!\endcond
 
 } // namespace seqan3::detail

@@ -739,8 +739,8 @@ public:
 //!\brief Class template argument deduction for view_translate.
 template <typename urng_t>
     requires std::ranges::sized_range<urng_t> && std::ranges::random_access_range<urng_t>
-          && nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
-             view_translate(urng_t &&, translation_frames const) -> view_translate<std::views::all_t<urng_t>>;
+              && nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
+view_translate(urng_t &&, translation_frames const) -> view_translate<std::views::all_t<urng_t>>;
 } // namespace seqan3::detail
 
 // ============================================================================

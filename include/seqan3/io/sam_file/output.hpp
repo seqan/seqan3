@@ -771,10 +771,11 @@ sam_file_output(std::filesystem::path const &, ref_ids_type &&, ref_lengths_type
 
 //!\brief Deduces ref_ids_type from input. Valid formats, and selected_field_ids are set to the default.
 template <std::ranges::forward_range ref_ids_type, std::ranges::forward_range ref_lengths_type>
-sam_file_output(std::filesystem::path const &, ref_ids_type &&, ref_lengths_type &&)
-    -> sam_file_output<typename sam_file_output<>::selected_field_ids,
-                       typename sam_file_output<>::valid_formats,
-                       std::remove_reference_t<ref_ids_type>>;
+sam_file_output(std::filesystem::path const &,
+                ref_ids_type &&,
+                ref_lengths_type &&) -> sam_file_output<typename sam_file_output<>::selected_field_ids,
+                                                        typename sam_file_output<>::valid_formats,
+                                                        std::remove_reference_t<ref_ids_type>>;
 
 //!\brief Deduces selected_field_ids, the valid format, and the ref_ids_type from input.
 template <output_stream stream_type,

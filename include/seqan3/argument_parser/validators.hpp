@@ -96,12 +96,8 @@ concept validator =
     && requires (validator_type validator, typename std::remove_reference_t<validator_type>::option_value_type value) {
            typename std::remove_reference_t<validator_type>::option_value_type;
 
-           {
-               validator(value)
-               } -> std::same_as<void>;
-           {
-               validator.get_help_page_message()
-               } -> std::same_as<std::string>;
+           { validator(value) } -> std::same_as<void>;
+           { validator.get_help_page_message() } -> std::same_as<std::string>;
        };
 //!\endcond
 

@@ -111,53 +111,49 @@ private:
         return char_to_rank_table[static_cast<index_t>(chr)];
     }
 
-    // clang-format off
     //!\copydoc seqan3::dna4::char_to_rank_table
-    static constexpr std::array<rank_type, 256> char_to_rank_table
-    {
-        []() constexpr {
-            std::array<rank_type, 256> ret{};
+    static constexpr std::array<rank_type, 256> char_to_rank_table{[]() constexpr
+                                                                   {
+                                                                       std::array<rank_type, 256> ret{};
 
-            // reverse mapping for characters and their lowercase
-            for (size_t rnk = 0u; rnk < alphabet_size; ++rnk)
-            {
-                ret[rank_to_char_table[rnk]] = rnk;
-                ret[to_lower(rank_to_char_table[rnk])] = rnk;
-            }
+                                                                       // reverse mapping for characters and their lowercase
+                                                                       for (size_t rnk = 0u; rnk < alphabet_size; ++rnk)
+                                                                       {
+                                                                           ret[rank_to_char_table[rnk]] = rnk;
+                                                                           ret[to_lower(rank_to_char_table[rnk])] = rnk;
+                                                                       }
 
-            // set C and U equal to T
-            ret['C'] = ret['T'];
-            ret['c'] = ret['t'];
-            ret['U'] = ret['T'];
-            ret['u'] = ret['t'];
+                                                                       // set C and U equal to T
+                                                                       ret['C'] = ret['T'];
+                                                                       ret['c'] = ret['t'];
+                                                                       ret['U'] = ret['T'];
+                                                                       ret['u'] = ret['t'];
 
-            // iupac characters get special treatment, because there is no N
-            ret['R'] = ret['A'];
-            ret['r'] = ret['A']; // A or G becomes A
-            ret['Y'] = ret['T'];
-            ret['y'] = ret['T']; // C or T becomes T
-            ret['S'] = ret['T'];
-            ret['s'] = ret['T']; // C or G becomes T
-            ret['W'] = ret['A'];
-            ret['w'] = ret['A']; // A or T becomes A
-            ret['K'] = ret['G'];
-            ret['k'] = ret['G']; // G or T becomes G
-            ret['M'] = ret['A'];
-            ret['m'] = ret['A']; // A or C becomes A
-            ret['B'] = ret['T'];
-            ret['b'] = ret['T']; // C or G or T becomes T
-            ret['D'] = ret['A'];
-            ret['d'] = ret['A']; // A or G or T becomes A
-            ret['H'] = ret['A'];
-            ret['h'] = ret['A']; // A or C or T becomes A
-            ret['V'] = ret['A'];
-            ret['v'] = ret['A']; // A or C or G  becomes A
+                                                                       // iupac characters get special treatment, because there is no N
+                                                                       ret['R'] = ret['A'];
+                                                                       ret['r'] = ret['A']; // A or G becomes A
+                                                                       ret['Y'] = ret['T'];
+                                                                       ret['y'] = ret['T']; // C or T becomes T
+                                                                       ret['S'] = ret['T'];
+                                                                       ret['s'] = ret['T']; // C or G becomes T
+                                                                       ret['W'] = ret['A'];
+                                                                       ret['w'] = ret['A']; // A or T becomes A
+                                                                       ret['K'] = ret['G'];
+                                                                       ret['k'] = ret['G']; // G or T becomes G
+                                                                       ret['M'] = ret['A'];
+                                                                       ret['m'] = ret['A']; // A or C becomes A
+                                                                       ret['B'] = ret['T'];
+                                                                       ret['b'] = ret['T']; // C or G or T becomes T
+                                                                       ret['D'] = ret['A'];
+                                                                       ret['d'] = ret['A']; // A or G or T becomes A
+                                                                       ret['H'] = ret['A'];
+                                                                       ret['h'] = ret['A']; // A or C or T becomes A
+                                                                       ret['V'] = ret['A'];
+                                                                       ret['v'] = ret['A']; // A or C or G  becomes A
 
-            return ret;
-        }()
-    };
+                                                                       return ret;
+                                                                   }()};
 };
-// clang-format on
 
 // ------------------------------------------------------------------
 // containers

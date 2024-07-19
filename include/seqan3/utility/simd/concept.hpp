@@ -29,68 +29,37 @@ struct simd_traits_has_rebind : std::true_type
 //     error: invalid use of incomplete type ‘struct incomplete::template_type<int>’
 //          requires std::same_as<decltype(a - b), simd_t>;
 template <typename simd_t>
-concept simd_concept =
-    requires (simd_t a, simd_t b) {
-        typename simd_traits<std::remove_reference_t<simd_t>>::scalar_type;
-        typename simd_traits<std::remove_reference_t<simd_t>>::mask_type;
-        typename simd_traits<std::remove_reference_t<simd_t>>::swizzle_type;
-        requires simd_traits_has_rebind<simd_traits<std::remove_reference_t<simd_t>>::template rebind>::value;
+concept simd_concept = requires (simd_t a, simd_t b) {
+    typename simd_traits<std::remove_reference_t<simd_t>>::scalar_type;
+    typename simd_traits<std::remove_reference_t<simd_t>>::mask_type;
+    typename simd_traits<std::remove_reference_t<simd_t>>::swizzle_type;
+    requires simd_traits_has_rebind<simd_traits<std::remove_reference_t<simd_t>>::template rebind>::value;
 
-        // require that static member variables are defined
-        requires std::integral<decltype(simd_traits<std::remove_reference_t<simd_t>>::length)>;
-        requires std::integral<decltype(simd_traits<std::remove_reference_t<simd_t>>::max_length)>;
+    // require that static member variables are defined
+    requires std::integral<decltype(simd_traits<std::remove_reference_t<simd_t>>::length)>;
+    requires std::integral<decltype(simd_traits<std::remove_reference_t<simd_t>>::max_length)>;
 
-        // assume array access that returns a scalar_type type
-        {
-            a[0]
-            } -> std::convertible_to<typename simd_traits<std::remove_reference_t<simd_t>>::scalar_type>;
+    // assume array access that returns a scalar_type type
+    { a[0] } -> std::convertible_to<typename simd_traits<std::remove_reference_t<simd_t>>::scalar_type>;
 
-        // require comparison operators
-        {
-            a == b
-            } -> std::same_as<typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
-        {
-            a != b
-            } -> std::same_as<typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
-        {
-            a < b
-            } -> std::same_as<typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
-        {
-            a > b
-            } -> std::same_as<typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
-        {
-            a <= b
-            } -> std::same_as<typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
-        {
-            a >= b
-            } -> std::same_as<typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
+    // require comparison operators
+    { a == b } -> std::same_as<typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
+    { a != b } -> std::same_as<typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
+    { a < b } -> std::same_as<typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
+    { a > b } -> std::same_as<typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
+    { a <= b } -> std::same_as<typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
+    { a >= b } -> std::same_as<typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
 
-        // require arithmetic operators
-        {
-            a + b
-            } -> std::same_as<std::remove_reference_t<simd_t>>;
-        {
-            a - b
-            } -> std::same_as<std::remove_reference_t<simd_t>>;
-        {
-            a * b
-            } -> std::same_as<std::remove_reference_t<simd_t>>;
-        {
-            a / b
-            } -> std::same_as<std::remove_reference_t<simd_t>>;
-        {
-            a += b
-            } -> std::same_as<std::remove_reference_t<simd_t> &>;
-        {
-            a -= b
-            } -> std::same_as<std::remove_reference_t<simd_t> &>;
-        {
-            a *= b
-            } -> std::same_as<std::remove_reference_t<simd_t> &>;
-        {
-            a /= b
-            } -> std::same_as<std::remove_reference_t<simd_t> &>;
-    };
+    // require arithmetic operators
+    { a + b } -> std::same_as<std::remove_reference_t<simd_t>>;
+    { a - b } -> std::same_as<std::remove_reference_t<simd_t>>;
+    { a * b } -> std::same_as<std::remove_reference_t<simd_t>>;
+    { a / b } -> std::same_as<std::remove_reference_t<simd_t>>;
+    { a += b } -> std::same_as<std::remove_reference_t<simd_t> &>;
+    { a -= b } -> std::same_as<std::remove_reference_t<simd_t> &>;
+    { a *= b } -> std::same_as<std::remove_reference_t<simd_t> &>;
+    { a /= b } -> std::same_as<std::remove_reference_t<simd_t> &>;
+};
 //!\endcond
 
 } // namespace seqan3::detail
@@ -116,8 +85,7 @@ inline namespace simd
  */
 //!\cond
 template <typename simd_t>
-concept simd_concept = !
-std::is_pointer_v<std::decay_t<simd_t>> && detail::simd_concept<simd_t>;
+concept simd_concept = !std::is_pointer_v<std::decay_t<simd_t>> && detail::simd_concept<simd_t>;
 //!\endcond
 
 /*!\interface seqan3::simd::simd_index <>
@@ -130,9 +98,11 @@ std::is_pointer_v<std::decay_t<simd_t>> && detail::simd_concept<simd_t>;
  */
 //!\cond
 template <typename t>
-concept simd_index =
-    simd::simd_concept<t>
-    && requires () { requires std::integral<typename simd_traits<std::remove_reference_t<t>>::scalar_type>; };
+concept simd_index = simd::simd_concept<t> &&
+    requires ()
+{
+    requires std::integral<typename simd_traits<std::remove_reference_t<t>>::scalar_type>;
+};
 //!\endcond
 
 } // namespace simd

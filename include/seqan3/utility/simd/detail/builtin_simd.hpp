@@ -83,10 +83,8 @@ template <typename builtin_simd_t>
 // NOTE: gcc throws a compile time error if builtin_simd_t is a pointer of an incomplete type. To tackle this we
 // short-circuit the requires with is_pointer_v. See builtin_simd_test.cpp for a test case for this.
     requires (!std::is_pointer_v<std::decay_t<builtin_simd_t>>) && requires (builtin_simd_t simd) {
-                                                                       {
-                                                                           simd[0]
-                                                                       };
-                                                                   }
+        { simd[0] };
+    }
 //!\endcond
 struct builtin_simd_traits_helper<builtin_simd_t>
 {

@@ -62,13 +62,13 @@ public:
      * \details
      * \stableapi{Since version 3.1.}
      */
-    static const mask unmasked;
+    static mask const unmasked;
 
     /*!\brief Member for masked.
      * \details
      * \stableapi{Since version 3.1.}
      */
-    static const mask masked;
+    static mask const masked;
     //!\}
 };
 

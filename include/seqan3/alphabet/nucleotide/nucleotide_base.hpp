@@ -76,8 +76,8 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename other_nucl_type>
-        requires (!std::same_as<nucleotide_base, other_nucl_type>)
-              && (!std::same_as<derived_type, other_nucl_type>) && nucleotide_alphabet<other_nucl_type>
+        requires (!std::same_as<nucleotide_base, other_nucl_type>) && (!std::same_as<derived_type, other_nucl_type>)
+              && nucleotide_alphabet<other_nucl_type>
               && detail::convertable_to_through_char_representation<other_nucl_type, derived_type>
     explicit constexpr nucleotide_base(other_nucl_type const & other) noexcept
     {
@@ -141,11 +141,10 @@ public:
     }
 
 private:
-    // clang-format off
     //!\brief Implementation of seqan3::nucleotide_base::char_is_valid().
-    static constexpr std::array<bool, 256> valid_char_table
-    {
-        []() constexpr {
+    static constexpr std::array<bool, 256> valid_char_table{
+        []() constexpr
+        {
             std::array<bool, 256> ret{};
 
             // Value-initialisation of std::array does usually initialise. `fill` is explicit.
@@ -166,9 +165,7 @@ private:
             ret['t'] = true;
 
             return ret;
-        }()
-    };
+        }()};
 };
-    // clang-format off
 
 } // namespace seqan3

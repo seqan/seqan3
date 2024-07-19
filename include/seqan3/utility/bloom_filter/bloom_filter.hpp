@@ -99,11 +99,11 @@ private:
     //!\brief The bitvector.
     data_type data{};
     //!\brief Precalculated seeds for multiplicative hashing. We use large irrational numbers for a uniform hashing.
-    static constexpr std::array<size_t, 5> hash_seeds{13572355802537770549ULL, // 2**64 / (e/2)
-                                                      13043817825332782213ULL, // 2**64 / sqrt(2)
-                                                      10650232656628343401ULL, // 2**64 / sqrt(3)
-                                                      16499269484942379435ULL, // 2**64 / (sqrt(5)/2)
-                                                      4893150838803335377ULL}; // 2**64 / (3*pi/5)
+    static constexpr std::array<size_t, 5> hash_seeds{13'572'355'802'537'770'549ULL, // 2**64 / (e/2)
+                                                      13'043'817'825'332'782'213ULL, // 2**64 / sqrt(2)
+                                                      10'650'232'656'628'343'401ULL, // 2**64 / sqrt(3)
+                                                      16'499'269'484'942'379'435ULL, // 2**64 / (sqrt(5)/2)
+                                                      4'893'150'838'803'335'377ULL}; // 2**64 / (3*pi/5)
 
     /*!\brief Perturbs a value and fits it into the vector.
      * \param h The value to process.
@@ -115,9 +115,9 @@ private:
     inline constexpr size_t hash_and_fit(size_t h, size_t const seed) const
     {
         h *= seed;
-        h ^= h >> hash_shift;         // XOR and shift higher bits into lower bits
-        h *= 11400714819323198485ULL; // = 2^64 / golden_ration, to expand h to 64 bit range
-                                      // Use fastrange (integer modulo without division) if possible.
+        h ^= h >> hash_shift;               // XOR and shift higher bits into lower bits
+        h *= 11'400'714'819'323'198'485ULL; // = 2^64 / golden_ration, to expand h to 64 bit range
+                                            // Use fastrange (integer modulo without division) if possible.
 #ifdef __SIZEOF_INT128__
         h = static_cast<uint64_t>((static_cast<__uint128_t>(h) * static_cast<__uint128_t>(size_in_bits)) >> 64);
 #else

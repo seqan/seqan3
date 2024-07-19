@@ -70,12 +70,13 @@ struct alignment_result_value_type
  * \{
  */
 //!\brief Type deduction for an empty object. It will always fail the compilation, if any field is accessed.
-alignment_result_value_type()->alignment_result_value_type<std::nullopt_t *, std::nullopt_t *, std::nullopt_t *>;
+alignment_result_value_type() -> alignment_result_value_type<std::nullopt_t *, std::nullopt_t *, std::nullopt_t *>;
 
 //!\brief Type deduction for id and score only.
 template <typename sequence1_id_t, typename sequence2_id_t, typename score_t>
-alignment_result_value_type(sequence1_id_t, sequence2_id_t, score_t)
-    -> alignment_result_value_type<sequence1_id_t, sequence2_id_t, score_t>;
+alignment_result_value_type(sequence1_id_t,
+                            sequence2_id_t,
+                            score_t) -> alignment_result_value_type<sequence1_id_t, sequence2_id_t, score_t>;
 
 //!\brief Type deduction for id, score and end positions.
 template <typename sequence1_id_t, typename sequence2_id_t, typename score_t, typename end_positions_t>

@@ -615,12 +615,10 @@ inline void format_sam::write_alignment_record(stream_type & stream,
     static_assert(
         ((std::ranges::forward_range<decltype(std::get<0>(mate))>
           || std::integral<std::remove_cvref_t<decltype(std::get<0>(mate))>>
-          || detail::is_type_specialisation_of_v<
-              std::remove_cvref_t<decltype(std::get<0>(mate))>,
-              std::optional>)&&(std::integral<std::remove_cvref_t<decltype(std::get<1>(mate))>>
-                                || detail::is_type_specialisation_of_v<
-                                    std::remove_cvref_t<decltype(std::get<1>(mate))>,
-                                    std::optional>)&&std::integral<std::remove_cvref_t<decltype(std::get<2>(mate))>>),
+          || detail::is_type_specialisation_of_v<std::remove_cvref_t<decltype(std::get<0>(mate))>, std::optional>)
+         && (std::integral<std::remove_cvref_t<decltype(std::get<1>(mate))>>
+             || detail::is_type_specialisation_of_v<std::remove_cvref_t<decltype(std::get<1>(mate))>, std::optional>)
+         && std::integral<std::remove_cvref_t<decltype(std::get<2>(mate))>>),
         "The mate object must be a std::tuple of size 3 with "
         "1) a std::ranges::forward_range with a value_type modelling seqan3::alphabet, "
         "2) a std::integral or std::optional<std::integral>, and "

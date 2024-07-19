@@ -157,13 +157,13 @@ struct matrix_index
  * \{
  */
 //!\brief Deduces the default index type to std::ptrdiff_t.
-matrix_index()->matrix_index<std::ptrdiff_t>;
+matrix_index() -> matrix_index<std::ptrdiff_t>;
 
 //!\brief Deduces the index type from the common type of both index types.
 template <std::integral row_index_t, std::integral col_index_t>
     requires std::common_with<row_index_t, col_index_t>
-matrix_index(row_index_type<row_index_t>, column_index_type<col_index_t>)
-    -> matrix_index<std::common_type_t<row_index_t, col_index_t>>;
+matrix_index(row_index_type<row_index_t>,
+             column_index_type<col_index_t>) -> matrix_index<std::common_type_t<row_index_t, col_index_t>>;
 
 //!\brief Deduces the index type from the simd vector index type.
 template <simd_index index_t>

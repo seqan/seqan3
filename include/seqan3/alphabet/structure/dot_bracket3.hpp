@@ -142,26 +142,22 @@ private:
         return char_to_rank_table[static_cast<index_t>(chr)];
     }
 
-    // clang-format off
     //!\copydoc seqan3::dna4::char_to_rank_table
-    static constexpr std::array<rank_type, 256> char_to_rank_table
-    {
-        []() constexpr {
-            std::array<rank_type, 256> rank_table{};
+    static constexpr std::array<rank_type, 256> char_to_rank_table{[]() constexpr
+                                                                   {
+                                                                       std::array<rank_type, 256> rank_table{};
 
-            // Value-initialisation of std::array does usually initialise. `fill` is explicit.
-            rank_table.fill(0u);
+                                                                       // Value-initialisation of std::array does usually initialise. `fill` is explicit.
+                                                                       rank_table.fill(0u);
 
-            // canonical
-            rank_table['.'] = 0u;
-            rank_table['('] = 1u;
-            rank_table[')'] = 2u;
+                                                                       // canonical
+                                                                       rank_table['.'] = 0u;
+                                                                       rank_table['('] = 1u;
+                                                                       rank_table[')'] = 2u;
 
-            return rank_table;
-        }()
-    };
+                                                                       return rank_table;
+                                                                   }()};
 };
-// clang-format on
 
 inline namespace literals
 {

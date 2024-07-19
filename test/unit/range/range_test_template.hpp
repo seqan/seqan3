@@ -134,17 +134,13 @@ TYPED_TEST_SUITE_P(range_test);
 
 template <typename range_t>
 concept has_size_member = requires (range_t range) {
-                              {
-                                  range.size()
-                              };
-                          };
+    { range.size() };
+};
 
 template <typename range_t>
 concept has_subscript_member = requires (range_t range) {
-                                   {
-                                       range[0]
-                                   };
-                               };
+    { range[0] };
+};
 
 TYPED_TEST_P(range_test, concept_check)
 {

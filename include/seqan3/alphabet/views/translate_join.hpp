@@ -251,8 +251,8 @@ public:
 
 //!\brief Class template argument deduction for view_translate_join.
 template <typename urng_t>
-view_translate_join(urng_t &&, translation_frames const = translation_frames{})
-    -> view_translate_join<std::views::all_t<urng_t>>;
+view_translate_join(urng_t &&,
+                    translation_frames const = translation_frames{}) -> view_translate_join<std::views::all_t<urng_t>>;
 
 // ============================================================================
 //  translate_fn (adaptor definition for both views)

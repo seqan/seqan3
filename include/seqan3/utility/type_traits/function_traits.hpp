@@ -59,10 +59,8 @@ struct function_traits<std::function<return_t(args_t...)>>
 // Overload for all function types.
 template <typename function_t>
     requires requires (function_t fn) {
-                 {
-                     std::function{fn}
-                 };
-             }
+        { std::function{fn} };
+    }
 struct function_traits<function_t> : function_traits<decltype(std::function{std::declval<function_t>()})>
 {};
 //!\endcond

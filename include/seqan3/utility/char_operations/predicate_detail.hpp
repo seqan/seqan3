@@ -74,7 +74,7 @@ public:
  * \relates seqan3::detail::char_predicate
  */
 template <char op, typename condition_head_t, typename... condition_ts>
-inline const std::string condition_message_v{
+inline std::string const condition_message_v{
     std::string{"("}
     + (condition_head_t::msg + ... + (std::string{" "} + std::string{{op, op}} + std::string{" "} + condition_ts::msg))
     + std::string{")"}};
@@ -100,17 +100,16 @@ struct char_predicate_base;
 //!\cond
 template <typename condition_t>
 concept char_predicate = requires {
-                             requires std::predicate<std::remove_reference_t<condition_t>, char>;
-                             requires std::is_base_of_v<char_predicate_base<std::remove_cvref_t<condition_t>>,
-                                                        std::remove_cvref_t<condition_t>>;
+    requires std::predicate<std::remove_reference_t<condition_t>, char>;
+    requires std::is_base_of_v<char_predicate_base<std::remove_cvref_t<condition_t>>, std::remove_cvref_t<condition_t>>;
 
-                             std::remove_reference_t<condition_t>::msg;
+    std::remove_reference_t<condition_t>::msg;
 
-                             //The msg type can be added with a std::string.
-                             {
-                                 std::string{} + std::remove_reference_t<condition_t>::msg
-                                 } -> std::convertible_to<decltype(std::remove_reference_t<condition_t>::msg)>;
-                         };
+    //The msg type can be added with a std::string.
+    {
+        std::string{} + std::remove_reference_t<condition_t>::msg
+    } -> std::convertible_to<decltype(std::remove_reference_t<condition_t>::msg)>;
+};
 //!\endcond
 
 /*!\name Requirements for seqan3::detail::char_predicate
@@ -196,15 +195,24 @@ struct char_predicate_base
         // libc++ deprecates other specialisations in llvm-17, and removes them in llvm-18.
         // We map the non-character types to corresponding chracter types.
         // For example, `seqan3::is_eof(EOF)` will call this function with `value_t == int`.
-        // clang-format off
-        using char_value_t = std::conditional_t<seqan3::builtin_character<value_t>, value_t,
-                             std::conditional_t<std::same_as<value_t, std::char_traits<char>::int_type>, char,
-                             std::conditional_t<std::same_as<value_t, std::char_traits<wchar_t>::int_type>, wchar_t,
-                             std::conditional_t<std::same_as<value_t, std::char_traits<char8_t>::int_type>, char8_t,
-                             std::conditional_t<std::same_as<value_t, std::char_traits<char16_t>::int_type>, char16_t,
-                             std::conditional_t<std::same_as<value_t, std::char_traits<char32_t>::int_type>, char32_t,
-                             void>>>>>>;
-        // clang-format on
+        using char_value_t = std::conditional_t<
+            seqan3::builtin_character<value_t>,
+            value_t,
+            std::conditional_t<
+                std::same_as<value_t, std::char_traits<char>::int_type>,
+                char,
+                std::conditional_t<
+                    std::same_as<value_t, std::char_traits<wchar_t>::int_type>,
+                    wchar_t,
+                    std::conditional_t<
+                        std::same_as<value_t, std::char_traits<char8_t>::int_type>,
+                        char8_t,
+                        std::conditional_t<
+                            std::same_as<value_t, std::char_traits<char16_t>::int_type>,
+                            char16_t,
+                            std::conditional_t<std::same_as<value_t, std::char_traits<char32_t>::int_type>,
+                                               char32_t,
+                                               void>>>>>>;
         static_assert(!std::same_as<char_value_t, void>, "There is no valid character representation.");
         using char_trait = std::char_traits<char_value_t>;
         return (static_cast<std::make_unsigned_t<value_t>>(val) < 256) ? operator()(static_cast<uint8_t>(val))
@@ -239,7 +247,7 @@ template <char_predicate... condition_ts>
 struct char_predicate_disjunction : public char_predicate_base<char_predicate_disjunction<condition_ts...>>
 {
     //!\brief The message representing the disjunction of the associated conditions.
-    static inline const std::string msg = detail::condition_message_v<'|', condition_ts...>;
+    static inline std::string const msg = detail::condition_message_v<'|', condition_ts...>;
 
     //!\brief The base type.
     using base_t = char_predicate_base<char_predicate_disjunction<condition_ts...>>;
@@ -260,7 +268,7 @@ template <char_predicate condition_t>
 struct char_predicate_negator : public char_predicate_base<char_predicate_negator<condition_t>>
 {
     //!\brief The message representing the negation of the associated condition.
-    static inline const std::string msg = std::string{'!'} + condition_t::msg;
+    static inline std::string const msg = std::string{'!'} + condition_t::msg;
 
     //!\brief The base type.
     using base_t = char_predicate_base<char_predicate_negator<condition_t>>;
@@ -288,7 +296,7 @@ template <uint8_t interval_first, uint8_t interval_last>
 struct is_in_interval_type : public char_predicate_base<is_in_interval_type<interval_first, interval_last>>
 {
     //!\brief The message representing this condition.
-    static inline const std::string msg = std::string{"is_in_interval<'"} + std::string{interval_first}
+    static inline std::string const msg = std::string{"is_in_interval<'"} + std::string{interval_first}
                                         + std::string{"', '"} + std::string{interval_last} + std::string{"'>"};
 
     //!\brief The base type.
@@ -323,7 +331,7 @@ struct is_char_type : public char_predicate_base<is_char_type<char_v>>
     static_assert(char_v == EOF || static_cast<uint64_t>(char_v) < 256, "TODO");
 
     //!\brief The message representing this condition.
-    static inline const std::string msg =
+    static inline std::string const msg =
         std::string{"is_char<'"} + ((char_v == EOF) ? std::string{"EOF"} : std::string{char_v}) + std::string{"'>"};
 
     //!\brief The base type.

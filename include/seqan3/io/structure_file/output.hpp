@@ -559,15 +559,17 @@ protected:
 template <output_stream stream_t,
           structure_file_output_format file_format,
           detail::fields_specialisation selected_field_ids>
-structure_file_output(stream_t &&, file_format const &, selected_field_ids const &)
-    -> structure_file_output<selected_field_ids, type_list<file_format>>;
+structure_file_output(stream_t &&,
+                      file_format const &,
+                      selected_field_ids const &) -> structure_file_output<selected_field_ids, type_list<file_format>>;
 
 //!\overload
 template <output_stream stream_t,
           structure_file_output_format file_format,
           detail::fields_specialisation selected_field_ids>
-structure_file_output(stream_t &, file_format const &, selected_field_ids const &)
-    -> structure_file_output<selected_field_ids, type_list<file_format>>;
+structure_file_output(stream_t &,
+                      file_format const &,
+                      selected_field_ids const &) -> structure_file_output<selected_field_ids, type_list<file_format>>;
 //!\}
 
 } // namespace seqan3

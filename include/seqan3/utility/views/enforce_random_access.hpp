@@ -166,29 +166,33 @@ public:
     using base_t::operator==;
     using base_t::operator!=;
     //!\brief Tests if iterator is at the end.
-    friend constexpr bool operator==(basic_iterator const & lhs, std::ranges::sentinel_t<urng_t> const & rhs) noexcept(
-        noexcept(std::declval<underlying_iter_t const &>() == std::declval<std::ranges::sentinel_t<urng_t> const &>()))
+    friend constexpr bool operator==(basic_iterator const & lhs, std::ranges::sentinel_t<urng_t> const & rhs)
+        noexcept(noexcept(std::declval<underlying_iter_t const &>()
+                          == std::declval<std::ranges::sentinel_t<urng_t> const &>()))
     {
         return lhs.base() == rhs;
     }
 
     //!\brief Tests if iterator is at the end.
-    friend constexpr bool operator==(std::ranges::sentinel_t<urng_t> const & lhs, basic_iterator const & rhs) noexcept(
-        noexcept(std::declval<underlying_iter_t const &>() == std::declval<std::ranges::sentinel_t<urng_t> const &>()))
+    friend constexpr bool operator==(std::ranges::sentinel_t<urng_t> const & lhs, basic_iterator const & rhs)
+        noexcept(noexcept(std::declval<underlying_iter_t const &>()
+                          == std::declval<std::ranges::sentinel_t<urng_t> const &>()))
     {
         return rhs == lhs;
     }
 
     //!\brief Tests if iterator is not at the end.
-    friend constexpr bool operator!=(basic_iterator const & lhs, std::ranges::sentinel_t<urng_t> const & rhs) noexcept(
-        noexcept(std::declval<underlying_iter_t const &>() != std::declval<std::ranges::sentinel_t<urng_t> const &>()))
+    friend constexpr bool operator!=(basic_iterator const & lhs, std::ranges::sentinel_t<urng_t> const & rhs)
+        noexcept(noexcept(std::declval<underlying_iter_t const &>()
+                          != std::declval<std::ranges::sentinel_t<urng_t> const &>()))
     {
         return !(lhs == rhs);
     }
 
     //!\brief Tests if iterator is not at the end.
-    friend constexpr bool operator!=(std::ranges::sentinel_t<urng_t> const & lhs, basic_iterator const & rhs) noexcept(
-        noexcept(std::declval<underlying_iter_t const &>() != std::declval<std::ranges::sentinel_t<urng_t> const &>()))
+    friend constexpr bool operator!=(std::ranges::sentinel_t<urng_t> const & lhs, basic_iterator const & rhs)
+        noexcept(noexcept(std::declval<underlying_iter_t const &>()
+                          != std::declval<std::ranges::sentinel_t<urng_t> const &>()))
     {
         return rhs != lhs;
     }
@@ -210,10 +214,10 @@ public:
     }
 
     //!\brief Computes the distance betwen this iterator and the sentinel of the underlying range.
-    constexpr friend typename base_t::difference_type
-    operator-(std::ranges::sentinel_t<urng_t> const & lhs,
-              basic_iterator const & rhs) noexcept(noexcept(std::declval<std::ranges::sentinel_t<urng_t> const &>()
-                                                            - std::declval<underlying_iter_t const &>()))
+    constexpr friend typename base_t::difference_type operator-(std::ranges::sentinel_t<urng_t> const & lhs,
+                                                                basic_iterator const & rhs)
+        noexcept(noexcept(std::declval<std::ranges::sentinel_t<urng_t> const &>()
+                          - std::declval<underlying_iter_t const &>()))
         requires std::sized_sentinel_for<std::ranges::sentinel_t<urng_t>, underlying_iter_t>
     {
         return lhs - rhs.base();
