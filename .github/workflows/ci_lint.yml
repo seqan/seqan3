@@ -82,7 +82,7 @@ jobs:
       - name: Run lint
         uses: seqan/actions/lint@main
         with:
-          clang_format: 15
+          clang_format: 18
           token: ${{ secrets.SEQAN_ACTIONS_PAT }}
           gpg_key: ${{ secrets.SEQAN_ACTIONS_GPG_KEY }}
           gpg_passphrase: ${{ secrets.SEQAN_ACTIONS_GPG_PASSPHRASE }}
