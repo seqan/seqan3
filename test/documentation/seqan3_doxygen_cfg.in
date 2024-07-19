@@ -407,7 +407,3 @@ GENERATE_LEGEND        = YES
 DOT_CLEANUP            = YES
 MSCGEN_TOOL            =
 MSCFILE_DIRS           =
-#---------------------------------------------------------------------------
-# Configuration options related to the deployment by Vercel
-#---------------------------------------------------------------------------
-${SEQAN3_DOXYFILE_OPTION_POWERED_BY_VERCEL}

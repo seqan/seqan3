@@ -14,7 +14,6 @@
     <li id="list_bottom_right" class="footer" style="float:left; font-size: 12pt; color: var(--page-foreground-color); font-weight: normal;">Version: <li>
     <script type="text/javascript" charset="utf-8" src="version.js"></script>
     $navpath
-    ${SEQAN3_FOOTER_HTML_OPTION_POWERED_BY_VERCEL}
     <li class="footer">$generatedby <a href="https://www.doxygen.org/index.html"><img class="footer" src="$relpath^doxygen.svg" width="104" height="31" alt="doxygen"/></a> $doxygenversion </li>
   </ul>
 </div>

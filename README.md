@@ -104,9 +104,3 @@ g++-11 -O3 -DNDEBUG -Wall -Wextra                               \
     -lz -lbz2 -pthread                                          \
   your_file.cpp
 ```
-
-## Sponsorships
-
-[![Vercel](https://raw.githubusercontent.com/seqan/seqan3/main/test/documentation/.vercel/powered-by-vercel.svg)](https://vercel.com/?utm_source=seqan&utm_campaign=oss)
-
-Vercel is kind enough to sponsor our documentation preview-builds within our pull requests. Check them out!
