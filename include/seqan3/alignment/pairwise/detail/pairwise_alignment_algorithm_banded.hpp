@@ -133,8 +133,15 @@ public:
         size_t const sequence1_size = std::ranges::distance(simd_seq1_collection);
         size_t const sequence2_size = std::ranges::distance(simd_seq2_collection);
 
+#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
         auto && [alignment_matrix, index_matrix] =
             this->acquire_matrices(sequence1_size, sequence2_size, this->lowest_viable_score());
+#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#    pragma GCC diagnostic pop
+#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
 
         compute_matrix(simd_seq1_collection, simd_seq2_collection, alignment_matrix, index_matrix);
 
