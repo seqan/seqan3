@@ -98,21 +98,18 @@ class strong_type;
  */
 //!\cond
 template <typename strong_type_t>
-concept derived_from_strong_type =
-    requires (strong_type_t && obj) {
-        typename std::remove_reference_t<strong_type_t>::value_type;
+concept derived_from_strong_type = requires (strong_type_t && obj) {
+    typename std::remove_reference_t<strong_type_t>::value_type;
 
-        {
-            std::remove_reference_t<strong_type_t>::skills
-        };
+    { std::remove_reference_t<strong_type_t>::skills };
 
-        requires std::same_as<decltype(std::remove_reference_t<strong_type_t>::skills), strong_type_skill const>;
+    requires std::same_as<decltype(std::remove_reference_t<strong_type_t>::skills), strong_type_skill const>;
 
-        requires std::derived_from<std::remove_cvref_t<strong_type_t>,
-                                   strong_type<typename std::remove_reference_t<strong_type_t>::value_type,
-                                               std::remove_cvref_t<strong_type_t>,
-                                               std::remove_reference_t<strong_type_t>::skills>>;
-    };
+    requires std::derived_from<std::remove_cvref_t<strong_type_t>,
+                               strong_type<typename std::remove_reference_t<strong_type_t>::value_type,
+                                           std::remove_cvref_t<strong_type_t>,
+                                           std::remove_reference_t<strong_type_t>::skills>>;
+};
 //!\endcond
 
 //------------------------------------------------------------------------------

@@ -499,14 +499,16 @@ sequence_file_output(stream_t &&,
 template <output_stream stream_t,
           sequence_file_output_format file_format,
           detail::fields_specialisation selected_field_ids>
-sequence_file_output(stream_t &&, file_format const &, selected_field_ids const &)
-    -> sequence_file_output<selected_field_ids, type_list<file_format>>;
+sequence_file_output(stream_t &&,
+                     file_format const &,
+                     selected_field_ids const &) -> sequence_file_output<selected_field_ids, type_list<file_format>>;
 
 //!\overload
 template <output_stream stream_t,
           sequence_file_output_format file_format,
           detail::fields_specialisation selected_field_ids>
-sequence_file_output(stream_t &, file_format const &, selected_field_ids const &)
-    -> sequence_file_output<selected_field_ids, type_list<file_format>>;
+sequence_file_output(stream_t &,
+                     file_format const &,
+                     selected_field_ids const &) -> sequence_file_output<selected_field_ids, type_list<file_format>>;
 //!\}
 } // namespace seqan3

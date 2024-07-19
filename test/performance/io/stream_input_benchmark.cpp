@@ -43,7 +43,7 @@
 #endif
 
 #ifndef NDEBUG
-inline constexpr size_t input_size = 10'000;
+inline constexpr size_t input_size = 10000;
 #else
 inline constexpr size_t input_size = 10'000'000;
 #endif // NDEBUG
@@ -66,23 +66,21 @@ std::string const & input_comp<seqan2::Nothing> = input;
 #endif
 
 #if defined(SEQAN3_HAS_ZLIB)
-// clang-format off
 template <>
-std::string const input_comp<seqan3::contrib::gz_istream>
-    {[]()
-     {
-         std::ostringstream ret;
-         { // In scope to force flush of ostream on destruction.
-             seqan3::contrib::gz_ostream os{ret};
-             std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
-         }
-         return ret.str();
-     }()};
+std::string const input_comp<seqan3::contrib::gz_istream>{
+    []()
+    {
+        std::ostringstream ret;
+        { // In scope to force flush of ostream on destruction.
+            seqan3::contrib::gz_ostream os{ret};
+            std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
+        }
+        return ret.str();
+    }()};
 
 template <>
-std::string const input_comp<seqan3::contrib::bgzf_istream>
-{
-    [] ()
+std::string const input_comp<seqan3::contrib::bgzf_istream>{
+    []()
     {
         std::ostringstream ret;
         { // In scope to force flush of ostream on destruction.
@@ -90,9 +88,7 @@ std::string const input_comp<seqan3::contrib::bgzf_istream>
             std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
         }
         return ret.str();
-    } ()
-};
-// clang-format on
+    }()};
 #    ifdef SEQAN3_HAS_SEQAN2
 template <>
 std::string const & input_comp<seqan2::GZFile> = input_comp<seqan3::contrib::gz_istream>;
@@ -103,19 +99,17 @@ std::string const & input_comp<seqan2::BgzfFile> = input_comp<seqan3::contrib::b
 #endif
 
 #if defined(SEQAN3_HAS_BZIP2)
-// clang-format off
 template <>
-std::string const input_comp<seqan3::contrib::bz2_istream>
-    {[]()
-     {
-         std::ostringstream ret;
-         { // In scope to force flush of ostream on destruction.
-             seqan3::contrib::bz2_ostream os{ret};
-             std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
-         }
-         return ret.str();
-     }()};
-// clang-format on
+std::string const input_comp<seqan3::contrib::bz2_istream>{
+    []()
+    {
+        std::ostringstream ret;
+        { // In scope to force flush of ostream on destruction.
+            seqan3::contrib::bz2_ostream os{ret};
+            std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
+        }
+        return ret.str();
+    }()};
 #    ifdef SEQAN3_HAS_SEQAN2
 template <>
 std::string const & input_comp<seqan2::BZ2File> = input_comp<seqan3::contrib::bz2_istream>;

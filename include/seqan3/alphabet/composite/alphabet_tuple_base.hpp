@@ -31,8 +31,8 @@ namespace seqan3::detail
 //!\brief Prevents wrong instantiations of seqan3::alphabet_tuple_base's equality comparison operators.
 template <typename tuple_derived_t, typename rhs_t, typename... component_types>
 inline constexpr bool tuple_general_guard =
-    (!std::same_as<rhs_t, tuple_derived_t>)&&(!std::same_as<rhs_t, alphabet_tuple_base<component_types...>>)&&(
-        !std::is_base_of_v<tuple_derived_t, rhs_t>)&&(!(std::same_as<rhs_t, component_types> || ...))
+    (!std::same_as<rhs_t, tuple_derived_t>) && (!std::same_as<rhs_t, alphabet_tuple_base<component_types...>>)
+    && (!std::is_base_of_v<tuple_derived_t, rhs_t>) && (!(std::same_as<rhs_t, component_types> || ...))
     && (!list_traits::contains<tuple_derived_t, recursive_required_types_t<rhs_t>>);
 
 //!\brief Prevents wrong instantiations of seqan3::alphabet_tuple_base's equality comparison operators.
@@ -602,11 +602,10 @@ private:
         return ((seqan3::to_rank(components) * cummulative_alph_sizes[idx]) + ...);
     }
 
-    // clang-format off
     //!\brief The cumulative alphabet size products are cached.
-    static constexpr std::array<rank_type, component_list::size()> cummulative_alph_sizes
-    {
-        []() constexpr {
+    static constexpr std::array<rank_type, component_list::size()> cummulative_alph_sizes{
+        []() constexpr
+        {
             // create array (1, |sigma1|, |sigma1|*|sigma2|,  ... ,  |sigma1|*...*|sigmaN|)
             std::array<rank_type, component_list::size() + 1> ret{};
             ret[0] = 1;
@@ -615,12 +614,12 @@ private:
             using reverse_list_t = decltype(seqan3::list_traits::detail::reverse(component_list{}));
 
             seqan3::detail::for_each<reverse_list_t>(
-                [&](auto alphabet_type_identity) constexpr {
+                [&](auto alphabet_type_identity) constexpr
+                {
                     using alphabet_t = typename decltype(alphabet_type_identity)::type;
                     ret[count] = static_cast<rank_type>(seqan3::alphabet_size<alphabet_t> * ret[count - 1]);
                     ++count;
-                }
-            );
+                });
 
             // reverse and strip one: (|sigma1|*...*|sigmaN-1|, ... |sigma1|*|sigma2|, |sigma1|, 1)
             // reverse order guarantees that the first alphabet is the most significant rank contributer
@@ -631,31 +630,32 @@ private:
                 ret2[i] = ret[component_list::size() - i - 1];
 
             return ret2;
-        }()
-    };
+        }()};
 
     //!\brief Conversion table from rank to the i-th component's rank.
-    static constexpr std::array<std::array<rank_type, alphabet_size < 1024u ? alphabet_size : 0u>, // not for big alphs
-                                list_traits::size<component_list>> rank_to_component_rank
-    {
-        []() constexpr {
-            std::array<std::array<rank_type, alphabet_size < 1024u ? alphabet_size : 0u>, // not for big alphs
-                                  list_traits::size<component_list>> ret{};
+    static constexpr std::array < std::array<rank_type,
+                                             alphabet_size<1024u ? alphabet_size : 0u>, // not for big alphs
+                                             list_traits::size<component_list>>
+            rank_to_component_rank{
+                []() constexpr
+                {
+                    std::array < std::array<rank_type,
+                                            alphabet_size<1024u ? alphabet_size : 0u>, // not for big alphs
+                                            list_traits::size<component_list>>
+                            ret{};
 
-            if constexpr (alphabet_size < 1024u)
-            {
-                std::array<size_t, alphabet_size> alph_sizes{seqan3::alphabet_size<component_types>...};
+                    if constexpr (alphabet_size < 1024u)
+                    {
+                        std::array<size_t, alphabet_size> alph_sizes{seqan3::alphabet_size<component_types>...};
 
-                for (size_t i = 0; i < list_traits::size<component_list>; ++i)
-                    for (size_t j = 0; j < static_cast<size_t>(alphabet_size); ++j)
-                        ret[i][j] = (j / cummulative_alph_sizes[i]) % alph_sizes[i];
-            }
+                        for (size_t i = 0; i < list_traits::size<component_list>; ++i)
+                            for (size_t j = 0; j < static_cast<size_t>(alphabet_size); ++j)
+                                ret[i][j] = (j / cummulative_alph_sizes[i]) % alph_sizes[i];
+                    }
 
-            return ret;
-        }()
-    };
+                    return ret;
+                }()};
 };
-// clang-format on
 
 /*!\brief Specialisation of seqan3::alphabet_proxy that updates the rank of the alphabet_tuple_base.
  * \tparam alphabet_type The type of the emulated component.

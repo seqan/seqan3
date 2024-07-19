@@ -251,7 +251,7 @@ private:
  */
 //!\brief Deduces the type from the passed constructor arguments.
 template <std::ranges::viewable_range fst_sequence_t, std::ranges::viewable_range sec_sequence_t>
-aligned_sequence_builder(fst_sequence_t &&, sec_sequence_t &&)
-    -> aligned_sequence_builder<fst_sequence_t, sec_sequence_t>;
+aligned_sequence_builder(fst_sequence_t &&,
+                         sec_sequence_t &&) -> aligned_sequence_builder<fst_sequence_t, sec_sequence_t>;
 //!\}
 } // namespace seqan3::detail

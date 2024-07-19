@@ -105,11 +105,10 @@ public:
     //!\}
 
 protected:
-    // clang-format off
     //!\brief Rank to char conversion table.
-    static constexpr std::array<char_type, alphabet_size> rank_to_char
-    {
-        []() constexpr {
+    static constexpr std::array<char_type, alphabet_size> rank_to_char{
+        []() constexpr
+        {
             std::array<char_type, alphabet_size> ret{};
 
             for (size_t i = 0; i < alphabet_size; ++i)
@@ -120,13 +119,12 @@ protected:
             }
 
             return ret;
-        }()
-    };
+        }()};
 
     //!\brief Char to rank conversion table.
-    static constexpr std::array<rank_type, detail::size_in_values_v<char_type>> char_to_rank
-    {
-        []() constexpr {
+    static constexpr std::array<rank_type, detail::size_in_values_v<char_type>> char_to_rank{
+        []() constexpr
+        {
             std::array<rank_type, detail::size_in_values_v<char_type>> ret{};
 
             for (size_t i = 0; i < 256; ++i)
@@ -138,10 +136,8 @@ protected:
             }
 
             return ret;
-        }()
-    };
+        }()};
 };
-// clang-format on
 
 //!\brief Type deduction guide enables usage of masked without specifying template args.
 //!\relates masked

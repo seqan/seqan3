@@ -225,9 +225,8 @@ public:
     ~basic_consume_iterator() = default;                                                        //!< Defaulted.
 
     //!\brief Constructor that delegates to the CRTP layer and initialises the callable.
-    basic_consume_iterator(underlying_iterator_t it,
-                           copyable_wrapper_t<fun_t> const & _fun,
-                           underlying_sentinel_t sen) noexcept(noexcept(base_t{it})) :
+    basic_consume_iterator(underlying_iterator_t it, copyable_wrapper_t<fun_t> const & _fun, underlying_sentinel_t sen)
+        noexcept(noexcept(base_t{it})) :
         base_t{std::move(it)},
         fun{std::addressof(_fun)},
         underlying_sentinel{std::move(sen)}
@@ -256,9 +255,10 @@ public:
      * \{
      */
     //!\brief Override pre-increment to implement consuming behaviour.
-    basic_consume_iterator & operator++() noexcept(noexcept(++std::declval<base_t &>()) && noexcept(
-        std::declval<underlying_iterator_t &>()
-        != std::declval<underlying_sentinel_t &>()) && noexcept(fun->operator()(std::declval<reference>())))
+    basic_consume_iterator & operator++()
+        noexcept(noexcept(++std::declval<base_t &>())
+                 && noexcept(std::declval<underlying_iterator_t &>() != std::declval<underlying_sentinel_t &>())
+                 && noexcept(fun->operator()(std::declval<reference>())))
     {
         base_t::operator++();
 
@@ -294,9 +294,10 @@ public:
      * \{
      */
     //!\brief Return the saved at_end state.
-    bool operator==(basic_consume_sentinel<const_range> const &) const noexcept(!or_throw && noexcept(
-        std::declval<underlying_iterator_t &>()
-        != std::declval<underlying_sentinel_t &>()) && noexcept(fun->operator()(std::declval<reference>())))
+    bool operator==(basic_consume_sentinel<const_range> const &) const
+        noexcept(!or_throw
+                 && noexcept(std::declval<underlying_iterator_t &>() != std::declval<underlying_sentinel_t &>())
+                 && noexcept(fun->operator()(std::declval<reference>())))
     {
         if (at_end_gracefully)
             return true;
@@ -313,8 +314,8 @@ public:
     }
 
     //!\brief Return the saved at_end state.
-    friend bool operator==(basic_consume_sentinel<const_range> const & lhs,
-                           basic_consume_iterator const & rhs) noexcept(noexcept(rhs == lhs))
+    friend bool operator==(basic_consume_sentinel<const_range> const & lhs, basic_consume_iterator const & rhs)
+        noexcept(noexcept(rhs == lhs))
     {
         return rhs == lhs;
     }
@@ -327,8 +328,8 @@ public:
     }
 
     //!\brief Return the saved at_end state.
-    friend bool operator!=(basic_consume_sentinel<const_range> const & lhs,
-                           basic_consume_iterator const & rhs) noexcept(noexcept(rhs != lhs))
+    friend bool operator!=(basic_consume_sentinel<const_range> const & lhs, basic_consume_iterator const & rhs)
+        noexcept(noexcept(rhs != lhs))
     {
         return rhs != lhs;
     }

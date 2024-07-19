@@ -25,21 +25,21 @@ namespace seqan3::detail
 enum struct trace_directions : uint8_t
 {
     //!\brief No trace
-    none = 0b00000,
+    none = 0b0'0000,
     //!\brief Trace comes from the diagonal entry.
-    diagonal = 0b00001,
+    diagonal = 0b0'0001,
     //!\brief Trace comes from the above entry, while opening the gap.
-    up_open = 0b00110,
+    up_open = 0b0'0110,
     //!\brief Trace comes from the above entry.
-    up = 0b00100,
+    up = 0b0'0100,
     //!\brief Trace comes from the left entry, while opening the gap.
-    left_open = 0b11000,
+    left_open = 0b1'1000,
     //!\brief Trace comes from the left entry.
-    left = 0b10000,
+    left = 0b1'0000,
     //!\brief Carry bit for the last up open even if it is not the maximum value.
-    carry_up_open = 0b00010,
+    carry_up_open = 0b0'0010,
     //!\brief Carry bit for the last left open even if it is not the maximum value.
-    carry_left_open = 0b01000
+    carry_left_open = 0b0'1000
 };
 
 } // namespace seqan3::detail

@@ -95,27 +95,27 @@ concept sam_file_output_format = requires (detail::sam_file_output_format_expose
                                            sam_tag_dictionary & tag_dict,
                                            double & e_value,
                                            double & bit_score) {
-                                     t::file_extensions;
+    t::file_extensions;
 
-                                     {
-                                         v.write_alignment_record(stream,
-                                                                  options,
-                                                                  header,
-                                                                  seq,
-                                                                  qual,
-                                                                  id,
-                                                                  ref_seq,
-                                                                  ref_id,
-                                                                  ref_offset,
-                                                                  cigar,
-                                                                  flag,
-                                                                  mapq,
-                                                                  mate,
-                                                                  tag_dict,
-                                                                  e_value,
-                                                                  bit_score)
-                                         } -> std::same_as<void>;
-                                 };
+    {
+        v.write_alignment_record(stream,
+                                 options,
+                                 header,
+                                 seq,
+                                 qual,
+                                 id,
+                                 ref_seq,
+                                 ref_id,
+                                 ref_offset,
+                                 cigar,
+                                 flag,
+                                 mapq,
+                                 mate,
+                                 tag_dict,
+                                 e_value,
+                                 bit_score)
+    } -> std::same_as<void>;
+};
 //!\endcond
 
 // Workaround for https://github.com/doxygen/doxygen/issues/9379

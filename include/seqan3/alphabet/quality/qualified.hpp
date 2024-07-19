@@ -192,44 +192,40 @@ private:
         return rank_to_char_table[rank];
     }
 
-    // clang-format off
     //!\copydoc seqan3::dna4::rank_to_char_table
-    static constexpr std::array<char_type, alphabet_size> rank_to_char_table
-    {
-        []() constexpr {
+    static constexpr std::array<char_type, alphabet_size> rank_to_char_table{
+        []() constexpr
+        {
             std::array<char_type, alphabet_size> ret{};
 
             for (size_t i = 0; i < alphabet_size; ++i)
             {
-                size_t const seq_rank = (i / base_type::cummulative_alph_sizes[0]) %
-                                        seqan3::alphabet_size<quality_alphabet_type>;
+                size_t const seq_rank =
+                    (i / base_type::cummulative_alph_sizes[0]) % seqan3::alphabet_size<quality_alphabet_type>;
 
                 ret[i] = seqan3::to_char(seqan3::assign_rank_to(seq_rank, sequence_alphabet_type{}));
             }
 
             return ret;
-        }()
-    };
+        }()};
 
     //!\brief Rank to Phred conversion table.
-    static constexpr std::array<char_type, alphabet_size> rank_to_phred
-    {
-        []() constexpr {
+    static constexpr std::array<char_type, alphabet_size> rank_to_phred{
+        []() constexpr
+        {
             std::array<char_type, alphabet_size> ret{};
 
             for (size_t i = 0; i < alphabet_size; ++i)
             {
-                size_t qual_rank = (i / base_type::cummulative_alph_sizes[1]) %
-                                seqan3::alphabet_size<quality_alphabet_type>;
+                size_t qual_rank =
+                    (i / base_type::cummulative_alph_sizes[1]) % seqan3::alphabet_size<quality_alphabet_type>;
 
                 ret[i] = seqan3::to_phred(seqan3::assign_rank_to(qual_rank, quality_alphabet_type{}));
             }
 
             return ret;
-        }()
-    };
+        }()};
 };
-// clang-format on
 
 /*!\brief Type deduction guide enables usage of qualified without specifying template args.
  * \relates qualified

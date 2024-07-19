@@ -66,27 +66,22 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-concept sequence_file_input_format =
-    requires (detail::sequence_file_input_format_exposer<t> & v,
-              std::ifstream & f,
-              sequence_file_input_options<dna5> & options,
-              std::streampos & position_buffer,
-              std::vector<dna5> & seq,
-              std::string & id,
-              std::vector<phred42> & qual,
-              std::vector<qualified<dna5, phred42>> & seq_qual) {
-        t::file_extensions;
+concept sequence_file_input_format = requires (detail::sequence_file_input_format_exposer<t> & v,
+                                               std::ifstream & f,
+                                               sequence_file_input_options<dna5> & options,
+                                               std::streampos & position_buffer,
+                                               std::vector<dna5> & seq,
+                                               std::string & id,
+                                               std::vector<phred42> & qual,
+                                               std::vector<qualified<dna5, phred42>> & seq_qual) {
+    t::file_extensions;
 
-        {
-            v.read_sequence_record(f, options, position_buffer, seq, id, qual)
-            } -> std::same_as<void>;
-        {
-            v.read_sequence_record(f, options, position_buffer, seq_qual, id, seq_qual)
-            } -> std::same_as<void>;
-        {
-            v.read_sequence_record(f, options, position_buffer, std::ignore, std::ignore, std::ignore)
-            } -> std::same_as<void>;
-    };
+    { v.read_sequence_record(f, options, position_buffer, seq, id, qual) } -> std::same_as<void>;
+    { v.read_sequence_record(f, options, position_buffer, seq_qual, id, seq_qual) } -> std::same_as<void>;
+    {
+        v.read_sequence_record(f, options, position_buffer, std::ignore, std::ignore, std::ignore)
+    } -> std::same_as<void>;
+};
 //!\endcond
 
 // Workaround for https://github.com/doxygen/doxygen/issues/9379

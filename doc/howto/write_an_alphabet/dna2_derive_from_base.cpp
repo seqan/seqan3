@@ -40,20 +40,16 @@ private:
     // map 0 => 'S' and 1 => 'W'
     static constexpr char_type rank_to_char_table[alphabet_size]{'S', 'W'};
 
-    // clang-format off
-    static constexpr std::array<rank_type, 256> char_to_rank_table
-    {
+    static constexpr std::array<rank_type, 256> char_to_rank_table{
         // initialise with an immediately evaluated lambda expression:
-        [] () constexpr
+        []() constexpr
         {
             std::array<rank_type, 256> ret{}; // initialise all values with 0 (=> 'S')
             ret['W'] = 1;                     // only 'W' and 'w' result in rank 1
             ret['w'] = 1;
             return ret;
-        } ()
-    };
+        }()};
 };
-// clang-format on
 
 // check the concepts
 static_assert(seqan3::alphabet<dna2>);          // ok

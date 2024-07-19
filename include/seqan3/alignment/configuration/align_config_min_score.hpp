@@ -52,7 +52,7 @@ public:
      *
      * \param score \copybrief score
      */
-    constexpr min_score(const int32_t score) : score{score}
+    constexpr min_score(int32_t const score) : score{score}
     {}
     //!\}
 

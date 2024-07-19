@@ -210,7 +210,7 @@ struct alignment_fixture_collection
 };
 
 template <typename config_t, typename fixture_t>
-alignment_fixture_collection(config_t config, std::vector<fixture_t> collection)
-    -> alignment_fixture_collection<config_t, fixture_t>;
+alignment_fixture_collection(config_t config,
+                             std::vector<fixture_t> collection) -> alignment_fixture_collection<config_t, fixture_t>;
 
 } // namespace seqan3::test::alignment::fixture

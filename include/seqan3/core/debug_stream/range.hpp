@@ -33,13 +33,12 @@ namespace seqan3::detail
  * * `std::ranges::range_reference_t<rng_t>` is not `char`.
  */
 template <typename rng_t>
-concept debug_stream_range_guard = !
-std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<rng_t>>,
-             std::remove_cvref_t<rng_t>>
-    && // prevent recursive instantiation
-    // exclude null-terminated strings:
-    !(std::is_pointer_v<std::decay_t<rng_t>>
-      && std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<rng_t>>, char>);
+concept debug_stream_range_guard =
+    !std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<rng_t>>, std::remove_cvref_t<rng_t>>
+    && !(std::is_pointer_v<std::decay_t<rng_t>>
+         && std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<rng_t>>, char>);
+// prevent recursive instantiation: std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<rng_t>>, char>
+// exclude null-terminated strings: std::is_pointer_v<std::decay_t<rng_t>>
 
 /*!\brief Helper template variable that checks if the reference type of a range can be streamed into an instance of
  *        seqan3::debug_stream_type .
@@ -58,10 +57,8 @@ constexpr bool reference_type_is_streamable_v = false;
 //!\cond
 template <std::ranges::range rng_t, typename char_t>
     requires requires (std::ranges::range_reference_t<rng_t> l, debug_stream_type<char_t> s) {
-                 {
-                     s << l
-                 };
-             }
+        { s << l };
+    }
 constexpr bool reference_type_is_streamable_v<rng_t, char_t> = true;
 //!\endcond
 } // namespace seqan3::detail

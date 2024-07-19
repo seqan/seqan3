@@ -40,20 +40,18 @@ struct is_span<std::span<t, extent>> : std::true_type
 //!\brief Prevents wrong instantiations of std::alphabet_variant's constructors.
 template <typename other_t, typename... alternative_types>
 inline constexpr bool variant_general_guard =
-    (!std::same_as<other_t, alphabet_variant<alternative_types...>>)&&(
-        !std::is_base_of_v<alphabet_variant<alternative_types...>,
-                           other_t>)&&(!(std::same_as<other_t, alternative_types> || ...))
+    (!std::same_as<other_t, alphabet_variant<alternative_types...>>)
+    && (!std::is_base_of_v<alphabet_variant<alternative_types...>, other_t>)
+    && (!(std::same_as<other_t, alternative_types> || ...))
     && (!list_traits::contains<alphabet_variant<alternative_types...>, recursive_required_types_t<other_t>>);
 
 //!\brief Prevents wrong instantiations of std::alphabet_variant's comparison operators.
 template <typename lhs_t, typename rhs_t, bool lhs_rhs_switched, typename... alternative_types>
 inline constexpr bool variant_comparison_guard =
-    (instantiate_if_v<
-         lazy<weakly_equality_comparable_with_trait, rhs_t, alternative_types>,
-         (std::same_as<lhs_t, alphabet_variant<alternative_types...>>)&&(
-             variant_general_guard<rhs_t, alternative_types...>)&&!(lhs_rhs_switched
-                                                                    && is_type_specialisation_of_v<rhs_t,
-                                                                                                   alphabet_variant>)>
+    (instantiate_if_v<lazy<weakly_equality_comparable_with_trait, rhs_t, alternative_types>,
+                      (std::same_as<lhs_t, alphabet_variant<alternative_types...>>)
+                          && (variant_general_guard<rhs_t, alternative_types...>)
+                          && !(lhs_rhs_switched && is_type_specialisation_of_v<rhs_t, alphabet_variant>)>
      || ...);
 } // namespace seqan3::detail
 
@@ -430,10 +428,12 @@ public:
 
     //!\copydoc operator==(alphabet_variant_t const lhs, indirect_alternative_type const rhs)
     template <typename alphabet_variant_t, typename indirect_alternative_type>
-    friend constexpr auto
-    operator!=(alphabet_variant_t const lhs, indirect_alternative_type const rhs) noexcept -> std::enable_if_t<
-        detail::variant_comparison_guard<alphabet_variant_t, indirect_alternative_type, false, alternative_types...>,
-        bool>
+        requires (!detail::is_span<alphabet_variant_t>::value)
+              && (detail::variant_comparison_guard<alphabet_variant_t,
+                                                   indirect_alternative_type,
+                                                   false,
+                                                   alternative_types...>)
+    friend constexpr bool operator!=(alphabet_variant_t const lhs, indirect_alternative_type const rhs) noexcept
     {
         return !(lhs == rhs);
     }
@@ -452,10 +452,12 @@ public:
 
     //!\copydoc operator==(alphabet_variant_t const lhs, indirect_alternative_type const rhs)
     template <typename alphabet_variant_t, typename indirect_alternative_type, typename = void>
-    friend constexpr auto operator!=(indirect_alternative_type const lhs, alphabet_variant_t const rhs) noexcept
-        -> std::enable_if_t<
-            detail::variant_comparison_guard<alphabet_variant_t, indirect_alternative_type, true, alternative_types...>,
-            bool>
+        requires (!detail::is_span<alphabet_variant_t>::value)
+              && (detail::variant_comparison_guard<alphabet_variant_t,
+                                                   indirect_alternative_type,
+                                                   true,
+                                                   alternative_types...>)
+    friend constexpr bool operator!=(indirect_alternative_type const lhs, alphabet_variant_t const rhs) noexcept
     {
         return rhs != lhs;
     }
@@ -543,7 +545,6 @@ protected:
         return char_to_rank_table[static_cast<index_t>(chr)];
     }
 
-    // clang-format off
     /*!\brief Compile-time generated lookup table which contains the partial
      * sum up to the position of each alternative.
      *
@@ -551,9 +552,9 @@ protected:
      * alternative_types::alphabet_size's.
      *
      */
-    static constexpr std::array<rank_type, sizeof...(alternative_types) + 1> partial_sum_sizes
-    {
-        []() constexpr {
+    static constexpr std::array<rank_type, sizeof...(alternative_types) + 1> partial_sum_sizes{
+        []() constexpr
+        {
             constexpr size_t N = sizeof...(alternative_types) + 1;
 
             std::array<rank_type, N> partial_sum{0, seqan3::alphabet_size<alternative_types>...};
@@ -562,13 +563,12 @@ protected:
                 partial_sum[i] += partial_sum[i - 1];
 
             return partial_sum;
-        }()
-    };
+        }()};
 
     //!\copydoc seqan3::alphabet_variant::rank_to_char
-    static constexpr std::array<char_type, alphabet_size> rank_to_char_table
-    {
-        []() constexpr {
+    static constexpr std::array<char_type, alphabet_size> rank_to_char_table{
+        []() constexpr
+        {
             auto assign_value_to_char = [](auto alternative, auto & value_to_char, auto & value) constexpr
             {
                 using alternative_t = std::decay_t<decltype(alternative)>;
@@ -586,15 +586,14 @@ protected:
             ((assign_value_to_char(alternative_types{}, value_to_char, value)), ...);
 
             return value_to_char;
-        }()
-    };
+        }()};
 
     /*!\brief Compile-time generated lookup table which maps the char to the index of the first alphabet that fulfils
      *        char_is_valid_for.
      */
-    static constexpr auto first_valid_char_table
-    {
-        []() constexpr {
+    static constexpr auto first_valid_char_table{
+        []() constexpr
+        {
             constexpr size_t alternative_size = sizeof...(alternative_types);
             constexpr size_t table_size = detail::size_in_values_v<char_type>;
             using first_alphabet_t = detail::min_viable_uint_t<alternative_size>;
@@ -612,13 +611,12 @@ protected:
             }
 
             return lookup_table;
-        }()
-    };
+        }()};
 
     //!\copydoc seqan3::alphabet_variant::char_to_rank
-    static constexpr std::array<rank_type, detail::size_in_values_v<char_type>> char_to_rank_table
-    {
-        []() constexpr {
+    static constexpr std::array<rank_type, detail::size_in_values_v<char_type>> char_to_rank_table{
+        []() constexpr
+        {
             constexpr size_t alternative_size = sizeof...(alternative_types);
             constexpr size_t table_size = detail::size_in_values_v<char_type>;
 
@@ -628,16 +626,15 @@ protected:
             {
                 char_type chr = static_cast<char_type>(i);
 
-                std::array<rank_type, alternative_size> ranks{rank_by_type_(assign_char_to(chr, alternative_types{}))...};
+                std::array<rank_type, alternative_size> ranks{
+                    rank_by_type_(assign_char_to(chr, alternative_types{}))...};
 
                 // if no char_is_valid_for any alternative, use the rank of the first alternative
                 char_to_rank[i] = first_valid_char_table[i] < alternative_size ? ranks[first_valid_char_table[i]] : 0;
             }
 
             return char_to_rank;
-        }()
-    };
+        }()};
 };
-// clang-format on
 
 } // namespace seqan3

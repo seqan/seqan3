@@ -242,12 +242,11 @@ public:
 //!\relates seqan3::detail::view_interleave
 template <std::ranges::random_access_range urng_t, std::ranges::random_access_range inserted_rng_t>
     requires std::ranges::viewable_range<urng_t> && std::ranges::sized_range<urng_t>
-          && std::ranges::sized_range<inserted_rng_t>
-          && std::common_reference_with<std::ranges::range_reference_t<urng_t>,
-                                        std::ranges::range_reference_t<inserted_rng_t>>
-             view_interleave(urng_t &&, size_t, inserted_rng_t &&)
-                 -> view_interleave<decltype(views::type_reduce(std::declval<urng_t>())),
-                                    seqan3::detail::all_t<inserted_rng_t>>;
+              && std::ranges::sized_range<inserted_rng_t>
+              && std::common_reference_with<std::ranges::range_reference_t<urng_t>,
+                                            std::ranges::range_reference_t<inserted_rng_t>>
+view_interleave(urng_t &&, size_t, inserted_rng_t &&)
+    -> view_interleave<decltype(views::type_reduce(std::declval<urng_t>())), seqan3::detail::all_t<inserted_rng_t>>;
 
 // ============================================================================
 //  interleave_fn (adaptor definition)

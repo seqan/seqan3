@@ -136,67 +136,66 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-concept structure_file_input_traits =
-    requires (t v) {
-        // TODO(joergi-w) The expensive concept checks are currently omitted. Check again when compiler has improved.
-        // sequence
-        requires writable_alphabet<typename t::seq_alphabet>;
-        requires writable_alphabet<typename t::seq_legal_alphabet>;
-        requires explicitly_convertible_to<typename t::seq_legal_alphabet, typename t::seq_alphabet>;
-        requires sequence_container<typename t::template seq_container<typename t::seq_alphabet>>;
+concept structure_file_input_traits = requires (t v) {
+    // TODO(joergi-w) The expensive concept checks are currently omitted. Check again when compiler has improved.
+    // sequence
+    requires writable_alphabet<typename t::seq_alphabet>;
+    requires writable_alphabet<typename t::seq_legal_alphabet>;
+    requires explicitly_convertible_to<typename t::seq_legal_alphabet, typename t::seq_alphabet>;
+    requires sequence_container<typename t::template seq_container<typename t::seq_alphabet>>;
 
-        // id
-        requires writable_alphabet<typename t::id_alphabet>;
-        requires sequence_container<typename t::template id_container<typename t::id_alphabet>>;
+    // id
+    requires writable_alphabet<typename t::id_alphabet>;
+    requires sequence_container<typename t::template id_container<typename t::id_alphabet>>;
 
-        // bpp
-        requires std::is_floating_point_v<typename t::bpp_prob>;
-        requires std::numeric_limits<typename t::bpp_partner>::is_integer;
+    // bpp
+    requires std::is_floating_point_v<typename t::bpp_prob>;
+    requires std::numeric_limits<typename t::bpp_partner>::is_integer;
 
-        //    requires container // TODO check Associative container Concept when implemented
-        //        <typename t::template bpp_queue
-        //            <typename t::template bpp_item
-        //                <typename t::bpp_prob, typename t::bpp_partner>>>
-        //        && requires(typename t::template bpp_queue // TODO maybe implement also a version that allows emplace_back
-        //            <typename t::template bpp_item
-        //                <typename t::bpp_prob, typename t::bpp_partner>> value) { value.emplace(1.0, 1); };
-        //    requires sequence_container
-        //        <typename t::template bpp_container
-        //            <typename t::template bpp_queue
-        //                 <typename t::template bpp_item
-        //                      <typename t::bpp_prob, typename t::bpp_partner>>>>;
+    //    requires container // TODO check Associative container Concept when implemented
+    //        <typename t::template bpp_queue
+    //            <typename t::template bpp_item
+    //                <typename t::bpp_prob, typename t::bpp_partner>>>
+    //        && requires(typename t::template bpp_queue // TODO maybe implement also a version that allows emplace_back
+    //            <typename t::template bpp_item
+    //                <typename t::bpp_prob, typename t::bpp_partner>> value) { value.emplace(1.0, 1); };
+    //    requires sequence_container
+    //        <typename t::template bpp_container
+    //            <typename t::template bpp_queue
+    //                 <typename t::template bpp_item
+    //                      <typename t::bpp_prob, typename t::bpp_partner>>>>;
 
-        // structure
-        requires std::is_same_v<typename t::structure_alphabet, dssp9> // TODO(joergi-w) add aa_structure_concept
-                     || rna_structure_alphabet<typename t::structure_alphabet>;
-        requires sequence_container<typename t::template structure_container<typename t::structure_alphabet>>;
+    // structure
+    requires std::is_same_v<typename t::structure_alphabet, dssp9> // TODO(joergi-w) add aa_structure_concept
+                 || rna_structure_alphabet<typename t::structure_alphabet>;
+    requires sequence_container<typename t::template structure_container<typename t::structure_alphabet>>;
 
-        // structured sequence: tuple composites of seq and structure
-        requires std::is_base_of_v<
-            alphabet_tuple_base<
-                typename t::template structured_seq_alphabet<typename t::seq_alphabet, typename t::structure_alphabet>,
-                typename t::seq_alphabet,
-                typename t::structure_alphabet>,
-            typename t::template structured_seq_alphabet<typename t::seq_alphabet, typename t::structure_alphabet>>;
-        //    requires sequence_container
-        //        <typename t::template structured_seq_container
-        //            <typename t::template structured_seq_alphabet
-        //                <typename t::seq_alphabet, typename t::structure_alphabet>>>;
+    // structured sequence: tuple composites of seq and structure
+    requires std::is_base_of_v<
+        alphabet_tuple_base<
+            typename t::template structured_seq_alphabet<typename t::seq_alphabet, typename t::structure_alphabet>,
+            typename t::seq_alphabet,
+            typename t::structure_alphabet>,
+        typename t::template structured_seq_alphabet<typename t::seq_alphabet, typename t::structure_alphabet>>;
+    //    requires sequence_container
+    //        <typename t::template structured_seq_container
+    //            <typename t::template structured_seq_alphabet
+    //                <typename t::seq_alphabet, typename t::structure_alphabet>>>;
 
-        // energy: std::optional of floating point number
-        requires std::is_floating_point_v<typename t::energy_type::value_type>;
+    // energy: std::optional of floating point number
+    requires std::is_floating_point_v<typename t::energy_type::value_type>;
 
-        // reactivity [error]
-        requires std::is_floating_point_v<typename t::react_type>;
-        requires sequence_container<typename t::template react_container<typename t::react_type>>;
+    // reactivity [error]
+    requires std::is_floating_point_v<typename t::react_type>;
+    requires sequence_container<typename t::template react_container<typename t::react_type>>;
 
-        // comment
-        requires writable_alphabet<typename t::comment_alphabet>;
-        requires sequence_container<typename t::template comment_container<typename t::comment_alphabet>>;
+    // comment
+    requires writable_alphabet<typename t::comment_alphabet>;
+    requires sequence_container<typename t::template comment_container<typename t::comment_alphabet>>;
 
-        // offset
-        requires std::numeric_limits<typename t::offset_type>::is_integer;
-    };
+    // offset
+    requires std::numeric_limits<typename t::offset_type>::is_integer;
+};
 //!\endcond
 
 // ----------------------------------------------------------------------------

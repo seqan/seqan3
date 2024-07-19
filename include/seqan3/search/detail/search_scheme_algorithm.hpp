@@ -828,10 +828,10 @@ inline void search_ss(index_t const & index,
 template <typename configuration_t, typename index_t, typename... policies_t>
     requires (template_specialisation_of<typename index_t::cursor_type, bi_fm_index_cursor>)
 template <bool abort_on_hit, typename query_t, typename delegate_t>
-inline void search_scheme_algorithm<configuration_t, index_t, policies_t...>::search_algo_bi(
-    query_t & query,
-    search_param const error_left,
-    delegate_t && delegate)
+inline void
+search_scheme_algorithm<configuration_t, index_t, policies_t...>::search_algo_bi(query_t & query,
+                                                                                 search_param const error_left,
+                                                                                 delegate_t && delegate)
 {
     switch (error_left.total)
     {

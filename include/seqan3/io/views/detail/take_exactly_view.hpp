@@ -319,8 +319,8 @@ public:
     }
 
     //!\brief Returns an iterator decremented by one.
-    constexpr basic_iterator operator--(int) noexcept(noexcept(--std::declval<basic_iterator &>())
-                                                      && std::is_nothrow_copy_constructible_v<basic_iterator>)
+    constexpr basic_iterator operator--(int)
+        noexcept(noexcept(--std::declval<basic_iterator &>()) && std::is_nothrow_copy_constructible_v<basic_iterator>)
         requires std::bidirectional_iterator<base_base_t>
     {
         basic_iterator cpy{*this};
@@ -329,8 +329,8 @@ public:
     }
 
     //!\brief Advances the iterator by skip positions.
-    constexpr basic_iterator & operator+=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() +=
-                                                                                        skip))
+    constexpr basic_iterator & operator+=(difference_type const skip)
+        noexcept(noexcept(std::declval<base_t &>() += skip))
         requires std::random_access_iterator<base_base_t>
     {
         base_t::operator+=(skip);
@@ -339,8 +339,8 @@ public:
     }
 
     //!\brief Advances the iterator by -skip positions.
-    constexpr basic_iterator & operator-=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() -=
-                                                                                        skip))
+    constexpr basic_iterator & operator-=(difference_type const skip)
+        noexcept(noexcept(std::declval<base_t &>() -= skip))
         requires std::random_access_iterator<base_base_t>
     {
         base_t::operator-=(skip);
@@ -383,8 +383,8 @@ public:
     }
 
     //!\brief Checks whether `lhs` is equal to `rhs`.
-    constexpr friend bool operator==(sentinel_type const & lhs,
-                                     basic_iterator const & rhs) noexcept(noexcept(rhs == lhs))
+    constexpr friend bool operator==(sentinel_type const & lhs, basic_iterator const & rhs)
+        noexcept(noexcept(rhs == lhs))
     {
         return rhs == lhs;
     }
@@ -405,8 +405,8 @@ public:
     }
 
     //!\brief Checks whether `lhs` is not equal to `rhs`.
-    constexpr friend bool operator!=(sentinel_type const & lhs,
-                                     basic_iterator const & rhs) noexcept(noexcept(rhs != lhs))
+    constexpr friend bool operator!=(sentinel_type const & lhs, basic_iterator const & rhs)
+        noexcept(noexcept(rhs != lhs))
     {
         return rhs != lhs;
     }

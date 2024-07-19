@@ -48,8 +48,8 @@ void print_tuple(debug_stream_type<char_t> & s, tuple_t && t, std::index_sequenc
  */
 //!\cond
 template <typename tuple_t>
-concept debug_streamable_tuple = !
-std::ranges::input_range<tuple_t> && !alphabet<tuple_t> && // exclude alphabet_tuple_base
+concept debug_streamable_tuple =
+    !std::ranges::input_range<tuple_t> && !alphabet<tuple_t> && // exclude alphabet_tuple_base
     tuple_like<std::remove_cvref_t<tuple_t>>;
 //!\endcond
 } // namespace seqan3::detail

@@ -92,20 +92,19 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-concept sequence_file_input_traits =
-    requires (t v) {
-        requires writable_alphabet<typename t::sequence_alphabet>;
-        requires writable_alphabet<typename t::sequence_legal_alphabet>;
-        requires detail::is_char_adaptation_v<typename t::sequence_alphabet>
-                     || explicitly_convertible_to<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
-        requires sequence_container<typename t::template sequence_container<typename t::sequence_alphabet>>;
+concept sequence_file_input_traits = requires (t v) {
+    requires writable_alphabet<typename t::sequence_alphabet>;
+    requires writable_alphabet<typename t::sequence_legal_alphabet>;
+    requires detail::is_char_adaptation_v<typename t::sequence_alphabet>
+                 || explicitly_convertible_to<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
+    requires sequence_container<typename t::template sequence_container<typename t::sequence_alphabet>>;
 
-        requires writable_alphabet<typename t::id_alphabet>;
-        requires sequence_container<typename t::template id_container<typename t::id_alphabet>>;
+    requires writable_alphabet<typename t::id_alphabet>;
+    requires sequence_container<typename t::template id_container<typename t::id_alphabet>>;
 
-        requires writable_quality_alphabet<typename t::quality_alphabet>;
-        requires sequence_container<typename t::template quality_container<typename t::quality_alphabet>>;
-    };
+    requires writable_quality_alphabet<typename t::quality_alphabet>;
+    requires sequence_container<typename t::template quality_container<typename t::quality_alphabet>>;
+};
 //!\endcond
 
 // ----------------------------------------------------------------------------

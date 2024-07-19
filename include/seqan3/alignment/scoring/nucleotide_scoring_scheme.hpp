@@ -68,14 +68,14 @@ public:
  */
 
 //!\brief Default constructed objects deduce to `int8_t`.
-nucleotide_scoring_scheme()->nucleotide_scoring_scheme<int8_t>;
+nucleotide_scoring_scheme() -> nucleotide_scoring_scheme<int8_t>;
 
 /*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `int8_t`.
  * To use a larger type, specify the template argument manually.
  */
 template <arithmetic score_arg_type>
-nucleotide_scoring_scheme(match_score<score_arg_type>, mismatch_score<score_arg_type>)
-    -> nucleotide_scoring_scheme<int8_t>;
+nucleotide_scoring_scheme(match_score<score_arg_type>,
+                          mismatch_score<score_arg_type>) -> nucleotide_scoring_scheme<int8_t>;
 
 //!\brief Deduce the score type from the provided matrix.
 template <arithmetic score_arg_type>

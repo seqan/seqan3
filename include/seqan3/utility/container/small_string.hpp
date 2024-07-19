@@ -469,7 +469,7 @@ small_string(std::array<char, N> const &) -> small_string<N>;
   * \details
   * \experimentalapi{Experimental since version 3.1.}
   */
-small_string(char const)->small_string<1>;
+small_string(char const) -> small_string<1>;
 //!\}
 
 } // namespace seqan3

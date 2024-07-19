@@ -291,8 +291,8 @@ public:
      * No-throw guarantee.
      */
     template <typename char_t>
-        requires std::convertible_to<char_t, index_alphabet_type> bool
-    extend_right(char_t const c) noexcept
+        requires std::convertible_to<char_t, index_alphabet_type>
+    bool extend_right(char_t const c) noexcept
     {
         assert(index != nullptr);
         // The rank cannot exceed 255 for single text and 254 for text collections as they are reserved as sentinels
@@ -316,8 +316,8 @@ public:
 
     //!\overload
     template <typename char_type>
-        requires detail::is_char_adaptation_v<char_type> bool
-    extend_right(char_type const * cstring) noexcept
+        requires detail::is_char_adaptation_v<char_type>
+    bool extend_right(char_type const * cstring) noexcept
     {
         return extend_right(std::basic_string_view<char_type>{cstring});
     }

@@ -94,11 +94,10 @@ private:
         return char_to_rank_table[static_cast<index_t>(chr)];
     }
 
-    // clang-format off
     //!\copydoc seqan3::dna4::char_to_rank_table
-    static constexpr std::array<rank_type, 256> char_to_rank_table
-    {
-        []() constexpr {
+    static constexpr std::array<rank_type, 256> char_to_rank_table{
+        []() constexpr
+        {
             std::array<rank_type, 256> ret{};
 
             ret.fill(8u);
@@ -108,10 +107,8 @@ private:
                 ret[static_cast<rank_type>(rank_to_char_table[rnk])] = rnk;
 
             return ret;
-        }()
-    };
+        }()};
 };
-// clang-format on
 
 inline namespace literals
 {

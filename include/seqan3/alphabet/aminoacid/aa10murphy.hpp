@@ -120,10 +120,10 @@ private:
         return char_to_rank_table[static_cast<index_t>(chr)];
     }
 
-    // clang-format off
     //!\copydoc seqan3::aa27::char_to_rank_table
     static constexpr std::array<rank_type, 256> char_to_rank_table{
-        []() constexpr {
+        []() constexpr
+        {
             std::array<rank_type, 256> ret{};
 
             // initialize with 'S' because that appears most frequently
@@ -172,10 +172,8 @@ private:
                                  // this alphabet gets converted to Phenylalanine.
 
             return ret;
-        }()
-    };
+        }()};
 };
-// clang-format on
 
 // ------------------------------------------------------------------
 // containers

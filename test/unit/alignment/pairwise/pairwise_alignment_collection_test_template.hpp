@@ -71,14 +71,14 @@ TYPED_TEST_P(pairwise_alignment_collection_test, end_positions)
                                     return res.score();
                                 }),
                         fixture.get_scores());
-        EXPECT_RANGE_EQ(
-            res_vec
-                | std::views::transform(
-                    [](auto res)
-                    {
-                        return std::pair<size_t, size_t>{res.sequence1_end_position(), res.sequence2_end_position()};
-                    }),
-            fixture.get_end_positions());
+        EXPECT_RANGE_EQ(res_vec
+                            | std::views::transform(
+                                [](auto res)
+                                {
+                                    return std::pair<size_t, size_t>{res.sequence1_end_position(),
+                                                                     res.sequence2_end_position()};
+                                }),
+                        fixture.get_end_positions());
     }
 }
 
@@ -103,14 +103,14 @@ TYPED_TEST_P(pairwise_alignment_collection_test, begin_positions)
                                     return res.score();
                                 }),
                         fixture.get_scores());
-        EXPECT_RANGE_EQ(
-            res_vec
-                | std::views::transform(
-                    [](auto res)
-                    {
-                        return std::pair<size_t, size_t>{res.sequence1_end_position(), res.sequence2_end_position()};
-                    }),
-            fixture.get_end_positions());
+        EXPECT_RANGE_EQ(res_vec
+                            | std::views::transform(
+                                [](auto res)
+                                {
+                                    return std::pair<size_t, size_t>{res.sequence1_end_position(),
+                                                                     res.sequence2_end_position()};
+                                }),
+                        fixture.get_end_positions());
         EXPECT_RANGE_EQ(res_vec
                             | std::views::transform(
                                 [](auto res)
@@ -144,14 +144,14 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
                                     return res.score();
                                 }),
                         fixture.get_scores());
-        EXPECT_RANGE_EQ(
-            res_vec
-                | std::views::transform(
-                    [](auto res)
-                    {
-                        return std::pair<size_t, size_t>{res.sequence1_end_position(), res.sequence2_end_position()};
-                    }),
-            fixture.get_end_positions());
+        EXPECT_RANGE_EQ(res_vec
+                            | std::views::transform(
+                                [](auto res)
+                                {
+                                    return std::pair<size_t, size_t>{res.sequence1_end_position(),
+                                                                     res.sequence2_end_position()};
+                                }),
+                        fixture.get_end_positions());
         EXPECT_RANGE_EQ(res_vec
                             | std::views::transform(
                                 [](auto res)

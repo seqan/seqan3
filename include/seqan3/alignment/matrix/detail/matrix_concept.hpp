@@ -31,24 +31,18 @@ constexpr score_type matrix_inf = std::numeric_limits<score_type>::max();
 //!\cond
 template <typename matrix_t>
 concept matrix = requires (std::remove_cvref_t<matrix_t> m) {
-                     typename std::remove_cvref_t<matrix_t>::value_type;
+    typename std::remove_cvref_t<matrix_t>::value_type;
 
-                     typename std::remove_cvref_t<matrix_t>::reference;
+    typename std::remove_cvref_t<matrix_t>::reference;
 
-                     typename std::remove_cvref_t<matrix_t>::size_type;
+    typename std::remove_cvref_t<matrix_t>::size_type;
 
-                     {
-                         m.cols()
-                         } -> std::same_as<typename std::remove_cvref_t<matrix_t>::size_type>;
+    { m.cols() } -> std::same_as<typename std::remove_cvref_t<matrix_t>::size_type>;
 
-                     {
-                         m.rows()
-                         } -> std::same_as<typename std::remove_cvref_t<matrix_t>::size_type>;
+    { m.rows() } -> std::same_as<typename std::remove_cvref_t<matrix_t>::size_type>;
 
-                     {
-                         m.at(matrix_coordinate{})
-                         } -> std::same_as<typename std::remove_cvref_t<matrix_t>::reference>;
-                 };
+    { m.at(matrix_coordinate{}) } -> std::same_as<typename std::remove_cvref_t<matrix_t>::reference>;
+};
 //!\endcond
 
 // Workaround for https://github.com/doxygen/doxygen/issues/9379

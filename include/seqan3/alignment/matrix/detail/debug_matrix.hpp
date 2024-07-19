@@ -394,11 +394,11 @@ protected:
         for (auto it = str.cbegin(); it < str.cend(); ++it, ++length)
         {
             uint8_t v = *it;
-            if ((v & 0b11100000) == 0b11000000)
+            if ((v & 0b1110'0000) == 0b1100'0000)
                 ++it;
-            else if ((v & 0b11110000) == 0b11100000)
+            else if ((v & 0b1111'0000) == 0b1110'0000)
                 it += 2;
-            else if ((v & 0b11111000) == 0b11110000)
+            else if ((v & 0b1111'1000) == 0b1111'0000)
                 it += 3;
         }
         return length;
@@ -458,8 +458,9 @@ debug_matrix(matrix_t &&) -> debug_matrix<matrix_t>;
 //!\brief The type deduction guide for the constructor
 //!       seqan3::detail::debug_matrix(matrix_t, first_sequence_t, second_sequence_t)
 template <matrix matrix_t, typename first_sequence_t, typename second_sequence_t>
-debug_matrix(matrix_t &&, first_sequence_t &&, second_sequence_t &&)
-    -> debug_matrix<matrix_t, first_sequence_t, second_sequence_t>;
+debug_matrix(matrix_t &&,
+             first_sequence_t &&,
+             second_sequence_t &&) -> debug_matrix<matrix_t, first_sequence_t, second_sequence_t>;
 //!\}
 
 } // namespace seqan3::detail

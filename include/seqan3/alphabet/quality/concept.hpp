@@ -110,10 +110,8 @@ inline constexpr auto to_phred = detail::adl_only::to_phred_cpo{};
  */
 template <typename alphabet_type>
     requires requires {
-                 {
-                     seqan3::to_phred(std::declval<alphabet_type>())
-                 };
-             }
+        { seqan3::to_phred(std::declval<alphabet_type>()) };
+    }
 using alphabet_phred_t = decltype(seqan3::to_phred(std::declval<alphabet_type>()));
 
 } // namespace seqan3
@@ -280,10 +278,8 @@ namespace seqan3
 //!\cond
 template <typename t>
 concept quality_alphabet = alphabet<t> && requires (t qual) {
-                                              {
-                                                  seqan3::to_phred(qual)
-                                              };
-                                          };
+    { seqan3::to_phred(qual) };
+};
 //!\endcond
 
 // ============================================================================
@@ -322,10 +318,8 @@ concept quality_alphabet = alphabet<t> && requires (t qual) {
 template <typename t>
 concept writable_quality_alphabet =
     writable_alphabet<t> && quality_alphabet<t> && requires (t v, alphabet_phred_t<t> c) {
-                                                       {
-                                                           seqan3::assign_phred_to(c, v)
-                                                       };
-                                                   };
+        { seqan3::assign_phred_to(c, v) };
+    };
 //!\endcond
 
 } // namespace seqan3

@@ -159,29 +159,25 @@ private:
 
     static_assert(sizeof(alignment_record_core) == 36);
 
-    // clang-format off
     //!\brief Converts a cigar op character to the rank according to the official BAM specifications.
-    static constexpr std::array<uint8_t, 256> char_to_sam_rank
-    {
-        []() constexpr {
-            std::array<uint8_t, 256> ret{};
+    static constexpr std::array<uint8_t, 256> char_to_sam_rank{[]() constexpr
+                                                               {
+                                                                   std::array<uint8_t, 256> ret{};
 
-            using index_t = std::make_unsigned_t<char>;
+                                                                   using index_t = std::make_unsigned_t<char>;
 
-            // ret['M'] = 0; set anyway by initialization
-            ret[static_cast<index_t>('I')] = 1;
-            ret[static_cast<index_t>('D')] = 2;
-            ret[static_cast<index_t>('N')] = 3;
-            ret[static_cast<index_t>('S')] = 4;
-            ret[static_cast<index_t>('H')] = 5;
-            ret[static_cast<index_t>('P')] = 6;
-            ret[static_cast<index_t>('=')] = 7;
-            ret[static_cast<index_t>('X')] = 8;
+                                                                   // ret['M'] = 0; set anyway by initialization
+                                                                   ret[static_cast<index_t>('I')] = 1;
+                                                                   ret[static_cast<index_t>('D')] = 2;
+                                                                   ret[static_cast<index_t>('N')] = 3;
+                                                                   ret[static_cast<index_t>('S')] = 4;
+                                                                   ret[static_cast<index_t>('H')] = 5;
+                                                                   ret[static_cast<index_t>('P')] = 6;
+                                                                   ret[static_cast<index_t>('=')] = 7;
+                                                                   ret[static_cast<index_t>('X')] = 8;
 
-            return ret;
-        }()
-    };
-    // clang-format on
+                                                                   return ret;
+                                                               }()};
 
     //!\brief Computes the bin number for a given region [beg, end), copied from the official SAM specifications.
     static uint16_t reg2bin(int32_t beg, int32_t end) noexcept
@@ -580,12 +576,10 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type & st
     static_assert(
         ((std::ranges::forward_range<decltype(std::get<0>(mate))>
           || std::integral<std::remove_cvref_t<decltype(std::get<0>(mate))>>
-          || detail::is_type_specialisation_of_v<
-              std::remove_cvref_t<decltype(std::get<0>(mate))>,
-              std::optional>)&&(std::integral<std::remove_cvref_t<decltype(std::get<1>(mate))>>
-                                || detail::is_type_specialisation_of_v<
-                                    std::remove_cvref_t<decltype(std::get<1>(mate))>,
-                                    std::optional>)&&std::integral<std::remove_cvref_t<decltype(std::get<2>(mate))>>),
+          || detail::is_type_specialisation_of_v<std::remove_cvref_t<decltype(std::get<0>(mate))>, std::optional>)
+         && (std::integral<std::remove_cvref_t<decltype(std::get<1>(mate))>>
+             || detail::is_type_specialisation_of_v<std::remove_cvref_t<decltype(std::get<1>(mate))>, std::optional>)
+         && std::integral<std::remove_cvref_t<decltype(std::get<2>(mate))>>),
         "The mate object must be a std::tuple of size 3 with "
         "1) a std::ranges::forward_range with a value_type modelling seqan3::alphabet, "
         "2) a std::integral or std::optional<std::integral>, and "

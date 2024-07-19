@@ -119,7 +119,7 @@ struct alignment_optimum<score_t>
  * \{
  */
 //!\brief Default constructed objects deduce to `int32_t`.
-alignment_optimum()->alignment_optimum<int32_t>;
+alignment_optimum() -> alignment_optimum<int32_t>;
 
 //!\brief Construction from column index, row index and the score deduces the score type.
 template <typename column_index_t, typename row_index_t, typename score_t>

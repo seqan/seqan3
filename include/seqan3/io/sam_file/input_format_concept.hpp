@@ -91,52 +91,52 @@ concept sam_file_input_format = requires (detail::sam_file_input_format_exposer<
                                           sam_tag_dictionary & tag_dict,
                                           double & e_value,
                                           double & bit_score) {
-                                    t::file_extensions;
-                                    // std::same_as<decltype(t::file_extensions), std::vector<std::string>>;
+    t::file_extensions;
+    // std::same_as<decltype(t::file_extensions), std::vector<std::string>>;
 
-                                    {
-                                        v.read_alignment_record(stream,
-                                                                options,
-                                                                ref_sequences,
-                                                                header,
-                                                                position_buffer,
-                                                                seq,
-                                                                qual,
-                                                                id,
-                                                                ref_seq,
-                                                                ref_id,
-                                                                ref_offset,
-                                                                cigar,
-                                                                flag,
-                                                                mapq,
-                                                                mate,
-                                                                tag_dict,
-                                                                e_value,
-                                                                bit_score)
-                                    };
+    {
+        v.read_alignment_record(stream,
+                                options,
+                                ref_sequences,
+                                header,
+                                position_buffer,
+                                seq,
+                                qual,
+                                id,
+                                ref_seq,
+                                ref_id,
+                                ref_offset,
+                                cigar,
+                                flag,
+                                mapq,
+                                mate,
+                                tag_dict,
+                                e_value,
+                                bit_score)
+    };
 
-                                    {
-                                        v.read_alignment_record(stream,
-                                                                options,
-                                                                std::ignore,
-                                                                header,
-                                                                position_buffer,
-                                                                std::ignore,
-                                                                std::ignore,
-                                                                std::ignore,
-                                                                std::ignore,
-                                                                std::ignore,
-                                                                std::ignore,
-                                                                std::ignore,
-                                                                std::ignore,
-                                                                std::ignore,
-                                                                std::ignore,
-                                                                std::ignore,
-                                                                std::ignore,
-                                                                std::ignore,
-                                                                std::ignore)
-                                    };
-                                };
+    {
+        v.read_alignment_record(stream,
+                                options,
+                                std::ignore,
+                                header,
+                                position_buffer,
+                                std::ignore,
+                                std::ignore,
+                                std::ignore,
+                                std::ignore,
+                                std::ignore,
+                                std::ignore,
+                                std::ignore,
+                                std::ignore,
+                                std::ignore,
+                                std::ignore,
+                                std::ignore,
+                                std::ignore,
+                                std::ignore,
+                                std::ignore)
+    };
+};
 //!\endcond
 
 // Workaround for https://github.com/doxygen/doxygen/issues/9379

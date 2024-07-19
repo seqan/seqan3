@@ -142,13 +142,13 @@ private:
     //!\brief Optimized bidirectional search without alphabet mapping
     template <typename csa_t>
         requires (std::same_as<csa_t, typename index_type::sdsl_index_type>
-                  || std::same_as<csa_t, typename index_type::rev_sdsl_index_type>) bool
-    bidirectional_search(csa_t const & csa,
-                         sdsl_char_type const c,
-                         size_type & l_fwd,
-                         size_type & r_fwd,
-                         size_type & l_bwd,
-                         size_type & r_bwd) const noexcept
+                  || std::same_as<csa_t, typename index_type::rev_sdsl_index_type>)
+    bool bidirectional_search(csa_t const & csa,
+                              sdsl_char_type const c,
+                              size_type & l_fwd,
+                              size_type & r_fwd,
+                              size_type & l_bwd,
+                              size_type & r_bwd) const noexcept
     {
         assert((l_fwd <= r_fwd) && (r_fwd < csa.size()));
         assert(r_fwd + 1 >= l_fwd);
@@ -201,15 +201,15 @@ private:
     //!\brief Optimized bidirectional search for cycle_back() and cycle_front() without alphabet mapping
     template <typename csa_t>
         requires (std::same_as<csa_t, typename index_type::sdsl_index_type>
-                  || std::same_as<csa_t, typename index_type::rev_sdsl_index_type>) bool
-    bidirectional_search_cycle(csa_t const & csa,
-                               sdsl_char_type const c,
-                               size_type const l_parent,
-                               size_type const r_parent,
-                               size_type & l_fwd,
-                               size_type & r_fwd,
-                               size_type & l_bwd,
-                               size_type & r_bwd) const noexcept
+                  || std::same_as<csa_t, typename index_type::rev_sdsl_index_type>)
+    bool bidirectional_search_cycle(csa_t const & csa,
+                                    sdsl_char_type const c,
+                                    size_type const l_parent,
+                                    size_type const r_parent,
+                                    size_type & l_fwd,
+                                    size_type & r_fwd,
+                                    size_type & l_bwd,
+                                    size_type & r_bwd) const noexcept
     {
         assert((l_parent <= r_parent) && (r_parent < csa.size()));
 
@@ -426,8 +426,8 @@ public:
      * No-throw guarantee.
      */
     template <typename char_t>
-        requires std::convertible_to<char_t, index_alphabet_type> bool
-    extend_right(char_t const c) noexcept
+        requires std::convertible_to<char_t, index_alphabet_type>
+    bool extend_right(char_t const c) noexcept
     {
 #ifndef NDEBUG
         fwd_cursor_last_used = true;
@@ -457,8 +457,8 @@ public:
 
     //!\overload
     template <typename char_type>
-        requires seqan3::detail::is_char_adaptation_v<char_type> bool
-    extend_right(char_type const * cstring) noexcept
+        requires seqan3::detail::is_char_adaptation_v<char_type>
+    bool extend_right(char_type const * cstring) noexcept
     {
         return extend_right(std::basic_string_view<char_type>{cstring});
     }
@@ -477,8 +477,8 @@ public:
      * No-throw guarantee.
      */
     template <typename char_t>
-        requires std::convertible_to<char_t, index_alphabet_type> bool
-    extend_left(char_t const c) noexcept
+        requires std::convertible_to<char_t, index_alphabet_type>
+    bool extend_left(char_t const c) noexcept
     {
 #ifndef NDEBUG
         fwd_cursor_last_used = false;
@@ -508,8 +508,8 @@ public:
 
     //!\overload
     template <typename char_type>
-        requires seqan3::detail::is_char_adaptation_v<char_type> bool
-    extend_left(char_type const * cstring) noexcept
+        requires seqan3::detail::is_char_adaptation_v<char_type>
+    bool extend_left(char_type const * cstring) noexcept
     {
         return extend_left(std::basic_string_view<char_type>{cstring});
     }

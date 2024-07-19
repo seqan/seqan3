@@ -470,8 +470,8 @@ public:
      *   via `seqan3::argument_parser::add_option()` calls beforehand.
      */
     template <typename id_type>
-        requires std::same_as<id_type, char> || std::constructible_from<std::string, id_type> bool
-    is_option_set(id_type const & id) const
+        requires std::same_as<id_type, char> || std::constructible_from<std::string, id_type>
+    bool is_option_set(id_type const & id) const
     {
         if (!parse_was_called)
             throw design_error{"You can only ask which options have been set after calling the function `parse()`."};

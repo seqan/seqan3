@@ -112,8 +112,8 @@ public:
     ~adaptor_base() noexcept = default;                                          //!< Defaulted.
 
     //!\brief Constructor with possible arguments; becomes a default constructor for adaptors without args.
-    constexpr adaptor_base(stored_args_ts... args) noexcept(noexcept(std::tuple<stored_args_ts...>{
-        std::forward<stored_args_ts>(args)...})) :
+    constexpr adaptor_base(stored_args_ts... args)
+        noexcept(noexcept(std::tuple<stored_args_ts...>{std::forward<stored_args_ts>(args)...})) :
         arguments{std::forward<stored_args_ts>(args)...}
     {}
     //!\}

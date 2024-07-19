@@ -108,7 +108,7 @@ inline void transpose_matrix_avx2(std::array<simd_t, simd_traits<simd_t>::length
     };
 
     // A look-up table to reverse the lowest 4 bits in order to permute the transposed rows.
-    static const uint8_t bit_rev[] = {0,  8,  4,  12, 2,  10, 6,  14, 1,  9,  5,  13, 3,  11, 7,  15,
+    static uint8_t const bit_rev[] = {0,  8,  4,  12, 2,  10, 6,  14, 1,  9,  5,  13, 3,  11, 7,  15,
                                       16, 24, 20, 28, 18, 26, 22, 30, 17, 25, 21, 29, 19, 27, 23, 31};
 
     // transpose a 32x32 byte matrix

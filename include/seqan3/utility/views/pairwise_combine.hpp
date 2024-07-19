@@ -348,8 +348,8 @@ public:
      * \{
      */
     //!\brief Pre-increment operator.
-    constexpr basic_iterator &
-    operator++(/*pre-increment*/) noexcept(noexcept(++std::declval<underlying_iterator_type &>()))
+    constexpr basic_iterator & operator++(/*pre-increment*/)
+        noexcept(noexcept(++std::declval<underlying_iterator_type &>()))
     {
         if (++second_it == end_it)
         {
@@ -361,8 +361,8 @@ public:
     }
 
     //!\brief Post-increment operator.
-    constexpr basic_iterator
-    operator++(int /*post-increment*/) noexcept(noexcept(std::declval<underlying_iterator_type &>()++))
+    constexpr basic_iterator operator++(int /*post-increment*/)
+        noexcept(noexcept(std::declval<underlying_iterator_type &>()++))
     {
         basic_iterator tmp{*this};
         ++*this;
@@ -370,8 +370,8 @@ public:
     }
 
     //!\brief Pre-decrement operator; `underlying_iterator_type` must model std::bidirectional_iterator.
-    constexpr basic_iterator &
-    operator--(/*pre-decrement*/) noexcept(noexcept(--std::declval<underlying_iterator_type &>()))
+    constexpr basic_iterator & operator--(/*pre-decrement*/)
+        noexcept(noexcept(--std::declval<underlying_iterator_type &>()))
         requires std::bidirectional_iterator<underlying_iterator_type>
     {
         if (--second_it == first_it)
@@ -384,8 +384,8 @@ public:
     }
 
     //!\brief Post-decrement operator; `underlying_iterator_type` must model std::bidirectional_iterator.
-    constexpr basic_iterator
-    operator--(int /*post-decrement*/) noexcept(noexcept(std::declval<underlying_iterator_type &>()--))
+    constexpr basic_iterator operator--(int /*post-decrement*/)
+        noexcept(noexcept(std::declval<underlying_iterator_type &>()--))
         requires std::bidirectional_iterator<underlying_iterator_type>
     {
         basic_iterator tmp{*this};
@@ -395,8 +395,8 @@ public:
 
     //!\brief Advances the iterator by the given offset; `underlying_iterator_type` must model
     //!\      std::random_access_iterator.
-    constexpr basic_iterator &
-    operator+=(difference_type const offset) noexcept(noexcept(std::declval<basic_iterator &>().from_index(1)))
+    constexpr basic_iterator & operator+=(difference_type const offset)
+        noexcept(noexcept(std::declval<basic_iterator &>().from_index(1)))
         requires std::random_access_iterator<underlying_iterator_type>
     {
         from_index(to_index() + offset);
@@ -415,9 +415,8 @@ public:
 
     //!\brief Advances the iterator by the given offset; `underlying_iterator_type` must model
     //!\      std::random_access_iterator.
-    constexpr friend basic_iterator
-    operator+(difference_type const offset,
-              basic_iterator iter) noexcept(noexcept(std::declval<basic_iterator<range_type> &>().from_index(1)))
+    constexpr friend basic_iterator operator+(difference_type const offset, basic_iterator iter)
+        noexcept(noexcept(std::declval<basic_iterator<range_type> &>().from_index(1)))
         requires std::random_access_iterator<underlying_iterator_type>
     {
         iter.from_index(iter.to_index() + offset);
@@ -426,8 +425,8 @@ public:
 
     //!\brief Decrements the iterator by the given offset; `underlying_iterator_type` must model
     //!\      std::random_access_iterator.
-    constexpr basic_iterator &
-    operator-=(difference_type const offset) noexcept(noexcept(std::declval<basic_iterator &>().from_index(1)))
+    constexpr basic_iterator & operator-=(difference_type const offset)
+        noexcept(noexcept(std::declval<basic_iterator &>().from_index(1)))
         requires std::random_access_iterator<underlying_iterator_type>
     {
         from_index(to_index() - offset);
@@ -555,9 +554,9 @@ private:
      * \param[in] index The index to set the iterator to.
      * \copydetails to_index()
      */
-    constexpr void from_index(size_t const index) noexcept(noexcept(
-        std::declval<underlying_iterator_type &>()
-        - std::declval<underlying_iterator_type &>()) && noexcept(std::declval<underlying_iterator_type &>() + 1))
+    constexpr void from_index(size_t const index)
+        noexcept(noexcept(std::declval<underlying_iterator_type &>() - std::declval<underlying_iterator_type &>())
+                 && noexcept(std::declval<underlying_iterator_type &>() + 1))
         requires std::random_access_iterator<underlying_iterator_type>
     {
         size_t src_size = end_it - begin_it;

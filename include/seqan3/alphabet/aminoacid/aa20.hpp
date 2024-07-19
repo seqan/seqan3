@@ -102,11 +102,10 @@ private:
         return char_to_rank_table[static_cast<index_t>(chr)];
     }
 
-    // clang-format off
     //!\copydoc seqan3::aa27::char_to_rank_table
-    static constexpr std::array<rank_type, 256> char_to_rank_table
-    {
-        []() constexpr {
+    static constexpr std::array<rank_type, 256> char_to_rank_table{
+        []() constexpr
+        {
             std::array<rank_type, 256> ret{};
 
             // initialize with 'S' because that appears most frequently
@@ -133,10 +132,8 @@ private:
             ret['z'] = ret['E']; // Convert z (either E/Q) to E, since E occurs more frequently.
             ret['*'] = ret['W']; // The most common stop codon is UGA. This is most similar to a Tryptophan.
             return ret;
-        }()
-    };
+        }()};
 };
-// clang-format on
 
 // ------------------------------------------------------------------
 // containers

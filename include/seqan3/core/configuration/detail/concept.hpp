@@ -63,12 +63,10 @@ inline constexpr std::array<std::array<void *, 0>, 0> compatibility_table{};
 //!\cond
 template <typename config_t>
 concept config_element = requires {
-                             requires std::is_base_of_v<seqan3::pipeable_config_element, config_t>;
-                             requires std::copyable<config_t>;
-                             {
-                                 config_t::id
-                             };
-                         };
+    requires std::is_base_of_v<seqan3::pipeable_config_element, config_t>;
+    requires std::copyable<config_t>;
+    { config_t::id };
+};
 //!\endcond
 
 /*!\interface seqan3::detail::config_element_pipeable_with <>
@@ -91,8 +89,8 @@ template <typename config1_t, typename config2_t>
 concept config_element_pipeable_with =
     config_element<config1_t> && config_element<config2_t>
     && std::same_as<std::remove_cvref_t<decltype(config1_t::id)>, std::remove_cvref_t<decltype(config2_t::id)>>
-    && compatibility_table<std::remove_cvref_t<decltype(config1_t::id)>>
-[static_cast<int32_t>(config1_t::id)][static_cast<int32_t>(config2_t::id)];
+    && compatibility_table<std::remove_cvref_t<decltype(config1_t::id)>>[static_cast<int32_t>(config1_t::id)]
+                                                                        [static_cast<int32_t>(config2_t::id)];
 //!\endcond
 
 } // namespace seqan3::detail

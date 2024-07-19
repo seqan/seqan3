@@ -72,19 +72,13 @@ concept sequence_file_output_format = requires (detail::sequence_file_output_for
                                                 std::string & id,
                                                 std::vector<phred42> & qual,
                                                 std::vector<dna5q> & seq_qual) {
-                                          t::file_extensions;
+    t::file_extensions;
 
-                                          {
-                                              v.write_sequence_record(f, options, seq, id, qual)
-                                              } -> std::same_as<void>;
-                                          {
-                                              v.write_sequence_record(f, options, std::ignore, id, std::ignore)
-                                              } -> std::same_as<void>;
-                                          {
-                                              v.write_sequence_record(f, options, std::ignore, std::ignore, std::ignore)
-                                              } -> std::same_as<void>;
-                                          // the last is required to be compile time valid, but should always throw at run-time.
-                                      };
+    { v.write_sequence_record(f, options, seq, id, qual) } -> std::same_as<void>;
+    { v.write_sequence_record(f, options, std::ignore, id, std::ignore) } -> std::same_as<void>;
+    // This one is required to be a valid call, but should always throw at run-time.
+    { v.write_sequence_record(f, options, std::ignore, std::ignore, std::ignore) } -> std::same_as<void>;
+};
 //!\endcond
 
 // Workaround for https://github.com/doxygen/doxygen/issues/9379

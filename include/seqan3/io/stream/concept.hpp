@@ -38,8 +38,8 @@ concept output_stream_over =
 
            {
                os << val
-               } -> std::same_as<std::basic_ostream<typename std::remove_reference_t<stream_type>::char_type,
-                                                    typename std::remove_reference_t<stream_type>::traits_type> &>;
+           } -> std::same_as<std::basic_ostream<typename std::remove_reference_t<stream_type>::char_type,
+                                                typename std::remove_reference_t<stream_type>::traits_type> &>;
        };
 
 template <typename stream_type>
@@ -107,8 +107,8 @@ concept input_stream_over =
 
            {
                is >> val
-               } -> std::same_as<std::basic_istream<typename std::remove_reference_t<stream_type>::char_type,
-                                                    typename std::remove_reference_t<stream_type>::traits_type> &>;
+           } -> std::same_as<std::basic_istream<typename std::remove_reference_t<stream_type>::char_type,
+                                                typename std::remove_reference_t<stream_type>::traits_type> &>;
        };
 
 template <typename stream_type>

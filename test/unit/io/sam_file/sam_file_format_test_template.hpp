@@ -122,7 +122,7 @@ struct sam_file_data : public ::testing::Test
         td[1]["bs"_tag] = std::vector<int16_t>{-3, 200, -300};
         td[1]["bS"_tag] = std::vector<uint16_t>{300u, 40u, 500u};
         td[1]["bi"_tag] = std::vector<int32_t>{-3, 200, -66000};
-        td[1]["bI"_tag] = std::vector<uint32_t>{294967296u};
+        td[1]["bI"_tag] = std::vector<uint32_t>{294'967'296u};
         td[1]["bf"_tag] = std::vector<float>{3.5f, 0.1f, 43.8f};
         return td;
     }();
@@ -179,8 +179,9 @@ TYPED_TEST_P(sam_file_read, header_sucess)
     std::string id1{"ref"};
     std::string id2{"ref2"};
 
-    EXPECT_EQ(header.ref_id_info[(header.ref_dict[id1])], (std::tuple<uint32_t, std::string>{249250621u, ""}));
-    EXPECT_EQ(header.ref_id_info[(header.ref_dict[id2])], (std::tuple<uint32_t, std::string>{243199373u, "AS:hs37d5"}));
+    EXPECT_EQ(header.ref_id_info[(header.ref_dict[id1])], (std::tuple<uint32_t, std::string>{249'250'621u, ""}));
+    EXPECT_EQ(header.ref_id_info[(header.ref_dict[id2])],
+              (std::tuple<uint32_t, std::string>{243'199'373u, "AS:hs37d5"}));
 
     EXPECT_EQ(header.read_groups[0],
               (std::pair<std::string, std::string>{"U0a_A2_L1", "PL:illumina\tPU:1\tLB:1\tSM:NA12878"}));

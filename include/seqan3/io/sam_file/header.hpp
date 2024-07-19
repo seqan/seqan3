@@ -111,7 +111,7 @@ private:
             std::hash<char_t> h{};
             for (char_t character : key)
             {
-                result *= 0x8F3F73B5CF1C9ADE;
+                result *= 0x8F'3F'73'B5'CF'1C'9A'DE;
                 result += h(character);
             }
             return result;

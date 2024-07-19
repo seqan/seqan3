@@ -28,8 +28,8 @@ namespace seqan3::detail
 //!\brief Helper function to deduce the unaligned sequence type from an aligned sequence container.
 template <template <typename...> typename container_type, typename seq_alph_t, typename... rest_t>
     requires container<container_type<gapped<seq_alph_t>, rest_t...>>
-constexpr auto remove_gap_from_value_type(container_type<gapped<seq_alph_t>, rest_t...>)
-    -> container_type<seq_alph_t, rest_t...>;
+constexpr auto
+    remove_gap_from_value_type(container_type<gapped<seq_alph_t>, rest_t...>) -> container_type<seq_alph_t, rest_t...>;
 
 //!\overload
 template <template <typename...> typename container_type,
@@ -211,26 +211,16 @@ concept aligned_sequence = sequence<t> && std::equality_comparable_with<std::ran
  */
 //!\cond
 template <typename t>
-concept writable_aligned_sequence =
-    aligned_sequence<t> && std::ranges::forward_range<t> && requires { typename detail::unaligned_seq_t<t>; }
-    && requires (t v, detail::unaligned_seq_t<t> unaligned) {
-           // global functions for generic usability
-           {
-               insert_gap(v, std::ranges::begin(v))
-               } -> std::same_as<std::ranges::iterator_t<t>>;
-           {
-               insert_gap(v, std::ranges::begin(v), 2)
-               } -> std::same_as<std::ranges::iterator_t<t>>;
-           {
-               erase_gap(v, std::ranges::begin(v))
-               } -> std::same_as<std::ranges::iterator_t<t>>;
-           {
-               erase_gap(v, std::ranges::begin(v), std::ranges::end(v))
-               } -> std::same_as<std::ranges::iterator_t<t>>;
-           {
-               assign_unaligned(v, unaligned)
-               } -> std::same_as<void>;
-       };
+concept writable_aligned_sequence = aligned_sequence<t> && std::ranges::forward_range<t> && requires {
+    typename detail::unaligned_seq_t<t>;
+} && requires (t v, detail::unaligned_seq_t<t> unaligned) {
+    // global functions for generic usability
+    { insert_gap(v, std::ranges::begin(v)) } -> std::same_as<std::ranges::iterator_t<t>>;
+    { insert_gap(v, std::ranges::begin(v), 2) } -> std::same_as<std::ranges::iterator_t<t>>;
+    { erase_gap(v, std::ranges::begin(v)) } -> std::same_as<std::ranges::iterator_t<t>>;
+    { erase_gap(v, std::ranges::begin(v), std::ranges::end(v)) } -> std::same_as<std::ranges::iterator_t<t>>;
+    { assign_unaligned(v, unaligned) } -> std::same_as<void>;
+};
 //!\endcond
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -418,9 +408,9 @@ inline void assign_unaligned(aligned_seq_t & aligned_seq, unaligned_sequence_typ
  */
 template <typename range_type>
     requires requires (range_type v) {
-                 v.insert_gap(std::ranges::iterator_t<range_type>{});
-                 v.insert_gap(std::ranges::iterator_t<range_type>{}, typename range_type::size_type{});
-             }
+        v.insert_gap(std::ranges::iterator_t<range_type>{});
+        v.insert_gap(std::ranges::iterator_t<range_type>{}, typename range_type::size_type{});
+    }
 std::ranges::iterator_t<range_type> insert_gap(range_type & rng,
                                                std::ranges::iterator_t<range_type> const pos_it,
                                                typename range_type::size_type const size = 1)
@@ -471,8 +461,8 @@ std::ranges::iterator_t<range_type> erase_gap(range_type & rng, std::ranges::ite
  */
 template <typename range_type>
     requires requires (range_type v) {
-                 v.erase_gap(std::ranges::iterator_t<range_type>{}, std::ranges::iterator_t<range_type>{});
-             }
+        v.erase_gap(std::ranges::iterator_t<range_type>{}, std::ranges::iterator_t<range_type>{});
+    }
 std::ranges::iterator_t<range_type> erase_gap(range_type & rng,
                                               std::ranges::iterator_t<range_type> const first,
                                               std::ranges::iterator_t<range_type> const last)
