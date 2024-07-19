@@ -12,6 +12,8 @@ $files = scandir($LOCALDIR, SCANDIR_SORT_DESCENDING);
 $list = array();
 foreach( $files as $file  )
 {
+    if( !is_dir("$LOCALDIR/$file") ) // Skip files
+        continue;
     if( strpos($file, "hidden_") !== FALSE ) // Skip directories starting with "hidden_"
         continue;
     if( $file[0] == "." ) // Skip current directory

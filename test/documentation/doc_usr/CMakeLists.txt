@@ -38,3 +38,4 @@ enable_testing ()
 
 message (STATUS "Add user doc test.")
 add_test (NAME doc_usr_no_warnings_test COMMAND bash -c "${SEQAN3_TEST_DOXYGEN_FAIL_ON_WARNINGS}")
+set_tests_properties (doc_usr_no_warnings_test PROPERTIES DEPENDS cppreference-doxygen-web-tag)
