@@ -31,9 +31,9 @@ namespace seqan3::detail
 //!\ingroup alphabet_adaptation
 //!\hideinitializer
 template <typename type>
-constexpr bool is_char_adaptation_v = std::same_as<type, char> || std::same_as<type, char8_t> ||
-                                      std::same_as<type, char16_t> || std::same_as<type, char32_t> ||
-                                      std::same_as<type, wchar_t>;
+constexpr bool is_char_adaptation_v =
+    std::same_as<type, char> || std::same_as<type, char8_t> || std::same_as<type, char16_t>
+    || std::same_as<type, char32_t> || std::same_as<type, wchar_t>;
 } // namespace seqan3::detail
 
 namespace seqan3::custom
