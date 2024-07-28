@@ -28,13 +28,13 @@ CMAKE_BUILD_PARALLEL_LEVEL=40 cmake --build .
 
 ### How does this work?
 
-In the following, we will use `3.2.0` as the latest stable release (LSR).
+In the following, we will use `3.3.0` as the latest stable release (LSR).
 
 The workflow entails these steps:
 1. Download and unzip the LSR.
 2. Remove everything from the LSR except the tests in `<seqan3_lsr_source>/test/`.
 3. Apply patches from the current git version on the LSR, i.e., patches found in
-   `<seqan3_git_source>/test/api_stability/3.2.0`.
+   `<seqan3_git_source>/test/api_stability/3.3.0`.
   * These patches will only apply changes on the tests.
   * This step is necessary as some of our tests also test non-public / non-stable API.
 3. Use the current version of `find_package (SeqAn3)` found in `<seqan3_git_source>/build_system`.
@@ -83,9 +83,9 @@ There are two categories of API changes that are reflected in the patches (prefi
 
 ### How to create patches?
 
-In the following, we will use `3.2.0` as the latest stable release (LSR).
+In the following, we will use `3.3.0` as the latest stable release (LSR).
 
-Create a new branch based on the LSR and apply all existing patches in `<seqan3_git_source>/test/api_stability/3.2.0`.
+Create a new branch based on the LSR and apply all existing patches in `<seqan3_git_source>/test/api_stability/3.3.0`.
 
 ```
 cd <seqan3_git_source>
@@ -95,12 +95,12 @@ git checkout test/api
 
 # copy over patches to a tmp directory (`git am` seems to not support applying patches onto a different branch)
 mkdir -p /tmp/seqan3-api-stability-patches
-cp test/api_stability/3.2.0/*.patch /tmp/seqan3-api-stability-patches
+cp test/api_stability/3.3.0/*.patch /tmp/seqan3-api-stability-patches
 
 # create a new branch based on the LSR and switch to it
-git checkout -b api-stability-patches 3.2.0
+git checkout -b api-stability-patches 3.3.0
 
-# apply all patches onto 3.2.0 (--keep-non-patch will keep `[NOAPI]` tags in the commit message)
+# apply all patches onto 3.3.0 (--keep-non-patch will keep `[NOAPI]` tags in the commit message)
 git am --keep-non-patch /tmp/seqan3-api-stability-patches/*.patch
 
 # clean up applied patches
@@ -135,8 +135,8 @@ New files for tests must not be added.
 After that, we can export all patches.
 
 ```
-# export all patches since 3.2.0
-git format-patch 3.2.0
+# export all patches since 3.3.0
+git format-patch 3.3.0
 
 # move them to tmp directory
 mv *.patch /tmp/seqan3-api-stability-patches
@@ -147,12 +147,12 @@ Now change to your branch that you were working on and check-in the patches.
 ```
 git checkout test/api
 
-cp /tmp/seqan3-api-stability-patches/*.patch test/api_stability/3.2.0/
+cp /tmp/seqan3-api-stability-patches/*.patch test/api_stability/3.3.0/
 
 rm -fdr /tmp/seqan3-api-stability-patches
 
 # add new patches
-git add test/api_stability/3.2.0/
+git add test/api_stability/3.3.0/
 
 # commit changes
 git commit
