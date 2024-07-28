@@ -11,8 +11,8 @@ import html
 import re
 import sys
 
-# https://regex101.com/r/aE0qX3/1
-tokenise_regex = re.compile(r"(\[\s*\d+%\](?:.(?!\[\s*\d+%\]))+(?:error:).*?(?=\[\s*\d+%\]|$))", re.DOTALL)
+# https://regex101.com/r/aE0qX3/2
+tokenise_regex = re.compile(r"(\[\s*\d+%\](?:.(?!\[\s*\d+%\]))+(?:: error:).*?(?=\[\s*\d+%\]|$))", re.DOTALL)
 # Match line containg 'error:', but stop at linebreak, semicolon or parenthesis.
 error_regex = re.compile(r"(error:[^(;\n]*)")
 
