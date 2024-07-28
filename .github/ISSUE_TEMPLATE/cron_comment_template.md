@@ -1,4 +1,4 @@
-Failure {{ build }} on gcc{{ compiler }}
+Failure {{ build }} on {{ compiler }}
 ---
 
 See {{ url }} for more information.

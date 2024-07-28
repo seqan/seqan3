@@ -1,0 +1,81 @@
+From 9f061adb903403ee7e039f6480c87d7d1c577c14 Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Sun, 28 Jul 2024 15:17:28 +0200
+Subject: [PATCH 3/4] [API] hamming scoring scheme
+
+---
+ .../08_pairwise_alignment/pa_assignment_3_solution.cpp    | 6 ++++--
+ .../alignment/configuration/align_cfg_method_global.cpp   | 6 ++++--
+ .../alignment/configuration/minimal_alignment_config.err  | 2 +-
+ .../alignment/configuration/align_config_edit_test.cpp    | 8 ++++++--
+ 4 files changed, 15 insertions(+), 7 deletions(-)
+
+diff --git a/doc/tutorial/08_pairwise_alignment/pa_assignment_3_solution.cpp b/doc/tutorial/08_pairwise_alignment/pa_assignment_3_solution.cpp
+index d9790afca..b761ca884 100644
+--- a/doc/tutorial/08_pairwise_alignment/pa_assignment_3_solution.cpp
++++ b/doc/tutorial/08_pairwise_alignment/pa_assignment_3_solution.cpp
+@@ -28,8 +28,10 @@ int main()
+                                                    seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
+                                                    seqan3::align_cfg::free_end_gaps_sequence1_trailing{false},
+                                                    seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}}
+-                | seqan3::align_cfg::scoring_scheme{
+-                    seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum62}};
++                | seqan3::align_cfg::scoring_scheme{seqan3::aminoacid_scoring_scheme{
++                    seqan3::aminoacid_similarity_matrix::blosum62}}
++                | seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
++                                                     seqan3::align_cfg::extension_score{-1}};
+ 
+     for (auto const & res : seqan3::align_pairwise(source, config))
+         seqan3::debug_stream << "Score: " << res.score() << '\n';
+diff --git a/test/snippet/alignment/configuration/align_cfg_method_global.cpp b/test/snippet/alignment/configuration/align_cfg_method_global.cpp
+index 0e1f92757..46e74c3dd 100644
+--- a/test/snippet/alignment/configuration/align_cfg_method_global.cpp
++++ b/test/snippet/alignment/configuration/align_cfg_method_global.cpp
+@@ -11,8 +11,10 @@ int main()
+ {
+     // configure a global alignment for DNA sequences
+     auto min_cfg = seqan3::align_cfg::method_global{}
+-                 | seqan3::align_cfg::scoring_scheme{
+-                     seqan3::nucleotide_scoring_scheme{seqan3::match_score{4}, seqan3::mismatch_score{-5}}};
++                 | seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
++                                                                                       seqan3::mismatch_score{-5}}}
++                 | seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
++                                                      seqan3::align_cfg::extension_score{-1}};
+ 
+     auto seq1 = "TCGT"_dna4;
+     auto seq2 = "ACGA"_dna4;
+diff --git a/test/snippet/alignment/configuration/minimal_alignment_config.err b/test/snippet/alignment/configuration/minimal_alignment_config.err
+index 7f8f011eb..f599e28b8 100644
+--- a/test/snippet/alignment/configuration/minimal_alignment_config.err
++++ b/test/snippet/alignment/configuration/minimal_alignment_config.err
+@@ -1 +1 @@
+-7
++10
+diff --git a/test/unit/alignment/configuration/align_config_edit_test.cpp b/test/unit/alignment/configuration/align_config_edit_test.cpp
+index 7ec211537..ee2e501a8 100644
+--- a/test/unit/alignment/configuration/align_config_edit_test.cpp
++++ b/test/unit/alignment/configuration/align_config_edit_test.cpp
+@@ -9,14 +9,18 @@
+ 
+ #include <seqan3/alignment/configuration/align_config_edit.hpp>
+ #include <seqan3/alignment/configuration/align_config_method.hpp>
++#include <seqan3/alphabet/concept.hpp>
++#include <seqan3/alphabet/nucleotide/dna15.hpp>
+ 
+ TEST(align_cfg_edit, is_hamming)
+ {
+     auto scheme = seqan3::get<seqan3::align_cfg::scoring_scheme>(seqan3::align_cfg::edit_scheme).scheme;
+ 
+-    for (unsigned i = 0; i < decltype(scheme)::matrix_size; ++i)
++    constexpr uint32_t dna15_size_v = seqan3::alphabet_size<seqan3::dna15>;
++
++    for (uint32_t i = 0; i < dna15_size_v; ++i)
+     {
+-        for (unsigned j = 0; j < decltype(scheme)::matrix_size; ++j)
++        for (uint32_t j = 0; j < dna15_size_v; ++j)
+         {
+             if (i == j)
+                 EXPECT_EQ((scheme.score(seqan3::assign_rank_to(i, seqan3::dna15{}),
+-- 
+2.43.0
+
