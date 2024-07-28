@@ -67,14 +67,12 @@ jobs:
           else
             FILE=".github/ISSUE_TEMPLATE/cron_comment_template.md"
             python3 .github/workflows/scripts/process_compiler_error_log.py build/build.log >> ${FILE}
-            echo "body=Failure ${{ matrix.compiler }}"
-            fi >> $GITHUB_OUTPUT
             URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-            sed -i "s@{{ build }}@${{ matrix.build }}@" $FILE
-            sed -i "s@{{ compiler }}@${{ matrix.compiler }}@" $FILE
-            sed -i "s@{{ url }}@$URL@" $FILE
+            sed -i "s@{{ build }}@${{ matrix.build }}@" ${FILE}
+            sed -i "s@{{ compiler }}@${{ matrix.compiler }}@" ${FILE}
+            sed -i "s@{{ url }}@$URL@" ${FILE}
             echo "body<<EOF" >> $GITHUB_OUTPUT
-            cat $FILE >> $GITHUB_OUTPUT
+            cat ${FILE} >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
           fi
 
