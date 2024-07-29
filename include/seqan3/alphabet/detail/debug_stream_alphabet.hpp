@@ -24,12 +24,15 @@ namespace seqan3
  * \param l The alphabet letter.
  * \relates seqan3::debug_stream_type
  */
-template <typename char_t, alphabet alphabet_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alphabet_t && l)
-    requires (!output_stream_over<std::basic_ostream<char_t>, alphabet_t>)
+template <typename alphabet_t>
+    requires alphabet<alphabet_t>
+struct alphabet_printer<alphabet_t>
 {
-    return s << to_char(l);
-}
+    static constexpr auto print = [](auto & s, alphabet_t l)
+    {
+        s << to_char(l);
+    };
+};
 
 // forward declare seqan3::mask
 class mask;
@@ -40,12 +43,15 @@ class mask;
  * \param l The mask alphabet letter.
  * \relates seqan3::debug_stream_type
  */
-template <typename char_t, seqan3::semialphabet alphabet_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alphabet_t && l)
+template <typename alphabet_t>
     requires std::same_as<std::remove_cvref_t<alphabet_t>, mask>
+struct mask_printer<alphabet_t>
 {
-    return s << (l == alphabet_t{} ? "UNMASKED" : "MASKED");
-}
+    static constexpr auto print = [](auto & s, alphabet_t const l)
+    {
+        s << (l == std::remove_cvref_t<alphabet_t>{} ? "UNMASKED" : "MASKED");
+    };
+};
 
 //!\}
 

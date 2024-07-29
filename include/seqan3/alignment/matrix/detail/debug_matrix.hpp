@@ -477,23 +477,18 @@ namespace seqan3
  *
  * This prints out an alignment matrix which can be a score matrix or a trace matrix.
  */
-template <typename char_t, detail::matrix alignment_matrix_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alignment_matrix_t && matrix)
+template <typename alignment_matrix_t>
+    requires detail::matrix<std::remove_cvref_t<alignment_matrix_t>>
+struct alignment_matrix_printer<alignment_matrix_t>
 {
-    detail::debug_matrix debug{std::forward<alignment_matrix_t>(matrix)};
+    static constexpr auto print = [](auto & s, auto && matrix)
+    {
+        detail::debug_matrix debug{std::forward<alignment_matrix_t>(matrix)};
 
-    std::stringstream sstream{};
-    debug.stream_matrix(sstream, s.flags2());
-    s << sstream.str();
-    return s;
-}
-
-//!\overload
-template <typename char_t, std::ranges::input_range alignment_matrix_t>
-    requires detail::debug_stream_range_guard<alignment_matrix_t> && detail::matrix<alignment_matrix_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alignment_matrix_t && matrix)
-{
-    return s << detail::debug_matrix{std::forward<alignment_matrix_t>(matrix)};
-}
+        std::stringstream sstream{};
+        debug.stream_matrix(sstream, s.flags2());
+        s << sstream.str();
+    };
+};
 
 } // namespace seqan3
