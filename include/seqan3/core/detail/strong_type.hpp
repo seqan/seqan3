@@ -447,34 +447,27 @@ private:
     value_t value;
 };
 
-//------------------------------------------------------------------------------
-// related functions
-//------------------------------------------------------------------------------
-
-/*!\name Formatted output
- * \relates seqan3::detail::strong_type
- * \{
- */
-
-/*!\brief Formatted output to a seqan3::detail::debug_stream_type.
- * \tparam char_t The char type of the seqan3::detail::debug_stream_type.
- * \tparam strong_type_t The strong type to print; must model seqan3::detail::derived_from_strong_type.
- *
- * \param[in,out] stream The output stream.
- * \param[in] value The strong typed value to print.
- *
- * \details
- *
- * Prints the stored value of the given strong type.
- *
- * \returns `stream_t &` A reference to the given stream.
- */
-template <typename char_t, derived_from_strong_type strong_type_t>
-debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, strong_type_t && value)
-{
-    stream << value.get();
-    return stream;
-}
-//!\}
-
 } // namespace seqan3::detail
+
+namespace seqan3
+{
+/*!\brief A strong type can be printed by printing its underlying value.
+ * \tparam strong_type_t The type of the strong type; must be derived from seqan3::detail::strong_type.
+ * \ingroup core_debug_stream
+ */
+template <detail::derived_from_strong_type strong_type_t>
+struct strong_type_printer<strong_type_t>
+{
+    /*!\brief Prints the stored value of the given strong type.
+     * \tparam stream_t The type of the stream.
+     * \tparam arg_t The type of the argument.
+     * \param[in,out] stream The output stream.
+     * \param[in] arg The strong typed value to print.
+     */
+    template <typename stream_t, typename arg_t>
+    constexpr void operator()(stream_t & stream, arg_t && arg) const
+    {
+        stream << arg.get();
+    }
+};
+} // namespace seqan3

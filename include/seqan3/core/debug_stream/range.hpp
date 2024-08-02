@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <functional>
 #include <ranges>
 
 #include <seqan3/alphabet/adaptation/char.hpp>
@@ -17,128 +18,141 @@
 #include <seqan3/core/debug_stream/debug_stream_type.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 
-namespace seqan3::detail
-{
-/*!\brief A helper concept definition for ranges that can be streamed to the seqan3::debug_stream.
- * \tparam rng_t The range type to check.
- * \ingroup core_debug_stream
- *
- * \details
- *
- * This concept refines the std::ranges::input_range concept to allow streaming the range object to the debug stream,
- * with the following requirements:
- *
- * * `rng_t` is not the same type as `std::ranges::range_reference_t<rng_t>`,
- * * `rng_t` is not a pointer or c-style array,
- * * `std::ranges::range_reference_t<rng_t>` is not `char`.
- */
-template <typename rng_t>
-concept debug_stream_range_guard =
-    !std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<rng_t>>, std::remove_cvref_t<rng_t>>
-    && !(std::is_pointer_v<std::decay_t<rng_t>>
-         && std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<rng_t>>, char>);
-// prevent recursive instantiation: std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<rng_t>>, char>
-// exclude null-terminated strings: std::is_pointer_v<std::decay_t<rng_t>>
-
-/*!\brief Helper template variable that checks if the reference type of a range can be streamed into an instance of
- *        seqan3::debug_stream_type .
- * \tparam rng_t The range type to check.
- * \tparam char_t The char type of the stream.
- * \ingroup core_debug_stream
- *
- * \details
- *
- * Evaluates to `true` if the following expression is valid: `debug_stream << *rng.begin();`, where rng is of  type
- * rng_t. Otherwise false.
- */
-template <std::ranges::range rng_t, typename char_t>
-constexpr bool reference_type_is_streamable_v = false;
-
-//!\cond
-template <std::ranges::range rng_t, typename char_t>
-    requires requires (std::ranges::range_reference_t<rng_t> l, debug_stream_type<char_t> s) {
-        { s << l };
-    }
-constexpr bool reference_type_is_streamable_v<rng_t, char_t> = true;
-//!\endcond
-} // namespace seqan3::detail
-
 namespace seqan3
 {
-/*!\name Formatted output overloads
- * \{
+
+/*!
+ * \interface seqan3::nonrecursive_range <>
+ * \brief A concept that checks whether a range is non-recursive.
+ *
+ * A range is considered non-recursive if it is itself a range whose reference type is not the range type itself.
+ *
+ * \tparam rng_t The type to check.
+ * \ingroup core_debug_stream
  */
-/*!\brief All input ranges can be printed to the seqan3::debug_stream element-wise (if their elements are printable).
- * \tparam rng_t Type of the range to be printed; must model std::ranges::input_range.
- * \param s The seqan3::debug_stream.
- * \param r The input range.
- * \relates seqan3::debug_stream_type
+template <typename rng_t>
+concept nonrecursive_range =
+    !std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<rng_t>>, std::remove_cvref_t<rng_t>>;
+
+/*!\brief A printer for arbitrary input ranges.
  *
- * \details
- *
+ * All input ranges can be printed to the seqan3::debug_stream element-wise (if their elements are printable).
  * If the element type models seqan3::alphabet (and is not an unsigned integer), the range is printed
  * just as if it were a string, i.e. <tt>std::vector<dna4>{'C'_dna4, 'G'_dna4, 'A'_dna4}</tt> is printed as "CGA".
  *
  * In all other cases the elements are comma separated and the range is enclosed in brackets, i.e.
  * `std::vector<int>{3, 1, 33, 7}` is printed as "[3,1,33,7]".
  *
- * \if DEV
- * Note that overloads for range based streaming need to refine the seqan3::detail::debug_stream_range_guard concept
- * to avoid ambiguous function calls.
- * \endif
- */
-template <typename char_t, std::ranges::input_range rng_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, rng_t && r)
-    requires detail::debug_stream_range_guard<rng_t>
-{
-    static_assert(detail::reference_type_is_streamable_v<rng_t, char_t>,
-                  "The reference type of the passed range cannot be streamed into the debug_stream.");
-
-    s << '[';
-    auto b = std::ranges::begin(r);
-    auto e = std::ranges::end(r);
-    if (b != e)
-    {
-        s << *b;
-        ++b;
-    }
-    while (b != e)
-    {
-        s << ',';
-        s << *b;
-        ++b;
-    }
-    s << ']';
-
-    return s;
-}
-
-/*!\brief All biological sequences can be printed to the seqan3::debug_stream.
- * \tparam sequence_t Type of the (biological) sequence to be printed; must model seqan3::sequence.
- * \param s The seqan3::debug_stream.
- * \param sequence The input range.
- * \relates seqan3::debug_stream_type
+ * This printer excludes recursive ranges, such as entities from the std::filesystem library.
  *
- * \details
+ * \tparam rng_t Type of the range to be printed; must model std::ranges::input_range and be non-recursive.
+ * \ingroup core_debug_stream
+ */
+template <typename rng_t>
+    requires std::ranges::input_range<rng_t> && nonrecursive_range<rng_t>
+struct input_range_printer<rng_t>
+{
+    /*!\brief Prints the elements of a sequence to an output stream.
+     *
+     * \tparam stream_t The type of the stream.
+     * \tparam arg_t The type of the argument.
+     *
+     * \param[in,out] stream The output stream to print to.
+     * \param[in] arg The range to be printed.
+     */
+    template <typename stream_t, typename arg_t>
+    constexpr void operator()(stream_t & stream, arg_t && arg) const
+    {
+        stream << '[';
+        auto first = std::ranges::begin(arg);
+        auto last = std::ranges::end(arg);
+        if (first != last)
+        {
+            stream << *first;
+            ++first;
+        }
+        while (first != last)
+        {
+            stream << ',';
+            stream << *first;
+            ++first;
+        }
+        stream << ']';
+    }
+};
+
+/*!\brief A printer for (biological) sequences.
  *
  * The (biological) sequence (except for ranges over unsigned integers) is printed just as if it were a string, i.e.
  * <tt>std::vector<dna4>{'C'_dna4, 'G'_dna4, 'A'_dna4}</tt> is printed as "CGA".
  *
- * \if DEV
- * Note that overloads for range based streaming need to refine the seqan3::detail::debug_stream_range_guard concept
- * to avoid ambiguous function calls.
- * \endif
+ * \tparam sequence_t The type of the sequence to be printed; must model seqan3::sequence.
+ * \ingroup core_debug_stream
  */
-template <typename char_t, sequence sequence_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, sequence_t && sequence)
-    requires detail::debug_stream_range_guard<sequence_t>
-          && (!detail::is_uint_adaptation_v<std::remove_cvref_t<std::ranges::range_reference_t<sequence_t>>>)
+template <sequence sequence_t>
+struct sequence_printer<sequence_t>
 {
-    for (auto && chr : sequence)
-        s << chr;
-    return s;
-}
+    /*!\brief Prints the elements of a sequence to an output stream.
+     *
+     * \tparam stream_t The type of the stream.
+     * \tparam arg_t The type of the argument.
+     *
+     * \param[in,out] stream The output stream to print to.
+     * \param[in] arg The sequence to be printed.
+     */
+    template <typename stream_t, typename arg_t>
+    constexpr void operator()(stream_t & stream, arg_t && arg) const
+    {
+        for (auto && chr : arg)
+            stream << chr;
+    }
+};
 
-//!\}
+/*!\brief A printer for character sequences.
+ * \ingroup core_debug_stream
+ *
+ * This struct provides a printer for character sequences. It is used to print character sequences to a stream.
+ * The character sequence must be an input range and the range reference type must be a character type, i.e.
+ * seqan3::detail::is_char_adaptation_v evaluates to `true`.
+ *
+ * \tparam char_sequence_t The type of the character sequence.
+ */
+template <typename char_sequence_t>
+    requires std::ranges::input_range<char_sequence_t>
+          && (detail::is_char_adaptation_v<std::remove_cvref_t<std::ranges::range_reference_t<char_sequence_t>>>)
+struct char_sequence_printer<char_sequence_t>
+{
+    /*!\brief Prints the character sequence to the given stream.
+     *
+     * \tparam stream_t The type of the stream.
+     * \tparam arg_t The type of the argument.
+     * \param stream The stream to print to.
+     * \param arg The character sequence to print.
+     */
+    template <typename stream_t, typename arg_t>
+    constexpr void operator()(stream_t & stream, arg_t && arg) const
+    {
+        // null-terminated string
+        if constexpr (std::is_pointer_v<std::decay_t<char_sequence_t>>)
+            return std::invoke(std_printer<char_sequence_t>{}, stream, std::forward<arg_t>(arg));
+
+        for (auto && chr : arg)
+            stream << chr;
+    }
+};
+
+/*!\brief A printer for integer sequences.
+ *
+ * This struct provides a printer for integer sequences.
+ * The integer sequence must be an input range and the range reference type must model std::integral concept.
+ *
+ * \tparam integer_sequence_t The type of the integer sequence.
+ * \ingroup core_debug_stream
+ */
+template <typename integer_sequence_t>
+    requires std::ranges::input_range<integer_sequence_t>
+          && std::integral<std::remove_cvref_t<std::ranges::range_reference_t<integer_sequence_t>>>
+struct integer_sequence_printer<integer_sequence_t> : public input_range_printer<integer_sequence_t>
+{};
 
 } // namespace seqan3

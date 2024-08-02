@@ -91,27 +91,31 @@ void stream_alignment(debug_stream_type<char_t> & stream,
 
 namespace seqan3
 {
-/*!\brief Stream operator for alignments, which are represented as tuples of aligned sequences.
+
+/*!\brief The printer for alignment.
+ * \tparam alignment_t The type of the alignment; must model seqan3::tuple_like and all sequences must be
+ *                     seqan3::aligned_sequence.
  * \ingroup alignment_aligned_sequence
- *
- * \tparam alignment_t The alignment type, must satisfy tuple_like and its size must be at least 2.
- *
- * \param[in,out] stream The target stream for the formatted output.
- * \param[in] alignment The alignment that shall be formatted. All sequences must be equally long.
- *
- * \return The given stream to which the alignment representation is appended.
  */
-template <typename char_t, typename alignment_t>
-    requires (detail::debug_streamable_tuple<alignment_t>
-              && detail::all_model_aligned_seq<detail::tuple_type_list_t<std::remove_cvref_t<alignment_t>>>)
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, alignment_t && alignment)
+template <typename alignment_t>
+    requires tuple_like<alignment_t> && detail::all_model_aligned_seq<detail::tuple_type_list_t<alignment_t>>
+struct alignment_printer<alignment_t>
 {
-    constexpr size_t sequence_count = std::tuple_size_v<std::remove_cvref_t<alignment_t>>;
+    /*!\brief The function call operator that pretty prints the alignment to the stream.
+     * \tparam stream_t The type of the stream.
+     * \tparam arg_t The type of the argument.
+     * \param[in,out] stream The target stream for the formatted output.
+     * \param[in] arg The alignment that shall be formatted. All sequences must be equally long.
+     */
+    template <typename stream_t, typename arg_t>
+    constexpr void operator()(stream_t & stream, arg_t && arg) const
+    {
+        constexpr size_t sequence_count = std::tuple_size_v<std::remove_cvref_t<arg_t>>;
 
-    static_assert(sequence_count >= 2, "An alignment requires at least two sequences.");
+        static_assert(sequence_count >= 2, "An alignment requires at least two sequences.");
 
-    detail::stream_alignment(stream, alignment, std::make_index_sequence<sequence_count - 1>{});
-    return stream;
-}
+        detail::stream_alignment(stream, std::forward<arg_t>(arg), std::make_index_sequence<sequence_count - 1>{});
+    }
+};
 
 } // namespace seqan3

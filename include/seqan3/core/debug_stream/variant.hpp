@@ -17,35 +17,34 @@
 
 namespace seqan3
 {
-/*!\name Formatted output overloads
- * \{
- */
+
 /*!\brief A std::variant can be printed by visiting the stream operator for the corresponding type.
- * \tparam    variant_type The type of the variant.
- * \param[in] s            The seqan3::debug_stream.
- * \param[in] v            The variant.
- * \relates seqan3::debug_stream_type
- *
- * \details
- *
- * Note that in case the variant is valueless(_by_exception), nothing is printed.
+ * \tparam variant_ts The types of the variant.
+ * \ingroup core_debug_stream
  */
-template <typename char_t, typename variant_type>
-    requires detail::is_type_specialisation_of_v<std::remove_cvref_t<variant_type>, std::variant>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, variant_type && v)
+template <typename... variant_ts>
+struct std_variant_printer<std::variant<variant_ts...>>
 {
-    if (!v.valueless_by_exception())
-        std::visit(
-            [&s](auto && arg)
-            {
-                s << arg;
-            },
-            v);
-    else
-        s << "<VALUELESS_VARIANT>";
-    return s;
-}
-
-//!\}
-
+    /*!\brief Prints the variant by visiting the stream operator for the corresponding type.
+     * \tparam stream_t The type of the stream.
+     * \tparam arg_t The type of the argument.
+     * \param[in,out] stream The output stream.
+     * \param[in] arg The variant argument to print.
+     *
+     * Note that in case the variant is valueless(_by_exception), nothing is printed.
+     */
+    template <typename stream_t, typename arg_t>
+    constexpr void operator()(stream_t & stream, arg_t && arg) const
+    {
+        if (!arg.valueless_by_exception())
+            std::visit(
+                [&stream](auto && elem)
+                {
+                    stream << elem;
+                },
+                arg);
+        else
+            stream << "<VALUELESS_VARIANT>";
+    }
+};
 } // namespace seqan3

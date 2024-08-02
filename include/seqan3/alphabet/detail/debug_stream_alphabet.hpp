@@ -15,38 +15,53 @@
 
 namespace seqan3
 {
-/*!\name Formatted output overloads
- * \{
+
+/*!\brief The printer used for formatted output of seqan3::alphabet types.
+ *
+ * Prints the char representation of the given alphabet letter.
+ *
+ * \tparam alphabet_t The type of the alphabet to be printed.
+ * \ingroup alphabet
  */
-/*!\brief All alphabets can be printed to the seqan3::debug_stream by their char representation.
- * \tparam alphabet_t Type of the alphabet to be printed; must model seqan3::alphabet.
- * \param s The seqan3::debug_stream.
- * \param l The alphabet letter.
- * \relates seqan3::debug_stream_type
- */
-template <typename char_t, alphabet alphabet_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alphabet_t && l)
-    requires (!output_stream_over<std::basic_ostream<char_t>, alphabet_t>)
+template <alphabet alphabet_t>
+struct alphabet_printer<alphabet_t>
 {
-    return s << to_char(l);
-}
+    /*!\brief Print the alphabet to the stream
+     * \tparam stream_t The type of the stream.
+     * \param[in,out] stream The stream to print to.
+     * \param[in] letter The alphabet letter.
+     */
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, alphabet_t const letter) const noexcept
+    {
+        stream << to_char(letter);
+    }
+};
 
 // forward declare seqan3::mask
 class mask;
 
-/*!\brief Overload for the seqan3::mask alphabet.
- * \tparam char_t Type char type of the debug_stream.
- * \param s The seqan3::debug_stream.
- * \param l The mask alphabet letter.
- * \relates seqan3::debug_stream_type
+/*!\brief The printer used for formatted output of seqan3::mask alphabet.
+ *
+ * Prints "MASKED" if the letter is masked and "UNMASKED" otherwise.
+ *
+ * \tparam mask_t The type of the alphabet to be printed. Must be seqan3::mask.
+ * \ingroup alphabet_mask
  */
-template <typename char_t, seqan3::semialphabet alphabet_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alphabet_t && l)
-    requires std::same_as<std::remove_cvref_t<alphabet_t>, mask>
+template <std::same_as<mask> mask_t>
+struct mask_printer<mask_t>
 {
-    return s << (l == alphabet_t{} ? "UNMASKED" : "MASKED");
-}
-
-//!\}
+    /*!\brief Print the mask alphabet to the stream
+     * \tparam stream_t The type of the stream.
+     * \param[in,out] stream The stream to print to.
+     * \param[in] arg The mask alphabet letter.
+     */
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, mask_t const arg) const noexcept
+    {
+        // seqan3::mask is incomplete at this point, so we cannot use `arg == mask{}`
+        stream << (arg == mask_t{} ? "UNMASKED" : "MASKED");
+    }
+};
 
 } // namespace seqan3

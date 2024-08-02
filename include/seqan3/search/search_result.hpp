@@ -181,31 +181,38 @@ public:
     //!\}
 };
 
-/*!\brief Print the seqan3::search_result to seqan3::debug_stream.
- * \tparam char_t The underlying character type of the seqan3::debug_stream_type.
- * \tparam search_result_t A specialization of seqan3::search_result.
- * \param stream The stream.
- * \param result The search result to print.
- * \relates seqan3::debug_stream_type
+/*!\brief The printer used for formatted output of the search result.
+ *
+ * The type of the printer must be a seqan3::search_result type.
+ *
+ * \tparam specs_t The list of types seqan3::search_result is specialised with.
+ * \ingroup search
  */
-template <typename char_t, typename search_result_t>
-    requires detail::is_type_specialisation_of_v<std::remove_cvref_t<search_result_t>, search_result>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, search_result_t && result)
+template <typename... specs_t>
+struct search_result_printer<search_result<specs_t...>>
 {
-    using result_type_list = detail::transfer_template_args_onto_t<std::remove_cvref_t<search_result_t>, type_list>;
+    /*!\brief Prints the search result.
+     * \tparam stream_t The type of the stream.
+     * \tparam arg_t The type of the argument.
+     * \param[in,out] stream The output stream.
+     * \param[in] arg The search result to print.
+     */
+    template <typename stream_t, typename arg_t>
+    constexpr void operator()(stream_t & stream, arg_t && arg) const
+    {
+        using result_type_list = type_list<specs_t...>;
 
-    stream << "<";
-    if constexpr (!std::same_as<list_traits::at<0, result_type_list>, detail::empty_type>)
-        stream << "query_id:" << result.query_id();
-    if constexpr (!std::same_as<list_traits::at<1, result_type_list>, detail::empty_type>)
-        stream << ", index cursor is present";
-    if constexpr (!std::same_as<list_traits::at<2, result_type_list>, detail::empty_type>)
-        stream << ", reference_id:" << result.reference_id();
-    if constexpr (!std::same_as<list_traits::at<3, result_type_list>, detail::empty_type>)
-        stream << ", reference_pos:" << result.reference_begin_position();
-    stream << ">";
-
-    return stream;
-}
+        stream << "<";
+        if constexpr (!std::same_as<list_traits::at<0, result_type_list>, detail::empty_type>)
+            stream << "query_id:" << arg.query_id();
+        if constexpr (!std::same_as<list_traits::at<1, result_type_list>, detail::empty_type>)
+            stream << ", index cursor is present";
+        if constexpr (!std::same_as<list_traits::at<2, result_type_list>, detail::empty_type>)
+            stream << ", reference_id:" << arg.reference_id();
+        if constexpr (!std::same_as<list_traits::at<3, result_type_list>, detail::empty_type>)
+            stream << ", reference_pos:" << arg.reference_begin_position();
+        stream << ">";
+    }
+};
 
 } // namespace seqan3

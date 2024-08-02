@@ -17,39 +17,45 @@
 
 namespace seqan3
 {
-/*!\name Formatted output overloads
- * \{
- */
-/*!\brief Make std::nullopt_t printable.
- * \tparam    optional_type This is std::nullopt_t.
- * \param[in] s             The seqan3::debug_stream.
- * \param[in] arg           This is std::nullopt.
- * \relates seqan3::debug_stream_type
- */
-template <typename char_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, std::nullopt_t SEQAN3_DOXYGEN_ONLY(arg))
-{
-    s << "<VALUELESS_OPTIONAL>";
-    return s;
-}
 
-/*!\brief A std::optional can be printed by printing its value or nothing if valueless.
- * \tparam    optional_type The type of the optional.
- * \param[in] s             The seqan3::debug_stream.
- * \param[in] arg           The std::optional.
- * \relates seqan3::debug_stream_type
- */
-template <typename char_t, typename optional_type>
-    requires detail::is_type_specialisation_of_v<std::remove_cvref_t<optional_type>, std::optional>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, optional_type && arg)
+//!\brief Printer for formatted output of std::nullopt_t.
+//!\ingroup core_debug_stream
+template <>
+struct optional_printer<std::nullopt_t>
 {
-    if (arg.has_value())
-        s << *arg;
-    else
-        s << "<VALUELESS_OPTIONAL>";
-    return s;
-}
+    /*!\brief Prints `std::nullopt_t` to formatted output stream.
+     * \tparam stream_t The type of the stream to which the value is streamed.
+     * \param[in,out] stream The stream to print to.
+     * \param[in] arg The optional to print.
+     */
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, std::nullopt_t const SEQAN3_DOXYGEN_ONLY(arg)) const
+    {
+        stream << "<VALUELESS_OPTIONAL>";
+    }
+};
 
-//!\}
+/*!\brief Printer for formatted output of a std::optional
+ * \tparam T The value type of the std::optional.
+ * \ingroup core_debug_stream
+ */
+template <typename T>
+struct optional_printer<std::optional<T>>
+{
+    /*!\brief Print the optional to the stream by printing its value or nothing if valueless.
+     * \tparam stream_t The type of the stream.
+     * \tparam arg_t The type of the argument.
+     * \param[in,out] stream The stream to print to.
+     * \param[in] arg The optional to print.
+     */
+    template <typename stream_t, typename arg_t>
+    constexpr void operator()(stream_t & stream, arg_t && arg) const
+    {
+        if (arg.has_value())
+            stream << *arg;
+        else
+            stream << "<VALUELESS_OPTIONAL>";
+    }
+};
 
 } // namespace seqan3

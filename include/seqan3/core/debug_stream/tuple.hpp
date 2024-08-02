@@ -36,42 +36,34 @@ void print_tuple(debug_stream_type<char_t> & s, tuple_t && t, std::index_sequenc
     s << ')';
 }
 
-/*!\interface seqan3::detail::debug_streamable_tuple <>
- * \brief A helper concept to avoid ambiguous overloads with the debug stream operator for alignments.
- * \ingroup core_debug_stream
- * \tparam tuple_t The tuple type to print to the seqan3::detail::debug_stream_type.
- *
- * \details
- *
- * This concept requires that the given type is a seqan3::tuple_like type but neither a std::ranges::input_range nor
- * an alphabet (see seqan3::alphabet_tuple_base).
- */
-//!\cond
-template <typename tuple_t>
-concept debug_streamable_tuple =
-    !std::ranges::input_range<tuple_t> && !alphabet<tuple_t> && // exclude alphabet_tuple_base
-    tuple_like<std::remove_cvref_t<tuple_t>>;
-//!\endcond
 } // namespace seqan3::detail
 
 namespace seqan3
 {
 
-/*!\brief All tuples can be printed by printing their elements separately.
+/*!\brief Printer for formatted output of tuple like objects.
  * \tparam tuple_t Type of the tuple to be printed; must model seqan3::tuple_like.
- * \param s The seqan3::debug_stream.
- * \param t The tuple.
- * \relates seqan3::debug_stream_type
+ * \ingroup core_debug_stream
  */
-template <typename char_t, typename tuple_t>
-    requires (detail::debug_streamable_tuple<tuple_t>)
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, tuple_t && t)
+template <tuple_like tuple_t>
+struct tuple_printer<tuple_t>
 {
-    detail::print_tuple(s,
-                        std::forward<tuple_t>(t),
-                        std::make_index_sequence<std::tuple_size_v<std::remove_cvref_t<tuple_t>>>{});
-    return s;
-}
+    /*!\brief Prints a tuple to a formatted output stream.
+     *
+     * Takes a stream and a tuple object as arguments and prints the tuple elements to the stream.
+     * The elements are printed using the `detail::print_tuple` function.
+     *
+     * \tparam stream_t The type of the stream.
+     * \tparam arg_t The type of the argument.
+     * \param[in,out] stream The stream to print to.
+     * \param[in] arg The tuple to print.
+     */
+    template <typename stream_t, typename arg_t>
+    constexpr void operator()(stream_t & stream, arg_t && arg) const
+    {
+        detail::print_tuple(stream, std::forward<arg_t>(arg), std::make_index_sequence<std::tuple_size_v<tuple_t>>{});
+    }
+};
 
 //!\}
 

@@ -1065,8 +1065,7 @@ concept writable_alphabet = alphabet<t> && writable_semialphabet<t> && requires 
  *
  * \{
  */
-/*!
- * \brief Save an alphabet letter to stream.
+/*!\brief Save an alphabet letter to stream.
  * \tparam archive_t Must satisfy seqan3::cereal_output_archive.
  * \tparam alphabet_t Type of l; must satisfy seqan3::semialphabet.
  * \param l The alphabet letter.

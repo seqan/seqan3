@@ -201,33 +201,39 @@ concept argument_parser_compatible_option =
     input_stream_over<std::istringstream, option_type> || named_enumeration<option_type>;
 //!\endcond
 
-/*!\name Formatted output overloads
- * \{
- */
 /*!\brief A type (e.g. an enum) can be made debug streamable by customizing the seqan3::enumeration_names.
- * \tparam option_type Type of the enum to be printed.
- * \param s  The seqan3::debug_stream.
- * \param op The value to print.
- * \relates seqan3::debug_stream_type
- *
- * \details
  *
  * This searches the seqan3::enumeration_names of the respective type for the value \p op and prints the
  * respective string if found or '\<UNKNOWN_VALUE\>' if the value cannot be found in the map.
+ *
+ * \tparam enum_t Type of the enum to be printed; must model seqan3::named_enumeration.
+ * \ingroup argument_parser
  */
-template <typename char_t, typename option_type>
-    requires named_enumeration<std::remove_cvref_t<option_type>>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, option_type && op)
+template <named_enumeration enum_t>
+struct enumeration_printer<enum_t>
 {
-    for (auto & [key, value] : enumeration_names<option_type>)
+    /*!\brief Prints the associated label of the given enum value.
+     * \tparam stream_t The type of the stream.
+     * \param[in,out] stream The output stream.
+     * \param[in] arg The enum value to print.
+     *
+     * If for the given enumeration value no enumeration name can be found, "<UNKNOWN_VALUE>" is printed.
+     */
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, enum_t const arg) const
     {
-        if (op == value)
-            return s << key;
-    }
+        for (auto & [label, enumerator] : enumeration_names<enum_t>)
+        {
+            if (arg == enumerator)
+            {
+                stream << label;
+                return;
+            }
+        }
 
-    return s << "<UNKNOWN_VALUE>";
-}
-//!\}
+        stream << "<UNKNOWN_VALUE>";
+    }
+};
 
 /*!\brief Used to further specify argument_parser options/flags.
  * \ingroup argument_parser

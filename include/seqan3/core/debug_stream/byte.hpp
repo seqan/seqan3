@@ -16,23 +16,22 @@
 
 namespace seqan3
 {
-/*!\name Formatted output overloads
- * \{
- */
 /*!\brief A std::byte can be printed by printing its value as integer.
- * \tparam    byte_type     The type of the input; must be equal to `std::byte`.
- * \param[in] s             The seqan3::debug_stream.
- * \param[in] arg           The std::byte.
- * \relates seqan3::debug_stream_type
+ * \ingroup core_debug_stream
  */
-template <typename char_t, typename byte_type>
-    requires std::same_as<std::remove_cvref_t<byte_type>, std::byte>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, byte_type && arg)
+template <>
+struct std_byte_printer<std::byte>
 {
-    s << std::to_integer<uint8_t>(arg);
-    return s;
-}
-
-//!\}
+    /*!\brief Prints the byte as uint8_t value.
+     * \tparam stream_t The type of the stream.
+     * \param[in,out] stream The output stream.
+     * \param[in] arg The byte argument to print.
+     */
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, std::byte const arg) const
+    {
+        stream << std::to_integer<uint8_t>(arg);
+    }
+};
 
 } // namespace seqan3
