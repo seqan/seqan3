@@ -18,8 +18,7 @@
 
 namespace seqan3::detail
 {
-/*!
- * \brief Transforms a structure annotation string into a base pair probability matrix.
+/*!\brief Transforms a structure annotation string into a base pair probability matrix.
  * \ingroup io_structure_file
  * \throws seqan3::parse_error if unpaired brackets are found in the structure annotation.
  * \tparam structure_alph_type The type of the structure alphabet; must satisfy seqan3::rna_structure_alphabet.

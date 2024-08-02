@@ -37,6 +37,22 @@ TEST(pretty_printing, char)
     EXPECT_EQ(debug_str('a'), "a"s);
 }
 
+TEST(pretty_printing, charX_t)
+{
+    EXPECT_EQ(gtest_str(char8_t{5}), "U+0005"s);
+    EXPECT_EQ(gtest_str(char16_t{5}), "U+0005"s);
+    EXPECT_EQ(gtest_str(char32_t{5}), "U+0005"s);
+    // EXPECT_EQ(debug_str(char8_t{5}), "U+0005"s);
+    // EXPECT_EQ(debug_str(char16_t{5}), "U+0005"s);
+    // EXPECT_EQ(debug_str(char32_t{5}), "U+0005"s);
+}
+
+TEST(pretty_printing, cstring)
+{
+    EXPECT_EQ(gtest_str("test"), "\"test\""s);
+    EXPECT_EQ(debug_str("test"), "test"s);
+}
+
 TEST(pretty_printing, tuple)
 {
     EXPECT_EQ(gtest_str(std::make_tuple<int, int>(42, -10)), "(42, -10)"s);

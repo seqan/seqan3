@@ -94,16 +94,22 @@ template <>
 inline constexpr bool add_enum_bitwise_operators<sam_flag> = true;
 //!\endcond
 
-/*!\brief Overload for the seqan3::sam_flags.
- * \tparam char_t Type char type of the debug_stream.
- * \param stream The seqan3::debug_stream.
- * \param flag The flag to print.
- * \relates seqan3::debug_stream_type
+/*!\brief A sam_flag can be printed as an integer value.
+ * \ingroup io_sam_file
  */
-template <typename char_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, sam_flag const flag)
+template <>
+struct sam_flag_printer<sam_flag>
 {
-    return stream << static_cast<int16_t>(flag);
-}
+    /*!\brief Prints the sam flag.
+     * \tparam stream_t The output stream type.
+     * \param[in,out] stream The output stream.
+     * \param[in] arg The sam flag to print.
+     */
+    template <typename stream_t>
+    constexpr void operator()(stream_t & stream, sam_flag const arg) const
+    {
+        stream << static_cast<int16_t>(arg);
+    }
+};
 
 } // namespace seqan3

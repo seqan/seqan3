@@ -21,6 +21,7 @@ using default_fields = seqan3::fields<seqan3::field::seq, seqan3::field::id, seq
 // This is needed for EXPECT_RANGE_EQ:
 namespace seqan3
 {
+// TODO: This is only for the test. We might need to consider adding enumeration_names for the io fields to the library.
 template <typename char_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, field f)
 {

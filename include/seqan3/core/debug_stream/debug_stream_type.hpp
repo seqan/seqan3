@@ -9,9 +9,13 @@
 
 #pragma once
 
+#include <cassert>
 #include <iosfwd>
+#include <stdexcept>
 
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
+#include <seqan3/core/debug_stream/default_printer.hpp>
+#include <seqan3/utility/detail/type_name_as_string.hpp>
 
 namespace seqan3
 {
@@ -114,6 +118,13 @@ public:
     {
         stream = &out;
     }
+
+    //!\brief Retrieve the underlying stream.
+    std::basic_ostream<char_t> & get_underlying_stream() const noexcept
+    {
+        assert(stream != nullptr);
+        return *stream;
+    }
     //!\}
 
     /*!\name Formatted output
@@ -121,7 +132,19 @@ public:
      */
     //!\brief Forwards to the underlying stream object.
     template <typename other_char_t, typename t>
-    friend debug_stream_type<other_char_t> & operator<<(debug_stream_type<other_char_t> & s, t && v);
+    friend debug_stream_type<other_char_t> & operator<<(debug_stream_type<other_char_t> & s, t && v)
+    {
+        if constexpr (printable_with<default_printer, decltype(s), t>)
+        {
+            std::invoke(default_printer{}, s, std::forward<t>(v));
+        }
+        else
+        {
+            std::string const msg = "debug_stream has no print overload for type: " + detail::type_name_as_string<t>;
+            throw std::runtime_error{msg};
+        }
+        return s;
+    }
 
     //!\brief This overloads enables forwarding std::endl and other manipulators.
     debug_stream_type & operator<<(std::ostream & (*fp)(std::ostream &))
@@ -130,26 +153,13 @@ public:
         return *this;
     }
 
-    //!\cond
-    debug_stream_type & operator<<(int8_t const v)
-    {
-        if ((flags2() & fmtflags2::small_int_as_number) == fmtflags2::small_int_as_number)
-            *stream << static_cast<int>(v);
-        else
-            *stream << v;
-        return *this;
-    }
-
-    debug_stream_type & operator<<(uint8_t const v)
-    {
-        if ((flags2() & fmtflags2::small_int_as_number) == fmtflags2::small_int_as_number)
-            *stream << static_cast<unsigned>(v);
-        else
-            *stream << v;
-        return *this;
-    }
-    //!\endcond
     //!\}
+
+    template <typename T>
+    friend struct debug_stream_printer;
+
+    template <typename T>
+    friend struct std_printer;
 
     //!\brief This type is std::ios_base::fmtflags
     using fmtflags = typename std::basic_ostream<char_t>::fmtflags;
@@ -182,17 +192,6 @@ public:
         stream->unsetf(flag);
     }
 
-// fmtflags is an enum in libstdc++ and an unsigned in libc++
-#ifdef _LIBCPP_VERSION
-    static_assert(std::same_as<fmtflags, unsigned>);
-#else
-    //!\copybrief setf()
-    debug_stream_type & operator<<(fmtflags const flag)
-    {
-        setf(flag);
-        return *this;
-    }
-#endif
     //!\}
 
     /*!\name Format flags (seqan3::fmtflags2)
@@ -224,12 +223,6 @@ public:
         flgs2 &= ~flag;
     }
 
-    //!\copybrief setf()
-    debug_stream_type & operator<<(fmtflags2 const flag)
-    {
-        setf(flag);
-        return *this;
-    }
     //!\}
 
 private:
@@ -240,12 +233,72 @@ private:
     fmtflags2 flgs2{fmtflags2::default_};
 };
 
-//!\brief Forwards to the underlying stream object.
-template <typename char_t, typename t>
-debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, t && v)
+/*!\brief A struct that provides a debug stream printer for a specific value type.
+ *
+ * This struct provides operator() overloads for printing values of type int8_t, uint8_t, and seqan3::fmtflags2
+ * to a debug stream. The operator() overloads handle the formatting of the values based on the
+ * fmtflags2 settings of the debug stream.
+ *
+ * \tparam value_t The type of the value to be printed.
+ * \ingroup core_debug_stream
+ */
+template <typename value_t>
+    requires (std::is_same_v<std::remove_cvref_t<value_t>, int8_t>
+              || std::is_same_v<std::remove_cvref_t<value_t>, uint8_t>
+              || std::is_same_v<std::remove_cvref_t<value_t>, fmtflags2>)
+struct debug_stream_printer<value_t>
 {
-    (*s.stream) << v;
-    return s;
-}
+    /*!\brief Prints an int8_t value to the debug stream.
+     *
+     * \tparam char_t The character type of the debug stream.
+     * \param stream The debug stream to print to.
+     * \param v The int8_t value to be printed.
+     *
+     * This function prints the int8_t value to the debug stream, taking into account the
+     * fmtflags2 settings of the stream. If the fmtflags2::small_int_as_number flag is set,
+     * the value is printed as an int, otherwise it is printed as is.
+     */
+    template <typename char_t>
+    constexpr void operator()(debug_stream_type<char_t> & stream, int8_t const v) const
+    {
+        if ((stream.flags2() & fmtflags2::small_int_as_number) == fmtflags2::small_int_as_number)
+            *stream.stream << static_cast<int>(v);
+        else
+            *stream.stream << v;
+    }
+
+    /*!\brief Prints a uint8_t value to the debug stream.
+     *
+     * \tparam char_t The character type of the debug stream.
+     * \param stream The debug stream to print to.
+     * \param v The uint8_t value to be printed.
+     *
+     * This function prints the uint8_t value to the debug stream, taking into account the
+     * fmtflags2 settings of the stream. If the fmtflags2::small_int_as_number flag is set,
+     * the value is printed as an unsigned int, otherwise it is printed as is.
+     */
+    template <typename char_t>
+    constexpr void operator()(debug_stream_type<char_t> & stream, uint8_t const v) const
+    {
+        if ((stream.flags2() & fmtflags2::small_int_as_number) == fmtflags2::small_int_as_number)
+            *stream.stream << static_cast<unsigned>(v);
+        else
+            *stream.stream << v;
+    }
+
+    /*!\brief Sets the fmtflags2 of the debug stream.
+     *
+     * \tparam char_t The character type of the debug stream.
+     * \param stream The debug stream to set the fmtflags2 for.
+     * \param flag The fmtflags2 value to set.
+     *
+     * This function sets the fmtflags2 of the debug stream to the specified flag value.
+     */
+    template <typename char_t>
+    constexpr void operator()(debug_stream_type<char_t> & stream, fmtflags2 const flag) const
+    {
+        stream.setf(flag);
+    }
+};
 
 } // namespace seqan3

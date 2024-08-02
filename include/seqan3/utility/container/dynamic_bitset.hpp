@@ -1925,26 +1925,6 @@ public:
         return is;
     }
 
-    /*!\brief Formatted debug output for the `seqan3::dynamic_bitset`.
-     * \param[in,out] s   The `seqan3::debug_stream` to write to.
-     * \param[in]     arg The `seqan3::dynamic_bitset` to read from.
-     * \returns `s`.
-     *
-     * \details
-     *
-     * Internally calls \ref to_string() "arg.to_string()" and inserts a <code>'</code> at every fourth position.
-     *
-     * \experimentalapi{Experimental since version 3.1.}
-     */
-    template <typename char_t>
-    friend debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, dynamic_bitset arg)
-    {
-        s << (std::string_view{arg.to_string()} | views::interleave(4, std::string_view{"'"})
-              | ranges::to<std::string>());
-        return s;
-    }
-    //!\}
-
     //!\cond DEV
     /*!\brief Serialisation support function.
      * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive.
@@ -1968,6 +1948,27 @@ public:
         data.bits = bits;
     }
     //!\endcond
+};
+
+/*!\brief Prints seqan3::dynamic_bitset.
+ * \ingroup utility_container
+ * \experimentalapi{Experimental since version 3.1.}
+ */
+template <size_t bit_capacity>
+struct dynamic_bitset_printer<dynamic_bitset<bit_capacity>>
+{
+    /*!\brief Prints the dynamic bitset.
+     * \tparam stream_t The type of the stream.
+     * \tparam arg_t The type of the argument.
+     * \param[in,out] stream The output stream.
+     * \param[in] arg The dynamic bitset to print.
+     */
+    template <typename stream_t, typename arg_t>
+    constexpr void operator()(stream_t & stream, arg_t && arg) const
+    {
+        stream << (std::string_view{arg.to_string()} | views::interleave(4, std::string_view{"'"})
+                   | ranges::to<std::string>());
+    }
 };
 
 } // namespace seqan3
