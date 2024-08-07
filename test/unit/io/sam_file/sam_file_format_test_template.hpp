@@ -19,7 +19,6 @@
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 #include <seqan3/test/streambuf.hpp>
-#include <seqan3/test/tmp_directory.hpp>
 
 using seqan3::operator""_cigar_operation;
 using seqan3::operator""_dna5;
@@ -360,67 +359,14 @@ TYPED_TEST_P(sam_file_read, issue2423)
 
 TYPED_TEST_P(sam_file_read, unknown_header_tag)
 {
-    constexpr std::string_view expected_warning = "Unsupported tag found in SAM header @HD: \"pb:5.0.0\"\n"
-                                                  "Unsupported tag found in SAM header @HD: \"otter\"\n"
-                                                  "Unsupported tag found in SAM header @PG: \"pb:5.0.0\"\n"
-                                                  "Unsupported tag found in SAM header @PG: \"otter\"\n";
-    // Default: Warnings to cerr
-    {
-        typename TestFixture::stream_type istream{this->unknown_tag_header};
-        seqan3::sam_file_input fin{istream, TypeParam{}};
-        testing::internal::CaptureStdout();
-        testing::internal::CaptureStderr();
-        EXPECT_NO_THROW(fin.begin());
-        EXPECT_EQ(testing::internal::GetCapturedStdout(), "");
-        EXPECT_EQ(testing::internal::GetCapturedStderr(), expected_warning);
-    }
-    // Redirect to cout
-    {
-        typename TestFixture::stream_type istream{this->unknown_tag_header};
-        seqan3::sam_file_input fin{istream, TypeParam{}};
-        fin.options.stream_warnings_to = std::addressof(std::cout);
-        testing::internal::CaptureStdout();
-        testing::internal::CaptureStderr();
-        EXPECT_NO_THROW(fin.begin());
-        EXPECT_EQ(testing::internal::GetCapturedStdout(), expected_warning);
-        EXPECT_EQ(testing::internal::GetCapturedStderr(), "");
-    }
-    // Redirect to file
-    {
-        seqan3::test::tmp_directory tmp{};
-        auto filename = tmp.path() / "warnings.txt";
+    typename TestFixture::stream_type istream{this->unknown_tag_header};
+    seqan3::sam_file_input fin{istream, TypeParam{}};
+    ASSERT_NO_THROW(fin.begin());
 
-        // Scope for ofstream-RAII
-        {
-            std::ofstream warning_file{filename};
-            ASSERT_TRUE(warning_file.good());
-
-            typename TestFixture::stream_type istream{this->unknown_tag_header};
-            seqan3::sam_file_input fin{istream, TypeParam{}};
-            fin.options.stream_warnings_to = std::addressof(warning_file);
-            testing::internal::CaptureStdout();
-            testing::internal::CaptureStderr();
-            EXPECT_NO_THROW(fin.begin());
-            EXPECT_EQ(testing::internal::GetCapturedStdout(), "");
-            EXPECT_EQ(testing::internal::GetCapturedStderr(), "");
-        }
-
-        std::ifstream warning_file{filename};
-        ASSERT_TRUE(warning_file.good());
-        std::string content{std::istreambuf_iterator<char>(warning_file), std::istreambuf_iterator<char>()};
-        EXPECT_EQ(content, expected_warning);
-    }
-    // Silence
-    {
-        typename TestFixture::stream_type istream{this->unknown_tag_header};
-        seqan3::sam_file_input fin{istream, TypeParam{}};
-        fin.options.stream_warnings_to = nullptr;
-        testing::internal::CaptureStdout();
-        testing::internal::CaptureStderr();
-        EXPECT_NO_THROW(fin.begin());
-        EXPECT_EQ(testing::internal::GetCapturedStdout(), "");
-        EXPECT_EQ(testing::internal::GetCapturedStderr(), "");
-    }
+    EXPECT_EQ(fin.header().user_tags, "pb:5.0.0\totter");                        // HD
+    EXPECT_EQ(std::get<1>(fin.header().ref_id_info.front()), "pb:5.0.0\totter"); // SQ
+    EXPECT_EQ(std::get<1>(fin.header().read_groups.front()), "pb:5.0.0\totter"); // RG
+    EXPECT_EQ(fin.header().program_infos.front().user_tags, "pb:5.0.0\totter");  // PG
 }
 
 // ----------------------------------------------------------------------------
@@ -573,11 +519,12 @@ TYPED_TEST_P(sam_file_write, with_header)
     seqan3::sam_file_header header{std::vector<std::string>{this->ref_id}};
     header.sorting = "unknown";
     header.grouping = "none";
-    header.ref_id_info.push_back({this->ref_seq.size(), "AN:other_name"});
+    header.ref_id_info.push_back({this->ref_seq.size(), "AN:other_name\tpb:5.0.0\totter"});
     header.ref_dict[this->ref_id] = 0;
-    header.program_infos.push_back({"prog1", "cool_program", "./prog1", "a", "b", "c"});
-    header.read_groups.emplace_back("group1", "DS:more info");
+    header.program_infos.push_back({"prog1", "cool_program", "./prog1", "a", "b", "c", "pb:5.0.0\totter"});
+    header.read_groups.emplace_back("group1", "DS:more info\tpb:5.0.0\totter");
     header.comments.push_back("This is a comment.");
+    header.user_tags = "pb:5.0.0\totter";
 
     {
         seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
