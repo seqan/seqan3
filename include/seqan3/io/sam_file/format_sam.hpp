@@ -165,7 +165,7 @@ protected:
               typename e_value_type,
               typename bit_score_type>
     void read_alignment_record(stream_type & stream,
-                               sam_file_input_options<seq_legal_alph_type> const & options,
+                               sam_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
                                ref_seqs_type & ref_seqs,
                                sam_file_header<ref_ids_type> & header,
                                stream_pos_type & position_buffer,
@@ -355,24 +355,25 @@ template <typename stream_type, // constraints checked by file
           typename tag_dict_type,
           typename e_value_type,
           typename bit_score_type>
-inline void format_sam::read_alignment_record(stream_type & stream,
-                                              sam_file_input_options<seq_legal_alph_type> const & options,
-                                              ref_seqs_type & ref_seqs,
-                                              sam_file_header<ref_ids_type> & header,
-                                              stream_pos_type & position_buffer,
-                                              seq_type & seq,
-                                              qual_type & qual,
-                                              id_type & id,
-                                              ref_seq_type & SEQAN3_DOXYGEN_ONLY(ref_seq),
-                                              ref_id_type & ref_id,
-                                              ref_offset_type & ref_offset,
-                                              cigar_type & cigar_vector,
-                                              flag_type & flag,
-                                              mapq_type & mapq,
-                                              mate_type & mate,
-                                              tag_dict_type & tag_dict,
-                                              e_value_type & SEQAN3_DOXYGEN_ONLY(e_value),
-                                              bit_score_type & SEQAN3_DOXYGEN_ONLY(bit_score))
+inline void
+format_sam::read_alignment_record(stream_type & stream,
+                                  sam_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
+                                  ref_seqs_type & ref_seqs,
+                                  sam_file_header<ref_ids_type> & header,
+                                  stream_pos_type & position_buffer,
+                                  seq_type & seq,
+                                  qual_type & qual,
+                                  id_type & id,
+                                  ref_seq_type & SEQAN3_DOXYGEN_ONLY(ref_seq),
+                                  ref_id_type & ref_id,
+                                  ref_offset_type & ref_offset,
+                                  cigar_type & cigar_vector,
+                                  flag_type & flag,
+                                  mapq_type & mapq,
+                                  mate_type & mate,
+                                  tag_dict_type & tag_dict,
+                                  e_value_type & SEQAN3_DOXYGEN_ONLY(e_value),
+                                  bit_score_type & SEQAN3_DOXYGEN_ONLY(bit_score))
 {
     static_assert(detail::decays_to_ignore_v<ref_offset_type>
                       || detail::is_type_specialisation_of_v<ref_offset_type, std::optional>,
@@ -389,7 +390,7 @@ inline void format_sam::read_alignment_record(stream_type & stream,
     // -------------------------------------------------------------------------------------------------------------
     if (is_char<'@'>(*stream_it)) // we always read the header if present
     {
-        read_header(stream_view, header, ref_seqs, options);
+        read_header(stream_view, header, ref_seqs);
 
         if (std::ranges::begin(stream_view) == std::ranges::end(stream_view)) // file has no records
             return;

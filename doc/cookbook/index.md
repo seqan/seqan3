@@ -439,7 +439,6 @@ Search for keywords with `Strg + F`.
 \include test/snippet/io/sam_file/sam_file_input_front.cpp
 \include test/snippet/io/sam_file/sam_file_input_get_header.cpp
 \include test/snippet/io/sam_file/sam_file_input_my_traits.cpp
-\include test/snippet/io/sam_file/sam_file_input_options.cpp
 \include test/snippet/io/sam_file/sam_file_input_reading_custom_fields.cpp
 \include test/snippet/io/sam_file/sam_file_input_reading_filter.cpp
 \include test/snippet/io/sam_file/sam_file_input_reading_move_record.cpp
