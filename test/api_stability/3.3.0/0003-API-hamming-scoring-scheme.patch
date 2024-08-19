@@ -1,4 +1,4 @@
-From 9f061adb903403ee7e039f6480c87d7d1c577c14 Mon Sep 17 00:00:00 2001
+From 95d6bf488f14178e26cf6be88ddeaf14c9332eaf Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Sun, 28 Jul 2024 15:17:28 +0200
 Subject: [PATCH 3/4] [API] hamming scoring scheme

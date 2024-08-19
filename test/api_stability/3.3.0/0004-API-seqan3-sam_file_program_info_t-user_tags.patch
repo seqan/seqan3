@@ -1,0 +1,55 @@
+From 1570f0829cda28be380ba315d8e9c003b21bf1cc Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Mon, 19 Aug 2024 14:13:08 +0200
+Subject: [PATCH 4/4] [API] seqan3::sam_file_program_info_t::user_tags
+
+---
+ test/unit/io/sam_file/format_sam_test.cpp           | 13 ++-----------
+ .../io/sam_file/sam_file_format_test_template.hpp   |  2 +-
+ 2 files changed, 3 insertions(+), 12 deletions(-)
+
+diff --git a/test/unit/io/sam_file/format_sam_test.cpp b/test/unit/io/sam_file/format_sam_test.cpp
+index 66683ce3b..81f6d075e 100644
+--- a/test/unit/io/sam_file/format_sam_test.cpp
++++ b/test/unit/io/sam_file/format_sam_test.cpp
+@@ -174,22 +174,13 @@ TEST_F(sam_format, header_errors)
+             "@SQ\tSN:ref2\tLN:243199373\tSB:user_tag\tLB:user_tag\tpb:user_tag\n"
+             "@RG\tID:U0a_A2_L1\tIB:user_tag\tpb:user_tag\n"
+             "@PG\tID:qc\tIB:user_tag\tPB:user_tag\tCB:user_tag\tDB:user_tag\tVB:user_tag\tpb:user_tag\n"};
+-        std::string expected_cerr{"Unsupported SAM header tag in @HD: VB\n"
+-                                  "Unsupported SAM header tag in @HD: SB\n"
+-                                  "Unsupported SAM header tag in @HD: GB\n"
+-                                  "Unsupported SAM header tag in @HD: pb\n"
+-                                  "Unsupported SAM header tag in @PG: IB\n"
+-                                  "Unsupported SAM header tag in @PG: PB\n"
+-                                  "Unsupported SAM header tag in @PG: CB\n"
+-                                  "Unsupported SAM header tag in @PG: DB\n"
+-                                  "Unsupported SAM header tag in @PG: VB\n"
+-                                  "Unsupported SAM header tag in @PG: pb\n"};
++
+         std::istringstream istream(header_str);
+         seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
+ 
+         testing::internal::CaptureStderr();
+         EXPECT_NO_THROW(fin.begin());
+-        EXPECT_EQ(testing::internal::GetCapturedStderr(), expected_cerr);
++        EXPECT_EQ(testing::internal::GetCapturedStderr(), "");
+     }
+     { // missing VN tag in @HD
+         std::string header_str{"@HD\n"};
+diff --git a/test/unit/io/sam_file/sam_file_format_test_template.hpp b/test/unit/io/sam_file/sam_file_format_test_template.hpp
+index 8cd712ddb..599a04bbc 100644
+--- a/test/unit/io/sam_file/sam_file_format_test_template.hpp
++++ b/test/unit/io/sam_file/sam_file_format_test_template.hpp
+@@ -503,7 +503,7 @@ TYPED_TEST_P(sam_file_write, with_header)
+     header.grouping = "none";
+     header.ref_id_info.push_back({this->ref_seq.size(), "AN:other_name"});
+     header.ref_dict[this->ref_id] = 0;
+-    header.program_infos.push_back({"prog1", "cool_program", "./prog1", "a", "b", "c"});
++    header.program_infos.push_back({"prog1", "cool_program", "./prog1", "a", "b", "c", ""});
+     header.read_groups.emplace_back("group1", "DS:more info");
+     header.comments.push_back("This is a comment.");
+ 
+-- 
+2.43.0
+
