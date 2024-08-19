@@ -60,6 +60,7 @@ jobs:
         run: make -k 2>&1 | tee build.log
 
       - name: Create comment body
+        if: always()
         id: comment-body
         run: |
           if [[ "${{ job.status }}" == "success" ]]; then
@@ -84,6 +85,7 @@ jobs:
           GH_REPO: ${{ github.repository }}
 
       - name: Find Comment
+        if: always()
         uses: peter-evans/find-comment@v3
         id: find_comment
         with:
@@ -91,6 +93,7 @@ jobs:
           body-includes: ${{ matrix.build }} on ${{ matrix.compiler }}
 
       - name: Update comment
+        if: always()
         uses: peter-evans/create-or-update-comment@v4
         with:
           comment-id: ${{ steps.find_comment.outputs.comment-id }}
