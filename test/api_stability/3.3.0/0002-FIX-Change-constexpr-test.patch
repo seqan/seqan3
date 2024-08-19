@@ -1,4 +1,4 @@
-From cb9c300606e3a4c1860f3195b98f5245f09474e5 Mon Sep 17 00:00:00 2001
+From 21ad129184c9a5833770b1bbfe51b344a0a8f5be Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Thu, 28 Sep 2023 19:35:57 +0200
 Subject: [PATCH 2/4] [FIX] Change constexpr test
