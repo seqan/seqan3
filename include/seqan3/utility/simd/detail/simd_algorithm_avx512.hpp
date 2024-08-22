@@ -270,7 +270,7 @@ constexpr simd_t extract_eighth_avx512(simd_t const & src)
 
     // for uneven index exchange higher 64 bits with lower 64 bits for each 128 bit lane.
     if constexpr (index % 2 == 1)
-        tmp = _mm512_shuffle_epi32(tmp, 0b0100'1110); // := [1, 0, 3, 2].
+        tmp = _mm512_shuffle_epi32(tmp, static_cast<_MM_PERM_ENUM>(0b0100'1110)); // := [1, 0, 3, 2].
 
     return reinterpret_cast<simd_t>(_mm512_castsi128_si512(_mm512_extracti64x2_epi64(tmp, index / 2)));
 }
