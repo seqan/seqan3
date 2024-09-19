@@ -68,6 +68,13 @@ if (NOT TARGET seqan3::test)
         endif ()
     endif ()
 
+    # GCC on arm64 (M1): Disable notes about ABI changes. Example:
+    # `parameter passing for argument of type 'std::ranges::single_view<double>' when C++17 is enabled changed to match C++14 in GCC 10.1`
+    # https://github.com/gcc-mirror/gcc/commit/56fe3ca30e1343e4f232ca539726506440e23dd3
+    if ("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "arm64" AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        target_compile_options (seqan3_test INTERFACE "-Wno-psabi")
+    endif ()
+
     target_link_libraries (seqan3_test INTERFACE "seqan3::seqan3" "pthread")
     target_include_directories (seqan3_test INTERFACE "${SEQAN3_TEST_INCLUDE_DIR}")
     add_library (seqan3::test ALIAS seqan3_test)

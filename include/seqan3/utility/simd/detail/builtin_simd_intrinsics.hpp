@@ -17,7 +17,13 @@
 //
 // See the following link for a full description of the x86intrin.h header on powerpc
 // https://github.com/gcc-mirror/gcc/blob/41d6b10e96a1de98e90a7c0378437c3255814b16/gcc/config/rs6000/xmmintrin.h#L27-L55
-#if __has_include(<x86intrin.h>) && !(defined(__powerpc__) || defined(__ppc__) || defined(__PPC__))
+//
+// We also exclude clang with libc++ on any non-x86 platform.
+// `x86intrin.h` includes `immintrin.h`, which will error:
+// https://github.com/llvm/llvm-project/blob/9886788a8a500a1b429a6db64397c849b112251c/clang/lib/Headers/immintrin.h#L14
+#if __has_include(<x86intrin.h>) && \
+    !(defined(__powerpc__) || defined(__ppc__) || defined(__PPC__)) && \
+    !(defined(__clang__) && defined(_LIBCPP_VERSION) && !defined(__i386__) && !defined(__x86_64__))
 #    include <x86intrin.h> // x86 intrinsics (linux)
 #endif
 
