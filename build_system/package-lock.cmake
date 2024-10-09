@@ -12,7 +12,8 @@ CPMDeclarePackage (cereal
                    VERSION ${SEQAN3_CEREAL_VERSION}
                    GITHUB_REPOSITORY USCiLab/cereal
                    DOWNLOAD_ONLY TRUE
-                   QUIET YES)
+                   QUIET YES
+                   GIT_SUBMODULES_RECURSE FALSE)
 # sdsl-lite
 set (SEQAN3_SDSL_VERSION 14cd017027ea742353fc5b500d1cb1d95896b77e)
 CPMDeclarePackage (sdsl-lite
@@ -20,7 +21,8 @@ CPMDeclarePackage (sdsl-lite
                    GIT_TAG ${SEQAN3_SDSL_VERSION}
                    GITHUB_REPOSITORY xxsds/sdsl-lite
                    DOWNLOAD_ONLY YES
-                   QUIET YES)
+                   QUIET YES
+                   GIT_SUBMODULES_RECURSE FALSE)
 # benchmark
 set (SEQAN3_BENCHMARK_VERSION 1.9.0)
 CPMDeclarePackage (benchmark
