@@ -59,5 +59,4 @@ CPMDeclarePackage (use_ccache
                    GITHUB_REPOSITORY seqan/cmake-scripts
                    SOURCE_SUBDIR ccache
                    SYSTEM TRUE
-                   EXCLUDE_FROM_ALL TRUE
-)
+                   EXCLUDE_FROM_ALL TRUE)
