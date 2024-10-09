@@ -115,9 +115,17 @@ endmacro ()
 # ----------------------------------------------------------------------------
 # CPM
 # ----------------------------------------------------------------------------
-set (CPM_INDENT "  CMake Package Manager CPM: ")
-include ("${CMAKE_CURRENT_LIST_DIR}/CPM.cmake")
-CPMUsePackageLock ("${CMAKE_CURRENT_LIST_DIR}/package-lock.cmake")
+if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/CPM.cmake")
+    set (SEQAN3_HAS_CPM TRUE)
+else ()
+    set (SEQAN3_HAS_CPM FALSE)
+endif ()
+
+if (SEQAN3_HAS_CPM)
+    set (CPM_INDENT "  CMake Package Manager CPM: ")
+    include ("${CMAKE_CURRENT_LIST_DIR}/CPM.cmake")
+    CPMUsePackageLock ("${CMAKE_CURRENT_LIST_DIR}/package-lock.cmake")
+endif ()
 
 # ----------------------------------------------------------------------------
 # Options for CheckCXXSourceCompiles
@@ -149,7 +157,7 @@ find_path (SEQAN3_SDSL_INCLUDE_DIR
 if (SEQAN3_SDSL_INCLUDE_DIR)
     seqan3_config_print ("Required dependency:        SDSL found.")
     set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_SDSL_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
-else ()
+elseif (SEQAN3_HAS_CPM)
     CPMGetPackage (sdsl-lite)
 
     find_path (SEQAN3_SDSL_INCLUDE_DIR
@@ -162,6 +170,8 @@ else ()
     else ()
         seqan3_config_error ("The SDSL library is required, but wasn't found.")
     endif ()
+else ()
+    seqan3_config_error ("The SDSL library is required, but wasn't found.")
 endif ()
 
 # ----------------------------------------------------------------------------
@@ -277,7 +287,7 @@ if (NOT SEQAN3_NO_CEREAL)
             seqan3_config_print ("Optional dependency:        Cereal found.")
         endif ()
         set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_CEREAL_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
-    else ()
+    elseif (SEQAN3_HAS_CPM)
         CPMGetPackage (cereal)
 
         find_path (SEQAN3_CEREAL_INCLUDE_DIR
@@ -297,6 +307,12 @@ if (NOT SEQAN3_NO_CEREAL)
             else ()
                 seqan3_config_print ("Optional dependency:        Cereal not found.")
             endif ()
+        endif ()
+    else ()
+        if (SEQAN3_CEREAL)
+            seqan3_config_error ("The (optional) cereal library was marked as required, but wasn't found.")
+        else ()
+            seqan3_config_print ("Optional dependency:        Cereal not found.")
         endif ()
     endif ()
 endif ()

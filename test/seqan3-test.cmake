@@ -11,6 +11,8 @@ cmake_minimum_required (VERSION 3.10...3.30)
 # require SeqAn3 package
 find_package (SeqAn3 REQUIRED HINTS ${CMAKE_CURRENT_LIST_DIR}/../build_system)
 
+enable_testing ()
+
 set (CPM_INDENT "CMake Package Manager CPM: ")
 CPMUsePackageLock ("${CMAKE_CURRENT_LIST_DIR}/../build_system/package-lock.cmake")
 

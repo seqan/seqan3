@@ -55,7 +55,7 @@ jobs:
 
       - name: Run tests
         working-directory: build
-        run: ctest . -j --output-on-failure
+        run: ctest . -j --output-on-failure --no-tests=error
 
       - name: Deploy Preview
         if: github.event_name == 'pull_request_target'

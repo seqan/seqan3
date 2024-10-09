@@ -58,6 +58,7 @@ jobs:
       - name: Configure tests
         run: |
           $CXX --version || true
+          cmake --version || true
           mkdir build && cd build
           cmake ../test/unit -DCMAKE_BUILD_TYPE=Release \
                              -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}"
@@ -72,5 +73,5 @@ jobs:
 
       - name: Run tests
         working-directory: build
-        run: ctest . -j --output-on-failure
+        run: ctest . -j --output-on-failure --no-tests=error
 
