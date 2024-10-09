@@ -26,7 +26,8 @@ CPMDeclarePackage (benchmark
                    VERSION ${SEQAN3_BENCHMARK_VERSION}
                    GITHUB_REPOSITORY google/benchmark
                    SYSTEM TRUE
-                   OPTIONS "BENCHMARK_ENABLE_TESTING OFF" "BENCHMARK_ENABLE_WERROR OFF" "CMAKE_MESSAGE_LOG_LEVEL WARNING")
+                   OPTIONS "BENCHMARK_ENABLE_TESTING OFF" "BENCHMARK_ENABLE_WERROR OFF"
+                           "CMAKE_MESSAGE_LOG_LEVEL WARNING")
 # googletest
 set (SEQAN3_GOOGLETEST_VERSION 1.15.2)
 CPMDeclarePackage (googletest
@@ -34,7 +35,8 @@ CPMDeclarePackage (googletest
                    VERSION ${SEQAN3_GOOGLETEST_VERSION}
                    GITHUB_REPOSITORY google/googletest
                    SYSTEM TRUE
-                   OPTIONS "BUILD_GMOCK OFF" "INSTALL_GTEST OFF" "CMAKE_CXX_STANDARD 20" "CMAKE_MESSAGE_LOG_LEVEL WARNING")
+                   OPTIONS "BUILD_GMOCK OFF" "INSTALL_GTEST OFF" "CMAKE_CXX_STANDARD 20"
+                           "CMAKE_MESSAGE_LOG_LEVEL WARNING")
 # doxygen-awesome
 set (SEQAN3_DOXYGEN_AWESOME_VERSION 2.3.4)
 CPMDeclarePackage (doxygen_awesome
