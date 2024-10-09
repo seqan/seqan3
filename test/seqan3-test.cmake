@@ -95,11 +95,11 @@ if (NOT TARGET seqan3::test)
         if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 12)
             target_compile_options (seqan3_test INTERFACE "-Wno-interference-size")
         endif ()
-    endif ()
 
-    # Warn about failed return value optimization.
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 14)
-        target_compile_options (seqan3_test INTERFACE "-Wnrvo")
+        # Warn about failed return value optimization.
+        if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 14)
+            target_compile_options (seqan3_test INTERFACE "-Wnrvo")
+        endif ()
     endif ()
 
     # GCC on arm64 (M1): Disable notes about ABI changes. Example:

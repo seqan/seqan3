@@ -24,5 +24,7 @@ install (FILES "${SEQAN3_CLONE_DIR}/build_system/seqan3-config.cmake"
 # install seqan3 header files in /include/seqan3
 install (DIRECTORY "${SEQAN3_INCLUDE_DIR}/seqan3" TYPE INCLUDE)
 
-install (DIRECTORY "${sdsl-lite_SOURCE_DIR}/include/sdsl" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/seqan3/vendor/sdsl")
-install (DIRECTORY "${cereal_SOURCE_DIR}/include/cereal" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/seqan3/vendor/cereal")
+install (DIRECTORY "${SEQAN3_SDSL_INCLUDE_DIR}/include/sdsl"
+         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/seqan3/vendor/sdsl")
+install (DIRECTORY "${SEQAN3_CEREAL_INCLUDE_DIR}/include/cereal"
+         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/seqan3/vendor/cereal")
