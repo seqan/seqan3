@@ -100,7 +100,7 @@ if (NOT TARGET seqan3::test)
 
         # Warn about failed return value optimization.
         if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 14)
-            target_compile_options (seqan3_test INTERFACE "-Wnrvo" "-Wno-error=nrvo")
+            target_compile_options (seqan3_test INTERFACE "-Wnrvo")
         endif ()
 
         # GCC on arm64 (M1): Disable notes about ABI changes. Example:

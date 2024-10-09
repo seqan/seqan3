@@ -197,13 +197,14 @@ public:
         }
         while (status == fill_status::empty_buffer);
 
+        std::optional<algorithm_result_t> result{std::nullopt};
         if (status == fill_status::end_of_resource)
-            return {std::nullopt};
+            return result;
 
         assert(status == fill_status::non_empty_buffer);
         assert(bucket_it != buffer_it->end());
 
-        std::optional<algorithm_result_t> result = std::ranges::iter_move(bucket_it);
+        result = std::ranges::iter_move(bucket_it);
         go_to_next_result(); // Go to next buffered result.
         return result;
     }
