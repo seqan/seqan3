@@ -142,17 +142,26 @@ endif ()
 # Require SDSL
 # ----------------------------------------------------------------------------
 
-CPMGetPackage (sdsl-lite)
-
 find_path (SEQAN3_SDSL_INCLUDE_DIR
            NAMES sdsl/version.hpp
-           HINTS "${sdsl-lite_SOURCE_DIR}/include" "${SEQAN3_INCLUDE_DIR}/seqan3")
+           HINTS "${SEQAN3_INCLUDE_DIR}/seqan3/vendor")
 
 if (SEQAN3_SDSL_INCLUDE_DIR)
     seqan3_config_print ("Required dependency:        SDSL found.")
     set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_SDSL_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
 else ()
-    seqan3_config_error ("The SDSL library is required, but wasn't found.")
+    CPMGetPackage (sdsl-lite)
+
+    find_path (SEQAN3_SDSL_INCLUDE_DIR
+               NAMES sdsl/version.hpp
+               HINTS "${sdsl-lite_SOURCE_DIR}/include")
+
+    if (SEQAN3_SDSL_INCLUDE_DIR)
+        seqan3_config_print ("Required dependency:        SDSL found.")
+        set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_SDSL_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
+    else ()
+        seqan3_config_error ("The SDSL library is required, but wasn't found.")
+    endif ()
 endif ()
 
 # ----------------------------------------------------------------------------
@@ -257,10 +266,9 @@ endif ()
 # ----------------------------------------------------------------------------
 
 if (NOT SEQAN3_NO_CEREAL)
-    CPMGetPackage (cereal)
     find_path (SEQAN3_CEREAL_INCLUDE_DIR
                NAMES cereal/version.hpp
-               HINTS "${cereal_SOURCE_DIR}/include" "${SEQAN3_INCLUDE_DIR}/seqan3")
+               HINTS "${SEQAN3_INCLUDE_DIR}/seqan3/vendor")
 
     if (SEQAN3_CEREAL_INCLUDE_DIR)
         if (SEQAN3_CEREAL)
@@ -270,10 +278,25 @@ if (NOT SEQAN3_NO_CEREAL)
         endif ()
         set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_CEREAL_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
     else ()
-        if (SEQAN3_CEREAL)
-            seqan3_config_error ("The (optional) cereal library was marked as required, but wasn't found.")
+        CPMGetPackage (cereal)
+
+        find_path (SEQAN3_CEREAL_INCLUDE_DIR
+                   NAMES cereal/version.hpp
+                   HINTS "${cereal_SOURCE_DIR}/include")
+
+        if (SEQAN3_CEREAL_INCLUDE_DIR)
+            if (SEQAN3_CEREAL)
+                seqan3_config_print ("Required dependency:        Cereal found.")
+            else ()
+                seqan3_config_print ("Optional dependency:        Cereal found.")
+            endif ()
+            set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_CEREAL_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
         else ()
-            seqan3_config_print ("Optional dependency:        Cereal not found.")
+            if (SEQAN3_CEREAL)
+                seqan3_config_error ("The (optional) cereal library was marked as required, but wasn't found.")
+            else ()
+                seqan3_config_print ("Optional dependency:        Cereal not found.")
+            endif ()
         endif ()
     endif ()
 endif ()

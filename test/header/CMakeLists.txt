@@ -129,8 +129,6 @@ macro (seqan3_header_test component header_base_path exclude_regex)
     unset (header_target)
 endmacro ()
 
-seqan3_require_ccache ()
-
 # note: seqan3/contrib/std/* will not be tested, because they use local (#include "file") includes
 # note: seqan3/version.hpp is one of the only header that is not required to have a seqan3/core/platform.hpp include
 seqan3_header_test (seqan3 "${SEQAN3_CLONE_DIR}/include" "seqan3/version.hpp|seqan3/contrib/std")
