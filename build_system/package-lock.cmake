@@ -11,18 +11,14 @@ CPMDeclarePackage (cereal
                    NAME cereal
                    VERSION ${SEQAN3_CEREAL_VERSION}
                    GITHUB_REPOSITORY USCiLab/cereal
-                   DOWNLOAD_ONLY TRUE
-                   QUIET YES
-                   GIT_SUBMODULES_RECURSE FALSE)
+                   DOWNLOAD_ONLY TRUE QUIET YES GIT_SUBMODULES_RECURSE FALSE)
 # sdsl-lite
 set (SEQAN3_SDSL_VERSION 14cd017027ea742353fc5b500d1cb1d95896b77e)
 CPMDeclarePackage (sdsl-lite
                    NAME sdsl-lite
                    GIT_TAG ${SEQAN3_SDSL_VERSION}
                    GITHUB_REPOSITORY xxsds/sdsl-lite
-                   DOWNLOAD_ONLY YES
-                   QUIET YES
-                   GIT_SUBMODULES_RECURSE FALSE)
+                   DOWNLOAD_ONLY YES QUIET YES GIT_SUBMODULES_RECURSE FALSE)
 # benchmark
 set (SEQAN3_BENCHMARK_VERSION 1.9.0)
 CPMDeclarePackage (benchmark
@@ -47,16 +43,14 @@ CPMDeclarePackage (doxygen_awesome
                    NAME doxygen_awesome
                    VERSION ${SEQAN3_DOXYGEN_AWESOME_VERSION}
                    GITHUB_REPOSITORY jothepro/doxygen-awesome-css
-                   DOWNLOAD_ONLY TRUE
-                   QUIET YES)
+                   DOWNLOAD_ONLY TRUE QUIET YES)
 # seqan2
 set (SEQAN3_SEQAN2_VERSION 5f8d538bc6fa5eaaa0b56067abf355ef6f3855dc)
 CPMDeclarePackage (seqan2
                    NAME seqan2
                    GIT_TAG ${SEQAN3_SEQAN2_VERSION}
                    GITHUB_REPOSITORY seqan/seqan
-                   DOWNLOAD_ONLY YES
-                   QUIET YES)
+                   DOWNLOAD_ONLY YES QUIET YES)
 # use_ccache
 set (SEQAN3_USE_CCACHE_VERSION d2a54ef555b6fc2d496a4c9506dbeb7cf899ce37)
 CPMDeclarePackage (use_ccache
