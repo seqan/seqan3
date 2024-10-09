@@ -7,9 +7,10 @@ project (seqan3_test_unit CXX)
 
 include (../seqan3-test.cmake)
 
+CPMGetPackage (benchmark)
+
 include (seqan3_macro_benchmark)
 
 seqan3_require_ccache ()
-seqan3_require_benchmark ()
 
 add_subdirectories ()

@@ -45,14 +45,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Checkout SeqAn2
-        uses: actions/checkout@v4
-        with:
-          repository: seqan/seqan
-          path: submodules/seqan
 
       - name: Load ccache
         uses: actions/cache@v4
@@ -71,9 +63,9 @@ jobs:
                                             -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
                                             -DSEQAN3_BENCHMARK_MIN_TIME=0.01
           case "${{ matrix.build }}" in
-            snippet) make gtest_build;;
-            performance) make gbenchmark_build;;
-            header) make gtest_build gbenchmark_build;;
+            snippet) make gtest_main;;
+            performance) make benchmark_main;;
+            header) make gtest_main benchmark_main;;
           esac
 
       - name: Build tests

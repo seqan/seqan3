@@ -37,14 +37,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Checkout SeqAn2
-        uses: actions/checkout@v4
-        with:
-          repository: seqan/seqan
-          path: submodules/seqan
 
       - name: Setup toolchain
         uses: seqan/actions/setup-toolchain@main
@@ -56,7 +48,7 @@ jobs:
         run: |
           mkdir build && cd build
           cmake ../test/unit -DCMAKE_BUILD_TYPE=Release
-          make gtest_build
+          make gtest_main
 
       - name: Build tests
         working-directory: build

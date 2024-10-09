@@ -5,9 +5,6 @@
 name: Latest Libraries
 
 on:
-  # Will always run on the default branch
-  schedule:
-    - cron: "0 4 * * SUN"
   # Enables a manual trigger, may run on any branch
   workflow_dispatch:
 
@@ -90,16 +87,16 @@ jobs:
                                                    -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
                                                    -DSEQAN3_BENCHMARK_MIN_TIME=0.01
           case "${{ matrix.build }}" in
-            unit) make -j2 gtest_build;;
-            snippet) make -j2 gtest_build;;
-            performance) make -j2 gbenchmark_build;;
-            header) make -j2 gtest_build gbenchmark_build;;
+            unit) make gtest_main;;
+            snippet) make gtest_main;;
+            performance) make benchmark_main;;
+            header) make gtest_main benchmark_main;;
           esac
 
       - name: Build tests
         run: |
           cd seqan3-build
-          make -k -j2 2>&1 | tee build.log
+          make -k 2>&1 | tee build.log
 
       - name: Setup Python
         if: ${{ failure() }}
