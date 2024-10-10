@@ -9,6 +9,11 @@ cmake_minimum_required (VERSION 3.7)
 include (../../build_system/seqan3-config-version.cmake)
 set (SEQAN3_VERSION "${PACKAGE_VERSION}")
 
+set (CPM_INDENT "CMake Package Manager CPM: ")
+include (../../build_system/CPM.cmake)
+CPMUsePackageLock (../../build_system/package-lock.cmake)
+CPMGetPackage (doxygen_awesome)
+
 project (seqan3
          LANGUAGES NONE
          VERSION "${SEQAN3_PROJECT_VERSION}")

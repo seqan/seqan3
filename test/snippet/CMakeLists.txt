@@ -2,11 +2,13 @@
 # SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
 # SPDX-License-Identifier: BSD-3-Clause
 
-cmake_minimum_required (VERSION 3.10...3.22)
+cmake_minimum_required (VERSION 3.10...3.30)
 project (seqan3_test_snippet CXX)
 
 include (../seqan3-test.cmake)
 include (../cmake/diagnostics/list_unused_snippets.cmake)
+
+CPMGetPackage (googletest)
 
 option (SEQAN3_GENERATE_SNIPPETS "Whether seqan3 snippets should be generated and overwritten within the source tree."
         ON)
@@ -55,9 +57,6 @@ macro (seqan3_snippets test_name_prefix snippet_base_path)
         seqan3_snippet ("${test_name_prefix}" "${snippet}" "${snippet_base_path}")
     endforeach ()
 endmacro ()
-
-seqan3_require_ccache ()
-seqan3_require_test ()
 
 seqan3_snippets ("snippet" "${CMAKE_CURRENT_SOURCE_DIR}")
 seqan3_snippets ("doc/snippet" "${CMAKE_CURRENT_SOURCE_DIR}/../../doc")

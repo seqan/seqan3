@@ -52,14 +52,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Checkout SeqAn2
-        uses: actions/checkout@v4
-        with:
-          repository: seqan/seqan
-          path: submodules/seqan
 
       - name: Configure tests
         run: |
@@ -68,7 +60,7 @@ jobs:
                                             -DCMAKE_DEPENDS_USE_COMPILER="${{ matrix.cmake_depends_use_compiler }}" \
                                             -DSEQAN3_USE_INCLUDE_DEPENDENCIES="${{ matrix.use_include_dependencies }}"
           case "${{ matrix.build }}" in
-            unit) make gtest_build;;
+            unit) make gtest_main;;
             external_project) make seqan3_test_prerequisite sharg_test_prerequisite;;
           esac
 

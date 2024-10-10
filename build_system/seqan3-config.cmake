@@ -61,7 +61,7 @@
 #
 # ============================================================================
 
-cmake_minimum_required (VERSION 3.5...3.12)
+cmake_minimum_required (VERSION 3.5...3.30)
 
 # ----------------------------------------------------------------------------
 # Set initial variables
@@ -113,38 +113,18 @@ macro (seqan3_config_error text)
 endmacro ()
 
 # ----------------------------------------------------------------------------
-# Find SeqAn3 include path
+# CPM
 # ----------------------------------------------------------------------------
-
-# Note that seqan3-config.cmake can be standalone and thus SEQAN3_CLONE_DIR might be empty.
-# * `SEQAN3_CLONE_DIR` was already found in seqan3-config-version.cmake
-# * `SEQAN3_INCLUDE_DIR` was already found in seqan3-config-version.cmake
-find_path (SEQAN3_SUBMODULES_DIR
-           NAMES submodules/sdsl-lite
-           HINTS "${SEQAN3_CLONE_DIR}" "${SEQAN3_INCLUDE_DIR}/seqan3")
-
-if (SEQAN3_INCLUDE_DIR)
-    seqan3_config_print ("SeqAn3 include dir found:   ${SEQAN3_INCLUDE_DIR}")
+if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/CPM.cmake")
+    set (SEQAN3_HAS_CPM TRUE)
 else ()
-    seqan3_config_error ("SeqAn3 include directory could not be found (SEQAN3_INCLUDE_DIR: '${SEQAN3_INCLUDE_DIR}')")
+    set (SEQAN3_HAS_CPM FALSE)
 endif ()
 
-# ----------------------------------------------------------------------------
-# Detect if we are a clone of repository and if yes auto-add submodules
-# ----------------------------------------------------------------------------
-
-if (SEQAN3_CLONE_DIR)
-    seqan3_config_print ("Detected as running from a repository checkout…")
-endif ()
-
-if (SEQAN3_SUBMODULES_DIR)
-    file (GLOB submodules ${SEQAN3_SUBMODULES_DIR}/submodules/*/include)
-    foreach (submodule ${submodules})
-        if (IS_DIRECTORY ${submodule})
-            seqan3_config_print ("  …adding submodule include:  ${submodule}")
-            set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${submodule} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
-        endif ()
-    endforeach ()
+if (SEQAN3_HAS_CPM)
+    set (CPM_INDENT "  CMake Package Manager CPM: ")
+    include ("${CMAKE_CURRENT_LIST_DIR}/CPM.cmake")
+    CPMUsePackageLock ("${CMAKE_CURRENT_LIST_DIR}/package-lock.cmake")
 endif ()
 
 # ----------------------------------------------------------------------------
@@ -153,9 +133,46 @@ endif ()
 
 # deactivate messages in check_*
 set (CMAKE_REQUIRED_QUIET 1)
-# use global variables in Check* calls
-set (CMAKE_REQUIRED_INCLUDES ${CMAKE_INCLUDE_PATH} ${SEQAN3_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
-set (CMAKE_REQUIRED_FLAGS ${CMAKE_CXX_FLAGS})
+
+# ----------------------------------------------------------------------------
+# Find SeqAn3 include path
+# ----------------------------------------------------------------------------
+
+# Note that seqan3-config.cmake can be standalone and thus SEQAN3_CLONE_DIR might be empty.
+# * `SEQAN3_INCLUDE_DIR` was already found in seqan3-config-version.cmake
+if (SEQAN3_INCLUDE_DIR)
+    seqan3_config_print ("SeqAn3 include dir found:   ${SEQAN3_INCLUDE_DIR}")
+else ()
+    seqan3_config_error ("SeqAn3 include directory could not be found (SEQAN3_INCLUDE_DIR: '${SEQAN3_INCLUDE_DIR}')")
+endif ()
+
+# ----------------------------------------------------------------------------
+# Require SDSL
+# ----------------------------------------------------------------------------
+
+find_path (SEQAN3_SDSL_INCLUDE_DIR
+           NAMES sdsl/version.hpp
+           HINTS "${SEQAN3_INCLUDE_DIR}/seqan3/vendor")
+
+if (SEQAN3_SDSL_INCLUDE_DIR)
+    seqan3_config_print ("Required dependency:        SDSL found.")
+    set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_SDSL_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
+elseif (SEQAN3_HAS_CPM)
+    CPMGetPackage (sdsl-lite)
+
+    find_path (SEQAN3_SDSL_INCLUDE_DIR
+               NAMES sdsl/version.hpp
+               HINTS "${sdsl-lite_SOURCE_DIR}/include")
+
+    if (SEQAN3_SDSL_INCLUDE_DIR)
+        seqan3_config_print ("Required dependency:        SDSL found.")
+        set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_SDSL_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
+    else ()
+        seqan3_config_error ("The SDSL library is required, but wasn't found.")
+    endif ()
+else ()
+    seqan3_config_error ("The SDSL library is required, but wasn't found.")
+endif ()
 
 # ----------------------------------------------------------------------------
 # Force-deactivate optional dependencies
@@ -255,30 +272,41 @@ else ()
 endif ()
 
 # ----------------------------------------------------------------------------
-# Require SDSL
-# ----------------------------------------------------------------------------
-
-check_include_file_cxx (sdsl/version.hpp _SEQAN3_HAVE_SDSL)
-
-if (_SEQAN3_HAVE_SDSL)
-    seqan3_config_print ("Required dependency:        SDSL found.")
-else ()
-    seqan3_config_error (
-        "The SDSL library is required, but wasn't found. Get it from https://github.com/xxsds/sdsl-lite")
-endif ()
-
-# ----------------------------------------------------------------------------
 # Cereal dependency is optional, but may set as required
 # ----------------------------------------------------------------------------
 
 if (NOT SEQAN3_NO_CEREAL)
-    check_include_file_cxx (cereal/cereal.hpp _SEQAN3_HAVE_CEREAL)
+    find_path (SEQAN3_CEREAL_INCLUDE_DIR
+               NAMES cereal/version.hpp
+               HINTS "${SEQAN3_INCLUDE_DIR}/seqan3/vendor")
 
-    if (_SEQAN3_HAVE_CEREAL)
+    if (SEQAN3_CEREAL_INCLUDE_DIR)
         if (SEQAN3_CEREAL)
             seqan3_config_print ("Required dependency:        Cereal found.")
         else ()
             seqan3_config_print ("Optional dependency:        Cereal found.")
+        endif ()
+        set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_CEREAL_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
+    elseif (SEQAN3_HAS_CPM)
+        CPMGetPackage (cereal)
+
+        find_path (SEQAN3_CEREAL_INCLUDE_DIR
+                   NAMES cereal/version.hpp
+                   HINTS "${cereal_SOURCE_DIR}/include")
+
+        if (SEQAN3_CEREAL_INCLUDE_DIR)
+            if (SEQAN3_CEREAL)
+                seqan3_config_print ("Required dependency:        Cereal found.")
+            else ()
+                seqan3_config_print ("Optional dependency:        Cereal found.")
+            endif ()
+            set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_CEREAL_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
+        else ()
+            if (SEQAN3_CEREAL)
+                seqan3_config_error ("The (optional) cereal library was marked as required, but wasn't found.")
+            else ()
+                seqan3_config_print ("Optional dependency:        Cereal not found.")
+            endif ()
         endif ()
     else ()
         if (SEQAN3_CEREAL)
