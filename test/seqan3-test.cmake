@@ -61,18 +61,23 @@ if (NOT TARGET seqan3::test)
     add_library (seqan3_test INTERFACE)
     target_compile_options (seqan3_test INTERFACE "-pedantic" "-Wall" "-Wextra" "-Werror")
 
-    # GCC12 and above: Disable warning about std::hardware_destructive_interference_size not being ABI-stable.
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        # GCC12 and above: Disable warning about std::hardware_destructive_interference_size not being ABI-stable.
         if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 12)
             target_compile_options (seqan3_test INTERFACE "-Wno-interference-size")
         endif ()
-    endif ()
 
-    # GCC on arm64 (M1): Disable notes about ABI changes. Example:
-    # `parameter passing for argument of type 'std::ranges::single_view<double>' when C++17 is enabled changed to match C++14 in GCC 10.1`
-    # https://github.com/gcc-mirror/gcc/commit/56fe3ca30e1343e4f232ca539726506440e23dd3
-    if ("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "arm64" AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-        target_compile_options (seqan3_test INTERFACE "-Wno-psabi")
+        # Warn about failed return value optimization.
+        if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 14)
+            target_compile_options (seqan3_test INTERFACE "-Wnrvo")
+        endif ()
+
+        # GCC on arm64 (M1): Disable notes about ABI changes. Example:
+        # `parameter passing for argument of type 'std::ranges::single_view<double>' when C++17 is enabled changed to match C++14 in GCC 10.1`
+        # https://github.com/gcc-mirror/gcc/commit/56fe3ca30e1343e4f232ca539726506440e23dd3
+        if ("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "arm64")
+            target_compile_options (seqan3_test INTERFACE "-Wno-psabi")
+        endif ()
     endif ()
 
     target_link_libraries (seqan3_test INTERFACE "seqan3::seqan3" "pthread")
