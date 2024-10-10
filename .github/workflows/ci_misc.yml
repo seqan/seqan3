@@ -85,4 +85,4 @@ jobs:
 
       - name: Run tests
         working-directory: build
-        run: ctest . -j${{ matrix.build == 'snippet' && '1' || '' }} --output-on-failure
+        run: ctest . -j${{ matrix.build == 'snippet' && '1' || '' }} --output-on-failure --no-tests=error
