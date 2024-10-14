@@ -14,7 +14,7 @@ file (COPY "${CMAKE_SOURCE_DIR}/../src/hello_world.cpp" DESTINATION "${CMAKE_CUR
 set (CMAKE_CURRENT_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../../source")
 
 ## [adding_files]
-cmake_minimum_required (VERSION 3.5)
+cmake_minimum_required (VERSION 3.5...3.30)
 project (seqan3_tutorial CXX)
 
 # add seqan3 to search path

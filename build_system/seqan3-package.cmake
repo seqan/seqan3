@@ -4,7 +4,7 @@
 
 # This file describes how SeqAn3 will be packaged.
 
-cmake_minimum_required (VERSION 3.7)
+cmake_minimum_required (VERSION 3.7...3.30)
 
 set (CPACK_GENERATOR "TXZ")
 

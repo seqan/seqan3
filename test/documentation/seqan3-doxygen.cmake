@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
 # SPDX-License-Identifier: BSD-3-Clause
 
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required (VERSION 3.10...3.30)
 
 ### Find doxygen and dependency to DOT tool
 message (STATUS "Searching for doxygen.")
