@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
 # SPDX-License-Identifier: BSD-3-Clause
 
-cmake_minimum_required (VERSION 3.5)
+cmake_minimum_required (VERSION 3.5...3.30)
 project (seqan3_test_external_project CXX)
 
 include (../seqan3-test.cmake) # for SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS, SEQAN3_VERSION
