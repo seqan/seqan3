@@ -42,14 +42,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: true
           fetch-depth: 0
-
-      - name: Checkout SeqAn2
-        uses: actions/checkout@v4
-        with:
-          repository: seqan/seqan
-          path: submodules/seqan
 
       - name: Load ccache
         uses: actions/cache@v4
@@ -68,7 +61,7 @@ jobs:
         run: |
           mkdir build && cd build
           cmake ../test/coverage -DCMAKE_BUILD_TYPE=Coverage
-          make gtest_build
+          make gtest_main
 
       - name: Build tests
         working-directory: build
