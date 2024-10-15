@@ -50,6 +50,9 @@ if (SEQAN3_WITH_SEQAN2 OR SEQAN3_WITH_SEQAN2_CI)
     endif ()
 endif ()
 
+# If the default is ever changed to `OFF`, add a check for the CI, similar to SEQAN3_WITH_SEQAN2_CI.
+option (SEQAN3_WITH_WERROR "Report compiler warnings as errors." ON)
+
 # ----------------------------------------------------------------------------
 # Custom Build types
 # ----------------------------------------------------------------------------
@@ -86,7 +89,12 @@ list (APPEND CMAKE_MODULE_PATH "${SEQAN3_TEST_CMAKE_MODULE_DIR}")
 # libraries which are in common for **all** seqan3 tests
 if (NOT TARGET seqan3::test)
     add_library (seqan3_test INTERFACE)
-    target_compile_options (seqan3_test INTERFACE "-pedantic" "-Wall" "-Wextra" "-Werror")
+    target_compile_options (seqan3_test INTERFACE "-pedantic" "-Wall" "-Wextra")
+
+    if (SEQAN3_WITH_WERROR)
+        target_compile_options (seqan3_test INTERFACE "-Werror")
+        message (STATUS "Building tests with -Werror.")
+    endif ()
 
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         # GCC12 and above: Disable warning about std::hardware_destructive_interference_size not being ABI-stable.
