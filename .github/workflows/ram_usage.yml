@@ -38,14 +38,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: seqan3
-          submodules: true
-
-      - name: Checkout SeqAn2
-        uses: actions/checkout@v4
-        with:
-          repository: seqan/seqan
-          path: seqan3/submodules/seqan
-          fetch-depth: 1
 
       - name: Setup compiler
         uses: seqan/actions/setup-compiler@main

@@ -202,13 +202,13 @@ HTML_FILE_EXTENSION    = .html
 HTML_HEADER            = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3_header.html
 HTML_FOOTER            = ${SEQAN3_DOXYGEN_OUTPUT_DIR}/seqan3_footer.html
 HTML_STYLESHEET        =
-HTML_EXTRA_STYLESHEET  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/doxygen-awesome/doxygen-awesome.css \
+HTML_EXTRA_STYLESHEET  = ${doxygen_awesome_SOURCE_DIR}/doxygen-awesome.css \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3.css
-HTML_EXTRA_FILES       = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/doxygen-awesome/doxygen-awesome-darkmode-toggle.js \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/doxygen-awesome/doxygen-awesome-fragment-copy-button.js \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/doxygen-awesome/doxygen-awesome-paragraph-link.js \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/doxygen-awesome/doxygen-awesome-interactive-toc.js \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/doxygen-awesome/doxygen-awesome-tabs.js \
+HTML_EXTRA_FILES       = ${doxygen_awesome_SOURCE_DIR}/doxygen-awesome-darkmode-toggle.js \
+                         ${doxygen_awesome_SOURCE_DIR}/doxygen-awesome-fragment-copy-button.js \
+                         ${doxygen_awesome_SOURCE_DIR}/doxygen-awesome-paragraph-link.js \
+                         ${doxygen_awesome_SOURCE_DIR}/doxygen-awesome-interactive-toc.js \
+                         ${doxygen_awesome_SOURCE_DIR}/doxygen-awesome-tabs.js \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc/tutorial/10_sam_file/example.sam \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/version.js \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/version.php \

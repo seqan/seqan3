@@ -7,6 +7,8 @@ project (seqan3_test_performance CXX)
 
 include (../seqan3-test.cmake)
 
+CPMGetPackage (benchmark)
+
 set (SEQAN3_BENCHMARK_MIN_TIME
      "1"
      CACHE STRING "Set --benchmark_min_time= for each bechmark. Timings are unreliable in CI.")
@@ -24,8 +26,5 @@ macro (seqan3_benchmark benchmark_cpp)
     unset (target)
     unset (test_name)
 endmacro ()
-
-seqan3_require_ccache ()
-seqan3_require_benchmark ()
 
 add_subdirectories ()
