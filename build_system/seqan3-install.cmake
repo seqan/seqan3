@@ -24,15 +24,5 @@ install (FILES "${SEQAN3_CLONE_DIR}/build_system/seqan3-config.cmake"
 # install seqan3 header files in /include/seqan3
 install (DIRECTORY "${SEQAN3_INCLUDE_DIR}/seqan3" TYPE INCLUDE)
 
-# install submodule header files, e.g. all external dependencies in /home/user/seqan3/submodules/*,
-# in /include/seqan3/submodules/<submodule>/include
-foreach (submodule_dir ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
-    # e.g. submodule_dir: (1) /home/user/seqan3/submodules/sdsl-lite/include or (2) /usr/include
-    # strip /home/user/seqan3/submodules/ and /include part.
-    file (RELATIVE_PATH submodule "${SEQAN3_SUBMODULES_DIR}/submodules" "${submodule_dir}/..")
-    # submodule is either a single module name, like sdsl-lite or a relative path to a folder ../../../usr
-    # skip relative folders and only keep submodules that reside in the submodules folder
-    if (NOT submodule MATCHES "^\\.\\.") # skip relative folders
-        install (DIRECTORY "${submodule_dir}" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/seqan3/submodules/${submodule}")
-    endif ()
-endforeach ()
+install (DIRECTORY "${SEQAN3_SDSL_INCLUDE_DIR}/sdsl" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/seqan3/vendor")
+install (DIRECTORY "${SEQAN3_CEREAL_INCLUDE_DIR}/cereal" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/seqan3/vendor")

@@ -5,9 +5,6 @@
 name: Latest Libraries
 
 on:
-  # Will always run on the default branch
-  schedule:
-    - cron: "0 4 * * SUN"
   # Enables a manual trigger, may run on any branch
   workflow_dispatch:
 
@@ -33,73 +30,44 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [11, 12, 13]
+        compiler: ["clang-18", "clang-17", "gcc-14", "gcc-13", "gcc-12", "gcc-11", "intel"]
         build: [unit, snippet, performance, header]
         include:
-          - compiler: 12
-            build: unit
-            cxx_flags: "-Wno-restrict" # Bogus errors in gtest that won't be fixed upstream
-
+          - compiler: "intel"
+            cxx_flags: "-fp-model=strict -Wno-overriding-option"
+    container:
+      image: ghcr.io/seqan/${{ matrix.compiler }}
+      volumes:
+        - /home/runner:/home/runner
     steps:
-      - name: Checkout SeqAn3
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          path: seqan3
-          submodules: true
 
-      - name: Update all submodules
+      - name: Update dependencies
         run: |
-          cd seqan3
-          git submodule status
-          git submodule update --recursive --remote
-          git submodule status
-
-      - name: Update googletest
-        run: |
-          grep 'SEQAN3_GTEST_TAG ".*"' seqan3/test/cmake/seqan3_require_test.cmake
-          sed -i 's/SEQAN3_GTEST_TAG ".*"/SEQAN3_GTEST_TAG "main"/' seqan3/test/cmake/seqan3_require_test.cmake
-          grep 'SEQAN3_GTEST_TAG ".*"' seqan3/test/cmake/seqan3_require_test.cmake
-
-      - name: Update googlebenchmark
-        run: |
-          grep 'SEQAN3_BENCHMARK_TAG ".*"' seqan3/test/cmake/seqan3_require_benchmark.cmake
-          sed -i 's/SEQAN3_BENCHMARK_TAG ".*"/SEQAN3_BENCHMARK_TAG "main"/' seqan3/test/cmake/seqan3_require_benchmark.cmake
-          grep 'SEQAN3_BENCHMARK_TAG ".*"' seqan3/test/cmake/seqan3_require_benchmark.cmake
-
-      - name: Checkout SeqAn2
-        uses: actions/checkout@v4
-        with:
-          repository: seqan/seqan
-          path: seqan3/submodules/seqan
-
-      - name: Setup compiler
-        uses: seqan/actions/setup-compiler@main
-        with:
-          compiler: gcc-${{ matrix.compiler }}
-
-      - name: Install CMake
-        uses: seqan/actions/setup-cmake@main
-        with:
-          cmake: 3.16.9
+          FILE="build_system/package-lock.cmake"
+          sed -i -E 's@(set \(SEQAN3_\S+_VERSION )[^\)]+\)@\1main)@g' $FILE
+          sed -i -E 's@VERSION( \$\{SEQAN3_\S+_VERSION\})@GIT_TAG\1@g' $FILE
+          sed -i -E 's@SEQAN3_(SDSL|CEREAL)_VERSION main@SEQAN3_\1_VERSION master@g' $FILE
+          cat $FILE
 
       - name: Configure tests
         run: |
-          mkdir seqan3-build
-          cd seqan3-build
+          mkdir build && cd build
           cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=Release \
                                                    -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
                                                    -DSEQAN3_BENCHMARK_MIN_TIME=0.01
           case "${{ matrix.build }}" in
-            unit) make -j2 gtest_build;;
-            snippet) make -j2 gtest_build;;
-            performance) make -j2 gbenchmark_build;;
-            header) make -j2 gtest_build gbenchmark_build;;
+            unit) make gtest_main;;
+            snippet) make gtest_main;;
+            performance) make benchmark_main;;
+            header) make gtest_main benchmark_main;;
           esac
 
       - name: Build tests
+        working-directory: build
         run: |
-          cd seqan3-build
-          make -k -j2 2>&1 | tee build.log
+          make -k 2>&1 | tee build.log
 
       - name: Setup Python
         if: ${{ failure() }}
@@ -110,38 +78,47 @@ jobs:
       - name: Process Log
         if: ${{ failure() }}
         run: |
-          FILE="seqan3/.github/ISSUE_TEMPLATE/cron_comment_template.md"
-          python3 seqan3/.github/workflows/scripts/process_compiler_error_log.py seqan3-build/build.log >> $FILE
+          FILE=".github/ISSUE_TEMPLATE/cron_comment_template.md"
+          python3 .github/workflows/scripts/process_compiler_error_log.py build/build.log >> $FILE
 
       - name: Create comment body
         if: ${{ failure() }}
         id: comment-body
         run: |
-          FILE="seqan3/.github/ISSUE_TEMPLATE/cron_comment_template.md"
-          URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-          sed -i "s@{{ build }}@${{ matrix.build }}@" $FILE
-          sed -i "s@{{ compiler }}@${{ matrix.compiler }}@" $FILE
-          sed -i "s@{{ url }}@$URL@" $FILE
-          echo "body<<EOF" >> $GITHUB_OUTPUT
-          cat $FILE >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          if [[ "${{ job.status }}" == "success" ]]; then
+            echo "body=Success ${{ matrix.build }} on ${{ matrix.compiler }}" >> $GITHUB_OUTPUT
+          else
+            FILE=".github/ISSUE_TEMPLATE/cron_comment_template.md"
+            URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            sed -i "s@{{ build }}@${{ matrix.build }}@" $FILE
+            sed -i "s@{{ compiler }}@${{ matrix.compiler }}@" $FILE
+            sed -i "s@{{ url }}@$URL@" $FILE
+            echo "body<<EOF" >> $GITHUB_OUTPUT
+            cat $FILE >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
 
       - name: Reopen issue
-        if: ${{ failure() }}
-        uses: octokit/request-action@v2.x
-        with:
-          route: PATCH /repos/{owner}/{repo}/issues/{issue_number}
-          owner: ${{ github.repository_owner }}
-          repo: seqan3
-          issue_number: ${{ env.ISSUE }}
-          state: "open"
+        if: failure()
+        run: gh issue reopen ${{ env.ISSUE }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.SEQAN_ACTIONS_PAT }}
+          GH_REPO: ${{ github.repository }}
 
-      - name: Create comment
-        if: ${{ failure() }}
-        uses: peter-evans/create-or-update-comment@v4
+      - name: Find Comment
+        if: always()
+        uses: peter-evans/find-comment@v3
+        id: find_comment
         with:
           issue-number: ${{ env.ISSUE }}
-          body: ${{ steps.comment-body.outputs.body }}
+          body-includes: ${{ matrix.build }} on ${{ matrix.compiler }}
 
+      - name: Update comment
+        if: always()
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.find_comment.outputs.comment-id }}
+          issue-number: ${{ env.ISSUE }}
+          body: ${{ steps.comment-body.outputs.body }}
+          edit-mode: replace
+          token: ${{ secrets.SEQAN_ACTIONS_PAT }}

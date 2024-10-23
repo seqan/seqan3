@@ -44,14 +44,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Checkout SeqAn2
-        uses: actions/checkout@v4
-        with:
-          repository: seqan/seqan
-          path: submodules/seqan
 
       - name: Load ccache
         uses: actions/cache@v4
@@ -66,10 +58,11 @@ jobs:
       - name: Configure tests
         run: |
           $CXX --version || true
+          cmake --version || true
           mkdir build && cd build
           cmake ../test/unit -DCMAKE_BUILD_TYPE=Release \
                              -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}"
-          make gtest_build
+          make gtest_main
 
       - name: Build tests
         working-directory: build

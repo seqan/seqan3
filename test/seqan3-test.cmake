@@ -11,8 +11,14 @@ cmake_minimum_required (VERSION 3.10...3.30)
 # require SeqAn3 package
 find_package (SeqAn3 REQUIRED HINTS ${CMAKE_CURRENT_LIST_DIR}/../build_system)
 
+enable_testing ()
+
+set (CPM_INDENT "CMake Package Manager CPM: ")
+CPMUsePackageLock ("${CMAKE_CURRENT_LIST_DIR}/../build_system/package-lock.cmake")
+
 include (CheckCXXCompilerFlag)
 include (CheckCXXSourceCompiles)
+include (CMakeDependentOption)
 include (FindPackageHandleStandardArgs)
 include (FindPackageMessage)
 
@@ -22,6 +28,30 @@ option (SEQAN3_TEST_BUILD_OFFLINE "Skip the update step of external projects." O
 # For large loops and erratic seeming bench results the value might
 # have to be adapted or the option deactivated.
 option (SEQAN3_BENCHMARK_ALIGN_LOOPS "Pass -falign-loops=32 to the benchmark builds." ON)
+
+option (SEQAN3_WITH_SEQAN2 "Build tests with SeqAn2." OFF)
+# Will be on if environment variable CI is set.
+# Can be toggled off if initially set to on.
+# Cannot be toggled on if initially set to off.
+cmake_dependent_option (SEQAN3_WITH_SEQAN2_CI "Build tests with SeqAn2." ON "DEFINED ENV{CI}" OFF)
+
+if (SEQAN3_WITH_SEQAN2 OR SEQAN3_WITH_SEQAN2_CI)
+    CPMGetPackage (seqan2)
+    find_path (SEQAN3_SEQAN2_INCLUDE_DIR
+               NAMES seqan/version.h
+               HINTS "${seqan2_SOURCE_DIR}/include")
+
+    if (SEQAN3_SEQAN2_INCLUDE_DIR)
+        message (STATUS "Building tests with SeqAn2.")
+        target_include_directories (seqan3_seqan3 SYSTEM INTERFACE ${SEQAN3_SEQAN2_INCLUDE_DIR})
+        target_compile_definitions (seqan3_seqan3 INTERFACE "SEQAN3_HAS_SEQAN2=1")
+    else ()
+        message (FATAL_ERROR "Could not find SeqAn2.")
+    endif ()
+endif ()
+
+# If the default is ever changed to `OFF`, add a check for the CI, similar to SEQAN3_WITH_SEQAN2_CI.
+option (SEQAN3_WITH_WERROR "Report compiler warnings as errors." ON)
 
 # ----------------------------------------------------------------------------
 # Custom Build types
@@ -59,7 +89,12 @@ list (APPEND CMAKE_MODULE_PATH "${SEQAN3_TEST_CMAKE_MODULE_DIR}")
 # libraries which are in common for **all** seqan3 tests
 if (NOT TARGET seqan3::test)
     add_library (seqan3_test INTERFACE)
-    target_compile_options (seqan3_test INTERFACE "-pedantic" "-Wall" "-Wextra" "-Werror")
+    target_compile_options (seqan3_test INTERFACE "-pedantic" "-Wall" "-Wextra")
+
+    if (SEQAN3_WITH_WERROR)
+        target_compile_options (seqan3_test INTERFACE "-Werror")
+        message (STATUS "Building tests with -Werror.")
+    endif ()
 
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         # GCC12 and above: Disable warning about std::hardware_destructive_interference_size not being ABI-stable.
@@ -89,7 +124,7 @@ endif ()
 # needed for performance test cases in seqan3/test/performance
 if (NOT TARGET seqan3::test::performance)
     add_library (seqan3_test_performance INTERFACE)
-    target_link_libraries (seqan3_test_performance INTERFACE "seqan3::test" "benchmark_main" "benchmark")
+    target_link_libraries (seqan3_test_performance INTERFACE "seqan3::test" "benchmark::benchmark_main")
     # std::views::join is experimental in libc++
     target_compile_definitions (seqan3_test_performance INTERFACE _LIBCPP_ENABLE_EXPERIMENTAL)
 
@@ -105,7 +140,7 @@ endif ()
 # needed for unit test cases in seqan3/test/unit
 if (NOT TARGET seqan3::test::unit)
     add_library (seqan3_test_unit INTERFACE)
-    target_link_libraries (seqan3_test_unit INTERFACE "seqan3::test" "gtest_main" "gtest")
+    target_link_libraries (seqan3_test_unit INTERFACE "seqan3::test" "GTest::gtest_main")
     add_library (seqan3::test::unit ALIAS seqan3_test_unit)
 endif ()
 
@@ -139,6 +174,4 @@ list (APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_VERBOSE_MAKEFILE=${CMAK
 include (seqan3_test_component)
 include (seqan3_test_files)
 include (seqan3_require_ccache)
-include (seqan3_require_benchmark)
-include (seqan3_require_test)
 include (add_subdirectories)

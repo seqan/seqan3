@@ -7,6 +7,9 @@ project (seqan3_header_test CXX)
 
 include (../seqan3-test.cmake)
 
+CPMGetPackage (googletest)
+CPMGetPackage (benchmark)
+
 option (SEQAN3_FULL_HEADER_TEST "Test seqan3 headers as well as the headers of external libraries" OFF)
 
 # We compile each header twice in separate compilation units, where the second compilation omits the header guard (check
@@ -125,10 +128,6 @@ macro (seqan3_header_test component header_base_path exclude_regex)
     unset (header_target_source)
     unset (header_target)
 endmacro ()
-
-seqan3_require_ccache ()
-seqan3_require_benchmark ()
-seqan3_require_test ()
 
 # note: seqan3/contrib/std/* will not be tested, because they use local (#include "file") includes
 # note: seqan3/version.hpp is one of the only header that is not required to have a seqan3/core/platform.hpp include
