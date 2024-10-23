@@ -49,7 +49,7 @@ ExternalProject_Add (
                "-DSEQAN3_ROOT=${SEQAN3_ROOT}")
 
 # 2) This tests test/external_project/seqan3_submodule_find_package/CMakeLists.txt
-#    We have a seqan3 checkout somewhere and we point CMAKE_PREFIX_PATH to <checkout>/seqan3/build_system
+#    We have a seqan3 checkout somewhere and we point CMAKE_PREFIX_PATH to <checkout>/seqan3/cmake
 #    and then use `find_package` to find `seqan3-config.cmake` which exposes our `seqan3::seqan3` target.
 #    This is expected to work with CMake >= 3.5.
 # (ExternalProject_Add simulates a fresh and separate invocation of cmake ../)
@@ -59,7 +59,7 @@ ExternalProject_Add (
     SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_submodule_find_package"
     CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
                "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
-               "-DCMAKE_PREFIX_PATH=${SEQAN3_ROOT}/build_system")
+               "-DCMAKE_PREFIX_PATH=${SEQAN3_ROOT}/cmake")
 
 # 3) This tests test/external_project/seqan3_installed/CMakeLists.txt
 #    This test assumes that seqan3 was installed by make install (e.g. system-wide).

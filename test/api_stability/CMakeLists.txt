@@ -28,13 +28,14 @@ macro (seqan3_api_stability_test test_suite git_apply)
         CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
                    -DCMAKE_CXX_FLAGS=${SEQAN3_API_STABILITY_CXX_FLAGS}
                    -DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER}
-                   -DCMAKE_PREFIX_PATH=${CMAKE_CURRENT_LIST_DIR}/../../build_system # use current build_system
+                   -DCMAKE_PREFIX_PATH=${CMAKE_CURRENT_LIST_DIR}/../../cmake
                    -DSEQAN3_GENERATE_SNIPPETS=OFF
                    -DSEQAN3_VERBOSE_TESTS=OFF
         PATCH_COMMAND ${CMAKE_COMMAND} -E echo "<SOURCE_DIR>"
         COMMAND ${CMAKE_COMMAND} -E remove_directory "<SOURCE_DIR>/include"
         COMMAND ${CMAKE_COMMAND} -E remove_directory "<SOURCE_DIR>/submodules"
         COMMAND ${CMAKE_COMMAND} -E remove_directory "<SOURCE_DIR>/build_system"
+        COMMAND ${CMAKE_COMMAND} -E remove_directory "<SOURCE_DIR>/cmake"
         COMMAND sh -c "${git_apply}"
         TEST_BEFORE_INSTALL TRUE
         TEST_COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -j

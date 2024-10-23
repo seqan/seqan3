@@ -8,7 +8,7 @@
 
 cmake_minimum_required (VERSION 3.5...3.30)
 
-find_path (SEQAN3_MODULE_PATH "seqan3-config.cmake" HINTS "${CMAKE_CURRENT_LIST_DIR}/build_system/")
+find_path (SEQAN3_MODULE_PATH "seqan3-config.cmake" HINTS "${CMAKE_CURRENT_LIST_DIR}/cmake/")
 list (APPEND CMAKE_MODULE_PATH "${SEQAN3_MODULE_PATH}")
 
 include (seqan3-config-version)

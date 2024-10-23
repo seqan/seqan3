@@ -20,7 +20,7 @@ cmake_minimum_required (VERSION 3.5...3.30)
 project (seqan3_tutorial CXX)
 
 # add seqan3 to search path
-list (APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../seqan3/build_system")
+list (APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../seqan3/cmake")
 # add the Sharg Parser to search path
 list (APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../sharg-parser/build_system")
 

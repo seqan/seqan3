@@ -37,7 +37,7 @@ The workflow entails these steps:
    `<seqan3_git_source>/test/api_stability/3.3.0`.
   * These patches will only apply changes on the tests.
   * This step is necessary as some of our tests also test non-public / non-stable API.
-3. Use the current version of `find_package (SeqAn3)` found in `<seqan3_git_source>/build_system`.
+3. Use the current version of `find_package (SeqAn3)` found in `<seqan3_git_source>/cmake`.
 4. Configure the tests `<seqan3_lsr_source>/test/unit` with our current seqan3 header-library
    (e.g. `<seqan3_git_source>/include` and `<seqan3_git_source>/submodules/*/include`).
   * But use the test cases from the LSR.
