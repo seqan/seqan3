@@ -7,7 +7,7 @@
 if (CPACK_SOURCE_INSTALLED_DIRECTORIES)
     file (COPY "@SEQAN3_SDSL_INCLUDE_DIR@/" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/include/seqan3/vendor")
     file (COPY "@SEQAN3_CEREAL_INCLUDE_DIR@/" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/include/seqan3/vendor")
-    configure_file ("@CPM_DOWNLOAD_LOCATION@" "${CMAKE_CURRENT_BINARY_DIR}/build_system/CPM.cmake" COPYONLY)
+    configure_file ("@CPM_DOWNLOAD_LOCATION@" "${CMAKE_CURRENT_BINARY_DIR}/cmake/CPM.cmake" COPYONLY)
     if ("@use_ccache_ADDED@" STREQUAL "YES")
         configure_file ("@use_ccache_SOURCE_DIR@/ccache/CMakeLists.txt"
                         "${CMAKE_CURRENT_BINARY_DIR}/test/cmake/seqan3_require_ccache.cmake" COPYONLY)

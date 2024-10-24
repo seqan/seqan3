@@ -6,7 +6,7 @@
 cmake_minimum_required (VERSION 3.7...3.30)
 
 ### Find seqan3
-include (../../build_system/seqan3-config-version.cmake)
+include (../../cmake/seqan3-config-version.cmake)
 set (SEQAN3_VERSION "${PACKAGE_VERSION}")
 
 # ----------------------------------------------------------------------------
@@ -14,7 +14,7 @@ set (SEQAN3_VERSION "${PACKAGE_VERSION}")
 # ----------------------------------------------------------------------------
 
 # This will be true for git clones and source packages.
-if (EXISTS "${SEQAN3_INCLUDE_DIR}/../build_system/CPM.cmake")
+if (EXISTS "${SEQAN3_INCLUDE_DIR}/../cmake/CPM.cmake")
     set (SEQAN3_HAS_CPM TRUE)
 else ()
     set (SEQAN3_HAS_CPM FALSE)
@@ -22,8 +22,8 @@ endif ()
 
 if (SEQAN3_HAS_CPM)
     set (CPM_INDENT "  CMake Package Manager CPM: ")
-    include ("${SEQAN3_INCLUDE_DIR}/../build_system/CPM.cmake")
-    CPMUsePackageLock ("${SEQAN3_INCLUDE_DIR}/../build_system/package-lock.cmake")
+    include ("${SEQAN3_INCLUDE_DIR}/../cmake/CPM.cmake")
+    CPMUsePackageLock ("${SEQAN3_INCLUDE_DIR}/../cmake/package-lock.cmake")
 endif ()
 
 project (seqan3

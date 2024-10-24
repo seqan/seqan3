@@ -17,8 +17,7 @@ install (FILES "${SEQAN3_CLONE_DIR}/CHANGELOG.md" #
          TYPE DOC)
 
 # install cmake files in /share/cmake
-install (FILES "${SEQAN3_CLONE_DIR}/build_system/seqan3-config.cmake"
-               "${SEQAN3_CLONE_DIR}/build_system/seqan3-config-version.cmake"
+install (FILES "${SEQAN3_CLONE_DIR}/cmake/seqan3-config.cmake" "${SEQAN3_CLONE_DIR}/cmake/seqan3-config-version.cmake"
          DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/seqan3")
 
 # install seqan3 header files in /include/seqan3

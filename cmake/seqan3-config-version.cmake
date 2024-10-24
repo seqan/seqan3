@@ -10,7 +10,7 @@
 
 # Note that seqan3-config.cmake can be standalone and thus SEQAN3_CLONE_DIR might be empty.
 find_path (SEQAN3_CLONE_DIR
-           NAMES build_system/seqan3-config.cmake
+           NAMES cmake/seqan3-config.cmake
            HINTS "${CMAKE_CURRENT_LIST_DIR}/..")
 find_path (SEQAN3_INCLUDE_DIR
            NAMES seqan3/version.hpp
