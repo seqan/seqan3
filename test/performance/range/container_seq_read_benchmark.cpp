@@ -21,13 +21,13 @@ template <typename t>
 using sdsl_int_vec = sdsl::int_vector<sizeof(t) * 8>;
 
 template <typename t>
-using small_vec = seqan3::small_vector<t, 10'000>;
+using small_vec = seqan3::small_vector<t, 10000>;
 
 // ============================================================================
 //  sequential_read
 // ============================================================================
 
-template <template <typename, typename...> typename container_t,
+template <template <typename...> typename container_t,
           typename alphabet_t,
           bool const_qualified = false,
           typename... args>
@@ -35,7 +35,7 @@ void sequential_read(benchmark::State & state)
 {
     container_t<alphabet_t, args...> container = []()
     {
-        auto container = seqan3::test::generate_sequence<alphabet_t>(10'000, 0, 0);
+        auto container = seqan3::test::generate_sequence<alphabet_t>(10000, 0, 0);
         return container_t<alphabet_t, args...>(container.begin(), container.end());
     }();
 
@@ -178,7 +178,7 @@ template <template <typename...> typename container_t,
           bool const_qualified = false>
 void sequential_read2(benchmark::State & state)
 {
-    container_t<alphabet_t, spec_t> container{seqan3::test::generate_sequence_seqan2<alphabet_t>(10'000, 0, 0)};
+    container_t<alphabet_t, spec_t> container{seqan3::test::generate_sequence_seqan2<alphabet_t>(10000, 0, 0)};
 
     using container_reference_t =
         std::conditional_t<const_qualified, container_t<alphabet_t, spec_t> const &, container_t<alphabet_t, spec_t> &>;
@@ -213,11 +213,11 @@ BENCHMARK_TEMPLATE(sequential_read2, seqan2::String, seqan2::Packed<>, seqan2::I
 BENCHMARK_TEMPLATE(sequential_read2, seqan2::String, seqan2::Packed<>, seqan2::AminoAcid);
 // BENCHMARK_TEMPLATE(sequential_read2, seqan2::String, seqan2::Packed<>, seqan2::Dna5Q); // broken in SeqAn2
 
-BENCHMARK_TEMPLATE(sequential_read2, seqan2::String, seqan2::Array<10'000>, seqan2::Dna);
-BENCHMARK_TEMPLATE(sequential_read2, seqan2::String, seqan2::Array<10'000>, seqan2::Dna5);
-BENCHMARK_TEMPLATE(sequential_read2, seqan2::String, seqan2::Array<10'000>, seqan2::Iupac);
-BENCHMARK_TEMPLATE(sequential_read2, seqan2::String, seqan2::Array<10'000>, seqan2::AminoAcid);
-BENCHMARK_TEMPLATE(sequential_read2, seqan2::String, seqan2::Array<10'000>, seqan2::Dna5Q);
+BENCHMARK_TEMPLATE(sequential_read2, seqan2::String, seqan2::Array<10000>, seqan2::Dna);
+BENCHMARK_TEMPLATE(sequential_read2, seqan2::String, seqan2::Array<10000>, seqan2::Dna5);
+BENCHMARK_TEMPLATE(sequential_read2, seqan2::String, seqan2::Array<10000>, seqan2::Iupac);
+BENCHMARK_TEMPLATE(sequential_read2, seqan2::String, seqan2::Array<10000>, seqan2::AminoAcid);
+BENCHMARK_TEMPLATE(sequential_read2, seqan2::String, seqan2::Array<10000>, seqan2::Dna5Q);
 
 // ============================================================================
 //  sequential_read (const)
