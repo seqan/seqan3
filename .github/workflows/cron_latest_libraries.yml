@@ -5,6 +5,9 @@
 name: Latest Libraries
 
 on:
+  # Will always run on the default branch
+  schedule:
+    - cron: "0 4 * * SUN"
   # Enables a manual trigger, may run on any branch
   workflow_dispatch:
 
@@ -23,7 +26,7 @@ defaults:
 
 jobs:
   build:
-    name: ${{ matrix.build }} gcc${{ matrix.compiler }}
+    name: ${{ matrix.build }} ${{ matrix.compiler }}
     runs-on: ubuntu-22.04
     timeout-minutes: 300
     if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
@@ -54,9 +57,9 @@ jobs:
       - name: Configure tests
         run: |
           mkdir build && cd build
-          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=Release \
-                                                   -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
-                                                   -DSEQAN3_BENCHMARK_MIN_TIME=0.01
+          cmake ../test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=Release \
+                                            -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
+                                            -DSEQAN3_BENCHMARK_MIN_TIME=0.01
           case "${{ matrix.build }}" in
             unit) make gtest_main;;
             snippet) make gtest_main;;

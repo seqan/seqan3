@@ -21,18 +21,18 @@ template <typename t>
 using sdsl_int_vec = sdsl::int_vector<sizeof(t) * 8>;
 
 template <typename t>
-using small_vec = seqan3::small_vector<t, 10'000>;
+using small_vec = seqan3::small_vector<t, 10000>;
 
 // ============================================================================
 //  sequential_write
 // ============================================================================
 
-template <template <typename, typename...> typename container_t, typename alphabet_t, typename... args>
+template <template <typename...> typename container_t, typename alphabet_t, typename... args>
 void sequential_write(benchmark::State & state)
 {
     container_t<alphabet_t, args...> container = []()
     {
-        auto container = seqan3::test::generate_sequence<alphabet_t>(10'000, 0, 0);
+        auto container = seqan3::test::generate_sequence<alphabet_t>(10000, 0, 0);
         return container_t<alphabet_t, args...>(container.begin(), container.end());
     }();
 
@@ -116,7 +116,7 @@ BENCHMARK_TEMPLATE(sequential_write, small_vec, seqan3::alphabet_variant<char, s
 template <template <typename...> typename container_t, typename spec_t, typename alphabet_t>
 void sequential_write2(benchmark::State & state)
 {
-    container_t<alphabet_t, spec_t> container{seqan3::test::generate_sequence_seqan2<alphabet_t>(10'000, 0, 0)};
+    container_t<alphabet_t, spec_t> container{seqan3::test::generate_sequence_seqan2<alphabet_t>(10000, 0, 0)};
 
     alphabet_t letter{};
     for (auto _ : state)
@@ -145,11 +145,11 @@ BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Packed<>, seqan2::
 BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Packed<>, seqan2::AminoAcid);
 // BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Packed<>, seqan2::Dna5Q); // broken in SeqAn2
 
-BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Array<10'000>, seqan2::Dna);
-BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Array<10'000>, seqan2::Dna5);
-BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Array<10'000>, seqan2::Iupac);
-BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Array<10'000>, seqan2::AminoAcid);
-BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Array<10'000>, seqan2::Dna5Q);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Array<10000>, seqan2::Dna);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Array<10000>, seqan2::Dna5);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Array<10000>, seqan2::Iupac);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Array<10000>, seqan2::AminoAcid);
+BENCHMARK_TEMPLATE(sequential_write2, seqan2::String, seqan2::Array<10000>, seqan2::Dna5Q);
 
 #endif // SEQAN3_HAS_SEQAN2
 
