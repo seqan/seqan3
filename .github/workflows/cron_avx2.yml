@@ -77,7 +77,7 @@ jobs:
           python3 .github/workflows/scripts/process_compiler_error_log.py build/build.log >> $FILE
 
       - name: Create comment body
-        if: ${{ failure() }}
+        if: always()
         id: comment-body
         run: |
           if [[ "${{ job.status }}" == "success" ]]; then
