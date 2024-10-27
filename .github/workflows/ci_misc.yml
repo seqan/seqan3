@@ -50,7 +50,6 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /home/runner/.ccache
-          save-always: true
           key: ccache-${{ runner.os }}-${{ github.workflow }}-${{ matrix.build }}-${{ matrix.compiler }}-${{ github.ref }}-${{ github.run_id }}
           restore-keys: |
             ccache-${{ runner.os }}-${{ github.workflow }}-${{ matrix.build }}-${{ matrix.compiler }}-${{ github.ref }}
