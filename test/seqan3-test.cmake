@@ -36,10 +36,10 @@ option (SEQAN3_WITH_SEQAN2 "Build tests with SeqAn2." OFF)
 cmake_dependent_option (SEQAN3_WITH_SEQAN2_CI "Build tests with SeqAn2." ON "DEFINED ENV{CI}" OFF)
 
 if (SEQAN3_WITH_SEQAN2 OR SEQAN3_WITH_SEQAN2_CI)
-    CPMGetPackage (seqan2)
+    CPMGetPackage (seqan)
     find_path (SEQAN3_SEQAN2_INCLUDE_DIR
                NAMES seqan/version.h
-               HINTS "${seqan2_SOURCE_DIR}/include")
+               HINTS "${seqan_SOURCE_DIR}/include")
 
     if (SEQAN3_SEQAN2_INCLUDE_DIR)
         message (STATUS "Building tests with SeqAn2.")

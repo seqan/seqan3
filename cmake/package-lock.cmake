@@ -5,6 +5,14 @@
 # CPM Package Lock
 # This file should be committed to version control
 
+# URL/GIT_TAG may be annotated with a branch name
+# This is needed for https://github.com/seqan/actions/tree/main/update_cpm_package_lock
+
+# The first argument of CPMDeclarePackage can be freely chosen and is used as argument in CPMGetPackage.
+# The NAME argument should be package name that would also be used in a find_package call.
+# Ideally, both are the same, which might not always be possible: https://github.com/cpm-cmake/CPM.cmake/issues/603
+# This is needed to support CPM_USE_LOCAL_PACKAGES
+
 # cereal
 set (SEQAN3_CEREAL_VERSION 1.3.2)
 CPMDeclarePackage (cereal
@@ -15,10 +23,12 @@ CPMDeclarePackage (cereal
                    QUIET YES)
 # sdsl-lite
 # Use URL download of the commit archive such that we do not clone submodules
+# Package name is still sdsl (name as v2 at xxsds/sdsl), but sdsl-lite is not currently being packaged
+# To avoid accidentally using the older sdsl, NAME is set to sdsl-lite
 set (SEQAN3_SDSL_VERSION 14cd017027ea742353fc5b500d1cb1d95896b77e)
 CPMDeclarePackage (sdsl-lite
                    NAME sdsl-lite
-                   URL https://github.com/xxsds/sdsl-lite/archive/${SEQAN3_SDSL_VERSION}.tar.gz
+                   URL https://github.com/xxsds/sdsl-lite/archive/${SEQAN3_SDSL_VERSION}.tar.gz # master
                    DOWNLOAD_ONLY YES
                    QUIET YES)
 # benchmark
@@ -33,7 +43,7 @@ CPMDeclarePackage (benchmark
 # googletest
 set (SEQAN3_GOOGLETEST_VERSION 1.15.2)
 CPMDeclarePackage (googletest
-                   NAME googletest
+                   NAME GTest
                    VERSION ${SEQAN3_GOOGLETEST_VERSION}
                    GITHUB_REPOSITORY google/googletest
                    SYSTEM TRUE
@@ -49,9 +59,9 @@ CPMDeclarePackage (doxygen_awesome
                    QUIET YES)
 # seqan2
 set (SEQAN3_SEQAN2_VERSION 5f8d538bc6fa5eaaa0b56067abf355ef6f3855dc)
-CPMDeclarePackage (seqan2
-                   NAME seqan2
-                   GIT_TAG ${SEQAN3_SEQAN2_VERSION}
+CPMDeclarePackage (seqan
+                   NAME seqan
+                   GIT_TAG ${SEQAN3_SEQAN2_VERSION} # main
                    GITHUB_REPOSITORY seqan/seqan
                    DOWNLOAD_ONLY YES
                    QUIET YES)
@@ -59,7 +69,7 @@ CPMDeclarePackage (seqan2
 set (SEQAN3_USE_CCACHE_VERSION d2a54ef555b6fc2d496a4c9506dbeb7cf899ce37)
 CPMDeclarePackage (use_ccache
                    NAME use_ccache
-                   GIT_TAG ${SEQAN3_USE_CCACHE_VERSION}
+                   GIT_TAG ${SEQAN3_USE_CCACHE_VERSION} # main
                    GITHUB_REPOSITORY seqan/cmake-scripts
                    SOURCE_SUBDIR ccache
                    SYSTEM TRUE
