@@ -5,6 +5,11 @@
 # CPM Package Lock
 # This file should be committed to version control
 
+# The first argument of CPMDeclarePackage can be freely chosen and is used as argument in CPMGetPackage.
+# The NAME argument should be package name that would also be used in a find_package call.
+# Ideally, both are the same, which might not always be possible: https://github.com/cpm-cmake/CPM.cmake/issues/603
+# This is needed to support CPM_USE_LOCAL_PACKAGES
+
 # cereal
 set (SEQAN3_CEREAL_VERSION 1.3.2)
 CPMDeclarePackage (cereal
@@ -15,6 +20,8 @@ CPMDeclarePackage (cereal
                    QUIET YES)
 # sdsl-lite
 # Use URL download of the commit archive such that we do not clone submodules
+# Package name is still sdsl (name as v2 at xxsds/sdsl), but sdsl-lite is not currently being packaged
+# To avoid accidentally using the older sdsl, NAME is set to sdsl-lite
 set (SEQAN3_SDSL_VERSION 14cd017027ea742353fc5b500d1cb1d95896b77e)
 CPMDeclarePackage (sdsl-lite
                    NAME sdsl-lite
@@ -33,7 +40,7 @@ CPMDeclarePackage (benchmark
 # googletest
 set (SEQAN3_GOOGLETEST_VERSION 1.15.2)
 CPMDeclarePackage (googletest
-                   NAME googletest
+                   NAME GTest
                    VERSION ${SEQAN3_GOOGLETEST_VERSION}
                    GITHUB_REPOSITORY google/googletest
                    SYSTEM TRUE
@@ -49,8 +56,8 @@ CPMDeclarePackage (doxygen_awesome
                    QUIET YES)
 # seqan2
 set (SEQAN3_SEQAN2_VERSION 5f8d538bc6fa5eaaa0b56067abf355ef6f3855dc)
-CPMDeclarePackage (seqan2
-                   NAME seqan2
+CPMDeclarePackage (seqan
+                   NAME seqan
                    GIT_TAG ${SEQAN3_SEQAN2_VERSION}
                    GITHUB_REPOSITORY seqan/seqan
                    DOWNLOAD_ONLY YES
