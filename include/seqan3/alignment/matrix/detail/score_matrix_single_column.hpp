@@ -113,14 +113,9 @@ public:
         this->number_of_columns = number_of_columns.get();
         optimal_column.clear();
         horizontal_column.clear();
-#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#    pragma GCC diagnostic push
-#    pragma GCC diagnostic ignored "-Wstringop-overflow"
-#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+        SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_START(-Wstringop-overflow)
         optimal_column.resize(number_of_rows.get(), initial_value);
-#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#    pragma GCC diagnostic pop
-#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+        SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_STOP
         horizontal_column.resize(number_of_rows.get(), initial_value);
         vertical_column = views::repeat_n(initial_value, number_of_rows.get());
     }

@@ -556,7 +556,9 @@ public:
     reference operator[](size_type const i)
     {
         assert(i < size());
+        SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_START(-Warray-bounds)
         return data_values | views::slice(data_delimiters[i], data_delimiters[i + 1]);
+        SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_STOP
     }
 
     //!\copydoc operator[]()
@@ -977,17 +979,11 @@ public:
         auto placeholder =
             views::repeat_n(std::ranges::range_value_t<rng_type>{}, count * value_len) | std::views::common;
         // insert placeholder so the tail is moved once:
-#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#    pragma GCC diagnostic push
-#    pragma GCC diagnostic ignored "-Wstringop-overread"
-#    pragma GCC diagnostic ignored "-Wstringop-overflow"
-#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+        SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_START(-Wstringop-overread, -Wstringop-overflow)
         data_values.insert(data_values.begin() + data_delimiters[pos_as_num],
                            std::ranges::begin(placeholder),
                            std::ranges::end(placeholder));
-#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#    pragma GCC diagnostic pop
-#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+        SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_STOP
 
         // assign the actual values to the placeholder:
         size_t i = data_delimiters[pos_as_num];
