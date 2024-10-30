@@ -227,14 +227,62 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 #    endif
 #endif
 
-/*!\brief Workaround bogus memcpy errors in GCC > 12. (Wrestrict and Wstringop-overflow)
- * \see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105545
- */
 #ifndef SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
 #    if SEQAN3_COMPILER_IS_GCC && (__GNUC__ >= 12)
+// For checking whether workaround applies, e.g., in search_scheme_test
 #        define SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY 1
+// The goal is to create _Pragma("GCC diagnostic ignored \"-Wrestrict\"")
+// The outer quotes are added by SEQAN3_PRAGMA, so we need SEQAN3_PRAGMA(GCC diagnostic ignored "-Wrestrict")
+// SEQAN3_CONCAT_STRING(GCC diagnostic ignored, -Wrestrict) -> SEQAN3_PRAGMA(GCC diagnostic ignored "-Wrestrict")
+#        define SEQAN3_CONCAT_STRING(x, y) SEQAN3_PRAGMA(x #y)
+#        define SEQAN3_GCC_DIAGNOSTIC_IGNORE1(x, ...)                                                                  \
+            SEQAN3_PRAGMA(GCC diagnostic push)                                                                         \
+            SEQAN3_CONCAT_STRING(GCC diagnostic ignored, x)
+#        define SEQAN3_GCC_DIAGNOSTIC_IGNORE2(x, y)                                                                    \
+            SEQAN3_PRAGMA(GCC diagnostic push)                                                                         \
+            SEQAN3_CONCAT_STRING(GCC diagnostic ignored, x)                                                            \
+            SEQAN3_CONCAT_STRING(GCC diagnostic ignored, y)
+// A helper that enables SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_START to take one or two arguments
+// SEQAN3_GCC_DIAGNOSTIC_IGNORE(-Wrestict, 2, 1) -> SEQAN3_GCC_DIAGNOSTIC_IGNORE1(-Wrestict, 2)
+// SEQAN3_GCC_DIAGNOSTIC_IGNORE(-Wrestict, -Warray-bounds, 2, 1) -> SEQAN3_GCC_DIAGNOSTIC_IGNORE2(-Wrestict, -Warray-bounds)
+#        define SEQAN3_GCC_DIAGNOSTIC_IGNORE(x, y, n, ...) SEQAN3_GCC_DIAGNOSTIC_IGNORE##n(x, y)
+// SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_START(-Wrestrict) -> SEQAN3_GCC_DIAGNOSTIC_IGNORE(-Wrestict, 2, 1)
+// SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_START(-Wrestrict, -Warray-bounds) -> SEQAN3_GCC_DIAGNOSTIC_IGNORE(-Wrestict, -Warray-bounds, 2, 1)
+#        define SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_START(x, ...) SEQAN3_GCC_DIAGNOSTIC_IGNORE(x, ##__VA_ARGS__, 2, 1)
+#        define SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_STOP SEQAN3_PRAGMA(GCC diagnostic pop)
 #    else
+/*!\name Workaround for bogus memcopy/memmove warnings on GCC
+     * \{
+     */
+//!\brief Indicates whether the workaround is active. `1` for GCC, `0` for other compilers.
 #        define SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY 0
+/*!\brief Denotes the start of a block where diagnostics are ignored.
+ * \details
+ * If SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY is 0, this macro has no effect.
+ * Otherwise, the macro takes one or two arguments and will expand to a preprocessor directive equivalent to:
+ * ### Input
+ * ```cpp
+ * // The macro accepts one or two arguments.
+ * SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_START(-Wrestrict, -Warray-bounds)
+ * ```
+ * ### Output
+ * ```cpp
+ * #pragma GCC diagnostic push
+ * #pragma GCC diagnostic ignored "-Wrestrict"
+ * #pragma GCC diagnostic ignored "-Warray-bounds"
+ * ```
+ */
+#        define SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_START(...)
+/*!\brief Denotes the end of a block where diagnostics are ignored.
+ * \details
+ * If SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY is 0, this macro has no effect.
+ * Otherwise, the macro will expand to a preprocessor directive equivalent to:
+ * ```cpp
+ * #pragma GCC diagnostic pop
+ * ```
+ */
+#        define SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_STOP
+//!\}
 #    endif
 #endif
 
