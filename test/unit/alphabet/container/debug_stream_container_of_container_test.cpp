@@ -25,15 +25,9 @@ TYPED_TEST_SUITE(debug_stream_test, container_of_container_types, );
 
 TYPED_TEST(debug_stream_test, container_of_container)
 {
-#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#    pragma GCC diagnostic push
-#    pragma GCC diagnostic ignored "-Warray-bounds"
-#    pragma GCC diagnostic ignored "-Wstringop-overflow"
-#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+    SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_START(-Warray-bounds, -Wstringop-overflow)
     TypeParam t1{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
-#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#    pragma GCC diagnostic pop
-#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+    SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_STOP
 
     std::ostringstream o;
     seqan3::debug_stream_type my_stream{o};
