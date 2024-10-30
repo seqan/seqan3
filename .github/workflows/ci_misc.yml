@@ -33,7 +33,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: ["clang-18", "gcc-14", "gcc-11", "intel"]
+        compiler: ["clang-19", "gcc-14", "gcc-11", "intel"]
         build: ["snippet", "performance", "header"]
         include:
           - compiler: "intel"
