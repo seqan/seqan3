@@ -19,7 +19,7 @@ Before submitting a pull request to our repository, make sure that the unit test
 
 ## Setting up unit tests
 
-Assume that you have cloned SeqAn including submodules into `/home/me/devel/seqan3` and performed some local changes.
+Assume that you have cloned SeqAn into `/home/me/devel/seqan3` and performed some local changes.
 
 Create an out-of-source build directory and change to it:
 

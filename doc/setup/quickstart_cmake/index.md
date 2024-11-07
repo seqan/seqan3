@@ -81,7 +81,6 @@ hours of use per month, which is plenty for our tutorials. A GitHub account is r
 - <b class="tab-title">Using GitHub Codespaces</b>
 [GitHub Codespaces](https://github.com/codespaces) offer a service similar to gitpod, including a free monthly quota.
 [Click here](https://codespaces.new/seqan/seqan3) to open SeqAn3 in Codespaces.
-Please note that you may have to manually clone the submodules by running `git submodule update --init`.
 
 </div>
 <br>
@@ -104,13 +103,13 @@ tutorial
 └── seqan3
 ```
 
-To set these directories up you can follow this script (note the <b>\--recurse-submodules</b> when cloning SeqAn3):
+To set these directories up you can follow this script:
 ```bash
 mkdir tutorial
 cd tutorial
 mkdir build
 mkdir source
-git clone --recurse-submodules https://github.com/seqan/seqan3.git
+git clone https://github.com/seqan/seqan3.git
 ```
 
 The output of the command `tree -L 2` should now look like this:
@@ -229,11 +228,6 @@ target_link_libraries (my_app PUBLIC seqan3::seqan3)
   export PATH=/usr/bin:$PATH
   ```
   and run `cmake` again.
-
-* **SDSL library not found**: `The SDSL library is required, but wasn't found.`<br>
-  The repository was not cloned correctly. This can be verified by checking whether
-  `submodules/sdsl-lite/include/version.hpp` exists.
-  If it does not, try running `git submodule update --init` within the seqan3 directory.
 
 * **Incorrect compiler**: `Your compiler is not supported.` or `Only GCC is supported.`<br>
   The incorrect compiler is used (e.g., Apple Clang instead of GCC). Be sure to set `-DCMAKE_CXX_COMPILER=`. For an

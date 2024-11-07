@@ -88,7 +88,7 @@ We recommend that you use CMake to build your project:
 
 Quick-Setup without CMake:
 
-  * Clone the repository with submodules: `git clone --recurse-submodules https://github.com/seqan/seqan3.git`
+  * Clone the repository: `git clone https://github.com/seqan/seqan3.git`
   * Add the following to your compiler invocation:
     * the include directories of SeqAn and its dependencies
     * C++20 mode
@@ -98,8 +98,7 @@ Quick-Setup without CMake:
 g++-11 -O3 -DNDEBUG -Wall -Wextra                               \
     -std=c++20                                                  \
     -I       /path/to/seqan3/include                            \
-    -isystem /path/to/seqan3/submodules/sdsl-lite/include       \
-    -isystem /path/to/seqan3/submodules/cereal/include          \
+    -isystem /path/to/sdsl-lite/include                         \
     -DSEQAN3_HAS_ZLIB=1 -DSEQAN3_HAS_BZIP2=1                    \
     -lz -lbz2 -pthread                                          \
   your_file.cpp
