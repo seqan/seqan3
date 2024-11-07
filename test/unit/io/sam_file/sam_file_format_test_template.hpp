@@ -705,6 +705,58 @@ TYPED_TEST_P(sam_file_write, format_errors)
                  seqan3::format_error);
 }
 
+TYPED_TEST_P(sam_file_write, issue3299)
+{
+    using sam_file_output_t = seqan3::sam_file_output<typename seqan3::sam_file_output<>::selected_field_ids,
+                                                      seqan3::type_list<TypeParam>,
+                                                      std::vector<std::string>>;
+    std::vector<std::string> seq_names{"hello", "world"};
+    std::vector<size_t> seq_lengths{1000, 2000};
+
+    // Issue: Moved-from sam_file_output would try to write header on destruction
+    {
+        sam_file_output_t fout1{std::ostringstream{}, seq_names, seq_lengths, TypeParam{}};
+        sam_file_output_t fout2{std::move(fout1)};
+    }
+
+    // Issue: Header does not own ref_ids: ref_ids outlives sam_file_output
+    {
+        std::vector<sam_file_output_t> alignment_streams;
+        auto seq_names_copy = seq_names;
+        alignment_streams.emplace_back(std::ostringstream{}, seq_names_copy, seq_lengths, TypeParam{});
+        // Destructor calls:
+        // 1) seq_names_copy
+        // 2) alignment_streams, starting with the one element it holds
+    }
+
+    // Issue: Header does not own ref_ids: ref_ids may change
+    size_t const iterations{this->issue3299_output.size()};
+    // Order of destruction of vector elements differs between GCC and Clang
+    std::vector<std::ostringstream> outputs(iterations);
+    {
+        std::vector<sam_file_output_t> alignment_streams;
+        for (size_t i = 0; i < iterations; ++i)
+        {
+            alignment_streams.emplace_back(outputs[i], seq_names, seq_lengths, TypeParam{});
+
+            std::ranges::for_each(seq_names,
+                                  [](std::string & str)
+                                  {
+                                      str += "foo";
+                                  });
+            std::ranges::for_each(seq_lengths,
+                                  [](size_t & len)
+                                  {
+                                      ++len;
+                                  });
+        }
+    }
+    for (size_t i = 0; i < iterations; ++i)
+    {
+        EXPECT_EQ(outputs[i].str(), this->issue3299_output[i]) << "Iteration: " << i;
+    }
+}
+
 REGISTER_TYPED_TEST_SUITE_P(sam_file_read,
                             input_concept,
                             header_sucess,
@@ -729,4 +781,5 @@ REGISTER_TYPED_TEST_SUITE_P(sam_file_write,
                             with_header,
                             cigar_vector,
                             special_cases,
-                            format_errors);
+                            format_errors,
+                            issue3299);

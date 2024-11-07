@@ -9,9 +9,7 @@
 
 #pragma once
 
-#include <cinttypes>
-#include <ciso646> // makes _LIBCPP_VERSION available
-#include <cstddef> // makes __GLIBCXX__ available
+#include <version>
 
 // macro cruft
 //!\cond
@@ -103,10 +101,6 @@
 // ============================================================================
 //  C++ standard and features
 // ============================================================================
-
-#if __has_include(<version>)
-#    include <version>
-#endif
 
 // C++ standard [required]
 #ifdef __cplusplus
