@@ -108,6 +108,20 @@ read1	41	*	1	61	1S1M1D1M1I	*	0	0	ACGT	!##$
         R"(@SQ	SN:ref	LN:150
 read1	41	ref	1	61	1S1M1D1M1I	=	10	300	ACGT	!##$	bH:H:1AE30
 )"};
+
+    std::vector<std::string> issue3299_output{
+        R"(@HD	VN:1.6
+@SQ	SN:hello	LN:1000
+@SQ	SN:world	LN:2000
+)",
+        R"(@HD	VN:1.6
+@SQ	SN:hellofoo	LN:1001
+@SQ	SN:worldfoo	LN:2001
+)",
+        R"(@HD	VN:1.6
+@SQ	SN:hellofoofoo	LN:1002
+@SQ	SN:worldfoofoo	LN:2002
+)"};
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -384,9 +398,9 @@ TEST_F(sam_format, write_different_header)
 
     write_header();
     ostream.flush();
-    EXPECT_EQ(
-        ostream.str(),
-        "@HD\tVN:1.6\tSO:coordinate\tSS:query\tGO:reference\n@SQ\tSN:ref\tLN:34\n*\t0\tref\t1\t0\t*\t*\t0\t0\t*\t*\n");
+    EXPECT_EQ(ostream.str(),
+              "@HD\tVN:1.6\tSO:coordinate\tSS:query\tGO:reference\n@SQ\tSN:ref\tLN:34\n*\t0\tref\t1\t0\t*\t*"
+              "\t0\t0\t*\t*\n");
 }
 
 TEST_F(sam_format, issue2195)

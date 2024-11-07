@@ -155,7 +155,10 @@ public:
     //!\brief The destructor will write the header if it has not been written before.
     ~sam_file_output()
     {
-        if (header_has_been_written)
+        // !primary_stream indicates moved-from object
+        // unique_ptr holds a nullptr after being moved from
+        // See https://eel.is/c++draft/unique.ptr#single.ctor-18
+        if (header_has_been_written || !primary_stream)
             return;
 
         assert(!format.valueless_by_exception());
