@@ -15,11 +15,8 @@
 template <typename sequential_push_t, typename sequential_pop_t>
 void test_buffer_queue_wait_status()
 {
-    size_t thread_count = std::thread::hardware_concurrency();
-
-    // limit thread count as virtualbox (used by Travis) seems to have problems with thread congestion
-    if (thread_count > 4)
-        thread_count = 4;
+    // At least two threads (one producer and one consumer), at most 4 threads (avoid congestion).
+    size_t thread_count = std::clamp<size_t>(std::thread::hardware_concurrency(), 2u, 4u);
 
     size_t writer_count = thread_count / 2;
     if constexpr (sequential_push_t::value)
@@ -129,11 +126,9 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
     }
 
     volatile std::atomic<size_t> chk_sum2 = 0;
-    size_t thread_count = std::thread::hardware_concurrency();
 
-    // limit thread count as virtualbox (used by Travis) seems to have problems with thread congestion
-    if (thread_count > 4)
-        thread_count = 4;
+    // At least two threads (one producer and one consumer), at most 4 threads (avoid congestion).
+    size_t thread_count = std::clamp<size_t>(std::thread::hardware_concurrency(), 2u, 4u);
 
     size_t writer_count = thread_count / 2;
     if constexpr (sequential_push_t::value)
