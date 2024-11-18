@@ -260,7 +260,7 @@ public:
         // store all cursors at once in a private std::array of cursors
         assert(index != nullptr);
 
-        sdsl_char_type c = 1; // NOTE: start with 0 or 1 depending on implicit_sentintel
+        sdsl_sigma_type c = 1; // NOTE: start with 0 or 1 depending on implicit_sentintel
         size_type _lb = node.lb, _rb = node.rb;
         while (c < sigma && !backward_search(index->index, index->index.comp2char[c], _lb, _rb))
         {
@@ -271,7 +271,8 @@ public:
         {
             parent_lb = node.lb;
             parent_rb = node.rb;
-            node = {_lb, _rb, node.depth + 1, c};
+            assert(c <= std::numeric_limits<sdsl_char_type>::max());
+            node = {_lb, _rb, node.depth + 1, static_cast<sdsl_char_type>(c)};
             return true;
         }
         return false;
@@ -406,7 +407,7 @@ public:
         // parent_lb > parent_rb --> invalid interval
         assert(parent_lb <= parent_rb);
 
-        sdsl_char_type c = node.last_char + 1;
+        sdsl_sigma_type c = node.last_char + 1;
         size_type _lb = parent_lb, _rb = parent_rb;
 
         while (c < sigma && !backward_search(index->index, index->index.comp2char[c], _lb, _rb))
@@ -416,7 +417,8 @@ public:
 
         if (c != sigma) // Collection has additional sentinel as delimiter
         {
-            node = {_lb, _rb, node.depth, c};
+            assert(c <= std::numeric_limits<sdsl_char_type>::max());
+            node = {_lb, _rb, node.depth, static_cast<sdsl_char_type>(c)};
             return true;
         }
         return false;

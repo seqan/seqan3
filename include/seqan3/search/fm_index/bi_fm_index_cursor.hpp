@@ -335,7 +335,7 @@ public:
 
         size_type new_parent_lb = fwd_lb, new_parent_rb = fwd_rb;
 
-        sdsl_char_type c = 1; // NOTE: start with 0 or 1 depending on implicit_sentintel
+        sdsl_sigma_type c = 1; // NOTE: start with 0 or 1 depending on implicit_sentintel
         while (c < sigma
                && !bidirectional_search(index->fwd_fm.index,
                                         index->fwd_fm.index.comp2char[c],
@@ -352,7 +352,8 @@ public:
             parent_lb = new_parent_lb;
             parent_rb = new_parent_rb;
 
-            _last_char = c;
+            assert(c <= std::numeric_limits<sdsl_char_type>::max());
+            _last_char = static_cast<sdsl_char_type>(c);
             ++depth;
 
             return true;
@@ -387,7 +388,7 @@ public:
 
         size_type new_parent_lb = rev_lb, new_parent_rb = rev_rb;
 
-        sdsl_char_type c = 1; // NOTE: start with 0 or 1 depending on implicit_sentintel
+        sdsl_sigma_type c = 1; // NOTE: start with 0 or 1 depending on implicit_sentintel
         while (c < sigma
                && !bidirectional_search(index->rev_fm.index,
                                         index->rev_fm.index.comp2char[c],
@@ -404,7 +405,8 @@ public:
             parent_lb = new_parent_lb;
             parent_rb = new_parent_rb;
 
-            _last_char = c;
+            assert(c <= std::numeric_limits<sdsl_char_type>::max());
+            _last_char = static_cast<sdsl_char_type>(c);
             ++depth;
 
             return true;
@@ -685,7 +687,7 @@ public:
 
         assert(index != nullptr && query_length() > 0);
 
-        sdsl_char_type c = _last_char + 1;
+        sdsl_sigma_type c = _last_char + 1;
 
         while (c < sigma
                && !bidirectional_search_cycle(index->fwd_fm.index,
@@ -702,7 +704,8 @@ public:
 
         if (c != sigma)
         {
-            _last_char = c;
+            assert(c <= std::numeric_limits<sdsl_char_type>::max());
+            _last_char = static_cast<sdsl_char_type>(c);
 
             return true;
         }
@@ -744,7 +747,7 @@ public:
 
         assert(index != nullptr && query_length() > 0);
 
-        sdsl_char_type c = _last_char + 1;
+        sdsl_sigma_type c = _last_char + 1;
         while (c < sigma
                && !bidirectional_search_cycle(index->rev_fm.index,
                                               index->rev_fm.index.comp2char[c],
@@ -760,7 +763,8 @@ public:
 
         if (c != sigma)
         {
-            _last_char = c;
+            assert(c <= std::numeric_limits<sdsl_char_type>::max());
+            _last_char = static_cast<sdsl_char_type>(c);
 
             return true;
         }

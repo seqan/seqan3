@@ -244,7 +244,7 @@ inline auto search_scheme_block_info(search_scheme_t const & search_scheme, size
     for (uint8_t block_id = 0; block_id < rest; ++block_id)
         ++blocks_length[block_id];
 
-    for (uint8_t search_id = 0; search_id < search_scheme.size(); ++search_id)
+    for (size_t search_id = 0; search_id < search_scheme.size(); ++search_id)
     {
         auto const & search = search_scheme[search_id];
 
@@ -783,7 +783,7 @@ inline void search_ss(index_t const & index,
     // retrieve cumulative block lengths and starting position
     auto const block_info = search_scheme_block_info(search_scheme, std::ranges::size(query));
 
-    for (uint8_t search_id = 0; search_id < search_scheme.size(); ++search_id)
+    for (size_t search_id = 0; search_id < search_scheme.size(); ++search_id)
     {
         auto const & search = search_scheme[search_id];
         auto const & [blocks_length, start_pos] = block_info[search_id];
