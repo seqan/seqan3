@@ -58,7 +58,7 @@ CPMDeclarePackage (doxygen_awesome
                    DOWNLOAD_ONLY TRUE
                    QUIET YES)
 # seqan2
-set (SEQAN3_SEQAN2_VERSION 5f8d538bc6fa5eaaa0b56067abf355ef6f3855dc)
+set (SEQAN3_SEQAN2_VERSION 80bb84378c8b106c0105b923bda717858344b750)
 CPMDeclarePackage (seqan
                    NAME seqan
                    GIT_TAG ${SEQAN3_SEQAN2_VERSION} # main
