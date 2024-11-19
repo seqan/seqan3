@@ -1,0 +1,55 @@
+# SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
+# SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+# SPDX-License-Identifier: CC0-1.0
+
+name: CodeQL
+
+on:
+  schedule:
+    - cron: "0 6 * * SAT"
+  workflow_dispatch:
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SEQAN3_NO_VERSION_CHECK: 1
+  TZ: Europe/Berlin
+
+defaults:
+  run:
+    shell: bash -Eeuxo pipefail {0}
+
+jobs:
+  codeql:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    container:
+      image: ghcr.io/seqan/gcc-14
+      volumes:
+        - /home/runner:/home/runner
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: cpp
+        build-mode: manual
+        trap-caching: false
+
+    - name: Build tests
+      run: |
+        cmake test/analyse -DCMAKE_BUILD_TYPE=Release \
+                           -DCMAKE_CXX_FLAGS="-std=c++23" \
+                           -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        make -k
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:cpp"
