@@ -25,7 +25,7 @@ TYPED_TEST(unsigned_operations, floor_log2)
     constexpr size_t one2 = seqan3::detail::floor_log2<unsigned_t>(0b0011);
     constexpr size_t two1 = seqan3::detail::floor_log2<unsigned_t>(0b0101);
     constexpr size_t two2 = seqan3::detail::floor_log2<unsigned_t>(0b0111);
-    constexpr size_t seven = seqan3::detail::floor_log2<unsigned_t>(0b10010010);
+    constexpr size_t seven = seqan3::detail::floor_log2<unsigned_t>(0b1001'0010);
     EXPECT_EQ(zero, 0u);
     EXPECT_EQ(one1, 1u);
     EXPECT_EQ(one2, 1u);
@@ -36,8 +36,8 @@ TYPED_TEST(unsigned_operations, floor_log2)
     for (uint8_t log2_value = 0; log2_value < seqan3::detail::bits_of<unsigned_t>; ++log2_value)
     {
         unsigned_t start = unsigned_t{1u} << log2_value;
-        unsigned_t end = start << 1u;
-        for (unsigned_t n = start, k = 0u; n < end && k < max_iterations; ++n, ++k)
+        unsigned_t end = static_cast<unsigned_t>(std::min<size_t>(start, max_iterations) + start);
+        for (unsigned_t n = start; n < end; ++n)
         {
             EXPECT_EQ(seqan3::detail::floor_log2(n), log2_value);
             EXPECT_EQ(std::floor(std::log2(n)), log2_value) << "If this fails this might be a floating point rounding "
@@ -54,7 +54,7 @@ TYPED_TEST(unsigned_operations, ceil_log2)
     constexpr size_t two = seqan3::detail::ceil_log2<unsigned_t>(0b0011);
     constexpr size_t three1 = seqan3::detail::ceil_log2<unsigned_t>(0b0101);
     constexpr size_t three2 = seqan3::detail::ceil_log2<unsigned_t>(0b0111);
-    constexpr size_t eight = seqan3::detail::ceil_log2<unsigned_t>(0b10010010);
+    constexpr size_t eight = seqan3::detail::ceil_log2<unsigned_t>(0b1001'0010);
     EXPECT_EQ(zero, 0u);
     EXPECT_EQ(one, 1u);
     EXPECT_EQ(two, 2u);
@@ -65,13 +65,13 @@ TYPED_TEST(unsigned_operations, ceil_log2)
     for (uint8_t log2_value = 0; log2_value < seqan3::detail::bits_of<unsigned_t>; ++log2_value)
     {
         unsigned_t start = unsigned_t{1u} << log2_value;
-        unsigned_t end = start << 1u;
+        unsigned_t end = static_cast<unsigned_t>(std::min<size_t>(start, max_iterations) + start);
         EXPECT_EQ(seqan3::detail::ceil_log2(start), log2_value);
         EXPECT_EQ(std::ceil(std::log2(start)), log2_value) << "ceil_log2 of " << start << " should be " << log2_value
                                                            << "; If this fails this might be a floating point rounding "
                                                            << "error on your machine.";
 
-        for (unsigned_t n = start + 1u, k = 0u; n < end && k < max_iterations; ++n, ++k)
+        for (unsigned_t n = start + 1u; n < end; ++n)
         {
             EXPECT_EQ(seqan3::detail::ceil_log2(n), log2_value + 1u);
 
