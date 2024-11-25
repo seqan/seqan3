@@ -1,0 +1,8 @@
+# SPDX-FileCopyrightText: 2006-2024, Knut Reinert & Freie Universität Berlin
+# SPDX-FileCopyrightText: 2016-2024, Knut Reinert & MPI für molekulare Genetik
+# SPDX-License-Identifier: CC0-1.0
+
+-${GITHUB_WORKSPACE}/include/seqan3/contrib/*
++${GITHUB_WORKSPACE}/include/seqan3/*
++${GITHUB_WORKSPACE}/test/*
+-*
