@@ -25,6 +25,7 @@ jobs:
   codeql:
     name: CodeQL
     runs-on: ubuntu-latest
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     permissions:
       security-events: write
     container:
