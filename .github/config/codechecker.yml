@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2006-2024, Knut Reinert & Freie Universität Berlin
+# SPDX-FileCopyrightText: 2016-2024, Knut Reinert & MPI für molekulare Genetik
+# SPDX-License-Identifier: CC0-1.0
+
+analyze:
+  - --enable=bugprone
+  - --enable=performance
+  - --disable=bugprone-easily-swappable-parameters
+  - --disable=cert-dcl58-cpp
+  - --disable=clang-diagnostic-float-conversion
+  - --disable=clang-diagnostic-implicit-int-conversion
+  - --disable=clang-diagnostic-implicit-int-float-conversion
+  - --disable=google-build-namespaces
+  - --skip=${GITHUB_WORKSPACE}/.github/config/codechecker.skip.analyze
+  - --clean
+
+parse:
+  - --export=html
+  - --output=./html
+  - --skip=${GITHUB_WORKSPACE}/.github/config/codechecker.skip.parse
+  - --trim-path-prefix=${GITHUB_WORKSPACE}/
