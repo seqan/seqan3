@@ -32,7 +32,7 @@ CPMDeclarePackage (sdsl-lite
                    DOWNLOAD_ONLY YES
                    QUIET YES)
 # benchmark
-set (SEQAN3_BENCHMARK_VERSION 1.9.0)
+set (SEQAN3_BENCHMARK_VERSION 1.9.1)
 CPMDeclarePackage (benchmark
                    NAME benchmark
                    VERSION ${SEQAN3_BENCHMARK_VERSION}
@@ -58,7 +58,7 @@ CPMDeclarePackage (doxygen_awesome
                    DOWNLOAD_ONLY TRUE
                    QUIET YES)
 # seqan2
-set (SEQAN3_SEQAN2_VERSION 1f1575a9e05c06a6b9efb50d23ce60e540cbaaf2)
+set (SEQAN3_SEQAN2_VERSION 578218d744522c43bc9e769f14be9c26d7e5de85)
 CPMDeclarePackage (seqan
                    NAME seqan
                    GIT_TAG ${SEQAN3_SEQAN2_VERSION} # main
