@@ -9,6 +9,8 @@ project (seqan3_app CXX)
 include (../find-package-diagnostics.cmake)
 # ---
 
+set (CMAKE_CXX_STANDARD 23)
+
 # require seqan3 with a version between >=3.0.0 and <4.0.0
 find_package (seqan3 3.0 REQUIRED)
 find_package (sharg 1.0 REQUIRED)
