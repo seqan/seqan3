@@ -36,8 +36,4 @@ add_executable (another_program another_program.cpp)
 target_link_libraries (another_program seqan3::seqan3 sharg::sharg)
 ## [adding_files]
 
-if (CMAKE_VERSION VERSION_LESS 3.14)
-    install (TARGETS hello_world another_program RUNTIME DESTINATION bin)
-else ()
-    install (TARGETS hello_world another_program) # RUNTIME DESTINATION not needed anymore since cmake 3.14
-endif ()
+install (TARGETS hello_world another_program)

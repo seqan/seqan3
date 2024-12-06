@@ -18,8 +18,4 @@ find_package (seqan3 3.0 REQUIRED)
 # build app with seqan3
 add_executable (hello_world ../src/hello_world.cpp)
 target_link_libraries (hello_world seqan3::seqan3)
-if (CMAKE_VERSION VERSION_LESS 3.14)
-    install (TARGETS hello_world RUNTIME DESTINATION bin)
-else ()
-    install (TARGETS hello_world) # RUNTIME DESTINATION not needed anymore since cmake 3.14
-endif ()
+install (TARGETS hello_world)

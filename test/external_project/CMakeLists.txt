@@ -10,10 +10,8 @@ include (ExternalProject)
 
 set (SEQAN3_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../")
 
-if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to install seqan3.
-    include (install-seqan3.cmake)
-    include (install-sharg.cmake)
-endif ()
+include (install-seqan3.cmake)
+include (install-sharg.cmake)
 
 option (SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE
         "Enable this option if you want to get a detailed list which paths were considered for find_package(...)" false)
@@ -72,16 +70,14 @@ ExternalProject_Add (
 #    We need CMake >= 3.14 to be able to package seqan3, but we actually expect that this
 #    test works with CMake >= 3.5.
 # (ExternalProject_Add simulates a fresh and separate invocation of cmake ../)
-if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to install seqan3.
-    ExternalProject_Add (
-        seqan3_installed
-        PREFIX seqan3_installed
-        SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_installed"
-        CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
-                   "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
-                   "-DCMAKE_SYSTEM_PREFIX_PATH=${SEQAN3_SYSTEM_PREFIX}")
-    add_dependencies (seqan3_installed seqan3_test_prerequisite)
-endif ()
+ExternalProject_Add (
+    seqan3_installed
+    PREFIX seqan3_installed
+    SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_installed"
+    CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
+               "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
+               "-DCMAKE_SYSTEM_PREFIX_PATH=${SEQAN3_SYSTEM_PREFIX}")
+add_dependencies (seqan3_installed seqan3_test_prerequisite)
 
 # 4) This tests test/external_project/seqan3_fetch_content_zip/CMakeLists.txt
 #    It uses fetch_content (a CMake 3.14 feature) to download our zip-release (e.g. zip, tar.xz) from
@@ -90,16 +86,14 @@ endif ()
 #    Note that FetchContent is a CMake >= 3.14 feature.
 #    This is expected to work with CMake >= 3.14.
 # (ExternalProject_Add simulates a fresh and separate invocation of cmake ../)
-if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to use fetch_content.
-    ExternalProject_Add (
-        seqan3_fetch_content_zip
-        PREFIX seqan3_fetch_content_zip
-        SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_fetch_content_zip"
-        CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
-                   "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
-                   "-DSEQAN3_PACKAGE_ZIP_URL=${SEQAN3_PACKAGE_ZIP_URL}")
-    add_dependencies (seqan3_fetch_content_zip seqan3_test_prerequisite)
-endif ()
+ExternalProject_Add (
+    seqan3_fetch_content_zip
+    PREFIX seqan3_fetch_content_zip
+    SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_fetch_content_zip"
+    CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
+               "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
+               "-DSEQAN3_PACKAGE_ZIP_URL=${SEQAN3_PACKAGE_ZIP_URL}")
+add_dependencies (seqan3_fetch_content_zip seqan3_test_prerequisite)
 
 # 5) This test is the same as 2) but emulates the settings within the setup tutorial.
 #    This test is used as snippet in the setup tutorial.
