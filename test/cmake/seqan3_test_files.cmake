@@ -2,8 +2,6 @@
 # SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
 # SPDX-License-Identifier: BSD-3-Clause
 
-cmake_minimum_required (VERSION 3.10...3.30)
-
 # Finds all files relative to the `test_base_path_` which satisfy the given file pattern.
 #
 # Example:

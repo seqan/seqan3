@@ -2,8 +2,6 @@
 # SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
 # SPDX-License-Identifier: BSD-3-Clause
 
-cmake_minimum_required (VERSION 3.10...3.30)
-
 include (seqan3_path_longest_stem)
 
 # Get a specific component of a test file which follows the seqan3 naming scheme.
