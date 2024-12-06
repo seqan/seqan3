@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
 # SPDX-License-Identifier: BSD-3-Clause
 
+# This line is required because this file is used in script mode (cmake -P).
 cmake_minimum_required (VERSION 3.12...3.30)
 
 function (generate_include_dependencies_impl)

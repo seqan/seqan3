@@ -2,8 +2,6 @@
 # SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
 # SPDX-License-Identifier: BSD-3-Clause
 
-cmake_minimum_required (VERSION 3.10...3.30)
-
 include (diagnostics/list_missing_unit_tests)
 
 # get_include_target (<VAR> TARGET dna4_test)

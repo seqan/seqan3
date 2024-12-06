@@ -4,8 +4,6 @@
 
 # This file describes where and which parts of SeqAn3 should be installed to.
 
-cmake_minimum_required (VERSION 3.14...3.30)
-
 include (GNUInstallDirs)
 
 # install documentation files in /share/doc
