@@ -44,7 +44,6 @@
 #   SEQAN3_INCLUDE_DIRS     -- to be passed to include_directories ()
 #   SEQAN3_LIBRARIES        -- to be passed to target_link_libraries ()
 #   SEQAN3_DEFINITIONS      -- to be passed to add_definitions ()
-#   SEQAN3_CXX_FLAGS        -- to be added to CMAKE_CXX_FLAGS
 #
 # Additionally, the following [IMPORTED][IMPORTED] targets are defined:
 #
@@ -52,9 +51,8 @@
 #                                  target_link_libraries(target seqan3::seqan3)
 #                              automatically sets
 #                                  target_include_directories(target $SEQAN3_INCLUDE_DIRS),
-#                                  target_link_libraries(target $SEQAN3_LIBRARIES),
-#                                  target_compile_definitions(target $SEQAN3_DEFINITIONS) and
-#                                  target_compile_options(target $SEQAN3_CXX_FLAGS)
+#                                  target_link_libraries(target $SEQAN3_LIBRARIES) and
+#                                  target_compile_definitions(target $SEQAN3_DEFINITIONS)
 #                              for a target.
 #
 #   [IMPORTED]: https://cmake.org/cmake/help/v3.10/prop_tgt/IMPORTED.html#prop_tgt:IMPORTED
@@ -201,51 +199,12 @@ option (SEQAN3_NO_BZIP2 "Don't use BZip2, even if present." OFF)
 # Check supported compilers
 # ----------------------------------------------------------------------------
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 10)
-    message (FATAL_ERROR "GCC < 10 is not supported. The detected compiler version is ${CMAKE_CXX_COMPILER_VERSION}.")
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 12)
+    message (FATAL_ERROR "GCC < 12 is not supported. The detected compiler version is ${CMAKE_CXX_COMPILER_VERSION}.")
 endif ()
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 17)
     message (FATAL_ERROR "Clang < 17 is not supported. The detected compiler version is ${CMAKE_CXX_COMPILER_VERSION}.")
-endif ()
-
-# ----------------------------------------------------------------------------
-# Require C++20
-# ----------------------------------------------------------------------------
-
-set (CMAKE_REQUIRED_FLAGS_SAVE ${CMAKE_REQUIRED_FLAGS})
-
-set (CXXSTD_TEST_SOURCE
-     "#if !defined (__cplusplus) || (__cplusplus < 202002L)
-      #error NOCXX20
-      #endif
-      int main() {}")
-
-set (SEQAN3_FEATURE_CPP20_FLAG_BUILTIN "")
-set (SEQAN3_FEATURE_CPP20_FLAG_STD20 "-std=c++20")
-
-set (SEQAN3_CPP20_FLAG "")
-
-foreach (_FLAG BUILTIN STD20)
-    set (CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS_SAVE} ${SEQAN3_FEATURE_CPP20_FLAG_${_FLAG}}")
-
-    check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" CPP20_FLAG_${_FLAG})
-
-    if (CPP20_FLAG_${_FLAG})
-        set (SEQAN3_CPP20_FLAG ${_FLAG})
-        break ()
-    endif ()
-endforeach ()
-
-set (CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS_SAVE})
-
-if (SEQAN3_CPP20_FLAG STREQUAL "BUILTIN")
-    seqan3_config_print ("C++ Standard-20 support:    builtin")
-elseif (SEQAN3_CPP20_FLAG)
-    set (SEQAN3_CXX_FLAGS "${SEQAN3_CXX_FLAGS} ${SEQAN3_FEATURE_CPP20_FLAG_${SEQAN3_CPP20_FLAG}}")
-    seqan3_config_print ("C++ Standard-20 support:    via ${SEQAN3_FEATURE_CPP20_FLAG_${SEQAN3_CPP20_FLAG}}")
-else ()
-    seqan3_config_error ("SeqAn3 requires C++20, but your compiler does not support it.")
 endif ()
 
 # ----------------------------------------------------------------------------
@@ -389,14 +348,18 @@ set (CXXSTD_TEST_SOURCE "#include <seqan3/core/platform.hpp>
 # using try_compile instead of check_cxx_source_compiles to capture output in case of failure
 file (WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx" "${CXXSTD_TEST_SOURCE}\n")
 
-try_compile (SEQAN3_PLATFORM_TEST #
+# cmake-format: off
+try_compile (SEQAN3_PLATFORM_TEST
              ${CMAKE_BINARY_DIR}
              ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx
-             CMAKE_FLAGS "-DCOMPILE_DEFINITIONS:STRING=${CMAKE_CXX_FLAGS} ${SEQAN3_CXX_FLAGS}"
-                         "-DINCLUDE_DIRECTORIES:STRING=${CMAKE_INCLUDE_PATH};${SEQAN3_INCLUDE_DIR};${SEQAN3_DEPENDENCY_INCLUDE_DIRS}"
+             CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${CMAKE_INCLUDE_PATH};${SEQAN3_INCLUDE_DIR};${SEQAN3_DEPENDENCY_INCLUDE_DIRS}"
              COMPILE_DEFINITIONS ${SEQAN3_DEFINITIONS}
              LINK_LIBRARIES ${SEQAN3_LIBRARIES}
+             CXX_STANDARD 23
+             CXX_STANDARD_REQUIRED ON
+             CXX_EXTENSIONS OFF
              OUTPUT_VARIABLE SEQAN3_PLATFORM_TEST_OUTPUT)
+# cmake-format: on
 
 if (SEQAN3_PLATFORM_TEST)
     seqan3_config_print ("SeqAn3 platform.hpp build:  passed.")
@@ -436,11 +399,9 @@ set (SEQAN3_INCLUDE_DIRS ${SEQAN3_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS}
 # ----------------------------------------------------------------------------
 
 if (SEQAN3_FOUND AND NOT TARGET seqan3::seqan3)
-    separate_arguments (SEQAN3_CXX_FLAGS_LIST UNIX_COMMAND "${SEQAN3_CXX_FLAGS}")
-
     add_library (seqan3_seqan3 INTERFACE)
     target_compile_definitions (seqan3_seqan3 INTERFACE ${SEQAN3_DEFINITIONS})
-    target_compile_options (seqan3_seqan3 INTERFACE ${SEQAN3_CXX_FLAGS_LIST})
+    target_compile_features (seqan3_seqan3 INTERFACE cxx_std_23)
     target_link_libraries (seqan3_seqan3 INTERFACE "${SEQAN3_LIBRARIES}")
     # include seqan3/include/ as -I, because seqan3 should never produce warnings.
     target_include_directories (seqan3_seqan3 INTERFACE "${SEQAN3_INCLUDE_DIR}")
@@ -467,7 +428,6 @@ if (SEQAN3_FIND_DEBUG)
     message ("  SEQAN3_INCLUDE_DIRS         ${SEQAN3_INCLUDE_DIRS}")
     message ("  SEQAN3_LIBRARIES            ${SEQAN3_LIBRARIES}")
     message ("  SEQAN3_DEFINITIONS          ${SEQAN3_DEFINITIONS}")
-    message ("  SEQAN3_CXX_FLAGS            ${SEQAN3_CXX_FLAGS}")
     message ("")
     message ("  SEQAN3_VERSION              ${SEQAN3_VERSION}")
     message ("  SEQAN3_VERSION_MAJOR        ${SEQAN3_VERSION_MAJOR}")
