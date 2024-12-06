@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 # Minimum cmake version
-cmake_minimum_required (VERSION 3.7...3.30)
+cmake_minimum_required (VERSION 3.20...3.31)
 
 ### Find seqan3
 include (../../cmake/seqan3-config-version.cmake)
