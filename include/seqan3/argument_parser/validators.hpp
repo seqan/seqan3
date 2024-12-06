@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <concepts>
+#include <exception>
 #include <filesystem>
 #include <fstream>
 #include <ranges>
