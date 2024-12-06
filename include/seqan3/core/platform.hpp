@@ -40,7 +40,7 @@
  *
  * \sa https://sourceforge.net/p/predef/wiki/Compilers
  */
-#if defined(__GNUC__) && !defined(__llvm__) && !defined(__INTEL_COMPILER)
+#if defined(__GNUC__) && !defined(__llvm__) && !defined(__INTEL_COMPILER) && !defined(__INTEL_LLVM_COMPILER)
 #    define SEQAN3_COMPILER_IS_GCC 1
 #else
 #    define SEQAN3_COMPILER_IS_GCC 0
@@ -52,51 +52,34 @@
 #endif // SEQAN3_DOXYGEN_ONLY(1)0
 
 // ============================================================================
-//  Compiler support GCC
+//  Compiler support
 // ============================================================================
 
-#if SEQAN3_COMPILER_IS_GCC
-#    if (__GNUC__ < 11)
-#        error                                                                                                         \
-            "SeqAn 3.1.x is the last version that supports GCC 7, 8, and 9. SeqAn 3.2.x is the latest version that support GCC 10. Please upgrade your compiler or use 3.1.x./3.2.x."
-#    endif // (__GNUC__ < 11)
+#if SEQAN3_COMPILER_IS_GCC && (__GNUC__ < 12)
+#    error "At least GCC 12 is needed."
+#endif
 
-#    if (__GNUC__ == 11 && __GNUC_MINOR__ <= 3)
-#        pragma GCC warning "Be aware that GCC < 11.4 might have bugs that cause SeqAn3 fail to compile."
-#    endif // (__GNUC__ == 11 && __GNUC_MINOR__ <= 2)
+// clang-format off
+#if defined(__INTEL_LLVM_COMPILER) && (__INTEL_LLVM_COMPILER < 20240000)
+#    error "At least Intel OneAPI 2024 is needed."
+#endif
+// clang-format on
 
-#    if (__GNUC__ == 12 && __GNUC_MINOR__ <= 2)
-#        pragma GCC warning "Be aware that GCC < 12.3 might have bugs that cause SeqAn3 fail to compile."
-#    endif // (__GNUC__ == 12 && __GNUC_MINOR__ <= 1)
-
-#    if SEQAN3_DOXYGEN_ONLY(1) 0
-//!\brief This disables the warning you would get if your compiler is newer than the latest supported version.
-#        define SEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC
-#    endif // SEQAN3_DOXYGEN_ONLY(1)0
-
-#    ifndef SEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC
-#        if (__GNUC__ > 14)
-#            pragma message                                                                                            \
-                "Your compiler is newer than the latest supported compiler of this SeqAn version (gcc-13). It might be that SeqAn does not compile due to this. You can disable this warning by setting -DSEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC."
-#        endif // (__GNUC__ > 13)
-#    endif     // SEQAN3_DISABLE_NEWER_COMPILER_DIAGNOSTIC
+#if defined(__clang__) && defined(__clang_major__) && (__clang_major__ < 17)
+#    error "At least Clang 17 is needed."
+#endif
 
 // ============================================================================
-//  Compiler support Clang
+//  Standard library support
 // ============================================================================
 
-#elif defined(__clang__)
-#    if __clang_major__ < 17
-#        error "Only Clang >= 17 is supported."
-#    endif
+#if defined(_LIBCPP_VERSION) && (_LIBCPP_VERSION < 170000)
+#    error "At least libc++ 17 is required."
+#endif
 
-// ============================================================================
-//  Compiler support other
-// ============================================================================
-
-#elif !defined(SEQAN3_DISABLE_COMPILER_CHECK)
-#    error "Your compiler is not supported. You can disable this error by setting -DSEQAN3_DISABLE_COMPILER_CHECK."
-#endif // SEQAN3_COMPILER_IS_GCC
+#if defined(_GLIBCXX_RELEASE) && (_GLIBCXX_RELEASE < 12)
+#    error "At least libstdc++ 12 is needed."
+#endif
 
 // ============================================================================
 //  C++ standard and features
@@ -104,8 +87,8 @@
 
 // C++ standard [required]
 #ifdef __cplusplus
-#    if (__cplusplus < 202002L)
-#        error "SeqAn3 requires C++20, make sure that you have set -std=c++20."
+#    if (__cplusplus < 202100)
+#        error "SeqAn3 requires C++23, make sure that you have set -std=c++23."
 #    endif
 #else
 #    error "This is not a C++ compiler."

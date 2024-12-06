@@ -188,7 +188,7 @@ For example, after adding `another_program.cpp` your `CMakeLists.txt` may look l
 # Including SeqAn3 as external project
 
 ```cmake
-cmake_minimum_required (VERSION 3.14...3.30)
+cmake_minimum_required (VERSION 3.20...3.31)
 
 project (my_app LANGUAGES CXX VERSION 1.0.0)
 

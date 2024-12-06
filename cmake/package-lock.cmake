@@ -47,8 +47,7 @@ CPMDeclarePackage (googletest
                    VERSION ${SEQAN3_GOOGLETEST_VERSION}
                    GITHUB_REPOSITORY google/googletest
                    SYSTEM TRUE
-                   OPTIONS "BUILD_GMOCK OFF" "INSTALL_GTEST OFF" "CMAKE_CXX_STANDARD 20"
-                           "CMAKE_MESSAGE_LOG_LEVEL WARNING")
+                   OPTIONS "BUILD_GMOCK OFF" "INSTALL_GTEST OFF" "CMAKE_MESSAGE_LOG_LEVEL WARNING")
 # doxygen-awesome
 set (SEQAN3_DOXYGEN_AWESOME_VERSION 2.3.4)
 CPMDeclarePackage (doxygen_awesome
