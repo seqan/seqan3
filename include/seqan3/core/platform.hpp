@@ -104,8 +104,8 @@
 
 // C++ standard [required]
 #ifdef __cplusplus
-#    if (__cplusplus < 202002L)
-#        error "SeqAn3 requires C++20, make sure that you have set -std=c++20."
+#    if (__cplusplus < 202100)
+#        error "SeqAn3 requires C++23, make sure that you have set -std=c++23."
 #    endif
 #else
 #    error "This is not a C++ compiler."
