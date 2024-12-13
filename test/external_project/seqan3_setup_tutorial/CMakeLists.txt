@@ -14,7 +14,7 @@ file (COPY "${CMAKE_SOURCE_DIR}/../src/hello_world.cpp" DESTINATION "${CMAKE_CUR
 set (CMAKE_CURRENT_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../../source")
 
 ## [adding_files]
-cmake_minimum_required (VERSION 3.5...3.30)
+cmake_minimum_required (VERSION 3.20...3.31)
 project (seqan3_tutorial CXX)
 
 # add seqan3 to search path
@@ -31,8 +31,4 @@ add_executable (another_program another_program.cpp)
 target_link_libraries (another_program seqan3::seqan3)
 ## [adding_files]
 
-if (CMAKE_VERSION VERSION_LESS 3.14)
-    install (TARGETS hello_world another_program RUNTIME DESTINATION bin)
-else ()
-    install (TARGETS hello_world another_program) # RUNTIME DESTINATION not needed anymore since cmake 3.14
-endif ()
+install (TARGETS hello_world another_program)
