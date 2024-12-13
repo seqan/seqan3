@@ -19,7 +19,7 @@
 //!\brief The patch version as MACRO.
 #define SEQAN3_VERSION_PATCH 0
 //!\brief The release candidate number. 0 means stable release, >= 1 means release candidate.
-#define SEQAN3_RELEASE_CANDIDATE 1
+#define SEQAN3_RELEASE_CANDIDATE 2
 
 //!\brief The full version as MACRO (number).
 #define SEQAN3_VERSION (SEQAN3_VERSION_MAJOR * 10000 + SEQAN3_VERSION_MINOR * 100 + SEQAN3_VERSION_PATCH)
