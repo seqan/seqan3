@@ -131,7 +131,7 @@ endmacro ()
 
 # note: seqan3/contrib/std/* will not be tested, because they use local (#include "file") includes
 # note: seqan3/version.hpp is one of the only header that is not required to have a seqan3/core/platform.hpp include
-seqan3_header_test (seqan3 "${SEQAN3_CLONE_DIR}/include" "seqan3/version.hpp|seqan3/contrib/std")
+seqan3_header_test (seqan3 "${SEQAN3_CLONE_DIR}/include" "seqan3/version.hpp|seqan3/contrib/std|seqan3/vendor")
 seqan3_header_test (seqan3_test "${SEQAN3_CLONE_DIR}/test/include" "")
 
 if (SEQAN3_FULL_HEADER_TEST)
