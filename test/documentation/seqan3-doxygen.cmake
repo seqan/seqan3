@@ -65,6 +65,7 @@ else ()
     # subsequently deployed to a server.
     add_custom_target (download-cppreference-doxygen-web-tag)
     add_custom_command (TARGET download-cppreference-doxygen-web-tag
+                        POST_BUILD
                         COMMAND ${CMAKE_COMMAND} -E copy "${SEQAN3_DOXYGEN_STD_TAGFILE}"
                                 "${SEQAN3_DEFAULT_DOXYGEN_STD_TAGFILE}"
                         BYPRODUCTS "${SEQAN3_DEFAULT_DOXYGEN_STD_TAGFILE}")
