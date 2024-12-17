@@ -9,7 +9,7 @@ int main()
 {
     seqan3::pod_tuple<int, float> tuple1{3, 4.7};
     static_assert(std::is_standard_layout_v<seqan3::pod_tuple<int, float>>);
-    static_assert(std::is_trivial_v<seqan3::pod_tuple<int, float>>);
+    static_assert(seqan3::trivial<seqan3::pod_tuple<int, float>>);
     seqan3::debug_stream << std::get<int>(tuple1) << '\n'; // 3
 
     // template parameters are automatically deduced:

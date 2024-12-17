@@ -16,7 +16,7 @@ TYPED_TEST_SUITE_P(nucleotide);
 
 TYPED_TEST_P(nucleotide, concept_check)
 {
-    EXPECT_TRUE(std::is_trivial_v<TypeParam>);
+    EXPECT_TRUE(seqan3::trivial<TypeParam>);
 
     EXPECT_TRUE(seqan3::nucleotide_alphabet<TypeParam>);
     EXPECT_TRUE(seqan3::nucleotide_alphabet<TypeParam &>);

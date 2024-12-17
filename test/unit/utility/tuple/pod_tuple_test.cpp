@@ -6,7 +6,6 @@
 
 #include <type_traits>
 
-#include <seqan3/utility/concept.hpp>
 #include <seqan3/utility/tuple/pod_tuple.hpp>
 
 using tuple_t = seqan3::pod_tuple<int, long, float>;
