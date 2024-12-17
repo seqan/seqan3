@@ -32,7 +32,7 @@ TYPED_TEST(uint_adaptation, type_properties)
 {
     EXPECT_TRUE((std::is_trivially_copyable_v<TypeParam>));
     EXPECT_TRUE((std::is_trivially_default_constructible_v<TypeParam>));
-    EXPECT_TRUE((std::is_trivial_v<TypeParam>));
+    EXPECT_TRUE((seqan3::trivial<TypeParam>));
 }
 
 TYPED_TEST(uint_adaptation, alphabet_rank_t)

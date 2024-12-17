@@ -134,7 +134,7 @@ concept trivially_copyable = std::copyable<t> && std::is_trivially_copyable_v<t>
  */
 //!\cond
 template <typename t>
-concept trivial = trivially_copyable<t> && trivially_destructible<t> && std::is_trivial_v<t>;
+concept trivial = trivially_copyable<t> && trivially_destructible<t> && std::is_trivially_default_constructible_v<t>;
 //!\endcond
 
 /*!\interface seqan3::standard_layout
