@@ -17,31 +17,34 @@ works.
 
 # Software
 Requirements:
-  - gcc >= 11
-  - cmake >= 3.5
+  - gcc >= 12 or clang >=17 or IntelOneAPI >= 2024.0
+  - cmake >= 3.20
   - git
 
-## Installing GCC
+## Installing a compiler
 
-SeqAn requires GCC >= 11. Current versions of LLVM/Clang and VisualStudio/MSVC are **not yet supported**.
-We will briefly explain how to install GCC-11 (or the latest GCC if such an option is available) on some popular
-operating systems. We recommend using the latest version of GCC available. For more information, refer to your
-operating system's documentation.
+VisualStudio/MSVC is **not yet supported**.
+We will briefly explain how to install a compiler on some popular operating systems.
+We recommend using the latest version of the compiler.
+For more information, refer to your operating system's documentation.
 
-### Linux
+### GCC
+
+#### Linux
 <div class="tabbed">
-- <b class="tab-title">Ubuntu >= 22.04</b>
+- <b class="tab-title">Ubuntu without PPA</b>
 ```bash
-# Installs default compiler version (gcc-11 for Ubuntu 22.04).
-sudo apt install g++
-# To install gcc-12, follow instructions for Ubuntu < 22.04.
+# Ubuntu 24.04
+sudo apt install g++-14
+# Ubuntu 22.04
+sudo apt install g++-12
 ```
-- <b class="tab-title">Ubuntu < 22.04</b>
+- <b class="tab-title">Ubuntu with PPA</b>
 ```bash
 sudo add-apt-repository --no-update --yes ppa:ubuntu-toolchain-r/ppa
 sudo add-apt-repository --no-update --yes ppa:ubuntu-toolchain-r/test
 sudo apt-get update
-sudo apt install g++-11
+sudo apt install g++-14
 ```
 - <b class="tab-title">Using conda</b>
 To avoid interference with system packages, we recommend creating a new environment when using conda.
@@ -54,15 +57,42 @@ and deactivated via `conda deactivate`.
 
 </div>
 
-### macOS
+#### macOS
 <div class="tabbed">
 - <b class="tab-title">Using Homebrew</b>
 ```bash
-brew install gcc@11
+brew install gcc@14
 ```
 - <b class="tab-title">Using Macports</b>
 ```bash
-sudo port install gcc11
+sudo port install gcc14
+```
+
+</div>
+
+### Clang
+
+#### Linux
+<div class="tabbed">
+- <b class="tab-title">Ubuntu 24.04</b>
+```bash
+# Ubuntu 24.04
+sudo apt install clang-18
+```
+- <b class="tab-title">Ubuntu with PPA</b>
+Refer to https://apt.llvm.org/
+
+</div>
+
+#### macOS
+<div class="tabbed">
+- <b class="tab-title">Using Homebrew</b>
+```bash
+brew install llvm@19
+```
+- <b class="tab-title">Using Macports</b>
+```bash
+sudo port install clang-19
 ```
 
 </div>
@@ -85,7 +115,7 @@ hours of use per month, which is plenty for our tutorials. A GitHub account is r
 </div>
 <br>
 \attention After installing, `g++ --version` should print the desired GCC version.
-           If not, you may have to use, for example, `g++-11 --version` or even specify the full path to your compiler.
+           If not, you may have to use, for example, `g++-14 --version` or even specify the full path to your compiler.
 
 Similarly, you may need to install CMake and git, e.g. `apt install cmake git`.
 
@@ -175,7 +205,7 @@ of errors easier. `Debug` is suitable for contributors, and we recommend using i
 \remark Depending on the standard C++ compiler on your system, you may need to specify the compiler via
 `-DCMAKE_CXX_COMPILER=`, for example:
 ```bash
-cmake -DCMAKE_CXX_COMPILER=/path/to/executable/g++-11 ../source
+cmake -DCMAKE_CXX_COMPILER=/path/to/executable/g++-14 ../source
 ```
 
 # Adding a new source file to your project
@@ -205,6 +235,25 @@ FetchContent_Declare (
 
 # Download and make SeqAn3 available.
 FetchContent_MakeAvailable (seqan3_fetch_content)
+
+add_executable (my_app my_app.cpp)
+
+# Set up everything needed to use SeqAn3 with my_app:
+target_link_libraries (my_app PUBLIC seqan3::seqan3)
+```
+
+# Including SeqAn3 as external project with CPM (recommended)
+
+See https://github.com/cpm-cmake/CPM.cmake for install instructions.
+
+```cmake
+cmake_minimum_required (VERSION 3.20...3.31)
+
+project (my_app LANGUAGES CXX VERSION 1.0.0)
+
+include (cmake/CPM.cmake)
+
+CPMAddPackage("gh:seqan/seqan3@3.4.0")
 
 add_executable (my_app my_app.cpp)
 
