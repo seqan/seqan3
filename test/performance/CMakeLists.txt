@@ -10,7 +10,7 @@ include (../seqan3-test.cmake)
 CPMGetPackage (benchmark)
 
 set (SEQAN3_BENCHMARK_MIN_TIME
-     "1"
+     "1s"
      CACHE STRING "Set --benchmark_min_time= for each bechmark. Timings are unreliable in CI.")
 
 macro (seqan3_benchmark benchmark_cpp)
