@@ -137,8 +137,8 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
     if constexpr (sequential_pop_t::value)
         thread_count = writer_count + 1;
 
-    // std::cout << "threads: " << thread_count << ‘\n‘;
-    // std::cout << "writers: " << writer_count << ‘\n‘;
+    // std::cout << "threads: " << thread_count << '\n';
+    // std::cout << "writers: " << writer_count << '\n';
 
     ASSERT_GE(thread_count, 2u);
 
@@ -147,8 +147,8 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
     std::vector<std::thread> workers;
     std::atomic<size_t> registered_writer = 0;
     std::atomic<size_t> registered_reader = 0;
-    seqan3::contrib::queue_op_status push_status = seqan3::contrib::queue_op_status::success;
-    seqan3::contrib::queue_op_status pop_status = seqan3::contrib::queue_op_status::success;
+    std::atomic<seqan3::contrib::queue_op_status> push_status = seqan3::contrib::queue_op_status::success;
+    std::atomic<seqan3::contrib::queue_op_status> pop_status = seqan3::contrib::queue_op_status::success;
     for (size_t tid = 0; tid < thread_count; ++tid)
     {
         workers.push_back(std::thread(
