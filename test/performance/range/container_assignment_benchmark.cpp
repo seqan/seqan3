@@ -30,8 +30,8 @@ struct assignment_functor
 {
     template <typename container_t>
         requires (id == tag::assignment_operator)
-    static constexpr void call(container_t & to, container_t const & from) noexcept(
-        noexcept(std::is_nothrow_assignable_v<container_t, container_t>))
+    static constexpr void call(container_t & to, container_t const & from)
+        noexcept(noexcept(std::is_nothrow_assignable_v<container_t, container_t>))
     {
         benchmark::DoNotOptimize(to = from);
     }
@@ -54,30 +54,17 @@ struct assignment_functor
 };
 
 template <typename container_t>
-    requires requires (container_t v) { v.clear(); }
-static constexpr void clear(container_t & container) noexcept(noexcept(std::declval<container_t>().clear()))
-{
-    container.clear();
-}
-
-template <typename container_t>
     requires requires (container_t v) { v.resize(1u); }
-static constexpr void resize(container_t & container,
-                             size_t const size) noexcept(noexcept(std::declval<container_t>().resize(1u)))
+static constexpr void resize(container_t & container, size_t const size)
+    noexcept(noexcept(std::declval<container_t>().resize(1u)))
 {
     container.resize(size);
 }
 
 #if SEQAN3_HAS_SEQAN2
 template <typename container_t>
-static constexpr void clear(container_t & container) noexcept(noexcept(seqan2::clear(std::declval<container_t>())))
-{
-    seqan2::clear(container);
-}
-
-template <typename container_t>
-static constexpr void resize(container_t & container,
-                             size_t const size) noexcept(noexcept(seqan2::resize(std::declval<container_t>(), 1u)))
+static constexpr void resize(container_t & container, size_t const size)
+    noexcept(noexcept(seqan2::resize(std::declval<container_t>(), 1u)))
 {
     seqan2::resize(container, size);
 }
@@ -106,8 +93,6 @@ static void assign(benchmark::State & state)
     for (auto _ : state)
     {
         fn.call(to, from);
-        benchmark::ClobberMemory();
-        clear(to);
         benchmark::ClobberMemory();
     }
 }
