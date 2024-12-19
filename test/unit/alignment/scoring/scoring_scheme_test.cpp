@@ -59,7 +59,7 @@ TEST(nucleotide_scoring_scheme, template_argument_deduction)
     }
 
     {
-        std::array<std::array<int16_t, 15>, 15> m;
+        std::array<std::array<int16_t, 15>, 15> m{};
         seqan3::nucleotide_scoring_scheme scheme{m};
         EXPECT_TRUE((std::is_same_v<decltype(scheme), seqan3::nucleotide_scoring_scheme<int16_t>>));
     }
@@ -83,7 +83,7 @@ TEST(aminoacid_scoring_scheme, template_argument_deduction)
     }
 
     {
-        std::array<std::array<int16_t, 27>, 27> m;
+        std::array<std::array<int16_t, 27>, 27> m{};
         seqan3::aminoacid_scoring_scheme scheme{m};
         EXPECT_TRUE((std::is_same_v<decltype(scheme), seqan3::aminoacid_scoring_scheme<int16_t>>));
     }
