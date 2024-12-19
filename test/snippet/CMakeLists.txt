@@ -40,7 +40,7 @@ macro (seqan3_snippet test_name_prefix snippet snippet_base_path)
     add_test (NAME "${snippet_compare_test_target}"
               COMMAND ${CMAKE_COMMAND} -DTARGET_FILE=$<TARGET_FILE:${target}>
                       -DSOURCE_FILE=${snippet_base_path}/${snippet} #
-                      -P "${CMAKE_SOURCE_DIR}/compare_snippet_output.cmake")
+                      -P "${CMAKE_CURRENT_SOURCE_DIR}/compare_snippet_output.cmake")
 
     # disable version checker, as it interferes with comparing the snippet output
     set_tests_properties ("${snippet_compare_test_target}" PROPERTIES ENVIRONMENT SEQAN3_NO_VERSION_CHECK=0)
