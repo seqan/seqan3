@@ -28,7 +28,7 @@ namespace seqan3
 //!\ingroup core_debug_stream
 //!\implements seqan3::enum_bitwise_operators
 //!\sa seqan3::enum_bitwise_operators enables combining enum values.
-enum fmtflags2
+enum class fmtflags2 : int8_t
 {
     none = 0,                     //!< No flag is set.
     utf8 = 1,                     //!< Enables use of non-ASCII UTF8 characters in formatted output.

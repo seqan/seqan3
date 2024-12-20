@@ -1,0 +1,113 @@
+# SPDX-FileCopyrightText: 2006-2024, Knut Reinert & Freie Universität Berlin
+# SPDX-FileCopyrightText: 2016-2024, Knut Reinert & MPI für molekulare Genetik
+# SPDX-License-Identifier: CC0-1.0
+
+name: Sanitizer
+
+on:
+  schedule:
+    - cron: "0 6 * * SAT"
+  workflow_dispatch:
+
+concurrency:
+  group: sanitizer-actions
+  cancel-in-progress: true
+
+env:
+  SEQAN3_NO_VERSION_CHECK: 1
+  TZ: Europe/Berlin
+  TSAN_OPTIONS: ignore_noninstrumented_modules=1
+  UBSAN_OPTIONS: print_stacktrace=1
+
+defaults:
+  run:
+    shell: bash -Eeuxo pipefail {0}
+
+jobs:
+  build:
+    name: ${{ matrix.name }} ${{ matrix.build_type }} ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
+    env:
+      ASAN_OPTIONS: strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1:detect_leaks=${{ contains(matrix.os, 'macos') && '0' || '1' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [ASan, TSan, UBSan]
+        os: [ubuntu-latest, macos-14]
+        build_type: [Release, RelWithDebInfo, Debug]
+        exclude:
+          # macOS llvm packages do not contain libarcher, which is required for TSan to handle OpenMP.
+          # TSan runs on ubuntu with clang. Packages there contain libarcher.
+          - name: "TSan"
+            os: macos-14
+
+        include:
+          - os: macos-14
+            compiler: clang-19
+          - os: ubuntu-latest
+            compiler: gcc-14
+            image: ghcr.io/seqan/gcc-14
+
+          - name: "TSan"
+            os: ubuntu-latest
+            compiler: clang-19
+            image: ghcr.io/seqan/clang-19
+            cxx_flags: "-fsanitize=thread"
+            ctest_excludes: "-E async_input_buffer_snippet"
+
+          - name: "ASan"
+            os: ubuntu-latest
+            cxx_flags: "-fsanitize=address -Wno-maybe-uninitialized"
+          - name: "ASan"
+            os: macos-14
+            cxx_flags: "-fsanitize=address"
+
+          - name: "UBSan"
+            os: ubuntu-latest
+            cxx_flags: "-fsanitize=undefined,float-divide-by-zero -Wno-maybe-uninitialized -Wno-stringop-overflow"
+          - name: "UBSan"
+            os: macos-14
+            cxx_flags: "-fsanitize=undefined,float-divide-by-zero,local-bounds,nullability"
+            ctest_excludes: "-E tmp_directory_snippet_cmp_output"
+
+    container:
+      # If an image is defined for a matrix entry, use it.
+      # Otherwise, use the "empty"/'' image which means do not use a container at all.
+      image: ${{ matrix.image || '' }}
+      volumes:
+        - /home/runner:/home/runner
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup compiler
+        if: contains(matrix.os, 'macos')
+        uses: seqan/actions/setup-compiler@main
+        with:
+          compiler: ${{ matrix.compiler }}
+
+      - name: Configure tests
+        run: |
+          mkdir build && cd build
+          cmake ../test/analyse -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+                                -DCMAKE_CXX_FLAGS="-fno-omit-frame-pointer ${{ matrix.cxx_flags }} -fno-sanitize-recover=all" \
+                                -DSEQAN3_BENCHMARK_MIN_TIME=0.01s \
+                                -DSEQAN3_WITH_SEQAN2_CI=OFF
+          make gtest_main benchmark_main
+
+      - name: Build tests
+        working-directory: build
+        run: make -k
+
+      - name: Run tests
+        working-directory: build
+        continue-on-error: true
+        id: test
+        run: ctest . -j --output-on-failure --no-tests=error ${{ matrix.ctest_excludes }}
+
+      # Rerun failed tests with **one** thread. Some snippets touch the same file and fail in parallel.
+      - name: Rerun failed tests
+        if: steps.test.outcome == 'failure'
+        working-directory: build
+        run: ctest . -j1 --output-on-failure --no-tests=error --rerun-failed

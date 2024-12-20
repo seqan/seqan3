@@ -113,7 +113,7 @@ void seqan3_affine_dna4_omp_for(benchmark::State & state)
     int64_t total = 0;
     for (auto _ : state)
     {
-#    pragma omp parallel for num_threads(std::thread::hardware_concurrency()) schedule(guided)
+#    pragma omp parallel for num_threads(std::thread::hardware_concurrency()) schedule(guided) reduction(+:total)
         for (size_t i = 0; i < zip.size(); ++i)
         {
             auto rng = align_pairwise(zip[i], affine_cfg | result_t{});
@@ -182,7 +182,7 @@ void seqan2_affine_dna4_omp_for(benchmark::State & state)
     int64_t total = 0;
     for (auto _ : state)
     {
-#    pragma omp parallel for num_threads(std::thread::hardware_concurrency()) schedule(guided)
+#    pragma omp parallel for num_threads(std::thread::hardware_concurrency()) schedule(guided) reduction(+:total)
         for (size_t i = 0; i < seqan2::length(vec1); ++i)
         {
             if constexpr (score_only)

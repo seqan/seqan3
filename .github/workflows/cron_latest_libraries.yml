@@ -59,7 +59,7 @@ jobs:
           mkdir build && cd build
           cmake ../test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=Release \
                                             -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
-                                            -DSEQAN3_BENCHMARK_MIN_TIME=0.01
+                                            -DSEQAN3_BENCHMARK_MIN_TIME=0.01s
           case "${{ matrix.build }}" in
             unit) make gtest_main;;
             snippet) make gtest_main;;
