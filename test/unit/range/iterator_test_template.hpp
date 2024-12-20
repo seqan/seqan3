@@ -499,14 +499,14 @@ inline void jump_backward_test(it_begin_t && it_begin, rng_t && rng)
     // Backward copy it + (-n)
     for (size_t n = 0; n < sz; ++n)
     {
-        expect_iter_equal<test_type>(pre_end_it + (-1 * n), pre_end_rng_it - n);
+        expect_iter_equal<test_type>(pre_end_it + (-static_cast<std::ptrdiff_t>(n)), pre_end_rng_it - n);
         expect_iter_equal<test_type>(pre_end_it, pre_end_rng_it);
     }
 
     // Backward copy friend through (-n) + it
     for (size_t n = 0; n < sz; ++n)
     {
-        expect_iter_equal<test_type>((-1 * n) + pre_end_it, pre_end_rng_it - n);
+        expect_iter_equal<test_type>((-static_cast<std::ptrdiff_t>(n)) + pre_end_it, pre_end_rng_it - n);
         expect_iter_equal<test_type>(pre_end_it, pre_end_rng_it);
     }
 }
