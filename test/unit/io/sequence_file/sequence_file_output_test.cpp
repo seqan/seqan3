@@ -10,6 +10,7 @@
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/test/tmp_directory.hpp>
+#include <seqan3/test/zlib_skip.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
 using seqan3::operator""_dna5;
@@ -483,6 +484,7 @@ TEST(compression, by_filename_gz)
 
     std::string buffer = compression_by_filename_impl(filename);
     buffer[9] = '\x00'; // zero out OS byte
+    SEQAN3_TEST_GTEST_SKIP_ZLIB_DEFLATE;
     EXPECT_EQ(buffer, expected_gz);
 }
 
@@ -497,6 +499,7 @@ TEST(compression, by_stream_gz)
 
     std::string buffer = out.str();
     buffer[9] = '\x00'; // zero out OS byte
+    SEQAN3_TEST_GTEST_SKIP_ZLIB_DEFLATE;
     EXPECT_EQ(buffer, expected_gz);
 }
 
@@ -507,6 +510,7 @@ TEST(compression, by_filename_bgzf)
 
     std::string buffer = compression_by_filename_impl(filename);
     buffer[9] = '\x00'; // zero out OS byte
+    SEQAN3_TEST_GTEST_SKIP_ZLIB_DEFLATE;
     EXPECT_EQ(buffer, expected_bgzf);
 }
 
@@ -521,6 +525,7 @@ TEST(compression, by_stream_bgzf)
 
     std::string buffer = out.str();
     buffer[9] = '\x00'; // zero out OS byte
+    SEQAN3_TEST_GTEST_SKIP_ZLIB_DEFLATE;
     EXPECT_EQ(buffer, expected_bgzf);
 }
 

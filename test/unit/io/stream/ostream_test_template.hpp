@@ -11,6 +11,7 @@
 
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/test/tmp_directory.hpp>
+#include <seqan3/test/zlib_skip.hpp>
 
 template <typename T>
 class ostream : public ::testing::Test
@@ -41,7 +42,10 @@ TYPED_TEST_P(ostream, output)
     std::string buffer{std::istreambuf_iterator<char>{fi}, std::istreambuf_iterator<char>{}};
 
     if constexpr (TestFixture::zero_out_os_byte)
+    {
         buffer[9] = '\x00'; // zero-out the OS byte.
+        SEQAN3_TEST_GTEST_SKIP_ZLIB_DEFLATE;
+    }
 
     EXPECT_EQ(buffer, TestFixture::compressed);
 }
@@ -63,7 +67,10 @@ TYPED_TEST_P(ostream, output_type_erased)
     std::string buffer{std::istreambuf_iterator<char>{fi}, std::istreambuf_iterator<char>{}};
 
     if constexpr (TestFixture::zero_out_os_byte)
+    {
         buffer[9] = '\x00'; // zero-out the OS byte.
+        SEQAN3_TEST_GTEST_SKIP_ZLIB_DEFLATE;
+    }
 
     EXPECT_EQ(buffer, TestFixture::compressed);
 }

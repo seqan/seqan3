@@ -13,6 +13,7 @@
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/io/structure_file/output.hpp>
 #include <seqan3/test/tmp_directory.hpp>
+#include <seqan3/test/zlib_skip.hpp>
 
 using seqan3::operator""_rna5;
 using seqan3::operator""_wuss51;
@@ -474,6 +475,7 @@ TEST_F(structure_file_output_compression, by_filename_gz)
 
     std::string buffer = compression_by_filename_impl(filename);
     buffer[9] = '\x00'; // zero out OS byte
+    SEQAN3_TEST_GTEST_SKIP_ZLIB_DEFLATE;
     EXPECT_EQ(buffer, expected_gz);
 }
 
@@ -486,6 +488,7 @@ TEST_F(structure_file_output_compression, by_stream_gz)
     }
     std::string buffer = out.str();
     buffer[9] = '\x00'; // zero out OS byte
+    SEQAN3_TEST_GTEST_SKIP_ZLIB_DEFLATE;
     EXPECT_EQ(buffer, expected_gz);
 }
 
@@ -495,6 +498,7 @@ TEST_F(structure_file_output_compression, by_filename_bgzf)
     auto filename = tmp.path() / "structure_file_output_test.dbn.bgzf";
     std::string buffer = compression_by_filename_impl(filename);
     buffer[9] = '\x00'; // zero out OS byte
+    SEQAN3_TEST_GTEST_SKIP_ZLIB_DEFLATE;
     EXPECT_EQ(buffer, expected_bgzf);
 }
 
@@ -507,6 +511,7 @@ TEST_F(structure_file_output_compression, by_stream_bgzf)
     }
     std::string buffer = out.str();
     buffer[9] = '\x00'; // zero out OS byte
+    SEQAN3_TEST_GTEST_SKIP_ZLIB_DEFLATE;
     EXPECT_EQ(buffer, expected_bgzf);
 }
 #endif
