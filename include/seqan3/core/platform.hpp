@@ -185,27 +185,8 @@ static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supp
 #    define SEQAN3_WORKAROUND_VIEW_PERFORMANCE 1
 #endif
 
-//!\brief A view does not need to be default constructible. This change is first implemented in gcc12.
-#ifndef SEQAN3_WORKAROUND_DEFAULT_CONSTRUCTIBLE_VIEW
-#    if SEQAN3_COMPILER_IS_GCC && (__GNUC__ < 12)
-#        define SEQAN3_WORKAROUND_DEFAULT_CONSTRUCTIBLE_VIEW 1
-#    else
-#        define SEQAN3_WORKAROUND_DEFAULT_CONSTRUCTIBLE_VIEW 0
-#    endif
-#endif
-
-//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100139
-//!       std::views::{take, drop} do not type-erase. This is a defect within the standard lib (fixed in gcc12).
-#ifndef SEQAN3_WORKAROUND_GCC_100139
-#    if SEQAN3_COMPILER_IS_GCC && (__GNUC__ < 12)
-#        define SEQAN3_WORKAROUND_GCC_100139 1
-#    else
-#        define SEQAN3_WORKAROUND_GCC_100139 0
-#    endif
-#endif
-
 #ifndef SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#    if SEQAN3_COMPILER_IS_GCC && (__GNUC__ >= 12)
+#    if SEQAN3_COMPILER_IS_GCC
 // For checking whether workaround applies, e.g., in search_scheme_test
 #        define SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY 1
 // The goal is to create _Pragma("GCC diagnostic ignored \"-Wrestrict\"")

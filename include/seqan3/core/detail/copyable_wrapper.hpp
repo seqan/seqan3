@@ -113,9 +113,7 @@ public:
 template <boxable t>
     requires std::copyable<t>
           || (std::is_nothrow_move_constructible_v<t> && std::is_nothrow_copy_constructible_v<t>)
-#if SEQAN3_WORKAROUND_DEFAULT_CONSTRUCTIBLE_VIEW // If views must be default constructible, t must also be
                  && std::default_initializable<t>
-#endif
              class copyable_wrapper<t>
 {
 private:
