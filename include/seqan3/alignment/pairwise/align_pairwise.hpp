@@ -22,7 +22,6 @@
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/core/algorithm/algorithm_result_generator_range.hpp>
 #include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
-#include <seqan3/core/detail/all_view.hpp>
 #include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
@@ -163,8 +162,8 @@ constexpr auto align_pairwise(sequence_t && sequences, alignment_config_t const 
     static_assert(std::ranges::random_access_range<second_seq_t> && std::ranges::sized_range<second_seq_t>,
                   "Alignment configuration error: The sequence must model random_access_range and sized_range.");
 
-    // Pipe with seqan3::detail::all to allow rvalue non-view ranges.
-    auto seq_view = std::forward<sequence_t>(sequences) | seqan3::detail::all;
+    // Pipe with std::views::all to allow rvalue non-view ranges.
+    auto seq_view = std::forward<sequence_t>(sequences) | std::views::all;
     // Configure the alignment algorithm.
     auto && [algorithm, complete_config] = detail::alignment_configurator::configure<decltype(seq_view)>(config);
 

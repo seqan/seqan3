@@ -14,7 +14,6 @@
 #include <ranges>
 #include <type_traits>
 
-#include <seqan3/core/detail/all_view.hpp>
 #include <seqan3/core/range/detail/adaptor_from_functor.hpp>
 #include <seqan3/core/range/detail/random_access_iterator.hpp>
 #include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
@@ -116,11 +115,11 @@ public:
      */
     template <typename orng_t, typename oirng_t>
         requires std::constructible_from<urng_t, decltype(views::type_reduce(std::declval<orng_t>()))>
-              && std::constructible_from<inserted_rng_t, seqan3::detail::all_t<oirng_t>>
+              && std::constructible_from<inserted_rng_t, std::views::all_t<oirng_t>>
     explicit constexpr view_interleave(orng_t && _urange, size_t const _step_size, oirng_t && _inserted_range) :
         view_interleave{views::type_reduce(std::forward<orng_t>(_urange)),
                         _step_size,
-                        seqan3::detail::all(std::forward<oirng_t>(_inserted_range))}
+                        std::views::all(std::forward<oirng_t>(_inserted_range))}
     {}
     //!\}
 
@@ -246,7 +245,7 @@ template <std::ranges::random_access_range urng_t, std::ranges::random_access_ra
               && std::common_reference_with<std::ranges::range_reference_t<urng_t>,
                                             std::ranges::range_reference_t<inserted_rng_t>>
 view_interleave(urng_t &&, size_t, inserted_rng_t &&)
-    -> view_interleave<decltype(views::type_reduce(std::declval<urng_t>())), seqan3::detail::all_t<inserted_rng_t>>;
+    -> view_interleave<decltype(views::type_reduce(std::declval<urng_t>())), std::views::all_t<inserted_rng_t>>;
 
 // ============================================================================
 //  interleave_fn (adaptor definition)

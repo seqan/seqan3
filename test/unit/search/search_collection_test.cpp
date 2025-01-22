@@ -11,7 +11,6 @@
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/core/debug_stream/tuple.hpp>
-#include <seqan3/core/detail/all_view.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/search/search.hpp>
@@ -24,13 +23,13 @@ using seqan3::operator""_phred42;
 
 using namespace std::string_literals;
 
-auto ref_id_and_position = seqan3::detail::all
+auto ref_id_and_position = std::views::all
                          | std::views::transform(
                                [](auto && res)
                                {
                                    return std::make_pair(res.reference_id(), res.reference_begin_position());
                                });
-auto query_id = seqan3::detail::all
+auto query_id = std::views::all
               | std::views::transform(
                     [](auto && res)
                     {
