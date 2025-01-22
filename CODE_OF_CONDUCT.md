@@ -1,8 +1,8 @@
 # Code of Conduct {#about_code_of_conduct}
 
 <!--
-    SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-    SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+    SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+    SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
     SPDX-License-Identifier: CC-BY-4.0
 -->
 

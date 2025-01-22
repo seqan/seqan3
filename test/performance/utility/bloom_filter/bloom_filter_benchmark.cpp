@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <benchmark/benchmark.h>
@@ -22,7 +22,7 @@ static void arguments(benchmark::internal::Benchmark * b)
         {
             for (int32_t hash_num = 2; hash_num < 3; ++hash_num)
             {
-                b->Args({(1LL << bits), hash_num, 1'000});
+                b->Args({(1LL << bits), hash_num, 1000});
             }
         }
     }

@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <benchmark/benchmark.h>
@@ -73,7 +73,7 @@ static void upcast(benchmark::State & state)
 
     for (auto _ : state)
     {
-        for (size_t i = 0; i < 1'000; ++i)
+        for (size_t i = 0; i < 1000; ++i)
         {
             target = seqan3::simd::upcast<target_t>(src);
 

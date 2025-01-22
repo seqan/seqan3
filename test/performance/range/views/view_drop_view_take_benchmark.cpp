@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <benchmark/benchmark.h>
@@ -40,7 +40,7 @@ void sequential_read(benchmark::State & state)
     }
     else
     {
-        auto dr = drop_t{}(1'000);
+        auto dr = drop_t{}(1000);
         auto ta = take_t{}(1'000'000);
 
         for (auto _ : state)
@@ -96,7 +96,7 @@ void random_access(benchmark::State & state)
     std::vector<size_t> access_positions;
     access_positions.resize(1'000'000);
     std::mt19937 gen(42);
-    std::uniform_int_distribution<size_t> dis(0, 998'000 - 1);
+    std::uniform_int_distribution<size_t> dis(0, 998000 - 1);
 
     for (size_t i = 0; i < 1'000'000; ++i)
         access_positions[i] = dis(gen);
@@ -113,7 +113,7 @@ void random_access(benchmark::State & state)
     }
     else
     {
-        auto dr = drop_t{}(1'000);
+        auto dr = drop_t{}(1000);
         auto ta = take_t{}(1'000'000);
         auto v = c | dr | ta | dr | ta | dr | ta;
 

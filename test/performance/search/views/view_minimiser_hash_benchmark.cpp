@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <benchmark/benchmark.h>
@@ -37,7 +37,7 @@ inline seqan3::shape make_gapped_shape(size_t const k)
 
 static void arguments(benchmark::internal::Benchmark * b)
 {
-    for (int32_t sequence_length : {50'000, /*1'000'000*/})
+    for (int32_t sequence_length : {50000, /*1'000'000*/})
     {
         for (int32_t k : {8, /*16, 24,*/ 30})
         {
@@ -90,7 +90,7 @@ void compute_minimisers(benchmark::State & state)
         if constexpr (tag == method_tag::naive)
         {
             seqan3::shape shape = seqan3::ungapped{static_cast<uint8_t>(k)};
-            uint64_t const seed = 0x8F3F73B5CF1C9ADE;
+            uint64_t const seed = 0x8F'3F'73'B5'CF'1C'9A'DE;
 
             // Use random seed to randomise order on forward strand.
             auto forward = seq | seqan3::views::kmer_hash(shape)

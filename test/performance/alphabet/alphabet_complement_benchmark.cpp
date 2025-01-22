@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 /* Copied and adjusted from https://raw.githubusercontent.com/kloetzl/libdna/master/bench2/revcomp.cxx
@@ -105,7 +105,7 @@ static void seqan3_dna4_simd_vector(std::string_view sv, std::vector<seqan3::sim
 template <tag id>
 void complement(benchmark::State & state)
 {
-    constexpr size_t length{1000003};
+    constexpr size_t length{1'000'003};
     allocator alloc{length};
     auto [forward, revcomp] = alloc.get();
     generate_random_dna4_char_string(forward, length);

@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <gtest/gtest.h>
@@ -61,14 +61,14 @@ TYPED_TEST(interleaved_bloom_filter_test, member_getter)
     TypeParam t1{TestFixture::make_ibf(seqan3::bin_count{64u}, seqan3::bin_size{1024u})};
     EXPECT_EQ(t1.bin_count(), 64u);
     EXPECT_EQ(t1.bin_size(), 1024u);
-    EXPECT_EQ(t1.bit_size(), 65'536ull);
+    EXPECT_EQ(t1.bit_size(), 65536ull);
     EXPECT_EQ(t1.hash_function_count(), 2u);
 
     TypeParam t2{
         TestFixture::make_ibf(seqan3::bin_count{73u}, seqan3::bin_size{1019u}, seqan3::hash_function_count{3u})};
     EXPECT_EQ(t2.bin_count(), 73u);
     EXPECT_EQ(t2.bin_size(), 1019u);
-    EXPECT_EQ(t2.bit_size(), 130'432ull);
+    EXPECT_EQ(t2.bit_size(), 130432ull);
     EXPECT_EQ(t2.hash_function_count(), 3u);
 }
 

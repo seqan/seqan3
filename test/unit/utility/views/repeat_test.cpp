@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <gtest/gtest.h>
@@ -122,13 +122,13 @@ TEST(general, subscript_operator)
 
     EXPECT_EQ(v[0], 'A');
     EXPECT_EQ(v[126], 'A');
-    EXPECT_EQ(v[78634126], 'A');
+    EXPECT_EQ(v[78'634'126], 'A');
 
     v[234] = 'X';
 
     EXPECT_EQ(v[0], 'X');
     EXPECT_EQ(v[126], 'X');
-    EXPECT_EQ(v[78634126], 'X');
+    EXPECT_EQ(v[78'634'126], 'X');
 }
 
 TEST(view, factory)

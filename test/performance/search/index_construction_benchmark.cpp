@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <benchmark/benchmark.h>
@@ -17,15 +17,15 @@
 #    include <seqan/index.h>
 #endif
 
-static constexpr int32_t max_length{50'000};
-static constexpr size_t seed{0x6126f};
+static constexpr int32_t max_length{50000};
+static constexpr size_t seed{0x6'12'6f};
 
 static void arguments(benchmark::internal::Benchmark * b)
 {
 #ifndef NDEBUG
     constexpr std::array<int32_t, 2> values{50, 5000};
 #else
-    constexpr std::array<int32_t, 3> values{50, 5000, 50'000};
+    constexpr std::array<int32_t, 3> values{50, 5000, 50000};
 #endif // NDEBUG
     for (int32_t length : values)
     {
@@ -35,7 +35,7 @@ static void arguments(benchmark::internal::Benchmark * b)
         b->Args({length, 5});
     }
 
-    b->Args({500, 1'000});
+    b->Args({500, 1000});
 }
 
 enum class tag

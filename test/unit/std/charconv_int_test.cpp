@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <gtest/gtest.h>
@@ -273,7 +273,7 @@ TYPED_TEST(integral_from_char_test, to_chars_error)
 // https://github.com/seqan/seqan3/issues/1595
 TEST(to_chars_test, issue_1595)
 {
-    uint64_t val{123456789};
+    uint64_t val{123'456'789};
     std::array<char, 100> buffer{};
 
     auto res = std::to_chars(buffer.data(), buffer.data() + buffer.size(), val);

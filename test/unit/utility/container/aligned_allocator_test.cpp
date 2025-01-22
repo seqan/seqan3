@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <gtest/gtest.h>
@@ -230,7 +230,7 @@ TEST(aligned_allocator, in_map)
     constexpr size_t alignment = 16;
     using key_type = char;
     using value_type = int;
-    using allocator = seqan3::aligned_allocator<std::pair<const key_type, value_type>, alignment>;
+    using allocator = seqan3::aligned_allocator<std::pair<key_type const, value_type>, alignment>;
     std::map<key_type, value_type, std::less<key_type>, allocator>
         container{{0, 0}, {1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}, {7, 7}, {8, 8}, {9, 9}};
 

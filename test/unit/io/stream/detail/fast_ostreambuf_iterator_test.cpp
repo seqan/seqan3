@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <gtest/gtest.h>
@@ -123,7 +123,7 @@ TEST(fast_ostreambuf_iterator, write_number)
 
         seqan3::detail::fast_ostreambuf_iterator<char> it{*ostr.rdbuf()};
 
-        uint64_t num{54389234};
+        uint64_t num{54'389'234};
 
         it.write_number(num);
 
@@ -137,7 +137,7 @@ TEST(fast_ostreambuf_iterator, write_number)
 
         seqan3::detail::fast_ostreambuf_iterator<char> it{*ostr.rdbuf()};
 
-        uint64_t num{54389234};
+        uint64_t num{54'389'234};
 
         it.write_number(num);
 

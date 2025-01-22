@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <gtest/gtest.h>
@@ -177,8 +177,8 @@ TYPED_TEST(kmer_hash_ungapped_test, invalid_sizes)
                          expected_error_message("seqan3::dna4", 32, 33));
     }
 
-    EXPECT_NO_THROW(text | seqan3::views::kmer_hash(0xFFFFFFFE001_shape));  // size=48, count=32
-    EXPECT_THROW_MSG(text | seqan3::views::kmer_hash(0xFFFFFFFE0009_shape), // size=48, count=33
+    EXPECT_NO_THROW(text | seqan3::views::kmer_hash(0xF'FF'FF'FF'E0'01_shape));  // size=48, count=32
+    EXPECT_THROW_MSG(text | seqan3::views::kmer_hash(0xFF'FF'FF'FE'00'09_shape), // size=48, count=33
                      std::invalid_argument,
                      expected_error_message("seqan3::dna4", 32, 33));
 
@@ -194,7 +194,7 @@ TEST(kmer_hash_ungapped_test, issue1614)
 {
     std::vector<seqan3::dna5> sequence{"TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"_dna5};
     EXPECT_RANGE_EQ(sequence | seqan3::views::kmer_hash(seqan3::ungapped{25}),
-                    seqan3::views::repeat_n(298023223876953124, 26));
+                    seqan3::views::repeat_n(298'023'223'876'953'124, 26));
 }
 
 // https://github.com/seqan/seqan3/issues/1643
@@ -204,7 +204,7 @@ TEST(kmer_hash_ungapped_test, issue1643)
 
     auto k_mer_size_23_view = text_23_elements | seqan3::views::kmer_hash(seqan3::ungapped{23u});
     EXPECT_EQ(k_mer_size_23_view.size(), 1u);
-    EXPECT_EQ(k_mer_size_23_view[0], 6829917194121u);
+    EXPECT_EQ(k_mer_size_23_view[0], 6'829'917'194'121u);
 
     auto k_mer_size_24_view = text_23_elements | seqan3::views::kmer_hash(seqan3::ungapped{24u});
     EXPECT_TRUE(k_mer_size_24_view.empty());

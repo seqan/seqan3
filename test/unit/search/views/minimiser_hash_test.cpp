@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <gtest/gtest.h>
@@ -62,8 +62,8 @@ protected:
     std::vector<seqan3::dna4> text1{"AAAAAAAAAAAAAAAAAAA"_dna4};
     std::vector<seqan3::dna4> text1_short{"AAAAAA"_dna4};
     result_t result1{0, 0, 0}; // Same for ungapped and gapped
-    result_t ungapped_default_seed{0x8F3F73B5CF1C9A21, 0x8F3F73B5CF1C9A21, 0x8F3F73B5CF1C9A21};
-    result_t gapped_default_seed{0x8F3F73B5CF1C9AD1, 0x8F3F73B5CF1C9AD1, 0x8F3F73B5CF1C9AD1};
+    result_t ungapped_default_seed{0x8F'3F'73'B5'CF'1C'9A'21, 0x8F'3F'73'B5'CF'1C'9A'21, 0x8F'3F'73'B5'CF'1C'9A'21};
+    result_t gapped_default_seed{0x8F'3F'73'B5'CF'1C'9A'D1, 0x8F'3F'73'B5'CF'1C'9A'D1, 0x8F'3F'73'B5'CF'1C'9A'D1};
 
     std::vector<seqan3::dna4> text2{"AC"_dna4};
     result_t result2{};

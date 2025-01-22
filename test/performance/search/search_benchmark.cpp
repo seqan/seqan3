@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <benchmark/benchmark.h>
@@ -305,13 +305,13 @@ void bidirectional_search_stratified(benchmark::State & state, options && o)
 }
 
 #ifndef NDEBUG
-inline constexpr size_t small_size = 1'000;
-inline constexpr size_t medium_size = 5'000;
-inline constexpr size_t big_size = 10'000;
+inline constexpr size_t small_size = 1000;
+inline constexpr size_t medium_size = 5000;
+inline constexpr size_t big_size = 10000;
 #else
-inline constexpr size_t small_size = 10'000;
-inline constexpr size_t medium_size = 50'000;
-inline constexpr size_t big_size = 100'000;
+inline constexpr size_t small_size = 10000;
+inline constexpr size_t medium_size = 50000;
+inline constexpr size_t big_size = 100000;
 #endif // NDEBUG
 
 BENCHMARK_CAPTURE(unidirectional_search_all_collection,

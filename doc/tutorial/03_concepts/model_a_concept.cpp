@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: CC0-1.0
 
 #include <cmath>
@@ -10,9 +10,9 @@
 // helper concept has_foo:
 template <typename T>
 concept has_foo = requires (T val) {
-                      typename T::FOO; // requirement 1
-                      val.foo;         // requirement 2
-                  };
+    typename T::FOO; // requirement 1
+    val.foo;         // requirement 2
+};
 
 // concept fooger:
 template <typename T>

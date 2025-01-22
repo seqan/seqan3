@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <gtest/gtest.h>
@@ -412,63 +412,63 @@ TEST(validator_test, input_directory)
     seqan3::test::tmp_directory tmp{};
     auto tmp_name = tmp.path() / "testbox.fasta";
 
-    {// directory
+    { // directory
 
-     {// has filename
-      std::ofstream tmp_dir(tmp_name);
-    seqan3::input_directory_validator my_validator{};
-    EXPECT_THROW(my_validator(tmp_name), seqan3::validation_error);
-}
+        { // has filename
+            std::ofstream tmp_dir(tmp_name);
+            seqan3::input_directory_validator my_validator{};
+            EXPECT_THROW(my_validator(tmp_name), seqan3::validation_error);
+        }
 
-{ // read directory
-    std::filesystem::path p = tmp_name;
-    p.remove_filename();
-    std::ofstream tmp_dir(p);
-    seqan3::input_directory_validator my_validator{};
-    my_validator(p);
-    EXPECT_NO_THROW(my_validator(p));
+        { // read directory
+            std::filesystem::path p = tmp_name;
+            p.remove_filename();
+            std::ofstream tmp_dir(p);
+            seqan3::input_directory_validator my_validator{};
+            my_validator(p);
+            EXPECT_NO_THROW(my_validator(p));
 
-    std::filesystem::path dir_in_path;
+            std::filesystem::path dir_in_path;
 
-    // option
-    std::string const & path = p.string();
-    char const * argv[] = {"./argument_parser_test", "-i", path.c_str()};
-    seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
-    test_accessor::set_terminal_width(parser, 80);
-    parser.add_option(dir_in_path,
-                      'i',
-                      "input-option",
-                      "desc",
-                      seqan3::option_spec::standard,
-                      seqan3::input_directory_validator{});
+            // option
+            std::string const & path = p.string();
+            char const * argv[] = {"./argument_parser_test", "-i", path.c_str()};
+            seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
+            test_accessor::set_terminal_width(parser, 80);
+            parser.add_option(dir_in_path,
+                              'i',
+                              "input-option",
+                              "desc",
+                              seqan3::option_spec::standard,
+                              seqan3::input_directory_validator{});
 
-    EXPECT_NO_THROW(parser.parse());
-    EXPECT_EQ(path, dir_in_path.string());
-}
-}
+            EXPECT_NO_THROW(parser.parse());
+            EXPECT_EQ(path, dir_in_path.string());
+        }
+    }
 
-{
-    // get help page message
-    std::filesystem::path path;
-    char const * argv[] = {"./argument_parser_test", "-h"};
-    seqan3::argument_parser parser{"test_parser", 2, argv, seqan3::update_notifications::off};
-    test_accessor::set_terminal_width(parser, 80);
-    parser.add_positional_option(path, "desc", seqan3::input_directory_validator{});
+    {
+        // get help page message
+        std::filesystem::path path;
+        char const * argv[] = {"./argument_parser_test", "-h"};
+        seqan3::argument_parser parser{"test_parser", 2, argv, seqan3::update_notifications::off};
+        test_accessor::set_terminal_width(parser, 80);
+        parser.add_positional_option(path, "desc", seqan3::input_directory_validator{});
 
-    testing::internal::CaptureStdout();
-    EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    std::string my_stdout = testing::internal::GetCapturedStdout();
-    std::string expected = std::string{"test_parser\n"
-                                       "===========\n"
-                                       "\n"
-                                       "POSITIONAL ARGUMENTS\n"
-                                       "    ARGUMENT-1 (std::filesystem::path)\n"
-                                       "          desc An existing, readable path for the input directory.\n"
-                                       "\n"}
-                         + basic_options_str + "\n" + basic_version_str;
+        testing::internal::CaptureStdout();
+        EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+        std::string my_stdout = testing::internal::GetCapturedStdout();
+        std::string expected = std::string{"test_parser\n"
+                                           "===========\n"
+                                           "\n"
+                                           "POSITIONAL ARGUMENTS\n"
+                                           "    ARGUMENT-1 (std::filesystem::path)\n"
+                                           "          desc An existing, readable path for the input directory.\n"
+                                           "\n"}
+                             + basic_options_str + "\n" + basic_version_str;
 
-    EXPECT_EQ(my_stdout, expected);
-}
+        EXPECT_EQ(my_stdout, expected);
+    }
 }
 
 TEST(validator_test, output_directory)

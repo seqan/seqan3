@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <gtest/gtest.h>
@@ -18,7 +18,7 @@ using namespace std::literals;
 template <char char_v>
 struct foo : seqan3::detail::char_predicate_base<foo<char_v>>
 {
-    static inline const std::string msg{std::string{"foo_"} + std::string{char_v}};
+    static inline std::string const msg{std::string{"foo_"} + std::string{char_v}};
 
     using base_t = seqan3::detail::char_predicate_base<foo<char_v>>;
 

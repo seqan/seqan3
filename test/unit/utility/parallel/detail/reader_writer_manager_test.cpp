@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <gtest/gtest.h>
@@ -19,7 +19,7 @@ TEST(reader_writer_manager, parallel)
 
     EXPECT_GE(threads, 1u);
 
-    uint64_t job_size = threads * 1000000;
+    uint64_t job_size = threads * 1'000'000;
 
     seqan3::contrib::fixed_buffer_queue<uint32_t> source_queue{job_size};
     seqan3::contrib::fixed_buffer_queue<uint32_t> target_queue{job_size};

@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <benchmark/benchmark.h>
@@ -42,7 +42,7 @@ void sequential_read(benchmark::State & state)
     }
     else
     {
-        auto adaptor = adaptor_t{}(1'000);
+        auto adaptor = adaptor_t{}(1000);
 
         for (auto _ : state)
         {
@@ -110,7 +110,7 @@ void random_access(benchmark::State & state)
     }
     else
     {
-        auto adaptor = adaptor_t{}(1'000);
+        auto adaptor = adaptor_t{}(1000);
 
         for (auto _ : state)
         {

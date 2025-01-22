@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <gtest/gtest.h>
@@ -87,13 +87,9 @@ TYPED_TEST(seqan2_container, std_iterator)
 
 template <typename range_t>
 concept SeqAn2Range = requires (range_t range) {
-                          {
-                              seqan2::begin(range)
-                              } -> std::same_as<std::ranges::iterator_t<range_t>>;
-                          {
-                              seqan2::end(range)
-                              } -> std::same_as<std::ranges::iterator_t<range_t>>;
-                      };
+    { seqan2::begin(range) } -> std::same_as<std::ranges::iterator_t<range_t>>;
+    { seqan2::end(range) } -> std::same_as<std::ranges::iterator_t<range_t>>;
+};
 
 TYPED_TEST(seqan2_container, seqan_range_concept)
 {

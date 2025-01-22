@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <gtest/gtest.h>
@@ -34,7 +34,7 @@ template <typename param_type>
 class type_inspection : public ::testing::Test
 {
     // The corresponding list of names that should be generated. Must have the same order as `reflection_types`.
-    static inline const std::vector names{"char",
+    static inline std::vector const names{"char",
                                           "char16_t const",
                                           "char32_t &",
                                           "short*",

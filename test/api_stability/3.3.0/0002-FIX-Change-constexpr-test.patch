@@ -1,7 +1,7 @@
-From 21ad129184c9a5833770b1bbfe51b344a0a8f5be Mon Sep 17 00:00:00 2001
+From 39bbad4ae37dbeb02543e1556cd626eb1a451e34 Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Thu, 28 Sep 2023 19:35:57 +0200
-Subject: [PATCH 2/4] [FIX] Change constexpr test
+Subject: [PATCH 2/5] [FIX] Change constexpr test
 
 gcc11 complains suddenly
 ---
@@ -21,5 +21,5 @@ index 54bcb640c..460fab223 100644
 +    [[maybe_unused]] static constinit auto combined = adaptor1 | adaptor2;
  }
 -- 
-2.43.0
+2.45.2
 

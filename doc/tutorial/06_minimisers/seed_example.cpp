@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: CC0-1.0
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
@@ -19,7 +19,7 @@ int main()
     seqan3::debug_stream << minimisers << '\n';
 
     // Get hash values
-    uint64_t seed = 0x8F3F73B5CF1C9ADE; // The default seed from minimiser_hash
+    uint64_t seed = 0x8F'3F'73'B5'CF'1C'9A'DE; // The default seed from minimiser_hash
     // Use XOR on all minimiser values
     auto hash_values = minimisers
                      | std::views::transform(

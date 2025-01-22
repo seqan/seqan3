@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <gtest/gtest.h>
@@ -90,7 +90,7 @@ TEST_P(sam_file_seek_test, seek_to)
 INSTANTIATE_TEST_SUITE_P(bam_file,
                          sam_file_seek_test,
                          ::testing::Values(sam_file_seek_test_fixture{"simple_three_verbose_reads.bam",
-                                                                      {4915200, 11730944, 23134208}}));
+                                                                      {4'915'200, 11'730'944, 23'134'208}}));
 
 INSTANTIATE_TEST_SUITE_P(sam_file,
                          sam_file_seek_test,

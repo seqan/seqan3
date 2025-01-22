@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <gtest/gtest.h>
@@ -67,7 +67,7 @@ constexpr bool size_test()
     res = res && (std::ranges::size(seqan3::shape{seqan3::ungapped{1}}) == 1u);
     res = res && (std::ranges::size(seqan3::shape{seqan3::ungapped{30}}) == 30u);
     res = res && (std::ranges::size(0b11_shape) == 2u);
-    res = res && (std::ranges::size(0b10101_shape) == 5u);
+    res = res && (std::ranges::size(0b1'0101_shape) == 5u);
 
     return res;
 }

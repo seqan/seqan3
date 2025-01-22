@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2024 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2024 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <benchmark/benchmark.h>
@@ -27,7 +27,7 @@ void sequential_read(benchmark::State & state)
 {
     container_t const container = []()
     {
-        auto values = std::views::iota(0u, 1'000u);
+        auto values = std::views::iota(0u, 1000u);
         return container_t{values.begin(), values.end()};
     }();
     size_t sum{};
