@@ -15,7 +15,7 @@
 #include <ranges>
 #include <type_traits>
 
-#include <seqan3/core/detail/copyable_wrapper.hpp>
+#include <seqan3/contrib/std/detail/movable_box.hpp>
 #include <seqan3/core/detail/iterator_traits.hpp>
 #include <seqan3/core/range/detail/adaptor_from_functor.hpp>
 #include <seqan3/core/range/detail/inherited_iterator_base.hpp>
@@ -58,7 +58,7 @@ private:
     urng_t urange;
 
     //!\brief The functor.
-    copyable_wrapper_t<fun_t> fun;
+    seqan::stl::detail::movable_box_t<fun_t> fun;
 
     //!\brief Whether this view is const_iterable or not.
     static constexpr bool const_iterable =
@@ -201,7 +201,7 @@ private:
     using base_t = inherited_iterator_base<basic_consume_iterator, underlying_iterator_t>;
 
     //!\brief Pointer to the functor stored in the view.
-    copyable_wrapper_t<fun_t> const * fun{nullptr};
+    seqan::stl::detail::movable_box_t<fun_t> const * fun{nullptr};
 
     //!\brief The sentinel type is identical to that of the underlying range.
     using underlying_sentinel_t = seqan3::detail::maybe_const_sentinel_t<const_range, urng_t>;
@@ -225,8 +225,9 @@ public:
     ~basic_consume_iterator() = default;                                                        //!< Defaulted.
 
     //!\brief Constructor that delegates to the CRTP layer and initialises the callable.
-    basic_consume_iterator(underlying_iterator_t it, copyable_wrapper_t<fun_t> const & _fun, underlying_sentinel_t sen)
-        noexcept(noexcept(base_t{it})) :
+    basic_consume_iterator(underlying_iterator_t it,
+                           seqan::stl::detail::movable_box_t<fun_t> const & _fun,
+                           underlying_sentinel_t sen) noexcept(noexcept(base_t{it})) :
         base_t{std::move(it)},
         fun{std::addressof(_fun)},
         underlying_sentinel{std::move(sen)}
@@ -348,7 +349,7 @@ private:
     underlying_sentinel_t underlying_sentinel{};
 
     //!\brief Pointer to the functor stored in the view.
-    copyable_wrapper_t<fun_t> const * fun{nullptr};
+    seqan::stl::detail::movable_box_t<fun_t> const * fun{nullptr};
 
 public:
     /*!\name Constructors, destructor and assignment
@@ -365,7 +366,8 @@ public:
      * \param[in] underlying_sentinel  The actual end of the underlying range.
      * \param[in] _fun                 Reference to the functor stored in the view.
      */
-    explicit basic_sentinel(underlying_sentinel_t underlying_sentinel, copyable_wrapper_t<fun_t> const & _fun) :
+    explicit basic_sentinel(underlying_sentinel_t underlying_sentinel,
+                            seqan::stl::detail::movable_box_t<fun_t> const & _fun) :
         underlying_sentinel{std::move(underlying_sentinel)},
         fun{std::addressof(_fun)}
     {}

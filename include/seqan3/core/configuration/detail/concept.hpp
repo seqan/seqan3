@@ -47,7 +47,7 @@ inline constexpr std::array<std::array<void *, 0>, 0> compatibility_table{};
  * \brief Concept for an algorithm configuration element.
  * \ingroup core_configuration
  *
- * \extends std::copyable
+ * \extends std::movable
  * \implements seqan3::pipeable_config_element
  */
 
@@ -64,7 +64,7 @@ inline constexpr std::array<std::array<void *, 0>, 0> compatibility_table{};
 template <typename config_t>
 concept config_element = requires {
     requires std::is_base_of_v<seqan3::pipeable_config_element, config_t>;
-    requires std::copyable<config_t>;
+    requires std::movable<config_t>;
     { config_t::id };
 };
 //!\endcond

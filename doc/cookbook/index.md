@@ -410,7 +410,6 @@ Search for keywords with `Strg + F`.
 \include test/snippet/core/debug_stream_set_underlying_stream.cpp
 \include test/snippet/core/debug_stream_set_underlying_stream2.cpp
 \include test/snippet/core/debug_stream_usage.cpp
-\include test/snippet/core/detail/copyable_wrapper.cpp
 \include test/snippet/core/detail/customisation_point.cpp
 \include test/snippet/core/detail/deferred_crtp_base.cpp
 \include test/snippet/core/detail/is_class_template_declarable_with.cpp
