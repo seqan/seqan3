@@ -33,7 +33,6 @@
 
 #    include <seqan/basic.h>
 
-#    if __cpp_lib_ranges // C++20 ranges available
 namespace std
 {
 
@@ -47,5 +46,5 @@ struct indirectly_readable_traits<seqan2::Iter<args_t...>>
 };
 
 } // namespace std
-#    endif //__cpp_lib_ranges
-#endif     // SEQAN3_HAS_SEQAN2
+
+#endif // SEQAN3_HAS_SEQAN2

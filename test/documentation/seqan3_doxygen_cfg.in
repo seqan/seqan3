@@ -352,11 +352,9 @@ PREDEFINED             = CEREAL_SERIALIZE_FUNCTION_NAME=serialize \
                          CEREAL_SAVE_MINIMAL_FUNCTION_NAME=save_minimal \
                          "SEQAN3_DOXYGEN_ONLY(x)= x" \
                          ${SEQAN3_DOXYGEN_PREDEFINED_NDEBUG} \
-                         __cpp_lib_three_way_comparison=1 \
                          SEQAN3_WORKAROUND_LITERAL=constexpr
 EXPAND_AS_DEFINED      = SEQAN3_CPO_OVERLOAD_BODY \
-                         SEQAN3_CPO_OVERLOAD \
-                         SEQAN3_WORKAROUND_GCC_114013
+                         SEQAN3_CPO_OVERLOAD
 SKIP_FUNCTION_MACROS   = NO
 #---------------------------------------------------------------------------
 # Configuration options related to external references
