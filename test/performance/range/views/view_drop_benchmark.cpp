@@ -42,7 +42,7 @@ void sequential_read(benchmark::State & state)
     }
     else
     {
-        auto adaptor = adaptor_t{}(1'000);
+        auto adaptor = adaptor_t{}(1000);
 
         for (auto _ : state)
         {
@@ -110,7 +110,7 @@ void random_access(benchmark::State & state)
     }
     else
     {
-        auto adaptor = adaptor_t{}(1'000);
+        auto adaptor = adaptor_t{}(1000);
 
         for (auto _ : state)
         {

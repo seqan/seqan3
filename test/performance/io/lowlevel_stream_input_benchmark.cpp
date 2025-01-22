@@ -36,7 +36,7 @@ void read_all(benchmark::State & state)
     {
         std::ofstream os{filename, std::ios::binary};
 
-        std::vector<seqan3::aa27> cont_rando = seqan3::test::generate_sequence<seqan3::aa27>(10'000, 0, 0);
+        std::vector<seqan3::aa27> cont_rando = seqan3::test::generate_sequence<seqan3::aa27>(10000, 0, 0);
 
         for (size_t i = 0; i < 100; ++i)
             for (auto c : cont_rando)

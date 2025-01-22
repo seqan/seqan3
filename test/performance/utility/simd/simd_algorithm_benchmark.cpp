@@ -73,7 +73,7 @@ static void upcast(benchmark::State & state)
 
     for (auto _ : state)
     {
-        for (size_t i = 0; i < 1'000; ++i)
+        for (size_t i = 0; i < 1000; ++i)
         {
             target = seqan3::simd::upcast<target_t>(src);
 

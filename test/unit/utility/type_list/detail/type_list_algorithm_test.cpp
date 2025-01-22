@@ -21,8 +21,8 @@ struct is_integral_fn
     }
 
     template <typename identity_t>
-        requires std::integral<typename identity_t::type> bool
-    operator()(identity_t)
+        requires std::integral<typename identity_t::type>
+    bool operator()(identity_t)
     {
         return true;
     }

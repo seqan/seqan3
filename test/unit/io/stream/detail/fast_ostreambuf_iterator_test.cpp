@@ -123,7 +123,7 @@ TEST(fast_ostreambuf_iterator, write_number)
 
         seqan3::detail::fast_ostreambuf_iterator<char> it{*ostr.rdbuf()};
 
-        uint64_t num{54389234};
+        uint64_t num{54'389'234};
 
         it.write_number(num);
 
@@ -137,7 +137,7 @@ TEST(fast_ostreambuf_iterator, write_number)
 
         seqan3::detail::fast_ostreambuf_iterator<char> it{*ostr.rdbuf()};
 
-        uint64_t num{54389234};
+        uint64_t num{54'389'234};
 
         it.write_number(num);
 

@@ -15,7 +15,7 @@ class sdsl_index_test : public ::testing::Test
 template <typename alphabet_strategy_t>
 using sdsl_index = csa_wt<wt_blcd<bit_vector, rank_support_v<>, select_support_scan<>, select_support_scan<0>>,
                           16,
-                          10000000,
+                          10'000'000,
                           sa_order_sa_sampling<>,
                           isa_sampling<>,
                           alphabet_strategy_t>;

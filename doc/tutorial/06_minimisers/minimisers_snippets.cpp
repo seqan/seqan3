@@ -25,7 +25,7 @@ int main()
     {
         //![minimiser_seed]
         //![def]
-        uint64_t const seed = 0x8F3F73B5CF1C9ADE;
+        uint64_t const seed = 0x8F'3F'73'B5'CF'1C'9A'DE;
         auto minimisers = text | seqan3::views::kmer_hash(seqan3::ungapped{4})
                         | std::views::transform(
                               [](uint64_t i)

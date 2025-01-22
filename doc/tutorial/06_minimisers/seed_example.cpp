@@ -19,7 +19,7 @@ int main()
     seqan3::debug_stream << minimisers << '\n';
 
     // Get hash values
-    uint64_t seed = 0x8F3F73B5CF1C9ADE; // The default seed from minimiser_hash
+    uint64_t seed = 0x8F'3F'73'B5'CF'1C'9A'DE; // The default seed from minimiser_hash
     // Use XOR on all minimiser values
     auto hash_values = minimisers
                      | std::views::transform(

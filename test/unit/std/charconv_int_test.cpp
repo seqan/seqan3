@@ -273,7 +273,7 @@ TYPED_TEST(integral_from_char_test, to_chars_error)
 // https://github.com/seqan/seqan3/issues/1595
 TEST(to_chars_test, issue_1595)
 {
-    uint64_t val{123456789};
+    uint64_t val{123'456'789};
     std::array<char, 100> buffer{};
 
     auto res = std::to_chars(buffer.data(), buffer.data() + buffer.size(), val);

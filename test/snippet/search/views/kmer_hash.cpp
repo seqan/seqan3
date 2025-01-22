@@ -25,7 +25,7 @@ int main()
     {
         auto text1 = "AGAAAATA"_dna4;
         auto text2 = "AAAAATA"_dna4;
-        seqan3::debug_stream << (text1 | seqan3::views::kmer_hash(0b11111101_shape)) << '\n'; // [12]
-        seqan3::debug_stream << (text2 | seqan3::views::kmer_hash(0b1111111_shape)) << '\n';  // [12]
+        seqan3::debug_stream << (text1 | seqan3::views::kmer_hash(0b1111'1101_shape)) << '\n'; // [12]
+        seqan3::debug_stream << (text2 | seqan3::views::kmer_hash(0b111'1111_shape)) << '\n';  // [12]
     }
 }

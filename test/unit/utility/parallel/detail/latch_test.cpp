@@ -19,7 +19,7 @@ TEST(latch, arrive_wait)
 
     auto work = [&]()
     {
-        for (unsigned i = 0; i < 1000000; ++i)
+        for (unsigned i = 0; i < 1'000'000; ++i)
             ++counter;
         completion_latch.arrive();
     };
@@ -30,7 +30,7 @@ TEST(latch, arrive_wait)
 
     completion_latch.wait();
 
-    EXPECT_EQ(counter.load(), 1000000 * threads);
+    EXPECT_EQ(counter.load(), 1'000'000 * threads);
 
     // All threads finished so we can join the threads.
     for (auto & t : pool)
@@ -48,11 +48,11 @@ TEST(latch, arrive_and_wait)
 
     auto work = [&]()
     {
-        for (unsigned i = 0; i < 1000000; ++i)
+        for (unsigned i = 0; i < 1'000'000; ++i)
             ++counter;
         completion_latch.arrive_and_wait();
 
-        EXPECT_EQ(counter.load(), 1000000 * threads);
+        EXPECT_EQ(counter.load(), 1'000'000 * threads);
     };
 
     std::vector<std::thread> pool;
@@ -60,7 +60,7 @@ TEST(latch, arrive_and_wait)
         pool.emplace_back(work);
 
     completion_latch.wait();
-    EXPECT_EQ(counter.load(), 1000000 * threads);
+    EXPECT_EQ(counter.load(), 1'000'000 * threads);
     // All threads finished so we can join the threads.
     for (auto & t : pool)
         t.join();

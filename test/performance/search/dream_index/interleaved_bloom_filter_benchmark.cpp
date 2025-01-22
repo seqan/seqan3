@@ -27,7 +27,7 @@ static void arguments(benchmark::internal::Benchmark * b)
             {
                 for (int32_t hash_num = 2; hash_num < 3; ++hash_num)
                 {
-                    b->Args({bins, (1LL << bits) / bins, hash_num, 1'000});
+                    b->Args({bins, (1LL << bits) / bins, hash_num, 1000});
                 }
             }
         }

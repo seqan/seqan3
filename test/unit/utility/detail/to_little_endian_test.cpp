@@ -17,7 +17,7 @@ TEST(to_little_endian, byte)
 
 TEST(to_little_endian, word)
 {
-    uint16_t val = 0x0102; // 258
+    uint16_t val = 0x01'02; // 258
     uint16_t res = seqan3::detail::to_little_endian(val);
     char * res_p = reinterpret_cast<char *>(&res);
 
@@ -27,7 +27,7 @@ TEST(to_little_endian, word)
 
 TEST(to_little_endian, double_word)
 {
-    uint32_t val = 0x01020304; // 16.909.060
+    uint32_t val = 0x01'02'03'04; // 16.909.060
     uint32_t res = seqan3::detail::to_little_endian(val);
     char * res_p = reinterpret_cast<char *>(&res);
 
@@ -39,7 +39,7 @@ TEST(to_little_endian, double_word)
 
 TEST(to_little_endian, quad_word)
 {
-    uint64_t val = 0x0102030405060708;
+    uint64_t val = 0x01'02'03'04'05'06'07'08;
     uint64_t res = seqan3::detail::to_little_endian(val);
     char * res_p = reinterpret_cast<char *>(&res);
 

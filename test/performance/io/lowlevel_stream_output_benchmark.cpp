@@ -37,10 +37,10 @@ void write_all(benchmark::State & state)
     std::ofstream os{filename, std::ios::binary};
 
     // sequence to write:
-    std::vector<char> sequence = seqan3::test::generate_sequence<char>(10'000, 0, 0);
+    std::vector<char> sequence = seqan3::test::generate_sequence<char>(10000, 0, 0);
 
 #ifdef SEQAN3_HAS_SEQAN2
-    auto seqan2_sequence = seqan3::test::generate_sequence_seqan2<char>(10'000, 0, 0);
+    auto seqan2_sequence = seqan3::test::generate_sequence_seqan2<char>(10000, 0, 0);
 #endif
     /* start benchmark */
     for (auto _ : state)

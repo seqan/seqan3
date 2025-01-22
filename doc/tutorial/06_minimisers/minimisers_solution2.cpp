@@ -27,7 +27,7 @@ int main()
     // results in: [27, 97, 26, 22, 5] representing the k-mers [ACGT, CGAC, ACGG, accg, aacc]
     seqan3::debug_stream << example_b << '\n';
 
-    auto example_c = text | seqan3::views::minimiser_hash(0b10101_shape, seqan3::window_size{8}, seqan3::seed{0});
+    auto example_c = text | seqan3::views::minimiser_hash(0b1'0101_shape, seqan3::window_size{8}, seqan3::seed{0});
     // results in: [9, 18, 7, 6] representing the k-mers [A.G.C, C.A.G, a.c.t, a.c.g]
     seqan3::debug_stream << example_c << '\n';
 }

@@ -122,13 +122,13 @@ TEST(general, subscript_operator)
 
     EXPECT_EQ(v[0], 'A');
     EXPECT_EQ(v[126], 'A');
-    EXPECT_EQ(v[78634126], 'A');
+    EXPECT_EQ(v[78'634'126], 'A');
 
     v[234] = 'X';
 
     EXPECT_EQ(v[0], 'X');
     EXPECT_EQ(v[126], 'X');
-    EXPECT_EQ(v[78634126], 'X');
+    EXPECT_EQ(v[78'634'126], 'X');
 }
 
 TEST(view, factory)

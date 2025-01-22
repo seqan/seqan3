@@ -90,25 +90,28 @@ TEST(maybe_iterator_category, output_iterator_tag)
     }
 }
 
-TEST(maybe_iterator_category, input_iterator_tag){{using iterator_t = std::istream_iterator<int>;
-EXPECT_SAME_TYPE(std::iterator_traits<iterator_t>::iterator_category, std::input_iterator_tag);
-EXPECT_SAME_TYPE(iterator_t::iterator_category, std::input_iterator_tag);
-}
+TEST(maybe_iterator_category, input_iterator_tag)
+{
+    {
+        using iterator_t = std::istream_iterator<int>;
+        EXPECT_SAME_TYPE(std::iterator_traits<iterator_t>::iterator_category, std::input_iterator_tag);
+        EXPECT_SAME_TYPE(iterator_t::iterator_category, std::input_iterator_tag);
+    }
 
 #ifdef __cpp_lib_ranges
-{
-    // std::views::transform will drop the iterator_category if the lambda doesn't return a lvalue.
-    // This is C++20 behaviour.
-    using range_t = std::vector<int>;
-    auto lambda = [](auto & element) -> auto
     {
-        return element;
-    };
-    using view_t = decltype(std::declval<range_t &>() | std::views::transform(lambda));
-    using iterator_t = std::ranges::iterator_t<view_t>;
-    EXPECT_SAME_TYPE(std::iterator_traits<iterator_t>::iterator_category, std::input_iterator_tag);
-    EXPECT_SAME_TYPE(iterator_t::iterator_category, std::input_iterator_tag);
-}
+        // std::views::transform will drop the iterator_category if the lambda doesn't return a lvalue.
+        // This is C++20 behaviour.
+        using range_t = std::vector<int>;
+        auto lambda = [](auto & element) -> auto
+        {
+            return element;
+        };
+        using view_t = decltype(std::declval<range_t &>() | std::views::transform(lambda));
+        using iterator_t = std::ranges::iterator_t<view_t>;
+        EXPECT_SAME_TYPE(std::iterator_traits<iterator_t>::iterator_category, std::input_iterator_tag);
+        EXPECT_SAME_TYPE(iterator_t::iterator_category, std::input_iterator_tag);
+    }
 #endif // __cpp_lib_ranges
 }
 

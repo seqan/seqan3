@@ -10,9 +10,9 @@
 // helper concept has_foo:
 template <typename T>
 concept has_foo = requires (T val) {
-                      typename T::FOO; // requirement 1
-                      val.foo;         // requirement 2
-                  };
+    typename T::FOO; // requirement 1
+    val.foo;         // requirement 2
+};
 
 // concept fooger:
 template <typename T>

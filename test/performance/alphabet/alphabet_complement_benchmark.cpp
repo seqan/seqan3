@@ -105,7 +105,7 @@ static void seqan3_dna4_simd_vector(std::string_view sv, std::vector<seqan3::sim
 template <tag id>
 void complement(benchmark::State & state)
 {
-    constexpr size_t length{1000003};
+    constexpr size_t length{1'000'003};
     allocator alloc{length};
     auto [forward, revcomp] = alloc.get();
     generate_random_dna4_char_string(forward, length);

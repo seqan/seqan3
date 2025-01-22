@@ -78,12 +78,12 @@ TEST(random_sequence_generator, sequence_pairs)
 
     std::vector<std::tuple<seqan3::dna5_vector, seqan3::dna5_vector>> sequence_pairs(3);
 
-    std::ranges::generate(
-        sequence_pairs,
-        [&]() -> std::tuple<seqan3::dna5_vector, seqan3::dna5_vector>
-        {
-            return {random_sequence_generator(random_engine), random_sequence_generator(random_engine)};
-        });
+    std::ranges::generate(sequence_pairs,
+                          [&]() -> std::tuple<seqan3::dna5_vector, seqan3::dna5_vector>
+                          {
+                              return {random_sequence_generator(random_engine),
+                                      random_sequence_generator(random_engine)};
+                          });
 
 #ifdef _LIBCPP_VERSION
     std::vector<std::tuple<seqan3::dna5_vector, seqan3::dna5_vector>> resulting_pairs{{"CTACN"_dna5, "AC"_dna5},

@@ -19,7 +19,7 @@ TEST(reader_writer_manager, parallel)
 
     EXPECT_GE(threads, 1u);
 
-    uint64_t job_size = threads * 1000000;
+    uint64_t job_size = threads * 1'000'000;
 
     seqan3::contrib::fixed_buffer_queue<uint32_t> source_queue{job_size};
     seqan3::contrib::fixed_buffer_queue<uint32_t> target_queue{job_size};

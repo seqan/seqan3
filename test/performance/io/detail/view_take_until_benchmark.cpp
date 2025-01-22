@@ -27,7 +27,7 @@ void sequential_read(benchmark::State & state)
 {
     container_t const container = []()
     {
-        auto values = std::views::iota(0u, 1'000u);
+        auto values = std::views::iota(0u, 1000u);
         return container_t{values.begin(), values.end()};
     }();
     size_t sum{};
