@@ -77,7 +77,10 @@ public:
 };
 
 template <boxable t>
-    requires std::copyable<t> || (std::is_nothrow_move_constructible_v<t> && std::is_nothrow_copy_constructible_v<t>)
+    requires std::copyable<t>
+          || (std::is_copy_constructible_v<t> && std::is_nothrow_move_constructible_v<t>
+              && std::is_nothrow_copy_constructible_v<t>)
+          || (!std::is_copy_constructible_v<t> && (std::movable<t> || std::is_nothrow_move_constructible_v<t>))
 class movable_box<t>
 {
 private:
@@ -92,12 +95,38 @@ public:
     constexpr movable_box(movable_box &&) = default;
     constexpr ~movable_box() = default;
 
-    constexpr movable_box & operator=(movable_box const &) = default;
+    constexpr movable_box & operator=(movable_box const &)
+        requires std::copyable<t>
+    = default;
 
-    constexpr movable_box & operator=(movable_box &&) = default;
+    constexpr movable_box & operator=(movable_box &&)
+        requires std::movable<t>
+    = default;
 
     constexpr explicit movable_box(t const & other) noexcept(std::is_nothrow_copy_constructible_v<t>) : value{other}
     {}
+
+    constexpr movable_box & operator=(movable_box const & other) noexcept(std::is_nothrow_copy_constructible_v<t>)
+        requires (!std::copyable<t> && std::copy_constructible<t>)
+    {
+        if (this != std::addressof(other))
+        {
+            value.~t();
+            std::construct_at(std::addressof(value), other.value);
+        }
+        return *this;
+    }
+
+    constexpr movable_box & operator=(movable_box && other) noexcept(std::is_nothrow_move_constructible_v<t>)
+        requires (!std::movable<t>)
+    {
+        if (this != std::addressof(other))
+        {
+            value.~t();
+            std::construct_at(std::addressof(value), std::move(other.value));
+        }
+        return *this;
+    }
 
     constexpr explicit movable_box(t && other) noexcept(std::is_nothrow_move_constructible_v<t>) :
         value{std::move(other)}
