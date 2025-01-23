@@ -7,7 +7,6 @@
 #include <iterator>
 #include <sstream>
 
-#include <seqan3/core/detail/all_view.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
 
@@ -100,11 +99,11 @@ TEST(integration, view)
                              "AGGCTGNAGGCTGAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN\n"};
 
     // valid without assignment?
-    seqan3::sequence_file_input{std::istringstream{input}, seqan3::format_fasta{}} | seqan3::detail::all
+    seqan3::sequence_file_input{std::istringstream{input}, seqan3::format_fasta{}} | std::views::all
         | std::views::take(2) | seqan3::sequence_file_output{std::ostringstream{}, seqan3::format_fasta{}};
 
     // valid with assignment and check contents
-    auto fout = seqan3::sequence_file_input{std::istringstream{input}, seqan3::format_fasta{}} | seqan3::detail::all
+    auto fout = seqan3::sequence_file_input{std::istringstream{input}, seqan3::format_fasta{}} | std::views::all
               | std::views::take(2) | seqan3::sequence_file_output{std::ostringstream{}, seqan3::format_fasta{}};
 
     fout.get_stream().flush();

@@ -12,8 +12,8 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/detail.hpp>
+#include <seqan3/contrib/std/detail/movable_box.hpp>
 #include <seqan3/core/configuration/pipeable_config_element.hpp>
-#include <seqan3/core/detail/copyable_wrapper.hpp>
 
 namespace seqan3::align_cfg
 {
@@ -22,7 +22,7 @@ namespace seqan3::align_cfg
  * \ingroup alignment_configuration
  *
  * \tparam callback_t The type of the callback; must model std::invocable with the generated seqan3::alignment_result
- *                    and std::copy_constructible.
+ *                    and std::move_constructible.
  *
  * \details
  *
@@ -35,7 +35,7 @@ namespace seqan3::align_cfg
  * function, you need to make sure that the referenced function object outlives the call to the alignment algorithm.
  *
  * \if DEV
- * The given callback is wrapped inside a seqan3::detail::copyable_wrapper wrapper type. This allows to also
+ * The given callback is wrapped inside a seqan::stl::detail::movable_box wrapper type. This allows to also
  * use lambdas with a capture block, which otherwise are not std::copy_assignable and therefore invalidate the
  * requirements for the configuration element (must model std::semiregular).
  * \endif
@@ -46,12 +46,12 @@ namespace seqan3::align_cfg
  *
  * \include test/snippet/alignment/configuration/align_cfg_on_result.cpp
  */
-template <std::copy_constructible callback_t>
+template <std::move_constructible callback_t>
 class on_result : private seqan3::pipeable_config_element
 {
 public:
     //!\brief The stored callable which will be invoked with the alignment result.
-    seqan3::detail::copyable_wrapper_t<callback_t> callback; // Allows lambdas with capture blocks.
+    seqan::stl::detail::movable_box_t<callback_t> callback; // Allows lambdas with capture blocks.
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -79,7 +79,7 @@ public:
  * \{
  */
 //!\brief Deduces the callback type from a forwarding constructor argument.
-template <std::copy_constructible callback_t>
+template <std::move_constructible callback_t>
 on_result(callback_t &&) -> on_result<std::decay_t<callback_t>>;
 //!\}
 } // namespace seqan3::align_cfg

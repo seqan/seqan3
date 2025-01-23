@@ -43,16 +43,13 @@ struct my_iterator : public base_t, public seqan3::detail::maybe_inherited_itera
     using iterator_concept = seqan3::detail::iterator_concept_tag_t<base_t>;
 };
 
-#ifdef __cpp_lib_ranges // This is C++20 behaviour.
 TEST(maybe_iterator_category, no_legacy_iterator)
 {
     {
         using view_t = std::ranges::basic_istream_view<char, char, std::char_traits<char>>;
         using iterator_t = std::ranges::iterator_t<view_t>;
-#    if SEQAN3_WORKAROUND_GCC_96070
         // not defined (this is expected for C++20 input iterator)
         // EXPECT_SAME_TYPE(std::iterator_traits<iterator_t>::iterator_category, void);
-#    endif // SEQAN3_WORKAROUND_GCC_96070
         EXPECT_FALSE(has_iterator_category<iterator_t>);
         EXPECT_FALSE(has_iterator_category<std::iterator_traits<iterator_t>>);
     }
@@ -60,16 +57,10 @@ TEST(maybe_iterator_category, no_legacy_iterator)
     {
         using view_t = std::ranges::basic_istream_view<char, char, std::char_traits<char>>;
         using iterator_t = my_iterator<std::ranges::iterator_t<view_t>>;
-#    if SEQAN3_WORKAROUND_GCC_96070
-        // our workaround
-        EXPECT_SAME_TYPE(std::iterator_traits<iterator_t>::iterator_category, void);
-#    else  // ^^^ workaround / no workaround vvv
         EXPECT_FALSE(has_iterator_category<iterator_t>);
         EXPECT_FALSE(has_iterator_category<std::iterator_traits<iterator_t>>);
-#    endif // SEQAN3_WORKAROUND_GCC_96070
     }
 }
-#endif // __cpp_lib_ranges
 
 TEST(maybe_iterator_category, output_iterator_tag)
 {
@@ -82,11 +73,7 @@ TEST(maybe_iterator_category, output_iterator_tag)
     {
         using iterator_t = std::ostream_iterator<int>;
         EXPECT_SAME_TYPE(std::iterator_traits<iterator_t>::iterator_category, std::output_iterator_tag);
-#if defined(__cpp_lib_ranges)
         EXPECT_SAME_TYPE(iterator_t::iterator_category, std::output_iterator_tag);
-#else // ^^^ >= C++20 / < C++20 vvv
-        EXPECT_FALSE(has_iterator_category<iterator_t>);
-#endif
     }
 }
 
@@ -98,7 +85,6 @@ TEST(maybe_iterator_category, input_iterator_tag)
         EXPECT_SAME_TYPE(iterator_t::iterator_category, std::input_iterator_tag);
     }
 
-#ifdef __cpp_lib_ranges
     {
         // std::views::transform will drop the iterator_category if the lambda doesn't return a lvalue.
         // This is C++20 behaviour.
@@ -112,7 +98,6 @@ TEST(maybe_iterator_category, input_iterator_tag)
         EXPECT_SAME_TYPE(std::iterator_traits<iterator_t>::iterator_category, std::input_iterator_tag);
         EXPECT_SAME_TYPE(iterator_t::iterator_category, std::input_iterator_tag);
     }
-#endif // __cpp_lib_ranges
 }
 
 TEST(maybe_iterator_category, forward_iterator_tag)
@@ -316,9 +301,5 @@ TEST(iterator_concept_tag_t, contiguous_iterator_tag)
     using range_t = std::vector<int>;
     using iterator_t = std::ranges::iterator_t<range_t>;
     EXPECT_SAME_TYPE(seqan3::detail::iterator_concept_tag_t<iterator_t>, std::contiguous_iterator_tag);
-#if defined(__cpp_lib_ranges)
     EXPECT_SAME_TYPE(iterator_t::iterator_concept, std::contiguous_iterator_tag);
-#else // ^^^ >= C++20 / < C++20 vvv
-    EXPECT_FALSE(has_iterator_concept<iterator_t>);
-#endif
 }
