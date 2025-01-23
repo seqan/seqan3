@@ -30,6 +30,11 @@ concept simple_view = std::ranges::view<range_t> && std::ranges::range<range_t c
 template <bool is_const, typename t>
 using maybe_const = std::conditional_t<is_const, t const, t>;
 
+template <class R>
+concept range_with_movable_references =
+    std::ranges::input_range<R> && std::move_constructible<std::ranges::range_reference_t<R>>
+    && std::move_constructible<std::ranges::range_rvalue_reference_t<R>>;
+
 } // namespace seqan::stl::detail
 
 #endif // SEQAN_STD_DETAIL_EXPOSITION_ONLY
