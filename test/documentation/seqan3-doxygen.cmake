@@ -46,10 +46,11 @@ if (NOT EXISTS "${SEQAN3_DOXYGEN_STD_TAGFILE}" OR SEQAN3_DOXYGEN_STD_TAGFILE STR
     # Reset path in case it was set from the outside, but does not exist.
     set (SEQAN3_DOXYGEN_STD_TAGFILE "${SEQAN3_DEFAULT_DOXYGEN_STD_TAGFILE}")
     include (ExternalProject)
+    # When updating, check whether warnings in SEQAN3_TEST_DOXYGEN_FAIL_ON_WARNINGS are gone when removing sed filter.
     ExternalProject_Add (
         download-cppreference-doxygen-web-tag
-        URL "https://github.com/PeterFeicht/cppreference-doc/releases/download/v20220730/html-book-20220730.tar.xz"
-        URL_HASH SHA256=71f15003c168b8dc5a00cbaf19b6480a9b3e87ab7e462aa39edb63d7511c028b
+        URL "https://github.com/PeterFeicht/cppreference-doc/releases/download/v20241110/html-book-20241110.tar.xz"
+        URL_HASH SHA256=431e80862eb70fd4793a60d7d3b6c13c8605284978f9ea0529572e8fd1562cc6
         TLS_VERIFY ON
         DOWNLOAD_DIR "${PROJECT_BINARY_DIR}"
         DOWNLOAD_NAME "html-book.tar.xz"
@@ -77,8 +78,14 @@ add_test (NAME cppreference-doxygen-web-tag COMMAND ${CMAKE_COMMAND} --build ${C
                                                     download-cppreference-doxygen-web-tag)
 
 # doxygen does not show any warnings (doxygen prints warnings / errors to cerr)
+# Second line filters warnings from tag file.
+# Note: Because the commands are line-wise, CMake will insert a semicolon between them.
+#       If this is changed to be a single line, the semicolon must be manually inserted.
 set (SEQAN3_TEST_DOXYGEN_FAIL_ON_WARNINGS
-     "${DOXYGEN_EXECUTABLE} -q > doxygen.cout 2> doxygen.cerr; cat \"doxygen.cerr\"; test ! -s \"doxygen.cerr\""
+     "${DOXYGEN_EXECUTABLE} -q > doxygen.cout 2> doxygen.cerr"
+     "sed -i '/documented symbol '\\''T std::experimental::erase'\\'' was not declared or defined\\./d; /documented symbol '\\''T std::experimental::erase_if'\\'' was not declared or defined\\./d' \"doxygen.cerr\""
+     "cat \"doxygen.cerr\""
+     "test ! -s \"doxygen.cerr\""
      CACHE INTERNAL "The doxygen test command")
 
 ### install helper
