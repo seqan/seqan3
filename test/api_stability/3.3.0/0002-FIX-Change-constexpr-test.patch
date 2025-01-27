@@ -1,7 +1,7 @@
-From 39bbad4ae37dbeb02543e1556cd626eb1a451e34 Mon Sep 17 00:00:00 2001
+From c734afc727852e3318ebc940fce7244689b81ae3 Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Thu, 28 Sep 2023 19:35:57 +0200
-Subject: [PATCH 2/5] [FIX] Change constexpr test
+Subject: [PATCH 2/7] [FIX] Change constexpr test
 
 gcc11 complains suddenly
 ---

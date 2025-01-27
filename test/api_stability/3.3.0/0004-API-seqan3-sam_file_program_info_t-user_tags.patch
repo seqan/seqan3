@@ -1,7 +1,7 @@
-From 1685e5e348ed7ed7a4233a6c6db84e8c716d42f9 Mon Sep 17 00:00:00 2001
+From 02fe12c864222def7762b28197b6bd72c013640a Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Mon, 19 Aug 2024 14:13:08 +0200
-Subject: [PATCH 4/5] [API] seqan3::sam_file_program_info_t::user_tags
+Subject: [PATCH 4/7] [API] seqan3::sam_file_program_info_t::user_tags
 
 ---
  test/unit/io/sam_file/format_sam_test.cpp           | 13 ++-----------
