@@ -150,6 +150,7 @@ git checkout test/api
 cp /tmp/seqan3-api-stability-patches/*.patch test/api_stability/3.3.0/
 
 rm -fdr /tmp/seqan3-api-stability-patches
+git branch -D api-stability-patches
 
 # add new patches
 git add test/api_stability/3.3.0/
