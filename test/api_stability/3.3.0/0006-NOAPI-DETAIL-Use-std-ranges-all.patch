@@ -1,0 +1,245 @@
+From ca5604875b712292c3f1a64b745830ebec3e29ab Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Wed, 22 Jan 2025 17:11:10 +0100
+Subject: [PATCH 6/7] [NOAPI][DETAIL] Use std::ranges::all
+
+---
+ test/performance/search/search_benchmark.cpp        |  5 ++---
+ .../alignment/pairwise/alignment_result_test.cpp    |  9 ++++-----
+ .../detail/algorithm_executor_blocking_test.cpp     |  5 ++---
+ .../sequence_file_integration_test.cpp              |  5 ++---
+ test/unit/search/search_collection_test.cpp         |  5 ++---
+ test/unit/search/search_test.cpp                    |  5 ++---
+ test/unit/utility/views/single_pass_input_test.cpp  | 13 ++++++-------
+ 7 files changed, 20 insertions(+), 27 deletions(-)
+
+diff --git a/test/performance/search/search_benchmark.cpp b/test/performance/search/search_benchmark.cpp
+index 481fec09b..595c336c0 100644
+--- a/test/performance/search/search_benchmark.cpp
++++ b/test/performance/search/search_benchmark.cpp
+@@ -8,7 +8,6 @@
+ #include <benchmark/benchmark.h>
+ 
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
+-#include <seqan3/core/detail/all_view.hpp>
+ #include <seqan3/search/fm_index/bi_fm_index.hpp>
+ #include <seqan3/search/fm_index/fm_index.hpp>
+ #include <seqan3/search/search.hpp>
+@@ -143,8 +142,8 @@ std::vector<alphabet_t> generate_repeating_sequence(size_t const template_length
+     uint8_t simulated_errors = 5;
+     len = (len + simulated_errors > template_length) ? template_length - simulated_errors : len;
+ 
+-    return generate_reads(seq_template, repeats, len, simulated_errors, 0.15, 0.15) | seqan3::detail::all
+-         | std::views::join | seqan3::ranges::to<std::vector>();
++    return generate_reads(seq_template, repeats, len, simulated_errors, 0.15, 0.15) | std::views::all | std::views::join
++         | seqan3::ranges::to<std::vector>();
+ }
+ 
+ //============================================================================
+diff --git a/test/unit/alignment/pairwise/alignment_result_test.cpp b/test/unit/alignment/pairwise/alignment_result_test.cpp
+index 6c57b950c..78a453dfb 100644
+--- a/test/unit/alignment/pairwise/alignment_result_test.cpp
++++ b/test/unit/alignment/pairwise/alignment_result_test.cpp
+@@ -19,7 +19,6 @@
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
+ #include <seqan3/alphabet/nucleotide/rna5.hpp>
+ #include <seqan3/alphabet/views/to_char.hpp>
+-#include <seqan3/core/detail/all_view.hpp>
+ #include <seqan3/core/detail/template_inspection.hpp>
+ #include <seqan3/test/expect_range_eq.hpp>
+ #include <seqan3/test/expect_same_type.hpp>
+@@ -209,14 +208,14 @@ TYPED_TEST(alignment_result_test, alignment)
+     if constexpr (seqan3::tuple_like<alignment_t>)
+     {
+         seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+-        EXPECT_RANGE_EQ(std::get<0>(tmp.alignment()) | seqan3::detail::all | seqan3::views::to_char, "AT-C--A"sv);
+-        EXPECT_RANGE_EQ(std::get<1>(tmp.alignment()) | seqan3::detail::all | seqan3::views::to_char, "AT-C--A"sv);
++        EXPECT_RANGE_EQ(std::get<0>(tmp.alignment()) | std::views::all | seqan3::views::to_char, "AT-C--A"sv);
++        EXPECT_RANGE_EQ(std::get<1>(tmp.alignment()) | std::views::all | seqan3::views::to_char, "AT-C--A"sv);
+     }
+     else
+     {
+         seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+-        EXPECT_RANGE_EQ(tmp.alignment()[0] | seqan3::detail::all | seqan3::views::to_char, "AT-C--A"sv);
+-        EXPECT_RANGE_EQ(tmp.alignment()[1] | seqan3::detail::all | seqan3::views::to_char, "AT-C--A"sv);
++        EXPECT_RANGE_EQ(tmp.alignment()[0] | std::views::all | seqan3::views::to_char, "AT-C--A"sv);
++        EXPECT_RANGE_EQ(tmp.alignment()[1] | std::views::all | seqan3::views::to_char, "AT-C--A"sv);
+     }
+ }
+ 
+diff --git a/test/unit/core/algorithm/detail/algorithm_executor_blocking_test.cpp b/test/unit/core/algorithm/detail/algorithm_executor_blocking_test.cpp
+index fc7b57255..3cc46ec42 100644
+--- a/test/unit/core/algorithm/detail/algorithm_executor_blocking_test.cpp
++++ b/test/unit/core/algorithm/detail/algorithm_executor_blocking_test.cpp
+@@ -12,7 +12,6 @@
+ #include <string>
+ 
+ #include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
+-#include <seqan3/core/detail/all_view.hpp>
+ #include <seqan3/test/pretty_printing.hpp>
+ #include <seqan3/utility/views/zip.hpp>
+ 
+@@ -175,11 +174,11 @@ TYPED_TEST(algorithm_executor_blocking_test, lvalue_sequence_pairs)
+ 
+ TYPED_TEST(algorithm_executor_blocking_test, rvalue_sequence_pairs_view)
+ {
+-    using persist_pairs_t = decltype(this->sequence_pairs | seqan3::detail::all);
++    using persist_pairs_t = decltype(this->sequence_pairs | std::views::all);
+     using algorithm_t = typename algorithm_type_for_input<persist_pairs_t>::type;
+     using executor_t = seqan3::detail::algorithm_executor_blocking<persist_pairs_t, algorithm_t, size_t, TypeParam>;
+ 
+-    executor_t exec{this->sequence_pairs | seqan3::detail::all,
++    executor_t exec{this->sequence_pairs | std::views::all,
+                     algorithm_t{dummy_algorithm{}},
+                     0u,
+                     this->execution_handler()};
+diff --git a/test/unit/io/sequence_file/sequence_file_integration_test.cpp b/test/unit/io/sequence_file/sequence_file_integration_test.cpp
+index 83a344bd3..bbaa01b55 100644
+--- a/test/unit/io/sequence_file/sequence_file_integration_test.cpp
++++ b/test/unit/io/sequence_file/sequence_file_integration_test.cpp
+@@ -10,7 +10,6 @@
+ #include <iterator>
+ #include <sstream>
+ 
+-#include <seqan3/core/detail/all_view.hpp>
+ #include <seqan3/io/sequence_file/input.hpp>
+ #include <seqan3/io/sequence_file/output.hpp>
+ 
+@@ -103,11 +102,11 @@ TEST(integration, view)
+                              "AGGCTGNAGGCTGAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN\n"};
+ 
+     // valid without assignment?
+-    seqan3::sequence_file_input{std::istringstream{input}, seqan3::format_fasta{}} | seqan3::detail::all
++    seqan3::sequence_file_input{std::istringstream{input}, seqan3::format_fasta{}} | std::views::all
+         | std::views::take(2) | seqan3::sequence_file_output{std::ostringstream{}, seqan3::format_fasta{}};
+ 
+     // valid with assignment and check contents
+-    auto fout = seqan3::sequence_file_input{std::istringstream{input}, seqan3::format_fasta{}} | seqan3::detail::all
++    auto fout = seqan3::sequence_file_input{std::istringstream{input}, seqan3::format_fasta{}} | std::views::all
+               | std::views::take(2) | seqan3::sequence_file_output{std::ostringstream{}, seqan3::format_fasta{}};
+ 
+     fout.get_stream().flush();
+diff --git a/test/unit/search/search_collection_test.cpp b/test/unit/search/search_collection_test.cpp
+index 0a7aeb701..9b3e04a7b 100644
+--- a/test/unit/search/search_collection_test.cpp
++++ b/test/unit/search/search_collection_test.cpp
+@@ -14,7 +14,6 @@
+ #include <seqan3/alphabet/quality/phred42.hpp>
+ #include <seqan3/alphabet/quality/qualified.hpp>
+ #include <seqan3/core/debug_stream/tuple.hpp>
+-#include <seqan3/core/detail/all_view.hpp>
+ #include <seqan3/search/fm_index/bi_fm_index.hpp>
+ #include <seqan3/search/fm_index/fm_index.hpp>
+ #include <seqan3/search/search.hpp>
+@@ -27,13 +26,13 @@ using seqan3::operator""_phred42;
+ 
+ using namespace std::string_literals;
+ 
+-auto ref_id_and_position = seqan3::detail::all
++auto ref_id_and_position = std::views::all
+                          | std::views::transform(
+                                [](auto && res)
+                                {
+                                    return std::make_pair(res.reference_id(), res.reference_begin_position());
+                                });
+-auto query_id = seqan3::detail::all
++auto query_id = std::views::all
+               | std::views::transform(
+                     [](auto && res)
+                     {
+diff --git a/test/unit/search/search_test.cpp b/test/unit/search/search_test.cpp
+index c22417120..fb473ede3 100644
+--- a/test/unit/search/search_test.cpp
++++ b/test/unit/search/search_test.cpp
+@@ -13,7 +13,6 @@
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
+ #include <seqan3/alphabet/quality/phred42.hpp>
+ #include <seqan3/alphabet/quality/qualified.hpp>
+-#include <seqan3/core/detail/all_view.hpp>
+ #include <seqan3/search/configuration/hit.hpp>
+ #include <seqan3/search/configuration/max_error.hpp>
+ #include <seqan3/search/configuration/on_result.hpp>
+@@ -29,13 +28,13 @@ using seqan3::operator""_phred42;
+ 
+ using namespace std::string_literals;
+ 
+-auto position = seqan3::detail::all
++auto position = std::views::all
+               | std::views::transform(
+                     [](auto && res)
+                     {
+                         return res.reference_begin_position();
+                     });
+-auto query_id = seqan3::detail::all
++auto query_id = std::views::all
+               | std::views::transform(
+                     [](auto && res)
+                     {
+diff --git a/test/unit/utility/views/single_pass_input_test.cpp b/test/unit/utility/views/single_pass_input_test.cpp
+index 1567d93ed..a800b317c 100644
+--- a/test/unit/utility/views/single_pass_input_test.cpp
++++ b/test/unit/utility/views/single_pass_input_test.cpp
+@@ -11,7 +11,6 @@
+ #include <type_traits>
+ #include <vector>
+ 
+-#include <seqan3/core/detail/all_view.hpp>
+ #include <seqan3/test/expect_same_type.hpp>
+ #include <seqan3/utility/views/single_pass_input.hpp>
+ 
+@@ -61,7 +60,7 @@ TYPED_TEST_SUITE(single_pass_input, underlying_range_types, );
+ 
+ TYPED_TEST(single_pass_input, view_concept)
+ {
+-    using view_t = seqan3::detail::single_pass_input_view<seqan3::detail::all_t<TypeParam &>>;
++    using view_t = seqan3::detail::single_pass_input_view<std::views::all_t<TypeParam &>>;
+     EXPECT_TRUE((std::derived_from<view_t, std::ranges::view_interface<view_t>>));
+     EXPECT_TRUE((std::sentinel_for<std::ranges::sentinel_t<view_t>, std::ranges::iterator_t<view_t>>));
+     EXPECT_TRUE(std::ranges::range<view_t>);
+@@ -115,7 +114,7 @@ TYPED_TEST(single_pass_input, deduction_guide_view)
+ 
+ TYPED_TEST(single_pass_input, view_construction)
+ {
+-    using view_t = seqan3::detail::single_pass_input_view<seqan3::detail::all_t<TypeParam>>;
++    using view_t = seqan3::detail::single_pass_input_view<std::views::all_t<TypeParam>>;
+     EXPECT_TRUE(std::is_default_constructible_v<view_t>);
+     EXPECT_TRUE(std::is_copy_constructible_v<view_t>);
+     EXPECT_TRUE(std::is_move_constructible_v<view_t>);
+@@ -129,7 +128,7 @@ TYPED_TEST(single_pass_input, view_construction)
+     }
+ 
+     { // from view
+-        [[maybe_unused]] seqan3::detail::single_pass_input_view v{TypeParam{this->data} | seqan3::detail::all};
++        [[maybe_unused]] seqan3::detail::single_pass_input_view v{TypeParam{this->data} | std::views::all};
+     }
+ }
+ 
+@@ -180,14 +179,14 @@ TYPED_TEST(single_pass_input, view_iterate)
+ 
+ TYPED_TEST(single_pass_input, iterator_concepts)
+ {
+-    using view_type = seqan3::detail::single_pass_input_view<seqan3::detail::all_t<TypeParam>>;
++    using view_type = seqan3::detail::single_pass_input_view<std::views::all_t<TypeParam>>;
+     EXPECT_TRUE((std::input_iterator<std::ranges::iterator_t<view_type>>));
+     EXPECT_FALSE((std::forward_iterator<std::ranges::iterator_t<view_type>>));
+ }
+ 
+ TYPED_TEST(single_pass_input, iterator_construction)
+ {
+-    using view_type = seqan3::detail::single_pass_input_view<seqan3::detail::all_t<TypeParam>>;
++    using view_type = seqan3::detail::single_pass_input_view<std::views::all_t<TypeParam>>;
+     using iterator_type = std::ranges::iterator_t<view_type>;
+     EXPECT_TRUE(std::is_default_constructible_v<iterator_type>);
+     EXPECT_TRUE(std::is_copy_constructible_v<iterator_type>);
+@@ -292,7 +291,7 @@ TYPED_TEST(single_pass_input, iterator_neq_comparison)
+ 
+ TYPED_TEST(single_pass_input, sentinel_concepts)
+ {
+-    using view_type = seqan3::detail::single_pass_input_view<seqan3::detail::all_t<TypeParam>>;
++    using view_type = seqan3::detail::single_pass_input_view<std::views::all_t<TypeParam>>;
+     using iterator_type = std::ranges::iterator_t<view_type>;
+     using sentinel_type = std::ranges::sentinel_t<view_type>;
+ 
+-- 
+2.45.2
+

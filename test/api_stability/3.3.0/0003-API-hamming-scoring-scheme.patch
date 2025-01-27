@@ -1,7 +1,7 @@
-From 584f349d8b9de4db71b23595c85aa5a7c9cc6f60 Mon Sep 17 00:00:00 2001
+From abeb5d0c40c71c16a8b04f98f0bbc8810929ca30 Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Sun, 28 Jul 2024 15:17:28 +0200
-Subject: [PATCH 3/5] [API] hamming scoring scheme
+Subject: [PATCH 3/7] [API] hamming scoring scheme
 
 ---
  .../08_pairwise_alignment/pa_assignment_3_solution.cpp    | 6 ++++--

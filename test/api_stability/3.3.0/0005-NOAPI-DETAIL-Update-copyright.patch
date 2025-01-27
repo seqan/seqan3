@@ -1,7 +1,7 @@
-From e8a2c7e13ea00bd2fc96422ca8183becbb4254cf Mon Sep 17 00:00:00 2001
+From 2fffc406b2126b41b3933f43cba50710806dd53b Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Wed, 22 Jan 2025 14:55:53 +0100
-Subject: [PATCH 5/5] [NOAPI][DETAIL] Update copyright
+Subject: [PATCH 5/7] [NOAPI][DETAIL] Update copyright
 
 ---
  test/unit/argument_parser/detail/format_help_test.cpp | 10 +++++-----
