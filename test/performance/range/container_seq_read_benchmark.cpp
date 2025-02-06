@@ -8,11 +8,10 @@
 #include <list>
 #include <vector>
 
-#include <sdsl/int_vector.hpp>
-
 #include <seqan3/alignment/decorator/gap_decorator.hpp>
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/alphabet/container/bitpacked_sequence.hpp>
+#include <seqan3/contrib/sdsl-lite.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/seqan2.hpp>
 #include <seqan3/utility/container/small_vector.hpp>

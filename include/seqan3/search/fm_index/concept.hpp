@@ -12,8 +12,7 @@
 #include <concepts>
 #include <type_traits>
 
-#include <sdsl/suffix_arrays.hpp>
-
+#include <seqan3/contrib/sdsl-lite.hpp>
 #include <seqan3/core/platform.hpp>
 
 namespace seqan3::detail

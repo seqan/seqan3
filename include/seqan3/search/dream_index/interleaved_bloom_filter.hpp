@@ -12,8 +12,7 @@
 #include <algorithm>
 #include <bit>
 
-#include <sdsl/bit_vectors.hpp>
-
+#include <seqan3/contrib/sdsl-lite.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
 

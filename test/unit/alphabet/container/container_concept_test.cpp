@@ -11,13 +11,12 @@
 #include <string>
 #include <vector>
 
-#include <sdsl/int_vector.hpp>
-
 #include <seqan3/alphabet/container/bitpacked_sequence.hpp>
 #include <seqan3/alphabet/container/concatenated_sequences.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
+#include <seqan3/contrib/sdsl-lite.hpp>
 #include <seqan3/utility/container/concept.hpp>
 
 TEST(range_concept, forward_range)

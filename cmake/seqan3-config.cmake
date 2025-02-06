@@ -15,10 +15,6 @@
 #   C++20
 #   pthread
 #
-# SeqAn requires the following libraries:
-#
-#   SDSL      -- the succinct data structure library
-#
 # SeqAn has the following optional dependencies:
 #
 #   ZLIB      -- zlib compression library
@@ -135,36 +131,6 @@ if (SEQAN3_INCLUDE_DIR)
     seqan3_config_print ("SeqAn3 include dir found:   ${SEQAN3_INCLUDE_DIR}")
 else ()
     seqan3_config_error ("SeqAn3 include directory could not be found (SEQAN3_INCLUDE_DIR: '${SEQAN3_INCLUDE_DIR}')")
-endif ()
-
-# ----------------------------------------------------------------------------
-# Require SDSL
-# ----------------------------------------------------------------------------
-
-find_path (SEQAN3_SDSL_INCLUDE_DIR
-           NAMES sdsl/version.hpp
-           HINTS "${SEQAN3_INCLUDE_DIR}/seqan3/vendor")
-
-# 1) Check the vendor directory of SeqAn3. This directory exists for source packages and installed packages.
-if (SEQAN3_SDSL_INCLUDE_DIR)
-    seqan3_config_print ("Required dependency:        SDSL found.")
-    set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_SDSL_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
-    # 2) Get package via CPM.
-elseif (SEQAN3_HAS_CPM)
-    CPMGetPackage (sdsl-lite)
-
-    find_path (SEQAN3_SDSL_INCLUDE_DIR
-               NAMES sdsl/version.hpp
-               HINTS "${sdsl-lite_SOURCE_DIR}/include")
-
-    if (SEQAN3_SDSL_INCLUDE_DIR)
-        seqan3_config_print ("Required dependency:        SDSL found.")
-        set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_SDSL_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
-    else ()
-        seqan3_config_error ("The SDSL library is required, but wasn't found.")
-    endif ()
-else ()
-    seqan3_config_error ("The SDSL library is required, but wasn't found.")
 endif ()
 
 # ----------------------------------------------------------------------------

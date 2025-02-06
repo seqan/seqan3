@@ -13,10 +13,9 @@
 #include <ranges>
 #include <type_traits>
 
-#include <sdsl/suffix_trees.hpp>
-
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/contrib/sdsl-lite.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
