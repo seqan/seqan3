@@ -8,17 +8,16 @@
 #include <list>
 #include <vector>
 
-#include <sdsl/int_vector.hpp>
-
 #include <seqan3/alignment/decorator/gap_decorator.hpp>
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/alphabet/container/bitpacked_sequence.hpp>
+#include <seqan3/contrib/sdsl-lite.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/seqan2.hpp>
 #include <seqan3/utility/container/small_vector.hpp>
 
 template <typename t>
-using sdsl_int_vec = sdsl::int_vector<sizeof(t) * 8>;
+using sdsl_int_vec = seqan3::contrib::sdsl::int_vector<sizeof(t) * 8>;
 
 template <typename t>
 using small_vec = seqan3::small_vector<t, 10000>;

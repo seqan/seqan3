@@ -347,7 +347,7 @@ TYPED_TEST(interleaved_bloom_filter_test, data_access)
 {
     seqan3::interleaved_bloom_filter ibf{seqan3::bin_count{1024u}, seqan3::bin_size{1024u}};
 
-    EXPECT_LE(sdsl::size_in_mega_bytes(ibf.raw_data()), 1.0f);
+    EXPECT_LE(seqan3::contrib::sdsl::size_in_mega_bytes(ibf.raw_data()), 1.0f);
 }
 
 TYPED_TEST(interleaved_bloom_filter_test, serialisation)

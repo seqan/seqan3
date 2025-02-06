@@ -12,8 +12,7 @@
 #include <concepts>
 #include <type_traits>
 
-#include <sdsl/suffix_arrays.hpp>
-
+#include <seqan3/contrib/sdsl-lite.hpp>
 #include <seqan3/core/platform.hpp>
 
 namespace seqan3::detail
@@ -43,10 +42,10 @@ concept sdsl_index = requires (t sdsl_index) {
                        typename t::char_type const c,
                        typename t::size_type const lb,
                        typename t::size_type const rb,
-                       sdsl::int_vector<8> const text) {
+                       seqan3::contrib::sdsl::int_vector<8> const text) {
         { sdsl_index.bwt.rank(lb, c) };
         { sdsl_index.wavelet_tree.lex_count(lb, rb, c) };
-        { sdsl::construct_im(sdsl_index, text, 0) };
+        { seqan3::contrib::sdsl::construct_im(sdsl_index, text, 0) };
     };
 };
 //!\endcond

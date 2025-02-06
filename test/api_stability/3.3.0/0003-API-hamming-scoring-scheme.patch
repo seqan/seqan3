@@ -1,7 +1,7 @@
-From abeb5d0c40c71c16a8b04f98f0bbc8810929ca30 Mon Sep 17 00:00:00 2001
+From 19f492b5e22fad6c94ce617af2c979072627e856 Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Sun, 28 Jul 2024 15:17:28 +0200
-Subject: [PATCH 3/7] [API] hamming scoring scheme
+Subject: [PATCH 3/8] [API] hamming scoring scheme
 
 ---
  .../08_pairwise_alignment/pa_assignment_3_solution.cpp    | 6 ++++--
@@ -77,5 +77,5 @@ index 7ec211537..ee2e501a8 100644
              if (i == j)
                  EXPECT_EQ((scheme.score(seqan3::assign_rank_to(i, seqan3::dna15{}),
 -- 
-2.45.2
+2.47.2
 

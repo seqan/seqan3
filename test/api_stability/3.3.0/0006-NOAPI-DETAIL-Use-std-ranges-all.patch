@@ -1,7 +1,7 @@
-From ca5604875b712292c3f1a64b745830ebec3e29ab Mon Sep 17 00:00:00 2001
+From e963f7c17989824777d2ee7a7a71bc7bf7d88365 Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Wed, 22 Jan 2025 17:11:10 +0100
-Subject: [PATCH 6/7] [NOAPI][DETAIL] Use std::ranges::all
+Subject: [PATCH 6/8] [NOAPI][DETAIL] Use std::ranges::all
 
 ---
  test/performance/search/search_benchmark.cpp        |  5 ++---
@@ -241,5 +241,5 @@ index 1567d93ed..a800b317c 100644
      using sentinel_type = std::ranges::sentinel_t<view_type>;
  
 -- 
-2.45.2
+2.47.2
 

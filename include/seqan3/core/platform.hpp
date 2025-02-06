@@ -105,14 +105,6 @@
 #    error SeqAn3 include directory not set correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
 #endif
 
-// SDSL [required]
-#if __has_include(<sdsl/version.hpp>)
-#    include <sdsl/version.hpp>
-static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supported by SeqAn3.");
-#else
-#    error The sdsl library was not included correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
-#endif
-
 // Cereal [optional]
 /*!\def SEQAN3_WITH_CEREAL
  * \brief Whether CEREAL support is available or not.

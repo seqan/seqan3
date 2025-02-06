@@ -1,0 +1,256 @@
+From 8d7406dfdaf1e084cc7df970d1a88918b5be3aa9 Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Wed, 12 Feb 2025 14:39:21 +0100
+Subject: [PATCH 8/8] [NOAPI][DETAIL] Put SDSL into contrib
+
+---
+ .../range/container_push_back_benchmark.cpp     |  5 ++---
+ .../range/container_seq_read_benchmark.cpp      |  5 ++---
+ .../range/container_seq_write_benchmark.cpp     |  5 ++---
+ .../core/detail/template_inspection_usage.cpp   |  2 ++
+ test/snippet/utility/tuple_utility.cpp          |  2 ++
+ .../detail/type_pack_algorithm_all_of.cpp       |  2 +-
+ .../container/container_concept_test.cpp        | 11 +++++------
+ .../interleaved_bloom_filter_test.cpp           |  2 +-
+ ...fm_index_cursor_collection_test_template.hpp | 17 ++++++++++-------
+ .../fm_index_cursor_test_template.hpp           | 17 ++++++++++-------
+ test/unit/search/sdsl_index_test.cpp            |  2 +-
+ .../utility/bloom_filter/bloom_filter_test.cpp  |  2 +-
+ 12 files changed, 39 insertions(+), 33 deletions(-)
+
+diff --git a/test/performance/range/container_push_back_benchmark.cpp b/test/performance/range/container_push_back_benchmark.cpp
+index 32470ac9b..59860b0c7 100644
+--- a/test/performance/range/container_push_back_benchmark.cpp
++++ b/test/performance/range/container_push_back_benchmark.cpp
+@@ -11,16 +11,15 @@
+ #include <list>
+ #include <vector>
+ 
+-#include <sdsl/int_vector.hpp>
+-
+ #include <seqan3/alignment/decorator/gap_decorator.hpp>
+ #include <seqan3/alphabet/all.hpp>
+ #include <seqan3/alphabet/container/bitpacked_sequence.hpp>
++#include <seqan3/contrib/sdsl-lite.hpp>
+ #include <seqan3/test/seqan2.hpp>
+ #include <seqan3/utility/container/small_vector.hpp>
+ 
+ template <typename t>
+-using sdsl_int_vec = sdsl::int_vector<sizeof(t) * 8>;
++using sdsl_int_vec = seqan3::contrib::sdsl::int_vector<sizeof(t) * 8>;
+ 
+ template <typename t>
+ using small_vec = seqan3::small_vector<t, 10'000>;
+diff --git a/test/performance/range/container_seq_read_benchmark.cpp b/test/performance/range/container_seq_read_benchmark.cpp
+index 6a3e41fc5..e460a29f3 100644
+--- a/test/performance/range/container_seq_read_benchmark.cpp
++++ b/test/performance/range/container_seq_read_benchmark.cpp
+@@ -11,17 +11,16 @@
+ #include <list>
+ #include <vector>
+ 
+-#include <sdsl/int_vector.hpp>
+-
+ #include <seqan3/alignment/decorator/gap_decorator.hpp>
+ #include <seqan3/alphabet/all.hpp>
+ #include <seqan3/alphabet/container/bitpacked_sequence.hpp>
++#include <seqan3/contrib/sdsl-lite.hpp>
+ #include <seqan3/test/performance/sequence_generator.hpp>
+ #include <seqan3/test/seqan2.hpp>
+ #include <seqan3/utility/container/small_vector.hpp>
+ 
+ template <typename t>
+-using sdsl_int_vec = sdsl::int_vector<sizeof(t) * 8>;
++using sdsl_int_vec = seqan3::contrib::sdsl::int_vector<sizeof(t) * 8>;
+ 
+ template <typename t>
+ using small_vec = seqan3::small_vector<t, 10'000>;
+diff --git a/test/performance/range/container_seq_write_benchmark.cpp b/test/performance/range/container_seq_write_benchmark.cpp
+index 193ab6965..a990d0abe 100644
+--- a/test/performance/range/container_seq_write_benchmark.cpp
++++ b/test/performance/range/container_seq_write_benchmark.cpp
+@@ -11,17 +11,16 @@
+ #include <list>
+ #include <vector>
+ 
+-#include <sdsl/int_vector.hpp>
+-
+ #include <seqan3/alignment/decorator/gap_decorator.hpp>
+ #include <seqan3/alphabet/all.hpp>
+ #include <seqan3/alphabet/container/bitpacked_sequence.hpp>
++#include <seqan3/contrib/sdsl-lite.hpp>
+ #include <seqan3/test/performance/sequence_generator.hpp>
+ #include <seqan3/test/seqan2.hpp>
+ #include <seqan3/utility/container/small_vector.hpp>
+ 
+ template <typename t>
+-using sdsl_int_vec = sdsl::int_vector<sizeof(t) * 8>;
++using sdsl_int_vec = seqan3::contrib::sdsl::int_vector<sizeof(t) * 8>;
+ 
+ template <typename t>
+ using small_vec = seqan3::small_vector<t, 10'000>;
+diff --git a/test/snippet/core/detail/template_inspection_usage.cpp b/test/snippet/core/detail/template_inspection_usage.cpp
+index 74b798cea..fd0070cab 100644
+--- a/test/snippet/core/detail/template_inspection_usage.cpp
++++ b/test/snippet/core/detail/template_inspection_usage.cpp
+@@ -1,3 +1,5 @@
++#include <tuple>
++
+ #include <seqan3/core/detail/template_inspection.hpp>
+ #include <seqan3/utility/type_list/type_list.hpp>
+ 
+diff --git a/test/snippet/utility/tuple_utility.cpp b/test/snippet/utility/tuple_utility.cpp
+index 91dbe8f0c..211c57557 100644
+--- a/test/snippet/utility/tuple_utility.cpp
++++ b/test/snippet/utility/tuple_utility.cpp
+@@ -1,3 +1,5 @@
++#include <string>
++
+ #include <seqan3/utility/tuple/split.hpp>
+ 
+ int main()
+diff --git a/test/snippet/utility/type_pack/detail/type_pack_algorithm_all_of.cpp b/test/snippet/utility/type_pack/detail/type_pack_algorithm_all_of.cpp
+index b8daf9cdb..8f2ad2aef 100644
+--- a/test/snippet/utility/type_pack/detail/type_pack_algorithm_all_of.cpp
++++ b/test/snippet/utility/type_pack/detail/type_pack_algorithm_all_of.cpp
+@@ -17,7 +17,7 @@ auto fn = [](auto value)
+     else if constexpr (std::is_same_v<value_t, int>)
+         return value == 3;
+     else if constexpr (std::is_same_v<value_t, double>)
+-        return std::abs(value - 1.2) < 0.00001;
++        return value - 1.2 < 0.00001;
+     else
+         return false;
+ };
+diff --git a/test/unit/alphabet/container/container_concept_test.cpp b/test/unit/alphabet/container/container_concept_test.cpp
+index f6dd0d60f..e62982fb0 100644
+--- a/test/unit/alphabet/container/container_concept_test.cpp
++++ b/test/unit/alphabet/container/container_concept_test.cpp
+@@ -14,13 +14,12 @@
+ #include <string>
+ #include <vector>
+ 
+-#include <sdsl/int_vector.hpp>
+-
+ #include <seqan3/alphabet/container/bitpacked_sequence.hpp>
+ #include <seqan3/alphabet/container/concatenated_sequences.hpp>
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
+ #include <seqan3/alphabet/quality/phred42.hpp>
+ #include <seqan3/alphabet/quality/qualified.hpp>
++#include <seqan3/contrib/sdsl-lite.hpp>
+ #include <seqan3/utility/container/concept.hpp>
+ 
+ TEST(range_concept, forward_range)
+@@ -179,10 +178,10 @@ TEST(container, reservible_container)
+     EXPECT_TRUE((seqan3::reservible_container<seqan3::concatenated_sequences<std::string>>));
+     EXPECT_TRUE((seqan3::reservible_container<seqan3::concatenated_sequences<std::vector<char>>>));
+ 
+-    EXPECT_TRUE((seqan3::reservible_container<sdsl::bit_vector>));
+-    EXPECT_TRUE((seqan3::reservible_container<sdsl::int_vector<>>));
+-    EXPECT_TRUE((seqan3::reservible_container<sdsl::int_vector<13>>));
+-    EXPECT_TRUE((seqan3::reservible_container<sdsl::int_vector<64>>));
++    EXPECT_TRUE((seqan3::reservible_container<seqan3::contrib::sdsl::bit_vector>));
++    EXPECT_TRUE((seqan3::reservible_container<seqan3::contrib::sdsl::int_vector<>>));
++    EXPECT_TRUE((seqan3::reservible_container<seqan3::contrib::sdsl::int_vector<13>>));
++    EXPECT_TRUE((seqan3::reservible_container<seqan3::contrib::sdsl::int_vector<64>>));
+     EXPECT_TRUE((seqan3::reservible_container<seqan3::bitpacked_sequence<seqan3::dna4>>));
+     EXPECT_TRUE(
+         (seqan3::reservible_container<seqan3::bitpacked_sequence<seqan3::qualified<seqan3::dna4, seqan3::phred42>>>));
+diff --git a/test/unit/search/dream_index/interleaved_bloom_filter_test.cpp b/test/unit/search/dream_index/interleaved_bloom_filter_test.cpp
+index 71ba36238..a6c608ec6 100644
+--- a/test/unit/search/dream_index/interleaved_bloom_filter_test.cpp
++++ b/test/unit/search/dream_index/interleaved_bloom_filter_test.cpp
+@@ -350,7 +350,7 @@ TYPED_TEST(interleaved_bloom_filter_test, data_access)
+ {
+     seqan3::interleaved_bloom_filter ibf{seqan3::bin_count{1024u}, seqan3::bin_size{1024u}};
+ 
+-    EXPECT_LE(sdsl::size_in_mega_bytes(ibf.raw_data()), 1.0f);
++    EXPECT_LE(seqan3::contrib::sdsl::size_in_mega_bytes(ibf.raw_data()), 1.0f);
+ }
+ 
+ TYPED_TEST(interleaved_bloom_filter_test, serialisation)
+diff --git a/test/unit/search/fm_index_cursor/fm_index_cursor_collection_test_template.hpp b/test/unit/search/fm_index_cursor/fm_index_cursor_collection_test_template.hpp
+index 5b80df314..4ef040186 100644
+--- a/test/unit/search/fm_index_cursor/fm_index_cursor_collection_test_template.hpp
++++ b/test/unit/search/fm_index_cursor/fm_index_cursor_collection_test_template.hpp
+@@ -17,13 +17,16 @@
+ 
+ #include "../helper.hpp"
+ 
+-using sdsl_byte_index_type = sdsl::csa_wt<
+-    sdsl::wt_blcd<sdsl::bit_vector, sdsl::rank_support_v<>, sdsl::select_support_scan<>, sdsl::select_support_scan<0>>,
+-    16,
+-    10000000,
+-    sdsl::sa_order_sa_sampling<>,
+-    sdsl::isa_sampling<>,
+-    sdsl::byte_alphabet>;
++using sdsl_byte_index_type =
++    seqan3::contrib::sdsl::csa_wt<seqan3::contrib::sdsl::wt_blcd<seqan3::contrib::sdsl::bit_vector,
++                                                                 seqan3::contrib::sdsl::rank_support_v<>,
++                                                                 seqan3::contrib::sdsl::select_support_scan<>,
++                                                                 seqan3::contrib::sdsl::select_support_scan<0>>,
++                                  16,
++                                  10'000'000,
++                                  seqan3::contrib::sdsl::sa_order_sa_sampling<>,
++                                  seqan3::contrib::sdsl::isa_sampling<>,
++                                  seqan3::contrib::sdsl::byte_alphabet>;
+ 
+ template <typename T>
+ struct fm_index_cursor_collection_test;
+diff --git a/test/unit/search/fm_index_cursor/fm_index_cursor_test_template.hpp b/test/unit/search/fm_index_cursor/fm_index_cursor_test_template.hpp
+index 8564b1df6..b11b1c985 100644
+--- a/test/unit/search/fm_index_cursor/fm_index_cursor_test_template.hpp
++++ b/test/unit/search/fm_index_cursor/fm_index_cursor_test_template.hpp
+@@ -16,13 +16,16 @@
+ 
+ #include "../helper.hpp"
+ 
+-using sdsl_byte_index_type = sdsl::csa_wt<
+-    sdsl::wt_blcd<sdsl::bit_vector, sdsl::rank_support_v<>, sdsl::select_support_scan<>, sdsl::select_support_scan<0>>,
+-    16,
+-    10000000,
+-    sdsl::sa_order_sa_sampling<>,
+-    sdsl::isa_sampling<>,
+-    sdsl::byte_alphabet>;
++using sdsl_byte_index_type =
++    seqan3::contrib::sdsl::csa_wt<seqan3::contrib::sdsl::wt_blcd<seqan3::contrib::sdsl::bit_vector,
++                                                                 seqan3::contrib::sdsl::rank_support_v<>,
++                                                                 seqan3::contrib::sdsl::select_support_scan<>,
++                                                                 seqan3::contrib::sdsl::select_support_scan<0>>,
++                                  16,
++                                  10'000'000,
++                                  seqan3::contrib::sdsl::sa_order_sa_sampling<>,
++                                  seqan3::contrib::sdsl::isa_sampling<>,
++                                  seqan3::contrib::sdsl::byte_alphabet>;
+ 
+ using locate_result_t = std::vector<std::pair<uint64_t, uint64_t>>;
+ 
+diff --git a/test/unit/search/sdsl_index_test.cpp b/test/unit/search/sdsl_index_test.cpp
+index 29042c51b..2277cd624 100644
+--- a/test/unit/search/sdsl_index_test.cpp
++++ b/test/unit/search/sdsl_index_test.cpp
+@@ -9,7 +9,7 @@
+ 
+ #include <seqan3/search/fm_index/concept.hpp>
+ 
+-using namespace sdsl;
++using namespace seqan3::contrib::sdsl;
+ 
+ template <typename T>
+ class sdsl_index_test : public ::testing::Test
+diff --git a/test/unit/utility/bloom_filter/bloom_filter_test.cpp b/test/unit/utility/bloom_filter/bloom_filter_test.cpp
+index 612683cf3..2133abd37 100644
+--- a/test/unit/utility/bloom_filter/bloom_filter_test.cpp
++++ b/test/unit/utility/bloom_filter/bloom_filter_test.cpp
+@@ -125,7 +125,7 @@ TYPED_TEST(bloom_filter_test, reset)
+ TYPED_TEST(bloom_filter_test, data_access)
+ {
+     seqan3::bloom_filter bf{seqan3::bin_size{1024u}};
+-    EXPECT_LE(sdsl::size_in_mega_bytes(bf.raw_data()), 0.001f);
++    EXPECT_LE(seqan3::contrib::sdsl::size_in_mega_bytes(bf.raw_data()), 0.001f);
+ }
+ 
+ TYPED_TEST(bloom_filter_test, serialisation)
+-- 
+2.47.2
+

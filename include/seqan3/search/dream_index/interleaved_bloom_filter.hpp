@@ -12,8 +12,7 @@
 #include <algorithm>
 #include <bit>
 
-#include <sdsl/bit_vectors.hpp>
-
+#include <seqan3/contrib/sdsl-lite.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
 
@@ -136,8 +135,9 @@ private:
     //!\endcond
 
     //!\brief The underlying datatype to use.
-    using data_type =
-        std::conditional_t<data_layout_mode_ == data_layout::uncompressed, sdsl::bit_vector, sdsl::sd_vector<>>;
+    using data_type = std::conditional_t<data_layout_mode_ == data_layout::uncompressed,
+                                         seqan3::contrib::sdsl::bit_vector,
+                                         seqan3::contrib::sdsl::sd_vector<>>;
 
     //!\brief The number of bins specified by the user.
     size_t bins{};
@@ -234,7 +234,7 @@ public:
         hash_shift = std::countl_zero(bin_size_);
         bin_words = (bins + 63) >> 6;    // = ceil(bins/64)
         technical_bins = bin_words << 6; // = bin_words * 64
-        data = sdsl::bit_vector(technical_bins * bin_size_);
+        data = seqan3::contrib::sdsl::bit_vector(technical_bins * bin_size_);
     }
 
     /*!\brief Construct an uncompressed Interleaved Bloom Filter from a compressed one.
@@ -251,7 +251,7 @@ public:
         std::tie(bins, technical_bins, bin_size_, hash_shift, bin_words, hash_funs) =
             std::tie(ibf.bins, ibf.technical_bins, ibf.bin_size_, ibf.hash_shift, ibf.bin_words, ibf.hash_funs);
 
-        data = sdsl::bit_vector{ibf.data.begin(), ibf.data.end()};
+        data = seqan3::contrib::sdsl::bit_vector{ibf.data.begin(), ibf.data.end()};
     }
 
     /*!\brief Construct a compressed Interleaved Bloom Filter.
@@ -271,7 +271,7 @@ public:
         std::tie(bins, technical_bins, bin_size_, hash_shift, bin_words, hash_funs) =
             std::tie(ibf.bins, ibf.technical_bins, ibf.bin_size_, ibf.hash_shift, ibf.bin_words, ibf.hash_funs);
 
-        data = sdsl::sd_vector<>{ibf.data};
+        data = seqan3::contrib::sdsl::sd_vector<>{ibf.data};
     }
     //!\}
 
@@ -672,7 +672,7 @@ class interleaved_bloom_filter<data_layout_mode>::membership_agent_type::binning
 {
 private:
     //!\brief The underlying datatype to use.
-    using data_type = sdsl::bit_vector;
+    using data_type = seqan3::contrib::sdsl::bit_vector;
     //!\brief The bitvector.
     data_type data{};
 
