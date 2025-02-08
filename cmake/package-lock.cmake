@@ -43,7 +43,7 @@ CPMDeclarePackage (benchmark
                    OPTIONS "BENCHMARK_ENABLE_TESTING OFF" "BENCHMARK_ENABLE_WERROR OFF"
                            "CMAKE_MESSAGE_LOG_LEVEL WARNING")
 # googletest
-set (SEQAN3_GOOGLETEST_VERSION 1.15.2 CACHE STRING "" FORCE)
+set (SEQAN3_GOOGLETEST_VERSION 1.16.0 CACHE STRING "" FORCE)
 CPMDeclarePackage (googletest
                    NAME GTest
                    VERSION ${SEQAN3_GOOGLETEST_VERSION}
