@@ -18,13 +18,13 @@
 #include <seqan3/test/tmp_directory.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 #    include <cereal/archives/binary.hpp>
 #    include <cereal/archives/json.hpp>
 #    include <cereal/archives/portable_binary.hpp>
 #    include <cereal/archives/xml.hpp>
 #    include <cereal/types/vector.hpp>
-#endif // SEQAN3_WITH_CEREAL
+#endif // SEQAN3_HAS_CEREAL
 
 namespace seqan3
 {
@@ -70,12 +70,12 @@ void do_cerealisation(value_t && value)
 template <typename value_t>
 void do_serialisation([[maybe_unused]] value_t && value)
 {
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
     do_cerealisation<cereal::BinaryInputArchive, cereal::BinaryOutputArchive>(value);
     do_cerealisation<cereal::PortableBinaryInputArchive, cereal::PortableBinaryOutputArchive>(value);
     do_cerealisation<cereal::JSONInputArchive, cereal::JSONOutputArchive>(value);
     do_cerealisation<cereal::XMLInputArchive, cereal::XMLOutputArchive>(value);
-#endif // SEQAN3_WITH_CEREAL
+#endif // SEQAN3_HAS_CEREAL
 }
 //!\endcond
 

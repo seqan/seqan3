@@ -114,7 +114,7 @@
 #endif
 
 #ifndef SEQAN3_HAS_BZIP2
-#    if __has_include(<bzlib.h>)
+#    if SEQAN3_HAS_ZLIB &&__has_include(<bzlib.h>)
 #        define SEQAN3_HAS_BZIP2 1
 #    else
 #        define SEQAN3_HAS_BZIP2 0
@@ -122,24 +122,24 @@
 #endif
 
 // Cereal [optional]
-/*!\def SEQAN3_WITH_CEREAL
+/*!\def SEQAN3_HAS_CEREAL
  * \brief Whether CEREAL support is available or not.
  * \ingroup core
  */
-#ifndef SEQAN3_WITH_CEREAL
+#ifndef SEQAN3_HAS_CEREAL
 #    if __has_include(<cereal/cereal.hpp>)
-#        define SEQAN3_WITH_CEREAL 1
+#        define SEQAN3_HAS_CEREAL 1
 #    else
-#        define SEQAN3_WITH_CEREAL 0
+#        define SEQAN3_HAS_CEREAL 0
 #    endif
-#elif SEQAN3_WITH_CEREAL != 0
+#elif SEQAN3_HAS_CEREAL != 0
 #    if !__has_include(<cereal/cereal.hpp>)
 #        error Cereal was marked as required, but not found!
 #    endif
 #endif
 
 //!\cond DEV
-#if !SEQAN3_WITH_CEREAL
+#if !SEQAN3_HAS_CEREAL
 /*!\name Cereal function macros
  * \ingroup core
  * \brief These can be changed by apps so we used the macros instead of the values internally.

@@ -18,15 +18,11 @@
 #include <string>
 #include <tuple>
 
-#if defined(SEQAN3_HAS_BZIP2)
-#    include <seqan3/contrib/stream/bz2_istream.hpp>
-#endif
-#if defined(SEQAN3_HAS_ZLIB)
-#    include <seqan3/contrib/stream/bgzf_istream.hpp>
-#    include <seqan3/contrib/stream/bgzf_stream_util.hpp>
-#    include <seqan3/contrib/stream/gz_istream.hpp>
-#endif
 #include <seqan3/contrib/stream/bgzf.hpp>
+#include <seqan3/contrib/stream/bgzf_istream.hpp>
+#include <seqan3/contrib/stream/bgzf_stream_util.hpp>
+#include <seqan3/contrib/stream/bz2_istream.hpp>
+#include <seqan3/contrib/stream/gz_istream.hpp>
 #include <seqan3/io/detail/magic_header.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/utility/concept.hpp>

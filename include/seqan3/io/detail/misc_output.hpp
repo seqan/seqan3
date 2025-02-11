@@ -15,14 +15,10 @@
 #include <string>
 #include <tuple>
 
-#if defined(SEQAN3_HAS_BZIP2)
-#    include <seqan3/contrib/stream/bz2_ostream.hpp>
-#endif
-#if defined(SEQAN3_HAS_ZLIB)
-#    include <seqan3/contrib/stream/bgzf_ostream.hpp>
-#    include <seqan3/contrib/stream/gz_ostream.hpp>
-#endif
 #include <seqan3/contrib/stream/bgzf.hpp>
+#include <seqan3/contrib/stream/bgzf_ostream.hpp>
+#include <seqan3/contrib/stream/bz2_ostream.hpp>
+#include <seqan3/contrib/stream/gz_ostream.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/utility/concept.hpp>
 
