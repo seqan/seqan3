@@ -105,6 +105,22 @@
 #    error SeqAn3 include directory not set correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
 #endif
 
+#ifndef SEQAN3_HAS_ZLIB
+#    if __has_include(<zlib.h>)
+#        define SEQAN3_HAS_ZLIB 1
+#    else
+#        define SEQAN3_HAS_ZLIB 0
+#    endif
+#endif
+
+#ifndef SEQAN3_HAS_BZIP2
+#    if __has_include(<bzlib.h>)
+#        define SEQAN3_HAS_BZIP2 1
+#    else
+#        define SEQAN3_HAS_BZIP2 0
+#    endif
+#endif
+
 // Cereal [optional]
 /*!\def SEQAN3_WITH_CEREAL
  * \brief Whether CEREAL support is available or not.

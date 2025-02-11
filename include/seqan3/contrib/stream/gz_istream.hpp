@@ -28,6 +28,8 @@
 #include <cstring>
 #include <vector>
 
+#include <seqan3/core/platform.hpp>
+
 #if !defined(SEQAN3_HAS_ZLIB) && !defined(SEQAN3_HEADER_TEST)
 #error "This file cannot be used when building without ZLIB-support."
 #endif // !defined(SEQAN3_HAS_ZLIB) && !defined(SEQAN3_HEADER_TEST)
