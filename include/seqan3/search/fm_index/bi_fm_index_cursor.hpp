@@ -156,7 +156,7 @@ private:
         size_type _l_fwd, _r_fwd, _l_bwd, _r_bwd;
 
         size_type cc = c;
-        if constexpr (!std::same_as<index_alphabet_type, sdsl::plain_byte_alphabet>)
+        if constexpr (!std::same_as<index_alphabet_type, seqan3::contrib::sdsl::plain_byte_alphabet>)
         {
             cc = csa.char2comp[c];
             if (cc == 0 && c > 0) // [[unlikely]]
@@ -213,7 +213,7 @@ private:
         assert((l_parent <= r_parent) && (r_parent < csa.size()));
 
         size_type c_begin;
-        if constexpr (std::same_as<index_alphabet_type, sdsl::plain_byte_alphabet>)
+        if constexpr (std::same_as<index_alphabet_type, seqan3::contrib::sdsl::plain_byte_alphabet>)
             c_begin = csa.C[c]; // TODO: check whether this can be removed
         else
             c_begin = csa.C[csa.char2comp[c]];

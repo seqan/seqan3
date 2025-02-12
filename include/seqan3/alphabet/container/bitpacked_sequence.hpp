@@ -67,7 +67,7 @@ private:
     static_assert(bits_per_letter <= 64, "alphabet must be representable in at most 64bit.");
 
     //!\brief Type of the underlying SDSL vector.
-    using data_type = sdsl::int_vector<bits_per_letter>;
+    using data_type = seqan3::contrib::sdsl::int_vector<bits_per_letter>;
 
     //!\brief The data storage.
     data_type data;

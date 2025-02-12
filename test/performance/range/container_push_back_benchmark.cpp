@@ -16,7 +16,7 @@
 #include <seqan3/utility/container/small_vector.hpp>
 
 template <typename t>
-using sdsl_int_vec = sdsl::int_vector<sizeof(t) * 8>;
+using sdsl_int_vec = seqan3::contrib::sdsl::int_vector<sizeof(t) * 8>;
 
 template <typename t>
 using small_vec = seqan3::small_vector<t, 10000>;

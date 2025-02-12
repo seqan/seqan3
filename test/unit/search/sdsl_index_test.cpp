@@ -6,7 +6,7 @@
 
 #include <seqan3/search/fm_index/concept.hpp>
 
-using namespace sdsl;
+using namespace seqan3::contrib::sdsl;
 
 template <typename T>
 class sdsl_index_test : public ::testing::Test

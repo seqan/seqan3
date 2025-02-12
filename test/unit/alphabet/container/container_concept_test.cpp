@@ -160,10 +160,10 @@ TEST(container, reservible_container)
     EXPECT_TRUE((seqan3::reservible_container<seqan3::concatenated_sequences<std::string>>));
     EXPECT_TRUE((seqan3::reservible_container<seqan3::concatenated_sequences<std::vector<char>>>));
 
-    EXPECT_TRUE((seqan3::reservible_container<sdsl::bit_vector>));
-    EXPECT_TRUE((seqan3::reservible_container<sdsl::int_vector<>>));
-    EXPECT_TRUE((seqan3::reservible_container<sdsl::int_vector<13>>));
-    EXPECT_TRUE((seqan3::reservible_container<sdsl::int_vector<64>>));
+    EXPECT_TRUE((seqan3::reservible_container<seqan3::contrib::sdsl::bit_vector>));
+    EXPECT_TRUE((seqan3::reservible_container<seqan3::contrib::sdsl::int_vector<>>));
+    EXPECT_TRUE((seqan3::reservible_container<seqan3::contrib::sdsl::int_vector<13>>));
+    EXPECT_TRUE((seqan3::reservible_container<seqan3::contrib::sdsl::int_vector<64>>));
     EXPECT_TRUE((seqan3::reservible_container<seqan3::bitpacked_sequence<seqan3::dna4>>));
     EXPECT_TRUE(
         (seqan3::reservible_container<seqan3::bitpacked_sequence<seqan3::qualified<seqan3::dna4, seqan3::phred42>>>));

@@ -87,8 +87,9 @@ private:
     //!\endcond
 
     //!\brief The underlying datatype to use.
-    using data_type =
-        std::conditional_t<data_layout_mode_ == data_layout::uncompressed, sdsl::bit_vector, sdsl::sd_vector<>>;
+    using data_type = std::conditional_t<data_layout_mode_ == data_layout::uncompressed,
+                                         seqan3::contrib::sdsl::bit_vector,
+                                         seqan3::contrib::sdsl::sd_vector<>>;
 
     //!\brief The size of the underlying bit vector in bits.
     size_t size_in_bits{};
@@ -164,7 +165,7 @@ public:
             throw std::logic_error{"The size of a bloom filter must be > 0."};
 
         hash_shift = std::countl_zero(size_in_bits);
-        data = sdsl::bit_vector(size_in_bits);
+        data = seqan3::contrib::sdsl::bit_vector(size_in_bits);
     }
 
     /*!\brief Construct a compressed Bloom Filter.
@@ -183,7 +184,7 @@ public:
     {
         std::tie(size_in_bits, hash_shift, hash_funs) = std::tie(bf.size_in_bits, bf.hash_shift, bf.hash_funs);
 
-        data = sdsl::sd_vector<>{bf.data};
+        data = seqan3::contrib::sdsl::sd_vector<>{bf.data};
     }
     //!\}
 
@@ -227,7 +228,7 @@ public:
     void reset() noexcept
         requires (data_layout_mode == data_layout::uncompressed)
     {
-        sdsl::util::_set_zero_bits(data);
+        seqan3::contrib::sdsl::util::_set_zero_bits(data);
     }
     //!\}
 
