@@ -14,6 +14,7 @@
 #include <cmath>
 #include <concepts>
 #include <stdexcept>
+#include <string>
 
 #include <seqan3/core/platform.hpp>
 

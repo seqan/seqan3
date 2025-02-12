@@ -10,6 +10,7 @@
 #pragma once
 
 #include <cassert>
+#include <ios>
 #include <ranges>
 
 #include <seqan3/core/platform.hpp>

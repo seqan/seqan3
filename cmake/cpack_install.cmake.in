@@ -5,7 +5,6 @@
 # Only if creating the source package (`make package_source`):
 # Copy dependency include directories into package's staging folder
 if (CPACK_SOURCE_INSTALLED_DIRECTORIES)
-    file (COPY "@SEQAN3_SDSL_INCLUDE_DIR@/" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/include/seqan3/vendor")
     file (COPY "@SEQAN3_CEREAL_INCLUDE_DIR@/" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/include/seqan3/vendor")
     configure_file ("@CPM_DOWNLOAD_LOCATION@" "${CMAKE_CURRENT_BINARY_DIR}/cmake/CPM.cmake" COPYONLY)
     if ("@use_ccache_ADDED@" STREQUAL "YES")

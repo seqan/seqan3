@@ -14,11 +14,10 @@
 #include <ranges>
 #include <type_traits>
 
-#include <sdsl/int_vector.hpp>
-
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/alphabet/views/to_rank.hpp>
+#include <seqan3/contrib/sdsl-lite.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/range/detail/random_access_iterator.hpp>
 #include <seqan3/utility/math.hpp>
@@ -68,7 +67,7 @@ private:
     static_assert(bits_per_letter <= 64, "alphabet must be representable in at most 64bit.");
 
     //!\brief Type of the underlying SDSL vector.
-    using data_type = sdsl::int_vector<bits_per_letter>;
+    using data_type = seqan3::contrib::sdsl::int_vector<bits_per_letter>;
 
     //!\brief The data storage.
     data_type data;

@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: CC0-1.0
 
+#include <string>
+
 #include <seqan3/utility/tuple/split.hpp>
 
 int main()
