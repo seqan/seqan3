@@ -11,13 +11,12 @@
 #include <string>
 #include <vector>
 
-#include <sdsl/int_vector.hpp>
-
 #include <seqan3/alphabet/container/bitpacked_sequence.hpp>
 #include <seqan3/alphabet/container/concatenated_sequences.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
+#include <seqan3/contrib/sdsl-lite.hpp>
 #include <seqan3/utility/container/concept.hpp>
 
 TEST(range_concept, forward_range)
@@ -161,10 +160,10 @@ TEST(container, reservible_container)
     EXPECT_TRUE((seqan3::reservible_container<seqan3::concatenated_sequences<std::string>>));
     EXPECT_TRUE((seqan3::reservible_container<seqan3::concatenated_sequences<std::vector<char>>>));
 
-    EXPECT_TRUE((seqan3::reservible_container<sdsl::bit_vector>));
-    EXPECT_TRUE((seqan3::reservible_container<sdsl::int_vector<>>));
-    EXPECT_TRUE((seqan3::reservible_container<sdsl::int_vector<13>>));
-    EXPECT_TRUE((seqan3::reservible_container<sdsl::int_vector<64>>));
+    EXPECT_TRUE((seqan3::reservible_container<seqan3::contrib::sdsl::bit_vector>));
+    EXPECT_TRUE((seqan3::reservible_container<seqan3::contrib::sdsl::int_vector<>>));
+    EXPECT_TRUE((seqan3::reservible_container<seqan3::contrib::sdsl::int_vector<13>>));
+    EXPECT_TRUE((seqan3::reservible_container<seqan3::contrib::sdsl::int_vector<64>>));
     EXPECT_TRUE((seqan3::reservible_container<seqan3::bitpacked_sequence<seqan3::dna4>>));
     EXPECT_TRUE(
         (seqan3::reservible_container<seqan3::bitpacked_sequence<seqan3::qualified<seqan3::dna4, seqan3::phred42>>>));

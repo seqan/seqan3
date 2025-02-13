@@ -122,7 +122,7 @@ TYPED_TEST(bloom_filter_test, reset)
 TYPED_TEST(bloom_filter_test, data_access)
 {
     seqan3::bloom_filter bf{seqan3::bin_size{1024u}};
-    EXPECT_LE(sdsl::size_in_mega_bytes(bf.raw_data()), 0.001f);
+    EXPECT_LE(seqan3::contrib::sdsl::size_in_mega_bytes(bf.raw_data()), 0.001f);
 }
 
 TYPED_TEST(bloom_filter_test, serialisation)

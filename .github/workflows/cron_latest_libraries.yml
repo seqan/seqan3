@@ -51,7 +51,7 @@ jobs:
           FILE="cmake/package-lock.cmake"
           sed -i -E 's@(set \(SEQAN3_\S+_VERSION )[^\)]+\)@\1main)@g' $FILE
           sed -i -E 's@VERSION( \$\{SEQAN3_\S+_VERSION\})@GIT_TAG\1@g' $FILE
-          sed -i -E 's@SEQAN3_(SDSL|CEREAL)_VERSION main@SEQAN3_\1_VERSION master@g' $FILE
+          sed -i -E 's@SEQAN3_CEREAL_VERSION main@SEQAN3_\1_VERSION master@g' $FILE
           cat $FILE
 
       - name: Configure tests

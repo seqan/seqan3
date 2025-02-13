@@ -13,13 +13,16 @@
 
 #include "../helper.hpp"
 
-using sdsl_byte_index_type = sdsl::csa_wt<
-    sdsl::wt_blcd<sdsl::bit_vector, sdsl::rank_support_v<>, sdsl::select_support_scan<>, sdsl::select_support_scan<0>>,
-    16,
-    10'000'000,
-    sdsl::sa_order_sa_sampling<>,
-    sdsl::isa_sampling<>,
-    sdsl::byte_alphabet>;
+using sdsl_byte_index_type =
+    seqan3::contrib::sdsl::csa_wt<seqan3::contrib::sdsl::wt_blcd<seqan3::contrib::sdsl::bit_vector,
+                                                                 seqan3::contrib::sdsl::rank_support_v<>,
+                                                                 seqan3::contrib::sdsl::select_support_scan<>,
+                                                                 seqan3::contrib::sdsl::select_support_scan<0>>,
+                                  16,
+                                  10'000'000,
+                                  seqan3::contrib::sdsl::sa_order_sa_sampling<>,
+                                  seqan3::contrib::sdsl::isa_sampling<>,
+                                  seqan3::contrib::sdsl::byte_alphabet>;
 
 using locate_result_t = std::vector<std::pair<uint64_t, uint64_t>>;
 
