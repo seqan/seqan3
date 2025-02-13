@@ -225,7 +225,7 @@ endif ()
 # ----------------------------------------------------------------------------
 
 # librt
-find_library (SEQAN3_RT_LIB klrt)
+find_library (SEQAN3_RT_LIB rt)
 if (SEQAN3_RT_LIB)
     list (APPEND SEQAN3_LIBRARIES ${SEQAN3_RT_LIB})
 endif ()
