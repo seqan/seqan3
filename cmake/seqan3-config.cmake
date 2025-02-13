@@ -160,7 +160,7 @@ set (THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package (Threads QUIET)
 
 if (TARGET Threads::Threads)
-    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} Threads::Threads)
+    list (APPEND SEQAN3_LIBRARIES Threads::Threads)
     if ("${CMAKE_THREAD_LIBS_INIT}" STREQUAL "")
         seqan3_config_print ("Thread support:             builtin.")
     else ()
@@ -181,7 +181,7 @@ else ()
 endif ()
 
 if (TARGET cereal::cereal)
-    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} cereal::cereal)
+    list (APPEND SEQAN3_LIBRARIES cereal::cereal)
     seqan3_config_print ("Optional dependency:        Cereal found.")
 else ()
     set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_HAS_CEREAL=0")
@@ -195,7 +195,7 @@ endif ()
 find_package (ZLIB QUIET)
 
 if (TARGET ZLIB::ZLIB)
-    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} ZLIB::ZLIB)
+    list (APPEND SEQAN3_LIBRARIES ZLIB::ZLIB)
     seqan3_config_print ("Optional dependency:        ZLIB-${ZLIB_VERSION_STRING} found.")
 else ()
     set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_HAS_ZLIB=0")
@@ -209,7 +209,7 @@ endif ()
 find_package (BZip2 QUIET)
 
 if (TARGET ZLIB::ZLIB AND TARGET BZip2::BZip2)
-    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} BZip2::BZip2)
+    list (APPEND SEQAN3_LIBRARIES BZip2::BZip2)
     seqan3_config_print ("Optional dependency:        BZip2-${BZIP2_VERSION_STRING} found.")
 else ()
     set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_HAS_BZIP2=0")
@@ -227,13 +227,13 @@ endif ()
 # librt
 find_library (SEQAN3_RT_LIB klrt)
 if (SEQAN3_RT_LIB)
-    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} ${SEQAN3_RT_LIB})
+    list (APPEND SEQAN3_LIBRARIES ${SEQAN3_RT_LIB})
 endif ()
 
 # libexecinfo -- implicit
 find_package (Backtrace QUIET)
 if (TARGET Backtrace::Backtrace)
-    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} Backtrace::Backtrace)
+    list (APPEND SEQAN3_LIBRARIES Backtrace::Backtrace)
     seqan3_config_print ("Optional dependency:        libexecinfo found.")
 else ()
     seqan3_config_print ("Optional dependency:        libexecinfo not found.")
@@ -249,13 +249,17 @@ set (CXXSTD_TEST_SOURCE "#include <seqan3/core/platform.hpp>
 # using try_compile instead of check_cxx_source_compiles to capture output in case of failure
 file (WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx" "${CXXSTD_TEST_SOURCE}\n")
 
+# cereal::cereal is an interface target and cannot be used in try_compile:
+# There is no shared or static library to link against.
+set (SEQAN3_TRYCOMPILE_LIBRARIES ${SEQAN3_LIBRARIES})
+list (REMOVE_ITEM SEQAN3_TRYCOMPILE_LIBRARIES cereal::cereal)
 # cmake-format: off
 try_compile (SEQAN3_PLATFORM_TEST
              ${CMAKE_BINARY_DIR}
              ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx
              CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${CMAKE_INCLUDE_PATH};${SEQAN3_INCLUDE_DIR}"
              COMPILE_DEFINITIONS ${SEQAN3_DEFINITIONS}
-             LINK_LIBRARIES ${SEQAN3_LIBRARIES}
+             LINK_LIBRARIES ${SEQAN3_TRYCOMPILE_LIBRARIES}
              CXX_STANDARD 23
              CXX_STANDARD_REQUIRED ON
              CXX_EXTENSIONS OFF
