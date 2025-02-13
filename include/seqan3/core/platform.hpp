@@ -190,6 +190,27 @@
 #    endif
 #endif
 
+//!\cond
+// clang-format off
+#if defined(SEQAN3_WITH_CEREAL) && defined(SEQAN3_HAS_CEREAL) && SEQAN3_WITH_CEREAL != SEQAN3_HAS_CEREAL
+#    error "SEQAN3_WITH_CEREAL is deprecated and has been replaced by SEQAN3_HAS_CEREAL. These two macros do not expand to the same value. Please use SEQAN3_HAS_CEREAL."
+#endif
+#ifndef SEQAN3_DISABLE_DEPRECATED_WARNINGS
+#    ifdef SEQAN3_WITH_CEREAL
+#        pragma GCC warning "SEQAN3_WITH_CEREAL is deprecated and will be removed in the next version; please use SEQAN3_HAS_CEREAL instead."
+#    else
+#        define SEQAN3_WITH_CEREAL                                                                                     \
+            SEQAN3_PRAGMA(GCC warning "SEQAN3_WITH_CEREAL is deprecated and will be removed in the next version; please use SEQAN3_HAS_CEREAL instead.") \
+            SEQAN3_HAS_CEREAL
+#    endif
+#else
+#    ifndef SEQAN3_WITH_CEREAL
+#        define SEQAN3_WITH_CEREAL SEQAN3_HAS_CEREAL
+#    endif
+#endif
+// clang-format on
+//!\endcond
+
 // ============================================================================
 //  Workarounds
 // ============================================================================
