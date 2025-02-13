@@ -94,14 +94,14 @@ jobs:
           fi
 
       - name: Reopen issue
-        if: failure()
+        if: failure() && github.repository_owner == 'seqan'
         run: gh issue reopen ${{ env.ISSUE }}
         env:
           GH_TOKEN: ${{ secrets.SEQAN_ACTIONS_PAT }}
           GH_REPO: ${{ github.repository }}
 
       - name: Find Comment
-        if: always()
+        if: always() && github.repository_owner == 'seqan'
         uses: peter-evans/find-comment@v3
         id: find_comment
         with:
@@ -109,7 +109,7 @@ jobs:
           body-includes: ${{ matrix.build }} on ${{ matrix.compiler }}
 
       - name: Update comment
-        if: always()
+        if: always() && github.repository_owner == 'seqan'
         uses: peter-evans/create-or-update-comment@v4
         with:
           comment-id: ${{ steps.find_comment.outputs.comment-id }}
