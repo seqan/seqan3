@@ -33,24 +33,26 @@ jobs:
           apt-get update
           apt-get install --yes --no-install-recommends build-essential git cmake wget fakeroot ca-certificates
 
-      - name: Setup Repo
+      - name: Create Source Package
+        id: source_package
         run: |
-          mkdir unstable && cd unstable
+          mkdir source && cd source
           git clone --depth 1 https://github.com/seqan/seqan3.git
-          cd seqan3/
+          mkdir package && cd package
+          cmake ../seqan3
+          make package_source
+          path=$(find "${PWD}" -maxdepth 1 -type f -name "*-Source.tar.xz")
+          echo "path=${path}" >> $GITHUB_OUTPUT
+
+      - name: Create Debian Repo
+        run: |
+          mkdir -p unstable/seqan3 && cd unstable
+          tar xf ${{ steps.source_package.outputs.path }} -C seqan3 --strip-components=1
+          cd seqan3
+          git init .
           git remote add salsa https://salsa.debian.org/med-team/seqan3.git
           git fetch --depth 1 salsa
           git checkout salsa/debian/experimental -- debian
-
-      - name: Reduce Noise
-        working-directory: unstable/seqan3
-        run: |
-          if [[ -f test/cmake/seqan3_require_ccache.cmake ]]; then
-            echo "" > test/cmake/seqan3_require_ccache.cmake
-          fi
-          if [[ -f test/documentation/seqan3_doxygen_cfg.in ]]; then
-            sed -i 's@^\(QUIET\s*=\) NO@\1 YES@' test/documentation/seqan3_doxygen_cfg.in
-          fi
 
       - name: Install Dependencies
         working-directory: unstable/seqan3
