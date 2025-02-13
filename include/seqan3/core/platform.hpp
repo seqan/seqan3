@@ -114,7 +114,7 @@
 #endif
 
 #ifndef SEQAN3_HAS_BZIP2
-#    if SEQAN3_HAS_ZLIB &&__has_include(<bzlib.h>)
+#    if SEQAN3_HAS_ZLIB && __has_include(<bzlib.h>)
 #        define SEQAN3_HAS_BZIP2 1
 #    else
 #        define SEQAN3_HAS_BZIP2 0
