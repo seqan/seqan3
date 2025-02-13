@@ -10,8 +10,6 @@ include (../seqan3-test.cmake)
 CPMGetPackage (googletest)
 CPMGetPackage (benchmark)
 
-option (SEQAN3_FULL_HEADER_TEST "Test seqan3 headers as well as the headers of external libraries" OFF)
-
 # We compile each header twice in separate compilation units, where the second compilation omits the header guard (check
 # for cyclic includes). Each alone is sufficient to test that the header is functional, but both are needed to check for
 # link errors, which can happen if the header accidentally defines a variable, e.g. a global or class static member.
@@ -133,15 +131,3 @@ endmacro ()
 # note: seqan3/version.hpp is one of the only header that is not required to have a seqan3/core/platform.hpp include
 seqan3_header_test (seqan3 "${SEQAN3_CLONE_DIR}/include" "seqan3/version.hpp|seqan3/contrib/std|seqan3/vendor")
 seqan3_header_test (seqan3_test "${SEQAN3_CLONE_DIR}/test/include" "")
-
-if (SEQAN3_FULL_HEADER_TEST)
-
-    # not self-contained headers; error: extra ‘;’ [-Werror=pedantic]
-    # seqan3_header_test (lemon "${SEQAN3_CLONE_DIR}/submodules/lemon/include" "")
-
-    # not complete self-contained headers
-    seqan3_header_test (cereal "${SEQAN3_CLONE_DIR}/submodules/cereal/include" "/external/|polymorphic_impl\.hpp")
-
-    seqan3_header_test (sdsl-lite "${SEQAN3_CLONE_DIR}/submodules/sdsl-lite/include" "")
-
-endif ()
