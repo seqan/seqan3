@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: CC0-1.0
 
 #include <seqan3/core/platform.hpp>
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 //![complete]
 #    include <fstream>
 
@@ -147,4 +147,4 @@ int main(int argc, char const ** argv)
     return 0;
 }
 //![complete]
-#endif //SEQAN3_WITH_CEREAL
+#endif //SEQAN3_HAS_CEREAL

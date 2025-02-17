@@ -23,11 +23,7 @@
 #include <seqan3/io/exception.hpp>
 #include <seqan3/utility/detail/to_little_endian.hpp>
 
-#if !defined(SEQAN3_HAS_ZLIB) && !defined(SEQAN3_HEADER_TEST)
-#    error "This file cannot be used when building without GZip-support."
-#endif // !defined(SEQAN3_HAS_ZLIB) && !defined(SEQAN3_HEADER_TEST)
-
-#if defined(SEQAN3_HAS_ZLIB)
+#if SEQAN3_HAS_ZLIB
 // Zlib headers
 #    include <zlib.h>
 

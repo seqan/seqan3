@@ -10,7 +10,7 @@
 
 #include <seqan3/io/stream/detail/fast_istreambuf_iterator.hpp>
 
-#if defined(SEQAN3_HAS_ZLIB)
+#if SEQAN3_HAS_ZLIB
 #    include <seqan3/contrib/stream/bgzf_istream.hpp>
 #    include <seqan3/contrib/stream/bgzf_ostream.hpp>
 #    include <seqan3/contrib/stream/gz_istream.hpp>
@@ -22,7 +22,7 @@
 #    undef SEQAN3_HAS_BZIP2
 #endif
 
-#if defined(SEQAN3_HAS_BZIP2)
+#if SEQAN3_HAS_BZIP2
 #    include <seqan3/contrib/stream/bz2_istream.hpp>
 #    include <seqan3/contrib/stream/bz2_ostream.hpp>
 #endif
@@ -65,7 +65,7 @@ template <>
 std::string const & input_comp<seqan2::Nothing> = input;
 #endif
 
-#if defined(SEQAN3_HAS_ZLIB)
+#if SEQAN3_HAS_ZLIB
 template <>
 std::string const input_comp<seqan3::contrib::gz_istream>{
     []()
@@ -98,7 +98,7 @@ std::string const & input_comp<seqan2::BgzfFile> = input_comp<seqan3::contrib::b
 #    endif
 #endif
 
-#if defined(SEQAN3_HAS_BZIP2)
+#if SEQAN3_HAS_BZIP2
 template <>
 std::string const input_comp<seqan3::contrib::bz2_istream>{
     []()
@@ -166,12 +166,12 @@ void compressed(benchmark::State & state)
     state.counters["iterations_per_run"] = i;
 }
 
-#if defined(SEQAN3_HAS_ZLIB)
+#if SEQAN3_HAS_ZLIB
 BENCHMARK_TEMPLATE(compressed, seqan3::contrib::gz_istream);
 BENCHMARK_TEMPLATE(compressed, seqan3::contrib::bgzf_istream);
 #endif
 
-#if defined(SEQAN3_HAS_BZIP2)
+#if SEQAN3_HAS_BZIP2
 BENCHMARK_TEMPLATE(compressed, seqan3::contrib::bz2_istream);
 #endif
 
@@ -201,11 +201,11 @@ void compressed_type_erased(benchmark::State & state)
     state.counters["iterations_per_run"] = i;
 }
 
-#if defined(SEQAN3_HAS_ZLIB)
+#if SEQAN3_HAS_ZLIB
 BENCHMARK_TEMPLATE(compressed_type_erased, seqan3::contrib::gz_istream);
 BENCHMARK_TEMPLATE(compressed_type_erased, seqan3::contrib::bgzf_istream);
 #endif
-#if defined(SEQAN3_HAS_BZIP2)
+#if SEQAN3_HAS_BZIP2
 BENCHMARK_TEMPLATE(compressed_type_erased, seqan3::contrib::bz2_istream);
 #endif
 
@@ -235,11 +235,11 @@ void compressed_type_erased2(benchmark::State & state)
     state.counters["iterations_per_run"] = i;
 }
 
-#if defined(SEQAN3_HAS_ZLIB)
+#if SEQAN3_HAS_ZLIB
 BENCHMARK_TEMPLATE(compressed_type_erased2, seqan3::contrib::gz_istream);
 BENCHMARK_TEMPLATE(compressed_type_erased2, seqan3::contrib::bgzf_istream);
 #endif
-#if defined(SEQAN3_HAS_BZIP2)
+#if SEQAN3_HAS_BZIP2
 BENCHMARK_TEMPLATE(compressed_type_erased2, seqan3::contrib::bz2_istream);
 #endif
 

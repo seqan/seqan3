@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: CC0-1.0
 
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 
 #    include "cleanup.hpp"
 seqan3::cleanup index_file{"index.file"};
@@ -42,4 +42,4 @@ int main()
         std::cout << "The indices differ!\n";
 }
 //![solution]
-#endif //SEQAN3_WITH_CEREAL
+#endif //SEQAN3_HAS_CEREAL

@@ -105,25 +105,47 @@
 #    error SeqAn3 include directory not set correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
 #endif
 
+// zlib [optional]
+/*!\def SEQAN3_HAS_ZLIB
+ * \brief Whether ZLIB support is available or not.
+ * \ingroup core
+ */
+#ifndef SEQAN3_HAS_ZLIB
+#    if __has_include(<zlib.h>)
+#        define SEQAN3_HAS_ZLIB 1
+#    else
+#        define SEQAN3_HAS_ZLIB 0
+#    endif
+#endif
+
+// bzip2 [optional]
+/*!\def SEQAN3_HAS_BZIP2
+ * \brief Whether BZIP2 support is available or not.
+ * \ingroup core
+ */
+#ifndef SEQAN3_HAS_BZIP2
+#    if SEQAN3_HAS_ZLIB && __has_include(<bzlib.h>)
+#        define SEQAN3_HAS_BZIP2 1
+#    else
+#        define SEQAN3_HAS_BZIP2 0
+#    endif
+#endif
+
 // Cereal [optional]
-/*!\def SEQAN3_WITH_CEREAL
+/*!\def SEQAN3_HAS_CEREAL
  * \brief Whether CEREAL support is available or not.
  * \ingroup core
  */
-#ifndef SEQAN3_WITH_CEREAL
+#ifndef SEQAN3_HAS_CEREAL
 #    if __has_include(<cereal/cereal.hpp>)
-#        define SEQAN3_WITH_CEREAL 1
+#        define SEQAN3_HAS_CEREAL 1
 #    else
-#        define SEQAN3_WITH_CEREAL 0
-#    endif
-#elif SEQAN3_WITH_CEREAL != 0
-#    if !__has_include(<cereal/cereal.hpp>)
-#        error Cereal was marked as required, but not found!
+#        define SEQAN3_HAS_CEREAL 0
 #    endif
 #endif
 
 //!\cond DEV
-#if !SEQAN3_WITH_CEREAL
+#if !SEQAN3_HAS_CEREAL
 /*!\name Cereal function macros
  * \ingroup core
  * \brief These can be changed by apps so we used the macros instead of the values internally.
@@ -167,6 +189,27 @@
 #        endif
 #    endif
 #endif
+
+//!\cond
+// clang-format off
+#if defined(SEQAN3_WITH_CEREAL) && defined(SEQAN3_HAS_CEREAL) && SEQAN3_WITH_CEREAL != SEQAN3_HAS_CEREAL
+#    error "SEQAN3_WITH_CEREAL is deprecated and has been replaced by SEQAN3_HAS_CEREAL. These two macros do not expand to the same value. Please use SEQAN3_HAS_CEREAL."
+#endif
+#ifndef SEQAN3_DISABLE_DEPRECATED_WARNINGS
+#    ifdef SEQAN3_WITH_CEREAL
+#        pragma GCC warning "SEQAN3_WITH_CEREAL is deprecated and will be removed in the next version; please use SEQAN3_HAS_CEREAL instead."
+#    else
+#        define SEQAN3_WITH_CEREAL                                                                                     \
+            SEQAN3_PRAGMA(GCC warning "SEQAN3_WITH_CEREAL is deprecated and will be removed in the next version; please use SEQAN3_HAS_CEREAL instead.") \
+            SEQAN3_HAS_CEREAL
+#    endif
+#else
+#    ifndef SEQAN3_WITH_CEREAL
+#        define SEQAN3_WITH_CEREAL SEQAN3_HAS_CEREAL
+#    endif
+#endif
+// clang-format on
+//!\endcond
 
 // ============================================================================
 //  Workarounds

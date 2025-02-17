@@ -9,7 +9,7 @@
 
 #include <seqan3/core/concept/cereal.hpp>
 
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 #    include <cereal/archives/binary.hpp>
 #    include <cereal/archives/json.hpp>
 #    include <cereal/archives/portable_binary.hpp>
@@ -17,7 +17,7 @@
 #    include <cereal/types/array.hpp>
 #endif
 
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 
 TEST(cereal, cereal_output_archive)
 {
