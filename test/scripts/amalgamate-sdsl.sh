@@ -50,6 +50,10 @@ CONTENT=${CONTENT//SDSL_/SDSL3_}
 CONTENT=${CONTENT//namespace sdsl/namespace seqan3::contrib::sdsl}
 CONTENT=${CONTENT//sdsl::/seqan3::contrib::sdsl::}
 
+## Patches
+# [C++26] `std::is_trivial` is deprecated: use `is_trivially_default_constructible && is_trivially_copyable` instead
+CONTENT=${CONTENT//std::is_trivial<X>::value/std::is_trivially_default_constructible<X>::value \&\& std::is_trivially_copyable<X>::value}
+
 cat <<EOL > sdsl-lite.hpp
 // SPDX-FileCopyrightText: 2016 SDSL Project Authors
 // SPDX-License-Identifier: BSD-3-Clause
@@ -63,6 +67,7 @@ cat <<EOL > sdsl-lite.hpp
 // * All comments were removed.
 // * "SDSL_" was replaced with "SDSL3_". This affects macros and include guards.
 // * The namespace was changed from "sdsl" to "seqan3::contrib::sdsl".
+// * "std::is_trivial" was replaced with "is_trivially_default_constructible && is_trivially_copyable".
 
 #pragma once
 
