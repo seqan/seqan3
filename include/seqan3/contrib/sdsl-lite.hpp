@@ -10,6 +10,7 @@
 // * All comments were removed.
 // * "SDSL_" was replaced with "SDSL3_". This affects macros and include guards.
 // * The namespace was changed from "sdsl" to "seqan3::contrib::sdsl".
+// * "std::is_trivial" was replaced with "is_trivially_default_constructible && is_trivially_copyable".
 
 #pragma once
 
@@ -3170,7 +3171,7 @@ serialize(X const & x, std::ostream & out, structure_tree_node * v = nullptr, st
     return x.serialize(out, v, name);
 }
 template <typename X>
-typename std::enable_if<std::is_standard_layout<X>::value && std::is_trivial<X>::value, uint64_t>::type
+typename std::enable_if<std::is_standard_layout<X>::value && std::is_trivially_default_constructible<X>::value && std::is_trivially_copyable<X>::value, uint64_t>::type
 serialize(X const & x, std::ostream & out, structure_tree_node * v = nullptr, std::string name = "")
 {
     return write_member(x, out, v, name);
@@ -3187,7 +3188,7 @@ typename std::enable_if<has_load<X>::value, void>::type load(X & x, std::istream
     x.load(in);
 }
 template <typename X>
-typename std::enable_if<std::is_standard_layout<X>::value && std::is_trivial<X>::value, void>::type
+typename std::enable_if<std::is_standard_layout<X>::value && std::is_trivially_default_constructible<X>::value && std::is_trivially_copyable<X>::value, void>::type
 load(X & x, std::istream & in)
 {
     read_member(x, in);
