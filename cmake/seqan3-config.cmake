@@ -137,25 +137,6 @@ endif ()
 # Force-deactivate optional dependencies
 # ----------------------------------------------------------------------------
 
-# Cereal is auto-detected by default, i.e. used if found, not used if not found.
-# You can optionally set a hard requirement so a build fails without cereal,
-# or you can force-disable cereal even if present on the system.
-option (SEQAN3_CEREAL "Require cereal and fail if not present." OFF)
-option (SEQAN3_NO_CEREAL "Don't use cereal, even if present." OFF)
-
-if (SEQAN3_CEREAL AND SEQAN3_NO_CEREAL)
-    # this is always a user error, therefore we always error-out, even if SeqAn is not required
-    message (FATAL_ERROR "You may not specify SEQAN3_CEREAL and SEQAN3_NO_CEREAL at the same time.\n\
-                          You can specify neither (use auto-detection), or specify either to force on/off.")
-    return ()
-endif ()
-
-if (SEQAN3_CEREAL)
-    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_WITH_CEREAL=1")
-elseif (SEQAN3_NO_CEREAL)
-    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_WITH_CEREAL=0")
-endif ()
-
 # These two are "opt-in", because detected by CMake
 # If you want to force-require these, just do find_package (zlib REQUIRED) before find_package (seqan3)
 option (SEQAN3_NO_ZLIB "Don't use ZLIB, even if present." OFF)
@@ -192,51 +173,21 @@ else ()
 endif ()
 
 # ----------------------------------------------------------------------------
-# Cereal dependency is optional, but may set as required
+# Cereal dependency
 # ----------------------------------------------------------------------------
 
-if (NOT SEQAN3_NO_CEREAL)
-    find_path (SEQAN3_CEREAL_INCLUDE_DIR
-               NAMES cereal/version.hpp
-               HINTS "${SEQAN3_INCLUDE_DIR}/seqan3/vendor")
+if (SEQAN3_HAS_CPM)
+    CPMGetPackage (cereal)
+else ()
+    find_package (cereal CONFIG QUIET)
+endif ()
 
-    # 1) Check the vendor directory of SeqAn3. This directory exists for source packages and installed packages.
-    if (SEQAN3_CEREAL_INCLUDE_DIR)
-        if (SEQAN3_CEREAL)
-            seqan3_config_print ("Required dependency:        Cereal found.")
-        else ()
-            seqan3_config_print ("Optional dependency:        Cereal found.")
-        endif ()
-        set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_CEREAL_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
-        # 2) Get package via CPM.
-    elseif (SEQAN3_HAS_CPM)
-        CPMGetPackage (cereal)
-
-        find_path (SEQAN3_CEREAL_INCLUDE_DIR
-                   NAMES cereal/version.hpp
-                   HINTS "${cereal_SOURCE_DIR}/include")
-
-        if (SEQAN3_CEREAL_INCLUDE_DIR)
-            if (SEQAN3_CEREAL)
-                seqan3_config_print ("Required dependency:        Cereal found.")
-            else ()
-                seqan3_config_print ("Optional dependency:        Cereal found.")
-            endif ()
-            set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_CEREAL_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
-        else ()
-            if (SEQAN3_CEREAL)
-                seqan3_config_error ("The (optional) cereal library was marked as required, but wasn't found.")
-            else ()
-                seqan3_config_print ("Optional dependency:        Cereal not found.")
-            endif ()
-        endif ()
-    else ()
-        if (SEQAN3_CEREAL)
-            seqan3_config_error ("The (optional) cereal library was marked as required, but wasn't found.")
-        else ()
-            seqan3_config_print ("Optional dependency:        Cereal not found.")
-        endif ()
-    endif ()
+if (TARGET cereal::cereal)
+    list (APPEND SEQAN3_LIBRARIES cereal::cereal)
+    seqan3_config_print ("Optional dependency:        Cereal found.")
+else ()
+    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_HAS_CEREAL=0")
+    seqan3_config_print ("Optional dependency:        Cereal not found.")
 endif ()
 
 # ----------------------------------------------------------------------------
@@ -314,13 +265,17 @@ set (CXXSTD_TEST_SOURCE "#include <seqan3/core/platform.hpp>
 # using try_compile instead of check_cxx_source_compiles to capture output in case of failure
 file (WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx" "${CXXSTD_TEST_SOURCE}\n")
 
+# cereal::cereal is an interface target and cannot be used in try_compile:
+# There is no shared or static library to link against.
+set (SEQAN3_TRYCOMPILE_LIBRARIES ${SEQAN3_LIBRARIES})
+list (REMOVE_ITEM SEQAN3_TRYCOMPILE_LIBRARIES cereal::cereal)
 # cmake-format: off
 try_compile (SEQAN3_PLATFORM_TEST
              ${CMAKE_BINARY_DIR}
              ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx
-             CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${CMAKE_INCLUDE_PATH};${SEQAN3_INCLUDE_DIR};${SEQAN3_DEPENDENCY_INCLUDE_DIRS}"
+             CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${CMAKE_INCLUDE_PATH};${SEQAN3_INCLUDE_DIR}"
              COMPILE_DEFINITIONS ${SEQAN3_DEFINITIONS}
-             LINK_LIBRARIES ${SEQAN3_LIBRARIES}
+             LINK_LIBRARIES ${SEQAN3_TRYCOMPILE_LIBRARIES}
              CXX_STANDARD 23
              CXX_STANDARD_REQUIRED ON
              CXX_EXTENSIONS OFF
@@ -358,7 +313,7 @@ foreach (package_var
 endforeach ()
 
 # propagate SEQAN3_INCLUDE_DIR into SEQAN3_INCLUDE_DIRS
-set (SEQAN3_INCLUDE_DIRS ${SEQAN3_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
+set (SEQAN3_INCLUDE_DIRS ${SEQAN3_INCLUDE_DIR})
 
 # ----------------------------------------------------------------------------
 # Export targets
@@ -371,9 +326,6 @@ if (SEQAN3_FOUND AND NOT TARGET seqan3::seqan3)
     target_link_libraries (seqan3_seqan3 INTERFACE "${SEQAN3_LIBRARIES}")
     # include seqan3/include/ as -I, because seqan3 should never produce warnings.
     target_include_directories (seqan3_seqan3 INTERFACE "${SEQAN3_INCLUDE_DIR}")
-    # include everything except seqan3/include/ as -isystem, i.e.
-    # a system header which suppresses warnings of external libraries.
-    target_include_directories (seqan3_seqan3 SYSTEM INTERFACE "${SEQAN3_DEPENDENCY_INCLUDE_DIRS}")
     add_library (seqan3::seqan3 ALIAS seqan3_seqan3)
 endif ()
 
