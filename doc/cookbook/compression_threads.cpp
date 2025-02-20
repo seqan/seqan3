@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: CC0-1.0
 
-#if defined(SEQAN3_HAS_ZLIB)
+#if SEQAN3_HAS_ZLIB
 //![example]
 #    include <seqan3/io/all.hpp>
 
@@ -24,4 +24,4 @@ int main()
     return 0;
 }
 //![example]
-#endif // defined(SEQAN3_HAS_ZLIB)
+#endif

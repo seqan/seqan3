@@ -15,14 +15,10 @@
 #include <string>
 #include <tuple>
 
-#if defined(SEQAN3_HAS_BZIP2)
-#    include <seqan3/contrib/stream/bz2_ostream.hpp>
-#endif
-#if defined(SEQAN3_HAS_ZLIB)
-#    include <seqan3/contrib/stream/bgzf_ostream.hpp>
-#    include <seqan3/contrib/stream/gz_ostream.hpp>
-#endif
 #include <seqan3/contrib/stream/bgzf.hpp>
+#include <seqan3/contrib/stream/bgzf_ostream.hpp>
+#include <seqan3/contrib/stream/bz2_ostream.hpp>
+#include <seqan3/contrib/stream/gz_ostream.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/utility/concept.hpp>
 
@@ -52,7 +48,7 @@ inline auto make_secondary_ostream(std::basic_ostream<char_t> & primary_stream, 
 
     if (extension == ".gz")
     {
-#if defined(SEQAN3_HAS_ZLIB)
+#if SEQAN3_HAS_ZLIB
         filename.replace_extension("");
         return {new contrib::basic_gz_ostream<char_t>{primary_stream}, stream_deleter_default};
 #else
@@ -61,7 +57,7 @@ inline auto make_secondary_ostream(std::basic_ostream<char_t> & primary_stream, 
     }
     else if ((extension == ".bgzf") || (extension == ".bam"))
     {
-#if defined(SEQAN3_HAS_ZLIB)
+#if SEQAN3_HAS_ZLIB
         if (extension != ".bam") // remove extension except for bam
             filename.replace_extension("");
 
@@ -72,7 +68,7 @@ inline auto make_secondary_ostream(std::basic_ostream<char_t> & primary_stream, 
     }
     else if (extension == ".bz2")
     {
-#if defined(SEQAN3_HAS_BZIP2)
+#if SEQAN3_HAS_BZIP2
         filename.replace_extension("");
         return {new contrib::basic_bz2_ostream<char_t>{primary_stream}, stream_deleter_default};
 #else

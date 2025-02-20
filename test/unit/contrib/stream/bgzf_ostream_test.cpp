@@ -6,7 +6,9 @@
 
 #include <seqan3/contrib/stream/bgzf_ostream.hpp>
 
-#include "../../io/stream/ostream_test_template.hpp"
+#if SEQAN3_HAS_ZLIB
+
+#    include "../../io/stream/ostream_test_template.hpp"
 
 template <>
 class ostream<seqan3::contrib::bgzf_ostream> : public ::testing::Test
@@ -29,3 +31,5 @@ public:
 using test_types = ::testing::Types<seqan3::contrib::bgzf_ostream>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(contrib_streams, ostream, test_types, );
+
+#endif

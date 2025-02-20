@@ -13,7 +13,7 @@
 
 #include <seqan3/core/platform.hpp>
 
-#if defined(SEQAN3_HAS_ZLIB)
+#if SEQAN3_HAS_ZLIB
 #    include <zlib.h>
 #endif
 

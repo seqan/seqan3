@@ -87,10 +87,12 @@ TEST_P(sam_file_seek_test, seek_to)
     EXPECT_TRUE(it == fin.end());
 }
 
+#if SEQAN3_HAS_ZLIB
 INSTANTIATE_TEST_SUITE_P(bam_file,
                          sam_file_seek_test,
                          ::testing::Values(sam_file_seek_test_fixture{"simple_three_verbose_reads.bam",
                                                                       {4'915'200, 11'730'944, 23'134'208}}));
+#endif
 
 INSTANTIATE_TEST_SUITE_P(sam_file,
                          sam_file_seek_test,

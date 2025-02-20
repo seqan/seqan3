@@ -459,7 +459,7 @@ void compression_by_stream_impl(comp_stream_t & stream)
     }
 }
 
-#if defined(SEQAN3_HAS_ZLIB)
+#if SEQAN3_HAS_ZLIB
 std::string expected_gz{'\x1F', '\x8B', '\x08', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\xB3', '\x53',
                         '\x08', '\x71', '\x0D', '\x0E', '\x51', '\x30', '\xE4', '\x72', '\x74', '\x76', '\x0F', '\xE1',
                         '\xB2', '\x53', '\x08', '\x49', '\x2D', '\x2E', '\x31', '\xE2', '\x72', '\x74', '\x77', '\x77',
@@ -531,7 +531,7 @@ TEST(compression, by_stream_bgzf)
 
 #endif
 
-#if defined(SEQAN3_HAS_BZIP2)
+#if SEQAN3_HAS_BZIP2
 std::string expected_bz2{'\x42', '\x5A', '\x68', '\x39', '\x31', '\x41', '\x59', '\x26', '\x53', '\x59', '\xB4',
                          '\x68', '\xEA', '\xE3', '\x00', '\x00', '\x06', '\xDF', '\x80', '\x00', '\x10', '\x40',
                          '\x00', '\x38', '\x01', '\x2A', '\x81', '\x0C', '\x00', '\x02', '\x00', '\x0C', '\x00',
