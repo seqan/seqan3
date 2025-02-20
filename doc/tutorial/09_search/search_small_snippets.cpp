@@ -5,11 +5,11 @@
 #include "cleanup.hpp"
 seqan3::cleanup index_file{"index.file"};
 
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 #    include <fstream>
 
 #    include <cereal/archives/binary.hpp>
-#endif //SEQAN3_WITH_CEREAL
+#endif //SEQAN3_HAS_CEREAL
 
 #include <filesystem>
 
@@ -33,7 +33,7 @@ int main()
         //![text_collection]
     }
 
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
     {
 //![store]
 #    include <fstream> // for writing/reading files
@@ -61,7 +61,7 @@ int main()
         }
         //![load]
     }
-#endif //SEQAN3_WITH_CEREAL
+#endif //SEQAN3_HAS_CEREAL
 
     {
         //![error_search]

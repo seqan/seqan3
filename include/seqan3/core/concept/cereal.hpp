@@ -13,7 +13,7 @@
 
 #include <seqan3/core/platform.hpp>
 
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 #    include <cereal/archives/binary.hpp>
 #    include <cereal/details/traits.hpp>
 #endif
@@ -35,7 +35,7 @@ namespace seqan3
  * \see core_concept
  */
 //!\cond
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 template <typename t>
 concept cereal_output_archive = std::is_base_of_v<cereal::detail::OutputArchiveBase, t>;
 #else
@@ -58,7 +58,7 @@ concept cereal_output_archive = false;
  * \see core_concept
  */
 //!\cond
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 template <typename t>
 concept cereal_input_archive = std::is_base_of_v<cereal::detail::InputArchiveBase, t>;
 #else
@@ -77,7 +77,7 @@ concept cereal_input_archive = false;
  * \see core_concept
  */
 //!\cond
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 template <typename t>
 concept cereal_archive = cereal_output_archive<t> || cereal_input_archive<t>;
 #else
@@ -100,7 +100,7 @@ concept cereal_archive = false;
  * \see core_concept
  */
 //!\cond
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 template <typename t>
 concept cereal_text_archive = std::is_base_of_v<cereal::traits::TextArchive, t>;
 #else
@@ -142,7 +142,7 @@ concept cereal_text_archive = false;
  * The cereal library is an optional dependency of SeqAn, if it is not found **no types** satisfy this concept.
  */
 //!\cond
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 template <typename value_t,
           typename input_archive_t = cereal::BinaryInputArchive,
           typename output_archive_t = cereal::BinaryOutputArchive>
@@ -163,7 +163,7 @@ namespace seqan3::detail
  * \details Helpful when defining templatised save/load/serialize functions.
  * \ingroup core_concept
  */
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 template <typename type>
 using strip_cereal_wrapper_t = typename cereal::traits::strip_minimal<std::decay_t<type>>::type;
 #else
