@@ -43,8 +43,8 @@ file (APPEND "${HEADER_TARGET_SOURCE}" #
 # test that seqan3 headers include platform.hpp
 if ("${HEADER_COMPONENT}" MATCHES "seqan3")
 
-    # exclude seqan3/std/* and seqan3/contrib/* from platform test
-    if (NOT HEADER_FILE_INCLUDE MATCHES "seqan3/(std|contrib)/")
+    # exclude seqan3/std/* and seqan3/contrib/sdsl-lite.hpp from platform test
+    if (NOT HEADER_FILE_INCLUDE MATCHES "seqan3/(std/|contrib/sdsl-lite.hpp)")
         file (APPEND "${HEADER_TARGET_SOURCE}" #
               "// seqan3-header-test-platform-start\n"
               "#ifndef SEQAN3_DOXYGEN_ONLY\n" #
