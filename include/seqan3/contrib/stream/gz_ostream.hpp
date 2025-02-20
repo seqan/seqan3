@@ -27,11 +27,9 @@
 #include <cstring>
 #include <vector>
 
-#if !defined(SEQAN3_HAS_ZLIB) && !defined(SEQAN3_HEADER_TEST)
-#error "This file cannot be used when building without ZLIB-support."
-#endif // !defined(SEQAN3_HAS_ZLIB) && !defined(SEQAN3_HEADER_TEST)
+#include <seqan3/core/platform.hpp>
 
-#if defined(SEQAN3_HAS_ZLIB)
+#if SEQAN3_HAS_ZLIB
 
 #include <zlib.h>
 
@@ -454,4 +452,4 @@ typedef basic_gz_ostream<wchar_t>  gz_wostream;
 
 } // namespace seqan3::contrib
 
-#endif // defined(SEQAN3_HAS_ZLIB)
+#endif // SEQAN3_HAS_ZLIB

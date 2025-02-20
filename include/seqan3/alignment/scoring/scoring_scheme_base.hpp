@@ -17,9 +17,9 @@
 #include <seqan3/core/detail/strong_type.hpp>
 #include <seqan3/utility/concept.hpp>
 
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 #    include <cereal/types/array.hpp>
-#endif // SEQAN3_WITH_CEREAL
+#endif // SEQAN3_HAS_CEREAL
 
 namespace seqan3
 {
