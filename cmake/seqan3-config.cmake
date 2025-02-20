@@ -134,13 +134,11 @@ else ()
 endif ()
 
 # ----------------------------------------------------------------------------
-# Force-deactivate optional dependencies
+# Force-(de)activate optional dependencies
 # ----------------------------------------------------------------------------
 
-# These two are "opt-in", because detected by CMake
-# If you want to force-require these, just do find_package (zlib REQUIRED) before find_package (seqan3)
-option (SEQAN3_NO_ZLIB "Don't use ZLIB, even if present." OFF)
-option (SEQAN3_NO_BZIP2 "Don't use BZip2, even if present." OFF)
+# https://cmake.org/cmake/help/latest/variable/CMAKE_DISABLE_FIND_PACKAGE_PackageName.html
+# https://cmake.org/cmake/help/latest/variable/CMAKE_REQUIRE_FIND_PACKAGE_PackageName.html
 
 # ----------------------------------------------------------------------------
 # Check supported compilers
@@ -194,16 +192,13 @@ endif ()
 # ZLIB dependency
 # ----------------------------------------------------------------------------
 
-if (NOT SEQAN3_NO_ZLIB)
-    find_package (ZLIB QUIET)
-endif ()
+find_package (ZLIB QUIET)
 
-if (ZLIB_FOUND)
-    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} ${ZLIB_LIBRARIES})
-    set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_DEPENDENCY_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
-    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_HAS_ZLIB=1")
+if (TARGET ZLIB::ZLIB)
+    list (APPEND SEQAN3_LIBRARIES ZLIB::ZLIB)
     seqan3_config_print ("Optional dependency:        ZLIB-${ZLIB_VERSION_STRING} found.")
 else ()
+    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_HAS_ZLIB=0")
     seqan3_config_print ("Optional dependency:        ZLIB not found.")
 endif ()
 
@@ -211,25 +206,18 @@ endif ()
 # BZip2 dependency
 # ----------------------------------------------------------------------------
 
-if (NOT SEQAN3_NO_BZIP2)
-    find_package (BZip2 QUIET)
-endif ()
+find_package (BZip2 QUIET)
 
-if (NOT ZLIB_FOUND AND BZIP2_FOUND)
-    # NOTE (marehr): iostream_bzip2 uses the type `uInt`, which is defined by
-    # `zlib`. Therefore, `bzip2` will cause a ton of errors without `zlib`.
-    message (AUTHOR_WARNING "Disabling BZip2 [which was successfully found], "
-                            "because ZLIB was not found. BZip2 depends on ZLIB.")
-    unset (BZIP2_FOUND)
-endif ()
-
-if (BZIP2_FOUND)
-    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} ${BZIP2_LIBRARIES})
-    set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_DEPENDENCY_INCLUDE_DIRS} ${BZIP2_INCLUDE_DIRS})
-    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_HAS_BZIP2=1")
+if (TARGET ZLIB::ZLIB AND TARGET BZip2::BZip2)
+    list (APPEND SEQAN3_LIBRARIES BZip2::BZip2)
     seqan3_config_print ("Optional dependency:        BZip2-${BZIP2_VERSION_STRING} found.")
 else ()
+    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_HAS_BZIP2=0")
     seqan3_config_print ("Optional dependency:        BZip2 not found.")
+endif ()
+
+if (NOT TARGET ZLIB::ZLIB AND TARGET BZip2::BZip2)
+    message (AUTHOR_WARNING "BZip2 was found but ZLIB was not found. BZip2 requires ZLIB.")
 endif ()
 
 # ----------------------------------------------------------------------------
