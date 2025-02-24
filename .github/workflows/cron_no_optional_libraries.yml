@@ -1,0 +1,90 @@
+# SPDX-FileCopyrightText: 2006-2025, Knut Reinert & Freie Universität Berlin
+# SPDX-FileCopyrightText: 2016-2025, Knut Reinert & MPI für molekulare Genetik
+# SPDX-License-Identifier: CC0-1.0
+
+name: No Optional Libraries
+
+on:
+  schedule:
+    - cron: "0 10 * * SUN"
+  workflow_dispatch:
+
+concurrency:
+  group: no-optional-libraries-actions
+  cancel-in-progress: true
+
+env:
+  SEQAN3_NO_VERSION_CHECK: 1
+  TZ: Europe/Berlin
+
+defaults:
+  run:
+    shell: bash -Eeuxo pipefail {0}
+
+jobs:
+  build:
+    name: ${{ matrix.build_type }} ${{ matrix.os }} (${{ matrix.zlib }}, ${{ matrix.bzip2 }}, ${{ matrix.cereal }})
+    runs-on: ${{ matrix.os }}
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      # Either all optional dependencies are disabled (true, true, true)
+      # Or only Bzip2 is disabled (false, true, false)
+      matrix:
+        os: [ubuntu-latest, macos-14]
+        build_type: [Release, Debug]
+        zlib: [true, false]
+        include:
+          - zlib: true
+            bzip2: true
+            cereal: true
+          - zlib: false
+            bzip2: true
+            cereal: false
+          - os: macos-14
+            compiler: clang-19
+          - os: ubuntu-latest
+            compiler: gcc-14
+            image: ghcr.io/seqan/gcc-14
+
+    container:
+      # If an image is defined for a matrix entry, use it.
+      # Otherwise, use the "empty"/'' image which means do not use a container at all.
+      image: ${{ matrix.image || '' }}
+      volumes:
+        - /home/runner:/home/runner
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup compiler
+        if: contains(matrix.os, 'macos')
+        uses: seqan/actions/setup-compiler@main
+        with:
+          compiler: ${{ matrix.compiler }}
+
+      - name: Configure tests
+        run: |
+          mkdir build && cd build
+          cmake ../test/analyse -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+                                -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=${{ matrix.zlib }} \
+                                -DCMAKE_DISABLE_FIND_PACKAGE_BZip2=${{ matrix.bzip2 }} \
+                                -DCMAKE_DISABLE_FIND_PACKAGE_cereal=${{ matrix.cereal }} \
+                                -DSEQAN3_BENCHMARK_MIN_TIME=0.01s
+          make gtest_main benchmark_main
+
+      - name: Build tests
+        working-directory: build
+        run: make -k
+
+      - name: Run tests
+        working-directory: build
+        continue-on-error: true
+        id: test
+        run: ctest . -j --output-on-failure --no-tests=error
+
+      # Rerun failed tests with **one** thread. Some snippets touch the same file and fail in parallel.
+      - name: Rerun failed tests
+        if: steps.test.outcome == 'failure'
+        working-directory: build
+        run: ctest . -j1 --output-on-failure --no-tests=error --rerun-failed
