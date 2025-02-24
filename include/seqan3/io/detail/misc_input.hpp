@@ -123,7 +123,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
         return {new contrib::basic_bgzf_istream<char_t>{primary_stream}, stream_deleter_default};
 #else
         throw file_open_error{"Trying to read from a bgzf file, but no ZLIB available."};
-#endif
+#endif // SEQAN3_HAS_ZLIB
     }
     else if (starts_with(magic_number, gz_compression::magic_header)) // GZIP
     {
@@ -134,7 +134,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
         return {new contrib::basic_gz_istream<char_t>{primary_stream}, stream_deleter_default};
 #else
         throw file_open_error{"Trying to read from a gzipped file, but no ZLIB available."};
-#endif
+#endif // SEQAN3_HAS_ZLIB
     }
     else if (starts_with(magic_number, bz2_compression::magic_header)) // BZip2
     {

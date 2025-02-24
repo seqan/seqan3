@@ -35,4 +35,4 @@ TEST(gz_istream_test, skipped)
     GTEST_SKIP() << "ZLIB is missing. Not running gz_istream_test.";
 }
 
-#endif
+#endif // SEQAN3_HAS_ZLIB

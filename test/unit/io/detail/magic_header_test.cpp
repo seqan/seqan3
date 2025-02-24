@@ -19,7 +19,7 @@ TEST(misc, valid_compression_extensions)
     // expect gz and bgzf
     EXPECT_TRUE(std::find(valid_compression.begin(), valid_compression.end(), "gz") != valid_compression.end());
     EXPECT_TRUE(std::find(valid_compression.begin(), valid_compression.end(), "bgzf") != valid_compression.end());
-#endif
+#endif // SEQAN3_HAS_ZLIB
 
 #if SEQAN3_HAS_BZIP2
     EXPECT_TRUE(std::find(valid_compression.begin(), valid_compression.end(), "bz2") != valid_compression.end());

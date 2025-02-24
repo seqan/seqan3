@@ -514,7 +514,7 @@ TEST_F(structure_file_output_compression, by_stream_bgzf)
     SEQAN3_TEST_GTEST_SKIP_ZLIB_DEFLATE;
     EXPECT_EQ(buffer, expected_bgzf);
 }
-#endif
+#endif // SEQAN3_HAS_ZLIB
 
 #if SEQAN3_HAS_BZIP2
 std::string expected_bz2{

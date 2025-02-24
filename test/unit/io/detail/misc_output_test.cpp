@@ -49,7 +49,7 @@ TEST(misc_output, issue2455_bgzf)
 
     EXPECT_TRUE(seqan3::detail::bgzf_compression::validate_header(std::span{file_content}));
 }
-#endif
+#endif // SEQAN3_HAS_ZLIB
 
 #if SEQAN3_HAS_BZIP2
 TEST(misc_output, issue2455_bz)

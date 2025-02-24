@@ -472,7 +472,7 @@ TEST_F(structure_file_input_read, read_empty_bgzf_file)
     EXPECT_TRUE(fin.begin() == fin.end());
 }
 
-#endif
+#endif // SEQAN3_HAS_ZLIB
 
 #if SEQAN3_HAS_BZIP2
 std::string input_bz2{

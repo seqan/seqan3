@@ -24,4 +24,4 @@ int main()
     return 0;
 }
 //![example]
-#endif
+#endif // SEQAN3_HAS_ZLIB

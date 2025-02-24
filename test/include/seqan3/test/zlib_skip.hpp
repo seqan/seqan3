@@ -15,7 +15,7 @@
 
 #if SEQAN3_HAS_ZLIB
 #    include <zlib.h>
-#endif
+#endif // SEQAN3_HAS_ZLIB
 
 // Some of our tests check the binary compressed output of zlib. This is not guaranteed to be the same for all zlib
 // implementations.

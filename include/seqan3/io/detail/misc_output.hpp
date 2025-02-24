@@ -53,7 +53,7 @@ inline auto make_secondary_ostream(std::basic_ostream<char_t> & primary_stream, 
         return {new contrib::basic_gz_ostream<char_t>{primary_stream}, stream_deleter_default};
 #else
         throw file_open_error{"Trying to write a gzipped file, but no ZLIB available."};
-#endif
+#endif // SEQAN3_HAS_ZLIB
     }
     else if ((extension == ".bgzf") || (extension == ".bam"))
     {
@@ -64,7 +64,7 @@ inline auto make_secondary_ostream(std::basic_ostream<char_t> & primary_stream, 
         return {new contrib::basic_bgzf_ostream<char_t>{primary_stream}, stream_deleter_default};
 #else
         throw file_open_error{"Trying to write a bgzf'ed file, but no ZLIB available."};
-#endif
+#endif // SEQAN3_HAS_ZLIB
     }
     else if (extension == ".bz2")
     {

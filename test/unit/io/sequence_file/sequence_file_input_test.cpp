@@ -412,7 +412,7 @@ TEST_F(sequence_file_input_f, read_empty_bgzf_file)
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
-#endif
+#endif // SEQAN3_HAS_ZLIB
 
 #if SEQAN3_HAS_BZIP2
 std::string input_bz2{'\x42', '\x5A', '\x68', '\x39', '\x31', '\x41', '\x59', '\x26', '\x53', '\x59', '\x8D', '\xD7',
