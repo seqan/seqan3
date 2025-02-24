@@ -140,6 +140,16 @@ endif ()
 # https://cmake.org/cmake/help/latest/variable/CMAKE_DISABLE_FIND_PACKAGE_PackageName.html
 # https://cmake.org/cmake/help/latest/variable/CMAKE_REQUIRE_FIND_PACKAGE_PackageName.html
 
+## Example for deactivating
+# cmake <path> -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=TRUE
+#              -DCMAKE_DISABLE_FIND_PACKAGE_BZip2=TRUE
+#              -DCMAKE_DISABLE_FIND_PACKAGE_cereal=TRUE
+
+## Example for requiring
+# cmake <path> -DCMAKE_REQUIRE_FIND_PACKAGE_ZLIB=TRUE
+#              -DCMAKE_REQUIRE_FIND_PACKAGE_BZip2=TRUE
+#              -DCMAKE_REQUIRE_FIND_PACKAGE_cereal=TRUE
+
 # ----------------------------------------------------------------------------
 # Check supported compilers
 # ----------------------------------------------------------------------------
