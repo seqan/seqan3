@@ -10,6 +10,7 @@
 #pragma once
 
 #include <bit>
+#include <istream>
 
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/debug_stream/debug_stream_type.hpp>

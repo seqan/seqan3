@@ -12,9 +12,9 @@
 #include <array>
 #include <type_traits>
 
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 #    include <cereal/types/array.hpp>
-#endif // SEQAN3_WITH_CEREAL
+#endif // SEQAN3_HAS_CEREAL
 
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>

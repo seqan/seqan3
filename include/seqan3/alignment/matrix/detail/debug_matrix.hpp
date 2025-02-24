@@ -10,6 +10,7 @@
 #pragma once
 
 #include <iomanip>
+#include <sstream>
 
 #include <seqan3/alignment/matrix/detail/matrix_concept.hpp>
 #include <seqan3/alignment/matrix/detail/row_wise_matrix.hpp>

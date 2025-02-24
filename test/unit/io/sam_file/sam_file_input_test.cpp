@@ -318,7 +318,7 @@ void decompression_impl(fixture_t & fix, input_file_t & fin)
     EXPECT_EQ(counter, 3u);
 }
 
-#if defined(SEQAN3_HAS_ZLIB)
+#if SEQAN3_HAS_ZLIB
 
 std::string input_gz{
     '\x1F', '\x8B', '\x08', '\x08', '\x9D', '\x5B', '\x38', '\x5C', '\x00', '\x03', '\x74', '\x65', '\x73', '\x74',
@@ -422,9 +422,9 @@ TEST_F(sam_file_input_f, read_empty_bgzf_file)
     EXPECT_TRUE(fin.begin() == fin.end());
 }
 
-#endif
+#endif // SEQAN3_HAS_ZLIB
 
-#if defined(SEQAN3_HAS_BZIP2)
+#if SEQAN3_HAS_BZIP2
 std::string input_bz2{
     '\x42', '\x5A', '\x68', '\x39', '\x31', '\x41', '\x59', '\x26', '\x53', '\x59', '\x7B', '\xE2', '\xE1',
     '\x92', '\x00', '\x00', '\x5C', '\x5F', '\x80', '\x00', '\x30', '\x2D', '\xFF', '\xFF', '\x90', '\x3C',
@@ -483,7 +483,7 @@ TEST_F(sam_file_input_f, read_empty_bz2_file)
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
-#endif
+#endif // SEQAN3_HAS_BZIP2
 
 // ----------------------------------------------------------------------------
 // BAM format specificities
@@ -522,7 +522,7 @@ struct sam_file_input_bam_format_f : public sam_file_input_f
         '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'};
 };
 
-#if defined(SEQAN3_HAS_ZLIB)
+#if SEQAN3_HAS_ZLIB
 TEST_F(sam_file_input_bam_format_f, construct_by_filename)
 {
     seqan3::test::tmp_directory tmp{};
@@ -578,4 +578,4 @@ TEST_F(sam_file_input_bam_format_f, construct_by_stream)
 
     EXPECT_EQ(counter, 3u);
 }
-#endif // defined(SEQAN3_HAS_ZLIB)
+#endif // SEQAN3_HAS_ZLIB

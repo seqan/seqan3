@@ -4,6 +4,7 @@
 
 //! [semialphabet]
 #include <cassert>
+#include <iostream>
 
 #include <seqan3/alphabet/concept.hpp> // alphabet concept checks
 

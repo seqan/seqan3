@@ -21,7 +21,7 @@ TEST(fm_index_test, additional_concepts)
 
 TEST(fm_index_test, cerealisation_errors)
 {
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 
     using seqan3::operator""_dna4;
 
@@ -49,5 +49,5 @@ TEST(fm_index_test, cerealisation_errors)
         cereal::BinaryInputArchive iarchive{is};
         EXPECT_THROW(iarchive(in), std::logic_error);
     }
-#endif
+#endif // SEQAN3_HAS_CEREAL
 }

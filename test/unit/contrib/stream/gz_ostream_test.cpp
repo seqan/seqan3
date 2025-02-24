@@ -6,7 +6,9 @@
 
 #include <seqan3/contrib/stream/gz_ostream.hpp>
 
-#include "../../io/stream/ostream_test_template.hpp"
+#if SEQAN3_HAS_ZLIB
+
+#    include "../../io/stream/ostream_test_template.hpp"
 
 template <>
 class ostream<seqan3::contrib::gz_ostream> : public ::testing::Test
@@ -27,3 +29,12 @@ public:
 using test_types = ::testing::Types<seqan3::contrib::gz_ostream>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(contrib_streams, ostream, test_types, );
+
+#else
+
+TEST(gz_ostream_test, skipped)
+{
+    GTEST_SKIP() << "ZLIB is missing. Not running gz_ostream_test.";
+}
+
+#endif // SEQAN3_HAS_ZLIB

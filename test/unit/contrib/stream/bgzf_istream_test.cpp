@@ -6,7 +6,9 @@
 
 #include <seqan3/contrib/stream/bgzf_istream.hpp>
 
-#include "../../io/stream/istream_test_template.hpp"
+#if SEQAN3_HAS_ZLIB
+
+#    include "../../io/stream/istream_test_template.hpp"
 
 template <>
 class istream<seqan3::contrib::bgzf_istream> : public ::testing::Test
@@ -27,3 +29,12 @@ public:
 using test_types = ::testing::Types<seqan3::contrib::bgzf_istream>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(contrib_streams, istream, test_types, );
+
+#else
+
+TEST(bgzf_istream_test, skipped)
+{
+    GTEST_SKIP() << "ZLIB is missing. Not running bgzf_istream_test.";
+}
+
+#endif // SEQAN3_HAS_ZLIB

@@ -27,7 +27,7 @@ inline std::vector<char> read_file_content(std::filesystem::path const & path)
     return {std::istreambuf_iterator{filestream}, std::istreambuf_iterator<char_t>{}};
 }
 
-#if defined(SEQAN3_HAS_ZLIB)
+#if SEQAN3_HAS_ZLIB
 TEST(misc_output, issue2455_gz)
 {
     seqan3::test::tmp_directory tmp;
@@ -49,9 +49,9 @@ TEST(misc_output, issue2455_bgzf)
 
     EXPECT_TRUE(seqan3::detail::bgzf_compression::validate_header(std::span{file_content}));
 }
-#endif
+#endif // SEQAN3_HAS_ZLIB
 
-#if defined(SEQAN3_HAS_BZIP2)
+#if SEQAN3_HAS_BZIP2
 TEST(misc_output, issue2455_bz)
 {
     seqan3::test::tmp_directory tmp;
@@ -61,4 +61,4 @@ TEST(misc_output, issue2455_bz)
 
     EXPECT_TRUE(seqan3::detail::starts_with(file_content, seqan3::detail::bz2_compression::magic_header));
 }
-#endif
+#endif // SEQAN3_HAS_BZIP2

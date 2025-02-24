@@ -6,7 +6,9 @@
 
 #include <seqan3/contrib/stream/bz2_ostream.hpp>
 
-#include "../../io/stream/ostream_test_template.hpp"
+#if SEQAN3_HAS_BZIP2
+
+#    include "../../io/stream/ostream_test_template.hpp"
 
 template <>
 class ostream<seqan3::contrib::bz2_ostream> : public ::testing::Test
@@ -27,3 +29,12 @@ public:
 using test_types = ::testing::Types<seqan3::contrib::bz2_ostream>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(contrib_streams, ostream, test_types, );
+
+#else
+
+TEST(bz2_ostream_test, skipped)
+{
+    GTEST_SKIP() << "BZip2 is missing. Not running bz2_ostream_test.";
+}
+
+#endif // SEQAN3_HAS_BZIP2

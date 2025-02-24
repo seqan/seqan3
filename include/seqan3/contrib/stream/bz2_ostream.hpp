@@ -27,11 +27,9 @@
 #include <iostream>
 #include <vector>
 
-#if !defined(SEQAN3_HAS_BZIP2) && !defined(SEQAN3_HEADER_TEST)
-#error "This file cannot be used when building without BZIP2-support."
-#endif // !defined(SEQAN3_HAS_BZIP2) && !defined(SEQAN3_HEADER_TEST)
+#include <seqan3/core/platform.hpp>
 
-#if defined(SEQAN3_HAS_BZIP2)
+#if SEQAN3_HAS_BZIP2
 
 #define BZ_NO_STDIO
 #include <bzlib.h>
@@ -426,4 +424,4 @@ typedef basic_bz2_ostream<wchar_t> bz2_wostream;
 
 } // namespace seqan3::contrib
 
-#endif // defined(SEQAN3_HAS_BZIP2)
+#endif // SEQAN3_HAS_BZIP2

@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <istream>
+
 #include <seqan3/utility/container/small_vector.hpp>
 
 namespace seqan3
