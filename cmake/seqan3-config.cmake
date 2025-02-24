@@ -174,7 +174,7 @@ endif ()
 # Cereal dependency
 # ----------------------------------------------------------------------------
 
-if (SEQAN3_HAS_CPM)
+if (SEQAN3_HAS_CPM AND NOT CMAKE_DISABLE_FIND_PACKAGE_cereal)
     CPMGetPackage (cereal)
 else ()
     find_package (cereal CONFIG QUIET)
