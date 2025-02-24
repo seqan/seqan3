@@ -25,7 +25,7 @@
 #if SEQAN3_HAS_BZIP2
 #    include <seqan3/contrib/stream/bz2_istream.hpp>
 #    include <seqan3/contrib/stream/bz2_ostream.hpp>
-#endif
+#endif // SEQAN3_HAS_BZIP2
 
 // SEQAN2
 #if __has_include(<seqan/stream.h>)
@@ -37,7 +37,7 @@
 
 #    if SEQAN3_HAS_BZIP2
 #        define SEQAN_HAS_BZIP2 1
-#    endif
+#    endif // SEQAN3_HAS_BZIP2
 
 #    include <seqan/stream.h>
 #endif
@@ -114,7 +114,7 @@ std::string const input_comp<seqan3::contrib::bz2_istream>{
 template <>
 std::string const & input_comp<seqan2::BZ2File> = input_comp<seqan3::contrib::bz2_istream>;
 #    endif
-#endif
+#endif // SEQAN3_HAS_BZIP2
 
 // ============================================================================
 //  plain benchmark of ostringstream
@@ -173,7 +173,7 @@ BENCHMARK_TEMPLATE(compressed, seqan3::contrib::bgzf_istream);
 
 #if SEQAN3_HAS_BZIP2
 BENCHMARK_TEMPLATE(compressed, seqan3::contrib::bz2_istream);
-#endif
+#endif // SEQAN3_HAS_BZIP2
 
 // ============================================================================
 //  compression applied, but stuffed into plain istream
@@ -207,7 +207,7 @@ BENCHMARK_TEMPLATE(compressed_type_erased, seqan3::contrib::bgzf_istream);
 #endif // SEQAN3_HAS_ZLIB
 #if SEQAN3_HAS_BZIP2
 BENCHMARK_TEMPLATE(compressed_type_erased, seqan3::contrib::bz2_istream);
-#endif
+#endif // SEQAN3_HAS_BZIP2
 
 // ============================================================================
 //  compression applied, but stuffed into plain istream, also stringstream erased
@@ -241,7 +241,7 @@ BENCHMARK_TEMPLATE(compressed_type_erased2, seqan3::contrib::bgzf_istream);
 #endif // SEQAN3_HAS_ZLIB
 #if SEQAN3_HAS_BZIP2
 BENCHMARK_TEMPLATE(compressed_type_erased2, seqan3::contrib::bz2_istream);
-#endif
+#endif // SEQAN3_HAS_BZIP2
 
 // ============================================================================
 //  seqan2 virtual stream

@@ -483,7 +483,7 @@ TEST_F(sam_file_input_f, read_empty_bz2_file)
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
-#endif
+#endif // SEQAN3_HAS_BZIP2
 
 // ----------------------------------------------------------------------------
 // BAM format specificities

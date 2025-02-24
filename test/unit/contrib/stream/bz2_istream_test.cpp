@@ -37,4 +37,4 @@ TEST(bz2_istream_test, skipped)
     GTEST_SKIP() << "BZip2 is missing. Not running bz2_istream_test.";
 }
 
-#endif
+#endif // SEQAN3_HAS_BZIP2

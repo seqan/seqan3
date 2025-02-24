@@ -145,7 +145,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
         return {new contrib::basic_bz2_istream<char_t>{primary_stream}, stream_deleter_default};
 #else
         throw file_open_error{"Trying to read from a bzipped file, but no libbz2 available."};
-#endif
+#endif // SEQAN3_HAS_BZIP2
     }
     else if (starts_with(magic_number, zstd_compression::magic_header)) // ZStd
     {

@@ -534,4 +534,4 @@ TEST_F(structure_file_input_read, read_empty_bz2_file)
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
-#endif
+#endif // SEQAN3_HAS_BZIP2

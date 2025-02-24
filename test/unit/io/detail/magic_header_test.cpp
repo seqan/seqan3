@@ -23,7 +23,7 @@ TEST(misc, valid_compression_extensions)
 
 #if SEQAN3_HAS_BZIP2
     EXPECT_TRUE(std::find(valid_compression.begin(), valid_compression.end(), "bz2") != valid_compression.end());
-#endif
+#endif // SEQAN3_HAS_BZIP2
 
 #if defined(SEQAN3_HAS_ZSTD)
     EXPECT_TRUE(std::find(valid_compression.begin(), valid_compression.end(), "zst") != valid_compression.end());

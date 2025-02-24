@@ -61,4 +61,4 @@ TEST(misc_output, issue2455_bz)
 
     EXPECT_TRUE(seqan3::detail::starts_with(file_content, seqan3::detail::bz2_compression::magic_header));
 }
-#endif
+#endif // SEQAN3_HAS_BZIP2

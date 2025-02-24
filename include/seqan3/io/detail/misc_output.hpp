@@ -73,7 +73,7 @@ inline auto make_secondary_ostream(std::basic_ostream<char_t> & primary_stream, 
         return {new contrib::basic_bz2_ostream<char_t>{primary_stream}, stream_deleter_default};
 #else
         throw file_open_error{"Trying to write a bzipped file, but no libbz2 available."};
-#endif
+#endif // SEQAN3_HAS_BZIP2
     }
     else if (extension == ".zst")
     {

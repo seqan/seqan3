@@ -550,4 +550,4 @@ TEST_F(structure_file_output_compression, by_stream_bz2)
     }
     EXPECT_EQ(out.str(), expected_bz2);
 }
-#endif
+#endif // SEQAN3_HAS_BZIP2
