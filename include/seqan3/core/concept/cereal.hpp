@@ -16,7 +16,7 @@
 #if SEQAN3_HAS_CEREAL
 #    include <cereal/archives/binary.hpp>
 #    include <cereal/details/traits.hpp>
-#endif
+#endif // SEQAN3_HAS_CEREAL
 
 namespace seqan3
 {
@@ -41,7 +41,7 @@ concept cereal_output_archive = std::is_base_of_v<cereal::detail::OutputArchiveB
 #else
 template <typename t>
 concept cereal_output_archive = false;
-#endif
+#endif // SEQAN3_HAS_CEREAL
 //!\endcond
 
 /*!\interface seqan3::cereal_input_archive <>
@@ -64,7 +64,7 @@ concept cereal_input_archive = std::is_base_of_v<cereal::detail::InputArchiveBas
 #else
 template <typename t>
 concept cereal_input_archive = false;
-#endif
+#endif // SEQAN3_HAS_CEREAL
 //!\endcond
 
 /*!\interface seqan3::cereal_archive <>
@@ -83,7 +83,7 @@ concept cereal_archive = cereal_output_archive<t> || cereal_input_archive<t>;
 #else
 template <typename t>
 concept cereal_archive = false;
-#endif
+#endif // SEQAN3_HAS_CEREAL
 //!\endcond
 
 /*!\interface seqan3::cereal_text_archive <>
@@ -106,7 +106,7 @@ concept cereal_text_archive = std::is_base_of_v<cereal::traits::TextArchive, t>;
 #else
 template <typename t>
 concept cereal_text_archive = false;
-#endif
+#endif // SEQAN3_HAS_CEREAL
 //!\endcond
 
 /*!\interface seqan3::cerealisable <>
@@ -151,7 +151,7 @@ concept cerealisable = cereal::traits::is_input_serializable<value_t, input_arch
 #else
 template <typename value_t, typename input_archive_t = void, typename output_archive_t = void>
 concept cerealisable = false;
-#endif
+#endif // SEQAN3_HAS_CEREAL
 //!\endcond
 
 } // namespace seqan3
@@ -169,6 +169,6 @@ using strip_cereal_wrapper_t = typename cereal::traits::strip_minimal<std::decay
 #else
 template <typename type>
 using strip_cereal_wrapper_t = type;
-#endif
+#endif // SEQAN3_HAS_CEREAL
 
 } // namespace seqan3::detail

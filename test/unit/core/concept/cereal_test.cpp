@@ -15,7 +15,7 @@
 #    include <cereal/archives/portable_binary.hpp>
 #    include <cereal/archives/xml.hpp>
 #    include <cereal/types/array.hpp>
-#endif
+#endif // SEQAN3_HAS_CEREAL
 
 #if SEQAN3_HAS_CEREAL
 
@@ -87,4 +87,4 @@ TEST(cereal, cerealisable)
     EXPECT_TRUE((seqan3::cerealisable<std::array<std::array<int, 10>, 10>>));
 }
 
-#endif
+#endif // SEQAN3_HAS_CEREAL

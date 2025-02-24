@@ -21,7 +21,7 @@
 
 #if SEQAN3_HAS_CEREAL
 #    include <cereal/types/vector.hpp>
-#endif
+#endif // SEQAN3_HAS_CEREAL
 
 namespace seqan3
 {

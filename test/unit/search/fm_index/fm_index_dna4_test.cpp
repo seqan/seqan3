@@ -49,5 +49,5 @@ TEST(fm_index_test, cerealisation_errors)
         cereal::BinaryInputArchive iarchive{is};
         EXPECT_THROW(iarchive(in), std::logic_error);
     }
-#endif
+#endif // SEQAN3_HAS_CEREAL
 }

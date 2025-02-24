@@ -45,4 +45,4 @@ int main()
 
     return 0;
 }
-#endif
+#endif // SEQAN3_HAS_CEREAL
