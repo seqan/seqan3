@@ -30,4 +30,11 @@ using test_types = ::testing::Types<seqan3::contrib::bz2_istream>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(contrib_streams, istream, test_types, );
 
+#else
+
+TEST(bz2_istream_test, skipped)
+{
+    GTEST_SKIP() << "BZip2 is missing. Not running bz2_istream_test.";
+}
+
 #endif

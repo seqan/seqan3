@@ -28,4 +28,11 @@ using test_types = ::testing::Types<seqan3::contrib::gz_istream>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(contrib_streams, istream, test_types, );
 
+#else
+
+TEST(gz_istream_test, skipped)
+{
+    GTEST_SKIP() << "ZLIB is missing. Not running gz_istream_test.";
+}
+
 #endif
