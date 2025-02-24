@@ -69,6 +69,16 @@ set_tests_properties (
     "snippet/utility/container/aligned_allocator_snippet_cmp_output"
     PROPERTIES SKIP_RETURN_CODE 1)
 
+# These tests do not produce output if cereal is not available.
+if (NOT TARGET cereal::cereal)
+    set_tests_properties (
+        "doc/snippet/tutorial/11_read_mapper/read_mapper_indexer_step3_snippet_cmp_output"
+        "doc/snippet/tutorial/11_read_mapper/read_mapper_step2_snippet_cmp_output"
+        "doc/snippet/tutorial/11_read_mapper/read_mapper_step3_snippet_cmp_output"
+        "doc/snippet/tutorial/11_read_mapper/read_mapper_step4_snippet_cmp_output"
+        PROPERTIES SKIP_RETURN_CODE 1)
+endif ()
+
 list_unused_snippets ("${CMAKE_CURRENT_SOURCE_DIR}")
 list_unused_snippets ("${CMAKE_CURRENT_SOURCE_DIR}/../../doc")
 
