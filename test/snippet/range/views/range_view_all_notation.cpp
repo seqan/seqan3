@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: CC0-1.0
 
 #include <algorithm>
+#include <iostream>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/views/complement.hpp>
