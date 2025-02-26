@@ -253,23 +253,17 @@ endif ()
 # Perform compilability test of platform.hpp (tests some requirements)
 # ----------------------------------------------------------------------------
 
-set (CXXSTD_TEST_SOURCE "#include <seqan3/core/platform.hpp>
-                         int main() {}")
-
-# using try_compile instead of check_cxx_source_compiles to capture output in case of failure
-file (WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx" "${CXXSTD_TEST_SOURCE}\n")
-
-# cereal::cereal is an interface target and cannot be used in try_compile:
-# There is no shared or static library to link against.
-set (SEQAN3_TRYCOMPILE_LIBRARIES ${SEQAN3_LIBRARIES})
-list (REMOVE_ITEM SEQAN3_TRYCOMPILE_LIBRARIES cereal::cereal)
 # cmake-format: off
+# Note: With CMake >= 3.25, the file WRITE can be removed, the second and third line in try_compile can be replaced by
+# SOURCE_FROM_CONTENT "platform_test.cpp" "#include <seqan3/core/platform.hpp>\nint main() {}"
+file (WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/platform_test.cpp"
+            "#include <seqan3/core/platform.hpp>\nint main() {}")
+
 try_compile (SEQAN3_PLATFORM_TEST
              ${CMAKE_BINARY_DIR}
-             ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx
-             CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${CMAKE_INCLUDE_PATH};${SEQAN3_INCLUDE_DIR}"
+             ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/platform_test.cpp
+             CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${SEQAN3_INCLUDE_DIR}"
              COMPILE_DEFINITIONS ${SEQAN3_DEFINITIONS}
-             LINK_LIBRARIES ${SEQAN3_TRYCOMPILE_LIBRARIES}
              CXX_STANDARD 23
              CXX_STANDARD_REQUIRED ON
              CXX_EXTENSIONS OFF
