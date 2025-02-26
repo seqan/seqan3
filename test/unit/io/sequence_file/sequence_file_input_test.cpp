@@ -313,7 +313,7 @@ void decompression_impl(fixture_t & fix, input_file_t & fin)
     EXPECT_EQ(counter, 3u);
 }
 
-#if defined(SEQAN3_HAS_ZLIB)
+#if SEQAN3_HAS_ZLIB
 std::string input_gz{
     '\x1F', '\x8B', '\x08', '\x00', '\x33', '\xBF', '\x13', '\x5C', '\x00', '\x03', '\xB3', '\x53', '\x08', '\x71',
     '\x0D', '\x0E', '\x51', '\x30', '\xE4', '\x72', '\x74', '\x76', '\x0F', '\xE1', '\xB2', '\x0B', '\x49', '\x2D',
@@ -412,9 +412,9 @@ TEST_F(sequence_file_input_f, read_empty_bgzf_file)
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
-#endif
+#endif // SEQAN3_HAS_ZLIB
 
-#if defined(SEQAN3_HAS_BZIP2)
+#if SEQAN3_HAS_BZIP2
 std::string input_bz2{'\x42', '\x5A', '\x68', '\x39', '\x31', '\x41', '\x59', '\x26', '\x53', '\x59', '\x8D', '\xD7',
                       '\xE7', '\xD6', '\x00', '\x00', '\x06', '\x5F', '\x80', '\x00', '\x10', '\x40', '\x00', '\x38',
                       '\x01', '\x2A', '\x81', '\x0C', '\x00', '\x02', '\x00', '\x0C', '\x00', '\x20', '\x00', '\x54',
@@ -466,4 +466,4 @@ TEST_F(sequence_file_input_f, read_empty_bz2_file)
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
-#endif
+#endif // SEQAN3_HAS_BZIP2

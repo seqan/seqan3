@@ -134,32 +134,21 @@ else ()
 endif ()
 
 # ----------------------------------------------------------------------------
-# Force-deactivate optional dependencies
+# Force-(de)activate optional dependencies
 # ----------------------------------------------------------------------------
 
-# Cereal is auto-detected by default, i.e. used if found, not used if not found.
-# You can optionally set a hard requirement so a build fails without cereal,
-# or you can force-disable cereal even if present on the system.
-option (SEQAN3_CEREAL "Require cereal and fail if not present." OFF)
-option (SEQAN3_NO_CEREAL "Don't use cereal, even if present." OFF)
+# https://cmake.org/cmake/help/latest/variable/CMAKE_DISABLE_FIND_PACKAGE_PackageName.html
+# https://cmake.org/cmake/help/latest/variable/CMAKE_REQUIRE_FIND_PACKAGE_PackageName.html
 
-if (SEQAN3_CEREAL AND SEQAN3_NO_CEREAL)
-    # this is always a user error, therefore we always error-out, even if SeqAn is not required
-    message (FATAL_ERROR "You may not specify SEQAN3_CEREAL and SEQAN3_NO_CEREAL at the same time.\n\
-                          You can specify neither (use auto-detection), or specify either to force on/off.")
-    return ()
-endif ()
+## Example for deactivating
+# cmake <path> -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=TRUE
+#              -DCMAKE_DISABLE_FIND_PACKAGE_BZip2=TRUE
+#              -DCMAKE_DISABLE_FIND_PACKAGE_cereal=TRUE
 
-if (SEQAN3_CEREAL)
-    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_WITH_CEREAL=1")
-elseif (SEQAN3_NO_CEREAL)
-    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_WITH_CEREAL=0")
-endif ()
-
-# These two are "opt-in", because detected by CMake
-# If you want to force-require these, just do find_package (zlib REQUIRED) before find_package (seqan3)
-option (SEQAN3_NO_ZLIB "Don't use ZLIB, even if present." OFF)
-option (SEQAN3_NO_BZIP2 "Don't use BZip2, even if present." OFF)
+## Example for requiring
+# cmake <path> -DCMAKE_REQUIRE_FIND_PACKAGE_ZLIB=TRUE
+#              -DCMAKE_REQUIRE_FIND_PACKAGE_BZip2=TRUE
+#              -DCMAKE_REQUIRE_FIND_PACKAGE_cereal=TRUE
 
 # ----------------------------------------------------------------------------
 # Check supported compilers
@@ -180,8 +169,8 @@ endif ()
 set (THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package (Threads QUIET)
 
-if (Threads_FOUND)
-    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} Threads::Threads)
+if (TARGET Threads::Threads)
+    list (APPEND SEQAN3_LIBRARIES Threads::Threads)
     if ("${CMAKE_THREAD_LIBS_INIT}" STREQUAL "")
         seqan3_config_print ("Thread support:             builtin.")
     else ()
@@ -192,67 +181,34 @@ else ()
 endif ()
 
 # ----------------------------------------------------------------------------
-# Cereal dependency is optional, but may set as required
+# Cereal dependency
 # ----------------------------------------------------------------------------
 
-if (NOT SEQAN3_NO_CEREAL)
-    find_path (SEQAN3_CEREAL_INCLUDE_DIR
-               NAMES cereal/version.hpp
-               HINTS "${SEQAN3_INCLUDE_DIR}/seqan3/vendor")
+if (SEQAN3_HAS_CPM AND NOT CMAKE_DISABLE_FIND_PACKAGE_cereal)
+    CPMGetPackage (cereal)
+else ()
+    find_package (cereal CONFIG QUIET)
+endif ()
 
-    # 1) Check the vendor directory of SeqAn3. This directory exists for source packages and installed packages.
-    if (SEQAN3_CEREAL_INCLUDE_DIR)
-        if (SEQAN3_CEREAL)
-            seqan3_config_print ("Required dependency:        Cereal found.")
-        else ()
-            seqan3_config_print ("Optional dependency:        Cereal found.")
-        endif ()
-        set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_CEREAL_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
-        # 2) Get package via CPM.
-    elseif (SEQAN3_HAS_CPM)
-        CPMGetPackage (cereal)
-
-        find_path (SEQAN3_CEREAL_INCLUDE_DIR
-                   NAMES cereal/version.hpp
-                   HINTS "${cereal_SOURCE_DIR}/include")
-
-        if (SEQAN3_CEREAL_INCLUDE_DIR)
-            if (SEQAN3_CEREAL)
-                seqan3_config_print ("Required dependency:        Cereal found.")
-            else ()
-                seqan3_config_print ("Optional dependency:        Cereal found.")
-            endif ()
-            set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_CEREAL_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
-        else ()
-            if (SEQAN3_CEREAL)
-                seqan3_config_error ("The (optional) cereal library was marked as required, but wasn't found.")
-            else ()
-                seqan3_config_print ("Optional dependency:        Cereal not found.")
-            endif ()
-        endif ()
-    else ()
-        if (SEQAN3_CEREAL)
-            seqan3_config_error ("The (optional) cereal library was marked as required, but wasn't found.")
-        else ()
-            seqan3_config_print ("Optional dependency:        Cereal not found.")
-        endif ()
-    endif ()
+if (TARGET cereal::cereal)
+    list (APPEND SEQAN3_LIBRARIES cereal::cereal)
+    seqan3_config_print ("Optional dependency:        Cereal found.")
+else ()
+    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_HAS_CEREAL=0")
+    seqan3_config_print ("Optional dependency:        Cereal not found.")
 endif ()
 
 # ----------------------------------------------------------------------------
 # ZLIB dependency
 # ----------------------------------------------------------------------------
 
-if (NOT SEQAN3_NO_ZLIB)
-    find_package (ZLIB QUIET)
-endif ()
+find_package (ZLIB QUIET)
 
-if (ZLIB_FOUND)
-    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} ${ZLIB_LIBRARIES})
-    set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_DEPENDENCY_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
-    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_HAS_ZLIB=1")
+if (TARGET ZLIB::ZLIB)
+    list (APPEND SEQAN3_LIBRARIES ZLIB::ZLIB)
     seqan3_config_print ("Optional dependency:        ZLIB-${ZLIB_VERSION_STRING} found.")
 else ()
+    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_HAS_ZLIB=0")
     seqan3_config_print ("Optional dependency:        ZLIB not found.")
 endif ()
 
@@ -260,25 +216,18 @@ endif ()
 # BZip2 dependency
 # ----------------------------------------------------------------------------
 
-if (NOT SEQAN3_NO_BZIP2)
-    find_package (BZip2 QUIET)
-endif ()
+find_package (BZip2 QUIET)
 
-if (NOT ZLIB_FOUND AND BZIP2_FOUND)
-    # NOTE (marehr): iostream_bzip2 uses the type `uInt`, which is defined by
-    # `zlib`. Therefore, `bzip2` will cause a ton of errors without `zlib`.
-    message (AUTHOR_WARNING "Disabling BZip2 [which was successfully found], "
-                            "because ZLIB was not found. BZip2 depends on ZLIB.")
-    unset (BZIP2_FOUND)
-endif ()
-
-if (BZIP2_FOUND)
-    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} ${BZIP2_LIBRARIES})
-    set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_DEPENDENCY_INCLUDE_DIRS} ${BZIP2_INCLUDE_DIRS})
-    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_HAS_BZIP2=1")
+if (TARGET ZLIB::ZLIB AND TARGET BZip2::BZip2)
+    list (APPEND SEQAN3_LIBRARIES BZip2::BZip2)
     seqan3_config_print ("Optional dependency:        BZip2-${BZIP2_VERSION_STRING} found.")
 else ()
+    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_HAS_BZIP2=0")
     seqan3_config_print ("Optional dependency:        BZip2 not found.")
+endif ()
+
+if (NOT TARGET ZLIB::ZLIB AND TARGET BZip2::BZip2)
+    message (AUTHOR_WARNING "BZip2 was found but ZLIB was not found. BZip2 requires ZLIB.")
 endif ()
 
 # ----------------------------------------------------------------------------
@@ -286,20 +235,16 @@ endif ()
 # ----------------------------------------------------------------------------
 
 # librt
-if ((${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    OR (${CMAKE_SYSTEM_NAME} STREQUAL "kFreeBSD")
-    OR (${CMAKE_SYSTEM_NAME} STREQUAL "GNU"))
-    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} rt)
+find_library (SEQAN3_RT_LIB rt)
+if (SEQAN3_RT_LIB)
+    list (APPEND SEQAN3_LIBRARIES ${SEQAN3_RT_LIB})
 endif ()
 
 # libexecinfo -- implicit
-check_include_file_cxx (execinfo.h _SEQAN3_HAVE_EXECINFO)
-mark_as_advanced (_SEQAN3_HAVE_EXECINFO)
-if (_SEQAN3_HAVE_EXECINFO)
+find_package (Backtrace QUIET)
+if (TARGET Backtrace::Backtrace)
+    list (APPEND SEQAN3_LIBRARIES Backtrace::Backtrace)
     seqan3_config_print ("Optional dependency:        libexecinfo found.")
-    if ((${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD") OR (${CMAKE_SYSTEM_NAME} STREQUAL "OpenBSD"))
-        set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} execinfo elf)
-    endif ()
 else ()
     seqan3_config_print ("Optional dependency:        libexecinfo not found.")
 endif ()
@@ -308,19 +253,17 @@ endif ()
 # Perform compilability test of platform.hpp (tests some requirements)
 # ----------------------------------------------------------------------------
 
-set (CXXSTD_TEST_SOURCE "#include <seqan3/core/platform.hpp>
-                         int main() {}")
-
-# using try_compile instead of check_cxx_source_compiles to capture output in case of failure
-file (WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx" "${CXXSTD_TEST_SOURCE}\n")
-
 # cmake-format: off
+# Note: With CMake >= 3.25, the file WRITE can be removed, the second and third line in try_compile can be replaced by
+# SOURCE_FROM_CONTENT "platform_test.cpp" "#include <seqan3/core/platform.hpp>\nint main() {}"
+file (WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/platform_test.cpp"
+            "#include <seqan3/core/platform.hpp>\nint main() {}")
+
 try_compile (SEQAN3_PLATFORM_TEST
              ${CMAKE_BINARY_DIR}
-             ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx
-             CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${CMAKE_INCLUDE_PATH};${SEQAN3_INCLUDE_DIR};${SEQAN3_DEPENDENCY_INCLUDE_DIRS}"
+             ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/platform_test.cpp
+             CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${SEQAN3_INCLUDE_DIR}"
              COMPILE_DEFINITIONS ${SEQAN3_DEFINITIONS}
-             LINK_LIBRARIES ${SEQAN3_LIBRARIES}
              CXX_STANDARD 23
              CXX_STANDARD_REQUIRED ON
              CXX_EXTENSIONS OFF
@@ -358,7 +301,7 @@ foreach (package_var
 endforeach ()
 
 # propagate SEQAN3_INCLUDE_DIR into SEQAN3_INCLUDE_DIRS
-set (SEQAN3_INCLUDE_DIRS ${SEQAN3_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
+set (SEQAN3_INCLUDE_DIRS ${SEQAN3_INCLUDE_DIR})
 
 # ----------------------------------------------------------------------------
 # Export targets
@@ -371,9 +314,6 @@ if (SEQAN3_FOUND AND NOT TARGET seqan3::seqan3)
     target_link_libraries (seqan3_seqan3 INTERFACE "${SEQAN3_LIBRARIES}")
     # include seqan3/include/ as -I, because seqan3 should never produce warnings.
     target_include_directories (seqan3_seqan3 INTERFACE "${SEQAN3_INCLUDE_DIR}")
-    # include everything except seqan3/include/ as -isystem, i.e.
-    # a system header which suppresses warnings of external libraries.
-    target_include_directories (seqan3_seqan3 SYSTEM INTERFACE "${SEQAN3_DEPENDENCY_INCLUDE_DIRS}")
     add_library (seqan3::seqan3 ALIAS seqan3_seqan3)
 endif ()
 

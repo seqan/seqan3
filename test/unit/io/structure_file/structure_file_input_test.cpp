@@ -243,7 +243,7 @@ struct structure_file_input_read : public ::testing::Test
         EXPECT_EQ(idx, bpp_comp.size());
     }
 
-#if defined(SEQAN3_HAS_ZLIB) || defined(SEQAN3_HAS_BZIP2)
+#if SEQAN3_HAS_ZLIB || SEQAN3_HAS_BZIP2
     template <typename input_file_t>
     void decompression_impl(input_file_t & fin)
     {
@@ -373,7 +373,7 @@ TEST_F(structure_file_input_read, record_file_view)
 // decompression
 // ----------------------------------------------------------------------------
 
-#if defined(SEQAN3_HAS_ZLIB)
+#if SEQAN3_HAS_ZLIB
 std::string input_gz{
     '\x1F', '\x8B', '\x08', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x03', '\x55', '\x8E', '\xC1', '\x0A',
     '\xC2', '\x40', '\x0C', '\x44', '\xEF', '\xF9', '\x8A', '\x3D', '\x76', '\x0F', '\x5D', '\x5B', '\x14', '\x7A',
@@ -472,9 +472,9 @@ TEST_F(structure_file_input_read, read_empty_bgzf_file)
     EXPECT_TRUE(fin.begin() == fin.end());
 }
 
-#endif
+#endif // SEQAN3_HAS_ZLIB
 
-#if defined(SEQAN3_HAS_BZIP2)
+#if SEQAN3_HAS_BZIP2
 std::string input_bz2{
     '\x42', '\x5A', '\x68', '\x39', '\x31', '\x41', '\x59', '\x26', '\x53', '\x59', '\xC7', '\x0B', '\xB5', '\x7F',
     '\x00', '\x00', '\x36', '\x5F', '\x80', '\x6E', '\x50', '\x40', '\x63', '\xEC', '\x81', '\x2A', '\xC3', '\x5A',
@@ -534,4 +534,4 @@ TEST_F(structure_file_input_read, read_empty_bz2_file)
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
-#endif
+#endif // SEQAN3_HAS_BZIP2

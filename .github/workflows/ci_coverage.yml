@@ -86,6 +86,7 @@ jobs:
                 --exclude-unreachable-branches \
                 --exclude-throw-branches \
                 --exclude-noncode-lines \
+                --merge-mode-functions separate \
                 -j \
                 --cobertura \
                 --output ${GITHUB_WORKSPACE}/build/coverage_report.xml

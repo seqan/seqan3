@@ -19,9 +19,9 @@
 #include <seqan3/utility/views/repeat_n.hpp>
 #include <seqan3/utility/views/slice.hpp>
 
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 #    include <cereal/types/vector.hpp>
-#endif
+#endif // SEQAN3_HAS_CEREAL
 
 namespace seqan3
 {

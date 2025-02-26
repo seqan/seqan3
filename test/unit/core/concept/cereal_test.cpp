@@ -9,15 +9,15 @@
 
 #include <seqan3/core/concept/cereal.hpp>
 
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 #    include <cereal/archives/binary.hpp>
 #    include <cereal/archives/json.hpp>
 #    include <cereal/archives/portable_binary.hpp>
 #    include <cereal/archives/xml.hpp>
 #    include <cereal/types/array.hpp>
-#endif
+#endif // SEQAN3_HAS_CEREAL
 
-#if SEQAN3_WITH_CEREAL
+#if SEQAN3_HAS_CEREAL
 
 TEST(cereal, cereal_output_archive)
 {
@@ -87,4 +87,4 @@ TEST(cereal, cerealisable)
     EXPECT_TRUE((seqan3::cerealisable<std::array<std::array<int, 10>, 10>>));
 }
 
-#endif
+#endif // SEQAN3_HAS_CEREAL
