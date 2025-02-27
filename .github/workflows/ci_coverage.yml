@@ -44,14 +44,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Load ccache
-        uses: actions/cache@v4
-        with:
-          path: /home/runner/.ccache
-          key: ccache-${{ runner.os }}-${{ github.workflow }}-${{ matrix.compiler }}-${{ github.ref }}-${{ github.run_id }}
-          restore-keys: |
-            ccache-${{ runner.os }}-${{ github.workflow }}-${{ matrix.compiler }}-${{ github.ref }}
-            ccache-${{ runner.os }}-${{ github.workflow }}-${{ matrix.compiler }}
+      - name: Setup cache
+        uses: seqan/actions/setup-actions-cache@main
 
       - name: Increase ccache size
         run: echo "CCACHE_MAXSIZE=300M" >> "${GITHUB_ENV}"
