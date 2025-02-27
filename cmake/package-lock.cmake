@@ -47,15 +47,16 @@ CPMDeclarePackage (doxygen_awesome
                    VERSION ${SEQAN3_DOXYGEN_AWESOME_VERSION}
                    GITHUB_REPOSITORY jothepro/doxygen-awesome-css
                    DOWNLOAD_ONLY TRUE
-                   QUIET YES)
+                   QUIET TRUE)
 # seqan2
-set (SEQAN3_SEQAN2_VERSION 339e44ea734359de8592d47cc7a7722bc7a040b4 CACHE STRING "" FORCE)
+set (SEQAN3_SEQAN2_VERSION 2.5.0 CACHE STRING "" FORCE)
 CPMDeclarePackage (seqan
                    NAME seqan
-                   GIT_TAG ${SEQAN3_SEQAN2_VERSION} # main
+                   VERSION ${SEQAN3_SEQAN2_VERSION}
+                   GIT_TAG seqan-v${SEQAN3_SEQAN2_VERSION}
                    GITHUB_REPOSITORY seqan/seqan
-                   DOWNLOAD_ONLY YES
-                   QUIET YES)
+                   DOWNLOAD_ONLY TRUE
+                   QUIET TRUE)
 # use_ccache
 set (SEQAN3_USE_CCACHE_VERSION d2a54ef555b6fc2d496a4c9506dbeb7cf899ce37 CACHE STRING "" FORCE)
 CPMDeclarePackage (use_ccache
