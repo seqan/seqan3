@@ -19,7 +19,7 @@ project (seqan3
          DESCRIPTION "SeqAn3 -- the modern C++ library for sequence analysis"
          HOMEPAGE_URL "https://github.com/seqan/seqan3")
 
-find_package (SeqAn3 3.0 REQUIRED HINTS ${SEQAN3_MODULE_PATH})
+include (seqan3-config)
 
 option (INSTALL_SEQAN3 "Enable installation of seqan3. (Projects embedding seqan3 may want to turn this OFF.)" ON)
 

@@ -281,24 +281,28 @@ endif ()
 # Finish find_package call
 # ----------------------------------------------------------------------------
 
-find_package_handle_standard_args (${CMAKE_FIND_PACKAGE_NAME} REQUIRED_VARS SEQAN3_INCLUDE_DIR)
+if (CMAKE_FIND_PACKAGE_NAME)
+    find_package_handle_standard_args (${CMAKE_FIND_PACKAGE_NAME} REQUIRED_VARS SEQAN3_INCLUDE_DIR)
 
-# Set SEQAN3_* variables with the content of ${CMAKE_FIND_PACKAGE_NAME}_(FOUND|...|VERSION)
-# This needs to be done, because `find_package(SeqAn3)` might be called in any case-sensitive way and we want to
-# guarantee that SEQAN3_* are always set.
-foreach (package_var
-         FOUND
-         DIR
-         ROOT
-         CONFIG
-         VERSION
-         VERSION_MAJOR
-         VERSION_MINOR
-         VERSION_PATCH
-         VERSION_TWEAK
-         VERSION_COUNT)
-    set (SEQAN3_${package_var} "${${CMAKE_FIND_PACKAGE_NAME}_${package_var}}")
-endforeach ()
+    # Set SEQAN3_* variables with the content of ${CMAKE_FIND_PACKAGE_NAME}_(FOUND|...|VERSION)
+    # This needs to be done, because `find_package(SeqAn3)` might be called in any case-sensitive way and we want to
+    # guarantee that SEQAN3_* are always set.
+    foreach (package_var
+             FOUND
+             DIR
+             ROOT
+             CONFIG
+             VERSION
+             VERSION_MAJOR
+             VERSION_MINOR
+             VERSION_PATCH
+             VERSION_TWEAK
+             VERSION_COUNT)
+        set (SEQAN3_${package_var} "${${CMAKE_FIND_PACKAGE_NAME}_${package_var}}")
+    endforeach ()
+else ()
+    set (SEQAN3_VERSION "${PACKAGE_VERSION}")
+endif ()
 
 # propagate SEQAN3_INCLUDE_DIR into SEQAN3_INCLUDE_DIRS
 set (SEQAN3_INCLUDE_DIRS ${SEQAN3_INCLUDE_DIR})
@@ -307,7 +311,7 @@ set (SEQAN3_INCLUDE_DIRS ${SEQAN3_INCLUDE_DIR})
 # Export targets
 # ----------------------------------------------------------------------------
 
-if (SEQAN3_FOUND AND NOT TARGET seqan3::seqan3)
+if (NOT TARGET seqan3::seqan3)
     add_library (seqan3_seqan3 INTERFACE)
     target_compile_definitions (seqan3_seqan3 INTERFACE ${SEQAN3_DEFINITIONS})
     target_compile_features (seqan3_seqan3 INTERFACE cxx_std_23)
