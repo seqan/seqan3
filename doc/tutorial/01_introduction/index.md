@@ -39,15 +39,15 @@ this implies no copyright-obligations (however distributing SeqAn or an applicat
 using it does, see [Copyright](https://docs.seqan.de/seqan3/main_user/about_copyright.html) and
 [Citing](https://docs.seqan.de/seqan3/main_user/about_citing.html)).
 
-You may ask why we do not use std::cout or std::cerr for console output.
-Actually, for the given text it does not make a difference since seqan3::debug_stream prints to std::cerr as well.
+You may ask why we do not use `std::cout` or `std::cerr` for console output.
+Actually, for the given text it does not make a difference since `seqan3::debug_stream` prints to `std::cerr` as well.
 However, the debug stream provides convenient output for SeqAn's types as well as widely used data structures
-(e.g. std::vector), which is especially helpful when you debug or develop your program
+(e.g., `std::vector`), which is especially helpful when you debug or develop your program
 (that's where the name originates from).
 
 \assignment{Assignment 1: Debug stream}
-Write a program that creates a std::vector of type `int` and initialise the vector with a few values.
-Then print the vector with seqan3::debug_stream. Does your program also work with std::cerr?
+Write a program that creates a `std::vector` of type `int` and initialise the vector with a few values.
+Then print the vector with `seqan3::debug_stream`. Does your program also work with `std::cerr`?
 \endassignment
 \solution
 \snippet introduction_debug_stream.cpp debug
@@ -76,7 +76,7 @@ Some helpful tips when browsing our documentation:
   [cookbook](https://docs.seqan.de/seqan3/main_user/cookbook.html). It is not structured and huge, but works
   well if you do a key word search with `Ctrl+F`.
 
-We recommend you to open the API documentation in separate browser tab s.t. you can easily switch back to the tutorial.
+We recommend you to open the API documentation in a separate browser tab s.t. you can easily switch back to the tutorial.
 
 If you have troubles or the documentation is missing some information, feel free to write to the developers
 of SeqAn on [Github](https://github.com/seqan/seqan3/issues/new/choose) and ask your questions directly.
@@ -127,11 +127,11 @@ e.g. type templates are used like ordinary types in many situations (no `<>`).
 We also always use `{}` to initialise objects and not `()` which is only used for function calls.
 In general, the style should be much easier for newcomers.
 
-## Avoid using namespace seqan3
+## Avoid <code>using namespace seqan3</code>
 
 In concordance with the [C++ Core guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rs-using),
 we encourage you to avoid declaring `using namespace seqan3;`. This has the benefit of easily distinguishing
-between `seqan3` features and standard C++ (`std`). The only exception are string literals, where we often use
+between `seqan3` features and standard C++ (`std`). The only exceptions are string literals, where we often use
 `using namespace seqan3::literals;` for convenience.
 
 # The next tutorials

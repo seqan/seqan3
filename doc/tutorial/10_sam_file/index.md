@@ -20,7 +20,7 @@ This tutorial is a walk-through with links into the API documentation and is als
 SAM files are used to store pairwise alignments between two (biological) sequences. There are also other output formats,
 like BLAST, which can store sequence alignments, but in this tutorial we will focus on SAM/BAM files.
 In addition to the alignment, these formats store information such as the start positions or mapping qualities.
-SAM files are a little more complex than sequence files but the basic design is the same.
+SAM files are a little more complex than sequence files, but the basic design is the same.
 If you are new to SeqAn, we strongly recommend completing the tutorial \ref tutorial_sequence_file first.
 
 # SAM/BAM file formats
@@ -78,8 +78,8 @@ To make things clearer, here is the table of SAM columns and the corresponding f
 | 11 | QUAL          | seqan3::sam_record::base_qualities     | seqan3::field::qual       |
 
 SAM files provide following additional fields:
-* seqan3::sam_record::tags (seqan3::field::tags)
-* seqan3::sam_record::header_ptr (seqan3::field::header_ptr)
+* `seqan3::sam_record::tags` (`seqan3::field::tags`)
+* `seqan3::sam_record::header_ptr` (`seqan3::field::header_ptr`)
 
 ## File extensions
 
@@ -106,7 +106,7 @@ Before we start, you should copy and paste this [example file](example.sam) into
 
 The construction works analogously to sequence files by passing a file name,
 in which case, all template parameters are automatically deduced (by the file name extension).
-Or you can pass a stream (e.g. std::cin or std::stringstream), but then you need to know your format beforehand:
+Or you can pass a stream (e.g. `std::cin` or `std::stringstream`), but then you need to know your format beforehand:
 
 \snippet doc/tutorial/10_sam_file/sam_file_filename_construction.cpp main
 
@@ -116,14 +116,14 @@ You can access a record member like this:
 
 \snippet doc/tutorial/10_sam_file/sam_file_sam_record.cpp main
 
-See seqan3::sam_record for all data accessors.
+See `seqan3::sam_record` for all data accessors.
 
 \assignment{Assignment 1: Accumulating mapping qualities}
 
 Let's assume we want to compute the average mapping quality of a SAM file.
 
 For this purpose, write a small program that
-    * only reads the mapping quality (seqan3::sam_record::mapping_quality) of a SAM file and
+    * only reads the mapping quality (`seqan3::sam_record::mapping_quality`) of a SAM file and
     * computes the average of all qualities.
 
 Use the following file to test your program:
@@ -144,10 +144,10 @@ Average: 27.4
 
 # Alignment representation in SAM/BAM files
 
-The SAM format is the common output format of read mappers where you align short read sequences
+The SAM format is the common output format of read mappers, where you align short read sequences
 to one or more large reference sequences.
 In fact, the SAM format stores those alignment information only partially:
-It **does not store the reference sequence** but only the query/read sequence and a *CIGAR* string
+It **does not store the reference sequence**, but only the query/read sequence and a *CIGAR* string
 representing the alignment based on the read.
 
 Take this SAM record as an example:
@@ -159,7 +159,7 @@ r003   73   ref   3   17   1M1D4M   *  0   0  TAGGC   *
 The record gives you the following information:
 A read with name `r003` has been mapped to a reference with name `ref` at position `3`
 (in the reference, counting from 1) with a quality of `17` (Phred scaled).
-The flag has a value of `73` which indicates that the read is paired, the first in pair, but the mate is unmapped
+The flag has a value of `73` which indicates that the read is paired, the first in the pair, but the mate is unmapped
 (see [this website](https://broadinstitute.github.io/picard/explain-flags.html) for a nice explanation of SAM flags).
 Fields set to `0` or `*` indicate empty fields and contain no valuable information.
 
@@ -180,8 +180,8 @@ or the [SAMtools paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2723002/).
 
 ## Reading the CIGAR string
 
-By default, the seqan3::sam_file_input will always read the seqan3::sam_record::cigar_sequence and store it
-into a std::vector\<seqan3::cigar\>:
+By default, the `seqan3::sam_file_input` will always read the `seqan3::sam_record::cigar_sequence` and store it
+into a `std::vector<seqan3::cigar>`:
 
 \snippet doc/tutorial/10_sam_file/sam_file_read_cigar.cpp main
 
@@ -208,12 +208,12 @@ Then read the following SAM file while providing the reference sequence informat
 \snippet doc/tutorial/10_sam_file/sam_file_solution2.cpp sam_file
 
 Only use
-* seqan3::sam_record::id,
-* seqan3::sam_record::reference_id,
-* seqan3::sam_record::mapping_quality, and
-* seqan3::sam_record::cigar.
+* `seqan3::sam_record::id`,
+* `seqan3::sam_record::reference_id`,
+* `seqan3::sam_record::mapping_quality`, and
+* `seqan3::sam_record::cigar`.
 
-With that information do the following:
+With that information, do the following:
   * Filter the alignment records and only take those with a mapping quality >= 30.
     (Take a look at the tutorial \ref sequence_file_section_fun_with_ranges for a reminder about using views on files)
   * For the resulting alignments, print which read was mapped against which reference id and
@@ -248,7 +248,7 @@ r004 mapped against 1 with 14 gaps in the read sequence and 0 gaps in the refere
 When writing a SAM file without any further specifications, the default file assumes that all fields are provided.
 Since those are quite a lot for alignment files, we usually want to write only a subset of the data stored in the SAM format and default the rest.
 
-For this purpose, you can use the seqan3::sam_record to write out a partial record.
+For this purpose, you can use the `seqan3::sam_record` to write out a partial record.
 
 \snippet doc/tutorial/10_sam_file/sam_file_writing.cpp main
 

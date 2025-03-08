@@ -37,12 +37,12 @@ Given an index, SeqAn will choose the best search strategy for you. Since very d
 internally depending on the configuration, it is advisable to do benchmarks with your application. A rule of thumb is
 to use the Bi-FM-Index when allowing more than 2 errors.
 
-This tutorial will show you how to use the seqan3::fm_index and seqan3::bi_fm_index to create indices and how to
-search them efficiently using seqan3::search.
+This tutorial will show you how to use the `seqan3::fm_index` and `seqan3::bi_fm_index` to create indices and how to
+search them efficiently using `seqan3::search`.
 
 ## Capabilities
 
-With this module you can:
+With this module, you can:
 * Create, store and load (Bi)-FM-Indices
 * Search for exact hits
 * Search for approximate hits (allowing substitutions and indels)
@@ -90,7 +90,7 @@ You are given the text
 \code
 dna4_vector text{"CGCTGTCTGAAGGATGAGTGTCAGCCAGTGTAACCCGATGAGCTACCCAGTAGTCGAACTGGGCCAGACAACCCGGCGCTAATGCACTCA"_dna4};
 \endcode
-Create a seqan3::fm_index over the reference, store the index and load the index into a new seqan3::fm_index object.
+Create a `seqan3::fm_index` over the reference, store the index and load the index into a new `seqan3::fm_index` object.
 Print whether the indices are identical or differ.
 \endassignment
 
@@ -112,13 +112,13 @@ the best result.
 
 **Exact search:** Finds all locations of the query in the reference without any errors.
 
-**Approximate search:** Finds all locations of the query in the reference with substitutions and indels within the confined set of maximal allowed errors.
+**Approximate search:** Finds all locations of the query in the reference with substitutions and indels, within the confined set of maximal allowed errors.
 
 **Hit:** A single result that identifies a specific location in the reference where a particular query can be found by either an exact or an approximate search.
 
 ## Searching for exact hits
 
-We can search for all exact hits using seqan3::search:
+We can search for all exact hits using `seqan3::search`:
 
 \include doc/tutorial/09_search/search_basic_search.cpp
 
@@ -166,26 +166,26 @@ The following hits were found:
 Up until now, we have seen that we can call the search with the query sequences and the index. In addition, we
 can provide a third parameter to provide a user defined
 \ref search_configuration_section_introduction "search configuration".
-If we do not provide a user defined search configuration, the seqan3::search_cfg::default_configuration will be used,
+If we do not provide a user-defined search configuration, the `seqan3::search_cfg::default_configuration` will be used,
 which triggers an exact search, finding all hits for a particular query. In the following, we will see how we can
-change the behaviour of the search algorithm by providing a user defined search configuration.
+change the behaviour of the search algorithm by providing a user-defined search configuration.
 
 ### Max error configuration
 
 You can specify the error configuration for the approximate search using the
 \ref search_configuration_subsection_error "seqan3::search_cfg::max_error_*" configuration.
-Here you can use a combination of the following configuration elements to specify exactly how the errors can be
+Here, you can use a combination of the following configuration elements to specify exactly how the errors can be
 distributed during the search:
- - seqan3::search_cfg::max_error_total,
- - seqan3::search_cfg::max_error_substitution,
- - seqan3::search_cfg::max_error_insertion and
- - seqan3::search_cfg::max_error_deletion.
+ - `seqan3::search_cfg::max_error_total,`
+ - `seqan3::search_cfg::max_error_substitution,`
+ - `seqan3::search_cfg::max_error_insertion` and
+ - `seqan3::search_cfg::max_error_deletion`.
 
 Each of the configuration elements can be constructed with either an absolute number of errors or an error rate
 depending on the context. These are represented by the following types:
 
-- seqan3::search_cfg::error_count: Absolute number of errors
-- seqan3::search_cfg::error_rate: Rate of errors \f$\in[0,1]\f$
+- `seqan3::search_cfg::error_count`: Absolute number of errors
+- `seqan3::search_cfg::error_rate`: Rate of errors \f$\in[0,1]\f$
 
 By combining the different error types using the `|`-operator, we give you full control over the error distribution.
 Thus, it is possible to set an upper limit of allowed errors but also to refine the error distribution by specifying the
@@ -246,18 +246,18 @@ which hits should be reported by the search.
 To do so, you can use one of the following \ref search_configuration_subsection_hit_strategy "seqan3::search_cfg::hit_*"
 configurations:
 
-- seqan3::search_cfg::hit_all: Report all hits that satisfy the (approximate) search.
-- seqan3::search_cfg::hit_single_best: Report the best hit, i.e. the *first* hit with the lowest edit distance.
-- seqan3::search_cfg::hit_all_best: Report all hits with the lowest edit distance.
-- seqan3::search_cfg::hit_strata: best+x strategy. Report all hits within the x-neighbourhood of the best hit.
+- `seqan3::search_cfg::hit_all`: Report all hits that satisfy the (approximate) search.
+- `seqan3::search_cfg::hit_single_best`: Report the best hit, i.e. the *first* hit with the lowest edit distance.
+- `seqan3::search_cfg::hit_all_best`: Report all hits with the lowest edit distance.
+- `seqan3::search_cfg::hit_strata`: best+x strategy. Report all hits within the x-neighbourhood of the best hit.
 
 In contrast to the max error configuration, which allows a combination of the different error configuration objects, the hit
 configuration can only exist once within one search configuration. Trying to specify more than one hit configuration
 in one search configuration will fail at compile time with a static assertion.
 Sometimes the program you write requires to choose between different hit configurations depending on a user given
-program argument at runtime. To handle such cases you can also use the dynamic configuration seqan3::search_cfg::hit.
+program argument at runtime. To handle such cases, you can also use the dynamic configuration `seqan3::search_cfg::hit`.
 This configuration object represents one of the four hit configurations mentioned previously and can be modified at
-runtime. The following snippet gives an example for this scenario:
+runtime. The following snippet gives an example of this scenario:
 
 \snippet doc/tutorial/09_search/search_small_snippets.cpp hit_dynamic
 
@@ -270,8 +270,8 @@ demonstrates:
 
 \snippet doc/tutorial/09_search/search_small_snippets.cpp hit_strata
 
-Here we introduced a new concept when working with the seqan3::configuration object, which is much like the access
-interface of a std::tuple. Concretely, it is possible to access the stored
+Here we introduced a new concept when working with the `seqan3::configuration` object, which is much like the access
+interface of a `std::tuple`. Concretely, it is possible to access the stored
 configuration using the `get<cfg_type>(cfg)` interface, where `cfg_type` is the name of the configuration type we would like
 to access. The `get` interface returns a reference to the stored object that is identified by the given name. If you
 try to access an object which does not exist within the search configuration, a static assert will be emitted at compile
@@ -280,19 +280,19 @@ time such that no invalid code can be generated.
 \note We need to use the expression `using seqan3::get;` before we can call the `get` interface in order to allow the
       compiler to find the correct implementation of it based on the passed argument. This is related to how C++
       resolves unqualified lookup of free functions in combination with function templates using an explicit template
-      argument such as the `get` interface does.
+      argument, such as the `get` interface does.
 
 So, the open question remains what the stratum actually does. In the above example, if the best hit found by
 the search for a particular query had an edit distance of 1, the strata strategy would report all hits with up to an
 edit distance of 2.
-Since in this example the total error number is set to 2, all hits with 1 or 2 errors would be reported.
+Since, in this example, the total error number is set to 2, all hits with 1 or 2 errors would be reported.
 
 \assignment{Assignment 4}
 Search for all occurrences of `GCT` in the text from [assignment 1](#assignment_create_index).<br>
 Allow up to 1 error of any type and print the number of hits for each hit strategy (use
 `seqan3::search_cfg::strata{1}`).
 \hint
-    You can use std::ranges::distance to get the size of any range. Depending on the underlying range properties, this
+    You can use `std::ranges::distance` to get the size of any range. Depending on the underlying range properties, this
     algorithm will use the optimal way to compute the number of elements contained in the range.
 \endhint
 \endassignment
@@ -314,30 +314,30 @@ There are 25 hits.
 
 ## Controlling the search output
 
-When calling the search algorithm, a lazy range over seqan3::search_result objects is returned. Each result object represents a
-single hit. This means that merely calling the seqan3::search algorithm will do nothing except configure the search
+When calling the search algorithm, a lazy range over `seqan3::search_result` objects is returned. Each result object represents a
+single hit. This means that merely calling the `seqan3::search` algorithm will do nothing except configure the search
 algorithm based on the given search configuration, query and index. Only when iterating over the lazy search result
 range, the actual search for every query is triggered. We have done this automatically in the previous examples when
-printing the result to the seqan3::debug_stream which then invokes a range based iteration over the returned range or
-by using the std::ranges::distance algorithm. However, in many cases, we want to access the specific positions and
-information stored in the seqan3::search_result object to proceed with our application. Since some information might be
+printing the result to the `seqan3::debug_stream` which then invokes a range-based iteration over the returned range or
+by using the `std::ranges::distance` algorithm. However, in many cases, we want to access the specific positions and
+information stored in the `seqan3::search_result` object to proceed with our application. Since some information might be
 more compute-intensive than others, there is a way to control what the final search result object will contain.
 
 ### Output configuration
 
 The behaviour of the search algorithm is further controlled through the
 \ref search_configuration_subsection_output "seqan3::search_cfg::output_*" configurations.
-The following output configurations exists:
+The following output configurations exist:
 
-- seqan3::search_cfg::output_query_id
-- seqan3::search_cfg::output_reference_id
-- seqan3::search_cfg::output_reference_begin_position
-- seqan3::search_cfg::output_index_cursor
+- `seqan3::search_cfg::output_query_id`
+- `seqan3::search_cfg::output_reference_id`
+- `seqan3::search_cfg::output_reference_begin_position`
+- `seqan3::search_cfg::output_index_cursor`
 
 Similarly to the max error configurations, you can arbitrarily combine the configurations to customise the final output.
 For example, if you are only interested in the position of the hit within the reference sequence, you can use the
-seqan3::search_cfg::output_reference_begin_position configuration. Instead, if you need access to the index where the
-hit was found, you can use the seqan3::search_cfg::output_index_cursor configuration.
+`seqan3::search_cfg::output_reference_begin_position` configuration. Instead, if you need access to the index where the
+hit was found, you can use the `seqan3::search_cfg::output_index_cursor` configuration.
 
 \note If you do not provide any output configuration, then the query id and reference id as well as the
       reference begin position will be automatically reported. If you select only one in your search configuration, then only this one
@@ -357,8 +357,8 @@ Align the query to each of the found positions in the genome and print the score
 Do the same for the text collection from [assignment 2](#assignment_exact_search).
 
 \hint
-The search will give you positions in the text. To access the corresponding subrange of the text you can use
-std::span:
+The search will give you positions in the text. To access the corresponding subrange of the text, you can use
+`std::span`:
 \include doc/tutorial/09_search/search_span.cpp
 \endhint
 \endassignment

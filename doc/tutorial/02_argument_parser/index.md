@@ -9,7 +9,7 @@ We have separated the feature of parsing command line arguments to its own proje
 
 ### [![sharg_logo][sharg_logo_link]][sharg_link] The Sharg Parser
 
-* Github Repository: https://github.com/seqan/sharg-parser
+* GitHub Repository: https://github.com/seqan/sharg-parser
 * API Documentation: https://docs.seqan.de/sharg.html
 * Tutorials: https://docs.seqan.de/sharg/main_user/usergroup1.html
 
@@ -22,7 +22,7 @@ We have separated the feature of parsing command line arguments to its own proje
 
 ## Sharg & SeqAn
 
-You can easily setup Sharg parallel to SeqAn as we use the exact same infrastructure.
+You can easily set up Sharg parallel to SeqAn as we use the same infrastructure.
 
 If you have completed the \ref setup, do the following to also include the Sharg parser:
 
@@ -51,4 +51,4 @@ If you have completed the \ref setup, do the following to also include the Sharg
 Done!
 
 **Now you can do the [basic tutorial of the Sharg parser](https://docs.seqan.de/sharg/main_user/tutorial_parser.html)
-to learn how to conveniently access command line arguments.**
+to learn how to access command line arguments conveniently.**
