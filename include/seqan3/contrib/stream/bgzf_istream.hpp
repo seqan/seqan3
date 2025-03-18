@@ -22,8 +22,8 @@
 
 #pragma once
 
-#include <cstring>
 #include <condition_variable>
+#include <cstring>
 #include <mutex>
 
 #include <seqan3/contrib/parallel/buffer_queue.hpp>
@@ -42,49 +42,42 @@ namespace seqan3::contrib
 // Class basic_bgzf_istreambuf
 // --------------------------------------------------------------------------
 
-template<
-    typename Elem,
-    typename Tr = std::char_traits<Elem>,
-    typename ElemA = std::allocator<Elem>,
-    typename ByteT = char,
-    typename ByteAT = std::allocator<ByteT>
->
+template <typename Elem,
+          typename Tr = std::char_traits<Elem>,
+          typename ElemA = std::allocator<Elem>,
+          typename ByteT = char,
+          typename ByteAT = std::allocator<ByteT>>
 class basic_bgzf_istreambuf : public std::basic_streambuf<Elem, Tr>
 {
 public:
-
-    typedef Tr                              traits_type;
+    typedef Tr traits_type;
     typedef typename traits_type::char_type char_type;
-    typedef typename traits_type::int_type  int_type;
-    typedef typename traits_type::off_type  off_type;
-    typedef typename traits_type::pos_type  pos_type;
+    typedef typename traits_type::int_type int_type;
+    typedef typename traits_type::off_type off_type;
+    typedef typename traits_type::pos_type pos_type;
 
 private:
+    typedef std::basic_istream<Elem, Tr> & istream_reference;
 
-    typedef std::basic_istream<Elem, Tr>& istream_reference;
-
-    typedef ElemA                   char_allocator_type;
-    typedef ByteT                   byte_type;
-    typedef ByteAT                  byte_allocator_type;
-    typedef byte_type*              byte_buffer_type;
+    typedef ElemA char_allocator_type;
+    typedef ByteT byte_type;
+    typedef ByteAT byte_allocator_type;
+    typedef byte_type * byte_buffer_type;
 
     typedef std::vector<char_type, char_allocator_type> TBuffer;
-    typedef fixed_buffer_queue<int32_t>                 TJobQueue;
+    typedef fixed_buffer_queue<int32_t> TJobQueue;
 
-    static const size_t MAX_PUTBACK = 4;
+    static size_t const MAX_PUTBACK = 4;
 
     // Allows serialized access to the underlying buffer.
     struct Serializer
     {
-        istream_reference   istream;
-        std::mutex          lock;
-        io_error            *error;
-        off_type            fileOfs;
+        istream_reference istream;
+        std::mutex lock;
+        io_error * error;
+        off_type fileOfs;
 
-        Serializer(istream_reference istream) :
-            istream(istream),
-            error(NULL),
-            fileOfs(0u)
+        Serializer(istream_reference istream) : istream(istream), error(NULL), fileOfs(0u)
         {}
 
         ~Serializer()
@@ -99,16 +92,16 @@ private:
     {
         typedef std::vector<byte_type, byte_allocator_type> TInputBuffer;
 
-        TInputBuffer            inputBuffer;
-        TBuffer                 buffer;
-        off_type                fileOfs;
-        int32_t                 size;
-        uint32_t                compressedSize;
+        TInputBuffer inputBuffer;
+        TBuffer buffer;
+        off_type fileOfs;
+        int32_t size;
+        uint32_t compressedSize;
 
-        std::mutex              cs;
+        std::mutex cs;
         std::condition_variable readyEvent;
-        bool                    ready;
-        bool                    bgzfEofMarker;
+        bool ready;
+        bool bgzfEofMarker;
 
         DecompressionJob() :
             inputBuffer(DefaultPageSize<detail::bgzf_compression>::MAX_BLOCK_SIZE, 0),
@@ -121,7 +114,7 @@ private:
             bgzfEofMarker(false)
         {}
 
-        DecompressionJob(DecompressionJob const &other) :
+        DecompressionJob(DecompressionJob const & other) :
             inputBuffer(other.inputBuffer),
             buffer(other.buffer),
             fileOfs(other.fileOfs),
@@ -134,18 +127,18 @@ private:
     };
 
     // string of recyclable jobs
-    size_t                        numThreads;
-    size_t                        numJobs;
+    size_t numThreads;
+    size_t numJobs;
     std::vector<DecompressionJob> jobs;
-    TJobQueue                     runningQueue;
-    TJobQueue                     todoQueue;
-    detail::reader_writer_manager runningQueueManager;  // synchronises reader, writer with running queue.
+    TJobQueue runningQueue;
+    TJobQueue todoQueue;
+    detail::reader_writer_manager runningQueueManager; // synchronises reader, writer with running queue.
     detail::reader_writer_manager todoQueueManager;    // synchronises reader, writer with todo queue.
-    int                           currentJobId;
+    int currentJobId;
 
     struct DecompressionThread
     {
-        basic_bgzf_istreambuf                        *streamBuf;
+        basic_bgzf_istreambuf * streamBuf;
         CompressionContext<detail::bgzf_compression> compressionCtx;
 
         void operator()()
@@ -163,7 +156,7 @@ private:
                 if (streamBuf->todoQueue.wait_pop(jobId) == queue_op_status::closed)
                     return;
 
-                DecompressionJob &job = streamBuf->jobs[jobId];
+                DecompressionJob & job = streamBuf->jobs[jobId];
                 size_t tailLen = 0;
 
                 // typically the idle queue contains only ready jobs
@@ -172,7 +165,11 @@ private:
                 if (!job.ready)
                 {
                     std::unique_lock<std::mutex> lock(job.cs);
-                    job.readyEvent.wait(lock, [&job]{return job.ready;});
+                    job.readyEvent.wait(lock,
+                                        [&job]
+                                        {
+                                            return job.ready;
+                                        });
                     assert(job.ready == true);
                 }
 
@@ -193,7 +190,7 @@ private:
                     {
                         // read header
                         streamBuf->serializer.istream.read(
-                            (char_type*)&job.inputBuffer[0],
+                            (char_type *)&job.inputBuffer[0],
                             DefaultPageSize<detail::bgzf_compression>::BLOCK_HEADER_LENGTH);
 
                         if (!streamBuf->serializer.istream.good())
@@ -214,18 +211,20 @@ private:
                         }
 
                         // extract length of compressed data
-                        tailLen = _bgzfUnpack16(&job.inputBuffer[0] + 16) +
-                                  1u - DefaultPageSize<detail::bgzf_compression>::BLOCK_HEADER_LENGTH;
+                        tailLen = _bgzfUnpack16(&job.inputBuffer[0] + 16) + 1u
+                                - DefaultPageSize<detail::bgzf_compression>::BLOCK_HEADER_LENGTH;
 
                         // read compressed data and tail
                         streamBuf->serializer.istream.read(
-                            (char_type*)&job.inputBuffer[0] + DefaultPageSize<detail::bgzf_compression>::BLOCK_HEADER_LENGTH,
+                            (char_type *)&job.inputBuffer[0]
+                                + DefaultPageSize<detail::bgzf_compression>::BLOCK_HEADER_LENGTH,
                             tailLen);
 
                         // Check if end-of-file marker is set
                         if (memcmp(reinterpret_cast<uint8_t const *>(&job.inputBuffer[0]),
                                    reinterpret_cast<uint8_t const *>(&BGZF_END_OF_FILE_MARKER[0]),
-                                   28) == 0)
+                                   28)
+                            == 0)
                         {
                             job.bgzfEofMarker = true;
                         }
@@ -244,8 +243,8 @@ private:
                         job.ready = false;
 
                     eofSkip:
-                        streamBuf->serializer.istream.clear(
-                            streamBuf->serializer.istream.rdstate() & ~std::ios_base::failbit);
+                        streamBuf->serializer.istream.clear(streamBuf->serializer.istream.rdstate()
+                                                            & ~std::ios_base::failbit);
                     }
 
                     if (streamBuf->runningQueue.try_push(jobId) != queue_op_status::success)
@@ -256,16 +255,18 @@ private:
                             job.ready = true;
                         }
                         job.readyEvent.notify_all();
-                        return;  // Terminate this thread.
+                        return; // Terminate this thread.
                     }
                 }
 
                 if (!job.ready)
                 {
                     // decompress block
-                    job.size = _decompressBlock(
-                        &job.buffer[0] + MAX_PUTBACK, job.buffer.capacity(),
-                        &job.inputBuffer[0], job.compressedSize, compressionCtx);
+                    job.size = _decompressBlock(&job.buffer[0] + MAX_PUTBACK,
+                                                job.buffer.capacity(),
+                                                &job.inputBuffer[0],
+                                                job.compressedSize,
+                                                compressionCtx);
 
                     // signal that job is ready
                     {
@@ -278,14 +279,11 @@ private:
         }
     };
 
-    std::vector<std::thread> pool;  // pool of worker threads
-    TBuffer                  putbackBuffer;
+    std::vector<std::thread> pool; // pool of worker threads
+    TBuffer putbackBuffer;
 
 public:
-
-    basic_bgzf_istreambuf(istream_reference istream_,
-                          size_t numThreads = bgzf_thread_count,
-                          size_t jobsPerThread = 8) :
+    basic_bgzf_istreambuf(istream_reference istream_, size_t numThreads = bgzf_thread_count, size_t jobsPerThread = 8) :
         serializer(istream_),
         numThreads(numThreads),
         numJobs(numThreads * jobsPerThread),
@@ -338,14 +336,11 @@ public:
 
         // save at most MAX_PUTBACK characters from previous page to putback buffer
         if (putback != 0)
-            std::copy(
-                this->gptr() - putback,
-                this->gptr(),
-                &putbackBuffer[0]);
+            std::copy(this->gptr() - putback, this->gptr(), &putbackBuffer[0]);
 
         if (currentJobId >= 0)
             todoQueue.wait_push(currentJobId);
-            // appendValue(todoQueue, currentJobId);
+        // appendValue(todoQueue, currentJobId);
 
         while (true)
         {
@@ -358,36 +353,36 @@ public:
                 return EOF;
             }
 
-            DecompressionJob &job = jobs[currentJobId];
+            DecompressionJob & job = jobs[currentJobId];
 
             // restore putback buffer
             this->setp(&job.buffer[0], &job.buffer[0] + (job.buffer.size() - 1));
             if (putback != 0)
-                std::copy(
-                    &putbackBuffer[0],
-                    &putbackBuffer[0] + putback,
-                    &job.buffer[0] + (MAX_PUTBACK - putback));
+                std::copy(&putbackBuffer[0], &putbackBuffer[0] + putback, &job.buffer[0] + (MAX_PUTBACK - putback));
 
             // wait for the end of decompression
             {
                 std::unique_lock<std::mutex> lock(job.cs);
-                job.readyEvent.wait(lock, [&job]{return job.ready;});
+                job.readyEvent.wait(lock,
+                                    [&job]
+                                    {
+                                        return job.ready;
+                                    });
             }
 
-            size_t size = (job.size != -1)? job.size : 0;
+            size_t size = (job.size != -1) ? job.size : 0;
 
             // reset buffer pointers
-            this->setg(
-                  &job.buffer[0] + (MAX_PUTBACK - putback),     // beginning of putback area
-                  &job.buffer[0] + MAX_PUTBACK,                 // read position
-                  &job.buffer[0] + (MAX_PUTBACK + size));       // end of buffer
+            this->setg(&job.buffer[0] + (MAX_PUTBACK - putback), // beginning of putback area
+                       &job.buffer[0] + MAX_PUTBACK,             // read position
+                       &job.buffer[0] + (MAX_PUTBACK + size));   // end of buffer
 
             // The end of the bgzf file is reached, either if there was an error, or if the
             // end-of-file marker was reached, while the uncompressed block had zero size.
             if (job.size == -1 || (job.size == 0 && job.bgzfEofMarker))
                 return EOF;
             else if (job.size > 0)
-                return traits_type::to_int_type(*this->gptr());      // return next character
+                return traits_type::to_int_type(*this->gptr()); // return next character
 
             throw io_error("BGZF: Invalid end condition in decompression. "
                            "Most likely due to an empty bgzf block without end-of-file marker.");
@@ -410,20 +405,18 @@ public:
 
                 if (currentJobId >= 0 && ofs <= this->egptr() - this->gptr())
                 {
-                    DecompressionJob &job = jobs[currentJobId];
+                    DecompressionJob & job = jobs[currentJobId];
 
                     // reset buffer pointers
-                    this->setg(
-                          this->eback(),            // beginning of putback area
-                          this->gptr() + ofs,       // read position
-                          this->egptr());           // end of buffer
+                    this->setg(this->eback(),      // beginning of putback area
+                               this->gptr() + ofs, // read position
+                               this->egptr());     // end of buffer
 
                     if (this->gptr() != this->egptr())
                         return pos_type((job.fileOfs << 16) + ((this->gptr() - &job.buffer[MAX_PUTBACK])));
                     else
                         return pos_type((job.fileOfs + job.compressedSize) << 16);
                 }
-
             }
             else if (dir == std::ios_base::beg)
             {
@@ -433,13 +426,12 @@ public:
                 // are we in the same block?
                 if (currentJobId >= 0 && jobs[currentJobId].fileOfs == (off_type)destFileOfs)
                 {
-                    DecompressionJob &job = jobs[currentJobId];
+                    DecompressionJob & job = jobs[currentJobId];
 
                     // reset buffer pointers
-                    this->setg(
-                          this->eback(),                                        // beginning of putback area
-                          &job.buffer[0] + (MAX_PUTBACK + (ofs & 0xffff)),      // read position
-                          this->egptr());                                       // end of buffer
+                    this->setg(this->eback(),                                    // beginning of putback area
+                               &job.buffer[0] + (MAX_PUTBACK + (ofs & 0xff'ff)), // read position
+                               this->egptr());                                   // end of buffer
                     return ofs;
                 }
 
@@ -479,7 +471,7 @@ public:
                         if (serializer.istream.rdbuf()->pubseekpos(destFileOfs, std::ios_base::in) == destFileOfs)
                             serializer.fileOfs = destFileOfs;
                         else
-                            currentJobId = -2;      // temporarily signals a seek error
+                            currentJobId = -2; // temporarily signals a seek error
                     }
                 }
 
@@ -493,20 +485,23 @@ public:
                 if (currentJobId >= 0)
                 {
                     // wait for the end of decompression
-                    DecompressionJob &job = jobs[currentJobId];
+                    DecompressionJob & job = jobs[currentJobId];
 
                     {
                         std::unique_lock<std::mutex> lock(job.cs);
-                        job.readyEvent.wait(lock, [&job]{return job.ready;});
+                        job.readyEvent.wait(lock,
+                                            [&job]
+                                            {
+                                                return job.ready;
+                                            });
                     }
 
                     assert(job.fileOfs == (off_type)destFileOfs);
 
                     // reset buffer pointers
-                    this->setg(
-                          &job.buffer[0] + MAX_PUTBACK,                     // no putback area
-                          &job.buffer[0] + (MAX_PUTBACK + (ofs & 0xffff)),  // read position
-                          &job.buffer[0] + (MAX_PUTBACK + job.size));       // end of buffer
+                    this->setg(&job.buffer[0] + MAX_PUTBACK,                     // no putback area
+                               &job.buffer[0] + (MAX_PUTBACK + (ofs & 0xff'ff)), // read position
+                               &job.buffer[0] + (MAX_PUTBACK + job.size));       // end of buffer
                     return ofs;
                 }
             }
@@ -520,43 +515,58 @@ public:
     }
 
     // returns the compressed input istream
-    istream_reference get_istream()    { return serializer.istream; };
+    istream_reference get_istream()
+    {
+        return serializer.istream;
+    };
 };
 
 // --------------------------------------------------------------------------
 // Class basic_bgzf_istreambase
 // --------------------------------------------------------------------------
 
-template<
-    typename Elem,
-    typename Tr = std::char_traits<Elem>,
-    typename ElemA = std::allocator<Elem>,
-    typename ByteT = char,
-    typename ByteAT = std::allocator<ByteT>
->
-class basic_bgzf_istreambase : virtual public std::basic_ios<Elem,Tr>
+template <typename Elem,
+          typename Tr = std::char_traits<Elem>,
+          typename ElemA = std::allocator<Elem>,
+          typename ByteT = char,
+          typename ByteAT = std::allocator<ByteT>>
+class basic_bgzf_istreambase : virtual public std::basic_ios<Elem, Tr>
 {
 public:
-    typedef std::basic_istream<Elem, Tr>&                          istream_reference;
-    typedef basic_bgzf_istreambuf<Elem, Tr, ElemA, ByteT, ByteAT>  decompression_bgzf_streambuf_type;
+    typedef std::basic_istream<Elem, Tr> & istream_reference;
+    typedef basic_bgzf_istreambuf<Elem, Tr, ElemA, ByteT, ByteAT> decompression_bgzf_streambuf_type;
 
-    basic_bgzf_istreambase(istream_reference istream_)
-        : m_buf(istream_)
+    basic_bgzf_istreambase(istream_reference istream_) : m_buf(istream_)
     {
         this->init(&m_buf);
     };
 
     // returns the underlying decompression bgzf istream object
-    decompression_bgzf_streambuf_type* rdbuf() { return &m_buf; };
+    decompression_bgzf_streambuf_type * rdbuf()
+    {
+        return &m_buf;
+    };
 
     // returns the bgzf error state
-    int get_zerr() const                    { return m_buf.get_zerr(); };
+    int get_zerr() const
+    {
+        return m_buf.get_zerr();
+    };
     // returns the uncompressed data crc
-    long get_crc() const                    { return m_buf.get_crc(); };
+    long get_crc() const
+    {
+        return m_buf.get_crc();
+    };
     // returns the uncompressed data size
-    long get_out_size() const               { return m_buf.get_out_size(); };
+    long get_out_size() const
+    {
+        return m_buf.get_out_size();
+    };
     // returns the compressed data size
-    long get_in_size() const                { return m_buf.get_in_size(); };
+    long get_in_size() const
+    {
+        return m_buf.get_in_size();
+    };
 
 private:
     decompression_bgzf_streambuf_type m_buf;
@@ -566,50 +576,59 @@ private:
 // Class basic_bgzf_istream
 // --------------------------------------------------------------------------
 
-template<
-    typename Elem,
-    typename Tr = std::char_traits<Elem>,
-    typename ElemA = std::allocator<Elem>,
-    typename ByteT = char,
-    typename ByteAT = std::allocator<ByteT>
->
+template <typename Elem,
+          typename Tr = std::char_traits<Elem>,
+          typename ElemA = std::allocator<Elem>,
+          typename ByteT = char,
+          typename ByteAT = std::allocator<ByteT>>
 class basic_bgzf_istream :
-    public basic_bgzf_istreambase<Elem,Tr,ElemA,ByteT,ByteAT>,
-    public std::basic_istream<Elem,Tr>
+    public basic_bgzf_istreambase<Elem, Tr, ElemA, ByteT, ByteAT>,
+    public std::basic_istream<Elem, Tr>
 {
 public:
-    typedef basic_bgzf_istreambase<Elem,Tr,ElemA,ByteT,ByteAT> bgzf_istreambase_type;
-    typedef std::basic_istream<Elem,Tr>                        istream_type;
-    typedef istream_type &                                     istream_reference;
-    typedef char                                               byte_type;
+    typedef basic_bgzf_istreambase<Elem, Tr, ElemA, ByteT, ByteAT> bgzf_istreambase_type;
+    typedef std::basic_istream<Elem, Tr> istream_type;
+    typedef istream_type & istream_reference;
+    typedef char byte_type;
 
     basic_bgzf_istream(istream_reference istream_) :
         bgzf_istreambase_type(istream_),
         istream_type(bgzf_istreambase_type::rdbuf()),
         m_is_gzip(false),
-        m_gbgzf_data_size(0)
-    {};
+        m_gbgzf_data_size(0) {};
 
     // returns true if it is a gzip file
-    bool is_gzip() const                { return m_is_gzip; };
+    bool is_gzip() const
+    {
+        return m_is_gzip;
+    };
     // return data size check
-    bool check_data_size() const        { return this->get_out_size() == m_gbgzf_data_size; };
+    bool check_data_size() const
+    {
+        return this->get_out_size() == m_gbgzf_data_size;
+    };
 
     // return the data size in the file
-    long get_gbgzf_data_size() const    { return m_gbgzf_data_size; };
+    long get_gbgzf_data_size() const
+    {
+        return m_gbgzf_data_size;
+    };
 
 protected:
-    static void read_long(istream_reference in_, unsigned long& x_);
+    static void read_long(istream_reference in_, unsigned long & x_);
 
     int check_header();
     bool m_is_gzip;
     unsigned long m_gbgzf_data_size;
 
-#ifdef _WIN32
+#    ifdef _WIN32
+
 private:
-    void _Add_vtordisp1() { } // Required to avoid VC++ warning C4250
-    void _Add_vtordisp2() { } // Required to avoid VC++ warning C4250
-#endif
+    void _Add_vtordisp1()
+    {} // Required to avoid VC++ warning C4250
+    void _Add_vtordisp2()
+    {} // Required to avoid VC++ warning C4250
+#    endif
 };
 
 // ===========================================================================

@@ -171,8 +171,8 @@ inline TDestCapacity _compressBlock(TDestValue * dstBegin,
                                     TSourceLength srcLength,
                                     CompressionContext<detail::bgzf_compression> & ctx)
 {
-    const size_t BLOCK_HEADER_LENGTH = DefaultPageSize<detail::bgzf_compression>::BLOCK_HEADER_LENGTH;
-    const size_t BLOCK_FOOTER_LENGTH = DefaultPageSize<detail::bgzf_compression>::BLOCK_FOOTER_LENGTH;
+    size_t const BLOCK_HEADER_LENGTH = DefaultPageSize<detail::bgzf_compression>::BLOCK_HEADER_LENGTH;
+    size_t const BLOCK_FOOTER_LENGTH = DefaultPageSize<detail::bgzf_compression>::BLOCK_FOOTER_LENGTH;
 
     assert(dstCapacity > BLOCK_HEADER_LENGTH + BLOCK_FOOTER_LENGTH);
     assert(sizeof(TDestValue) == 1u);
@@ -249,8 +249,8 @@ inline TDestCapacity _decompressBlock(TDestValue * dstBegin,
                                       TSourceLength srcLength,
                                       CompressionContext<detail::bgzf_compression> & ctx)
 {
-    const size_t BLOCK_HEADER_LENGTH = DefaultPageSize<detail::bgzf_compression>::BLOCK_HEADER_LENGTH;
-    const size_t BLOCK_FOOTER_LENGTH = DefaultPageSize<detail::bgzf_compression>::BLOCK_FOOTER_LENGTH;
+    size_t const BLOCK_HEADER_LENGTH = DefaultPageSize<detail::bgzf_compression>::BLOCK_HEADER_LENGTH;
+    size_t const BLOCK_FOOTER_LENGTH = DefaultPageSize<detail::bgzf_compression>::BLOCK_FOOTER_LENGTH;
 
     assert(sizeof(TSourceValue) == 1u);
     assert(sizeof(unsigned) == 4u);

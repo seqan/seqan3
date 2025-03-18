@@ -23,21 +23,21 @@
 
 #pragma once
 
-#include <iostream>
 #include <cstring>
+#include <iostream>
 #include <vector>
 
 #include <seqan3/core/platform.hpp>
 
 #if SEQAN3_HAS_ZLIB
 
-#include <zlib.h>
+#    include <zlib.h>
 
 namespace seqan3::contrib
 {
 
 // Default gzip buffer size, change this to suite your needs.
-const size_t GZ_OUTPUT_DEFAULT_BUFFER_SIZE = 921600;
+size_t const GZ_OUTPUT_DEFAULT_BUFFER_SIZE = 921600;
 
 // --------------------------------------------------------------------------
 // Enum EStrategy
@@ -61,20 +61,18 @@ template <typename Elem,
           typename Tr = std::char_traits<Elem>,
           typename ElemA = std::allocator<Elem>,
           typename ByteT = unsigned char,
-          typename ByteAT = std::allocator<ByteT>
-          >
-class basic_gz_ostreambuf :
-    public std::basic_streambuf<Elem, Tr>
+          typename ByteAT = std::allocator<ByteT>>
+class basic_gz_ostreambuf : public std::basic_streambuf<Elem, Tr>
 {
 public:
-    typedef std::basic_ostream<Elem, Tr> &              ostream_reference;
-    typedef ElemA                                       char_allocator_type;
-    typedef ByteT                                       byte_type;
-    typedef ByteAT                                      byte_allocator_type;
-    typedef byte_type *                                 byte_buffer_type;
-    typedef Tr                                          traits_type;
-    typedef typename Tr::char_type                      char_type;
-    typedef typename Tr::int_type                       int_type;
+    typedef std::basic_ostream<Elem, Tr> & ostream_reference;
+    typedef ElemA char_allocator_type;
+    typedef ByteT byte_type;
+    typedef ByteAT byte_allocator_type;
+    typedef byte_type * byte_buffer_type;
+    typedef Tr traits_type;
+    typedef typename Tr::char_type char_type;
+    typedef typename Tr::int_type int_type;
     typedef std::vector<byte_type, byte_allocator_type> byte_vector_type;
     typedef std::vector<char_type, char_allocator_type> char_vector_type;
 
@@ -101,7 +99,6 @@ public:
     // This method should be called at the end of the compression.
     std::streamsize flush_finalize();
 
-
 private:
     bool zip_to_stream(char_type *, std::streamsize);
     size_t fill_input_buffer();
@@ -119,19 +116,13 @@ private:
 // Class basic_gz_ostreambuf implementation
 // --------------------------------------------------------------------------
 
-template <typename Elem,
-          typename Tr,
-          typename ElemA,
-          typename ByteT,
-          typename ByteAT>
-basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::basic_gz_ostreambuf(
-    ostream_reference ostream_,
-    size_t level_,
-    EStrategy strategy_,
-    size_t window_size_,
-    size_t memory_level_,
-    size_t buffer_size_
-    ) :
+template <typename Elem, typename Tr, typename ElemA, typename ByteT, typename ByteAT>
+basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::basic_gz_ostreambuf(ostream_reference ostream_,
+                                                                         size_t level_,
+                                                                         EStrategy strategy_,
+                                                                         size_t window_size_,
+                                                                         size_t memory_level_,
+                                                                         size_t buffer_size_) :
     m_ostream(ostream_),
     m_output_buffer(buffer_size_, 0),
     m_buffer(buffer_size_, 0)
@@ -144,23 +135,17 @@ basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::basic_gz_ostreambuf(
     m_zip_stream.avail_out = 0;
     m_zip_stream.next_out = NULL;
 
-    m_err = deflateInit2(
-        &m_zip_stream,
-        std::min(9, static_cast<int>(level_)),
-        Z_DEFLATED,
-        static_cast<int>(window_size_),
-        std::min(9, static_cast<int>(memory_level_)),
-        static_cast<int>(strategy_)
-        );
+    m_err = deflateInit2(&m_zip_stream,
+                         std::min(9, static_cast<int>(level_)),
+                         Z_DEFLATED,
+                         static_cast<int>(window_size_),
+                         std::min(9, static_cast<int>(memory_level_)),
+                         static_cast<int>(strategy_));
 
     this->setp(&(m_buffer[0]), &(m_buffer[m_buffer.size() - 1]));
 }
 
-template <typename Elem,
-          typename Tr,
-          typename ElemA,
-          typename ByteT,
-          typename ByteAT>
+template <typename Elem, typename Tr, typename ElemA, typename ByteT, typename ByteAT>
 basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::~basic_gz_ostreambuf()
 {
     flush_finalize();
@@ -168,11 +153,7 @@ basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::~basic_gz_ostreambuf()
     m_err = deflateEnd(&m_zip_stream);
 }
 
-template <typename Elem,
-          typename Tr,
-          typename ElemA,
-          typename ByteT,
-          typename ByteAT>
+template <typename Elem, typename Tr, typename ElemA, typename ByteT, typename ByteAT>
 int basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::sync()
 {
     if (this->pptr() && this->pptr() > this->pbase())
@@ -184,11 +165,7 @@ int basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::sync()
     return 0;
 }
 
-template <typename Elem,
-          typename Tr,
-          typename ElemA,
-          typename ByteT,
-          typename ByteAT>
+template <typename Elem, typename Tr, typename ElemA, typename ByteT, typename ByteAT>
 typename basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::int_type
 basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::overflow(
     typename basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::int_type c)
@@ -212,11 +189,7 @@ basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::overflow(
     }
 }
 
-template <typename Elem,
-          typename Tr,
-          typename ElemA,
-          typename ByteT,
-          typename ByteAT>
+template <typename Elem, typename Tr, typename ElemA, typename ByteT, typename ByteAT>
 bool basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::zip_to_stream(
     typename basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::char_type * buffer_,
     std::streamsize buffer_size_)
@@ -233,21 +206,19 @@ bool basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::zip_to_stream(
     {
         m_err = deflate(&m_zip_stream, 0);
 
-        if (m_err == Z_OK  || m_err == Z_STREAM_END)
+        if (m_err == Z_OK || m_err == Z_STREAM_END)
         {
             written_byte_size = static_cast<std::streamsize>(m_output_buffer.size()) - m_zip_stream.avail_out;
 
             // output buffer is full, dumping to ostream
-            m_ostream.write((const char_type *) &(m_output_buffer[0]),
+            m_ostream.write((char_type const *)&(m_output_buffer[0]),
                             static_cast<std::streamsize>(written_byte_size / sizeof(char_type)));
 
             // checking if some bytes were not written.
             if ((remainder = written_byte_size % sizeof(char_type)) != 0)
             {
                 // copy to the beginning of the stream
-                std::memmove(&(m_output_buffer[0]),
-                             &(m_output_buffer[written_byte_size - remainder]),
-                             remainder);
+                std::memmove(&(m_output_buffer[0]), &(m_output_buffer[written_byte_size - remainder]), remainder);
             }
 
             m_zip_stream.avail_out = static_cast<uInt>(m_output_buffer.size() - remainder);
@@ -259,18 +230,14 @@ bool basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::zip_to_stream(
     return m_err == Z_OK;
 }
 
-template <typename Elem,
-          typename Tr,
-          typename ElemA,
-          typename ByteT,
-          typename ByteAT>
+template <typename Elem, typename Tr, typename ElemA, typename ByteT, typename ByteAT>
 std::streamsize basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::flush(int flush_mode)
 {
     int const buffer_size = static_cast<int>(this->pptr() - this->pbase()); // amount of data currently in buffer
 
     std::streamsize written_byte_size = 0, total_written_byte_size = 0;
 
-    m_zip_stream.next_in = (byte_buffer_type) this->pbase();
+    m_zip_stream.next_in = (byte_buffer_type)this->pbase();
     m_zip_stream.avail_in = static_cast<uInt>(buffer_size * sizeof(char_type));
     m_zip_stream.avail_out = static_cast<uInt>(m_output_buffer.size());
     m_zip_stream.next_out = &(m_output_buffer[0]);
@@ -285,16 +252,14 @@ std::streamsize basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::flush(int f
             total_written_byte_size += written_byte_size;
 
             // output buffer is full, dumping to ostream
-            m_ostream.write((const char_type *) &(m_output_buffer[0]),
+            m_ostream.write((char_type const *)&(m_output_buffer[0]),
                             static_cast<std::streamsize>(written_byte_size / sizeof(char_type) * sizeof(byte_type)));
 
             // checking if some bytes were not written.
             if ((remainder = written_byte_size % sizeof(char_type)) != 0)
             {
                 // copy to the beginning of the stream
-                std::memmove(&(m_output_buffer[0]),
-                             &(m_output_buffer[written_byte_size - remainder]),
-                             remainder);
+                std::memmove(&(m_output_buffer[0]), &(m_output_buffer[written_byte_size - remainder]), remainder);
             }
 
             m_zip_stream.avail_out = static_cast<uInt>(m_output_buffer.size() - remainder);
@@ -308,21 +273,13 @@ std::streamsize basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::flush(int f
     return total_written_byte_size;
 }
 
-template <typename Elem,
-          typename Tr,
-          typename ElemA,
-          typename ByteT,
-          typename ByteAT>
+template <typename Elem, typename Tr, typename ElemA, typename ByteT, typename ByteAT>
 std::streamsize basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::flush()
 {
     return flush(Z_SYNC_FLUSH);
 }
 
-template <typename Elem,
-          typename Tr,
-          typename ElemA,
-          typename ByteT,
-          typename ByteAT>
+template <typename Elem, typename Tr, typename ElemA, typename ByteT, typename ByteAT>
 std::streamsize basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::flush_finalize()
 {
     return flush(Z_FINISH);
@@ -338,30 +295,31 @@ template <typename Elem,
           typename Tr = std::char_traits<Elem>,
           typename ElemA = std::allocator<Elem>,
           typename ByteT = unsigned char,
-          typename ByteAT = std::allocator<ByteT>
-          >
-class basic_gz_ostreambase :
-    virtual public std::basic_ios<Elem, Tr>
+          typename ByteAT = std::allocator<ByteT>>
+class basic_gz_ostreambase : virtual public std::basic_ios<Elem, Tr>
 {
 public:
-    typedef std::basic_ostream<Elem, Tr> &                      ostream_reference;
+    typedef std::basic_ostream<Elem, Tr> & ostream_reference;
     typedef basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT> zip_streambuf_type;
 
     // Construct a zip stream
     // More info on the following parameters can be found in the zlib documentation.
     basic_gz_ostreambase(ostream_reference ostream_,
-                          size_t level_,
-                          EStrategy strategy_,
-                          size_t window_size_,
-                          size_t memory_level_,
-                          size_t buffer_size_) :
+                         size_t level_,
+                         EStrategy strategy_,
+                         size_t window_size_,
+                         size_t memory_level_,
+                         size_t buffer_size_) :
         m_buf(ostream_, level_, strategy_, window_size_, memory_level_, buffer_size_)
     {
         this->init(&m_buf);
     }
 
     // returns the underlying zip ostream object
-    zip_streambuf_type * rdbuf() { return &m_buf; }
+    zip_streambuf_type * rdbuf()
+    {
+        return &m_buf;
+    }
 
 private:
     zip_streambuf_type m_buf;
@@ -392,16 +350,15 @@ template <typename Elem,
           typename Tr = std::char_traits<Elem>,
           typename ElemA = std::allocator<Elem>,
           typename ByteT = unsigned char,
-          typename ByteAT = std::allocator<ByteT>
-          >
+          typename ByteAT = std::allocator<ByteT>>
 class basic_gz_ostream :
     public basic_gz_ostreambase<Elem, Tr, ElemA, ByteT, ByteAT>,
     public std::basic_ostream<Elem, Tr>
 {
 public:
     typedef basic_gz_ostreambase<Elem, Tr, ElemA, ByteT, ByteAT> zip_ostreambase_type;
-    typedef std::basic_ostream<Elem, Tr>                          ostream_type;
-    typedef ostream_type &                                        ostream_reference;
+    typedef std::basic_ostream<Elem, Tr> ostream_type;
+    typedef ostream_type & ostream_reference;
 
     // Constructs a zipper ostream decorator
     //
@@ -414,31 +371,37 @@ public:
     // buffer_size_ the buffer size used to zip data
 
     basic_gz_ostream(ostream_reference ostream_,
-                      size_t level_ = Z_DEFAULT_COMPRESSION,
-                      EStrategy strategy_ = DefaultStrategy,
-                      size_t window_size_ = 31, // 15 (size) + 16 (gzip header)
-                      size_t memory_level_ = 8,
-                      size_t buffer_size_ = GZ_OUTPUT_DEFAULT_BUFFER_SIZE) :
+                     size_t level_ = Z_DEFAULT_COMPRESSION,
+                     EStrategy strategy_ = DefaultStrategy,
+                     size_t window_size_ = 31, // 15 (size) + 16 (gzip header)
+                     size_t memory_level_ = 8,
+                     size_t buffer_size_ = GZ_OUTPUT_DEFAULT_BUFFER_SIZE) :
         zip_ostreambase_type(ostream_, level_, strategy_, window_size_, memory_level_, buffer_size_),
         ostream_type(this->rdbuf())
     {}
 
     ~basic_gz_ostream()
     {
-        ostream_type::flush(); this->rdbuf()->flush_finalize();
+        ostream_type::flush();
+        this->rdbuf()->flush_finalize();
     }
 
     // flush inner buffer and zipper buffer
     basic_gz_ostream<Elem, Tr> & flush()
     {
-        ostream_type::flush(); this->rdbuf()->flush(); return *this;
+        ostream_type::flush();
+        this->rdbuf()->flush();
+        return *this;
     }
 
-#ifdef _WIN32
+#    ifdef _WIN32
+
 private:
-    void _Add_vtordisp1() {}  // Required to avoid VC++ warning C4250
-    void _Add_vtordisp2() {}  // Required to avoid VC++ warning C4250
-#endif
+    void _Add_vtordisp1()
+    {} // Required to avoid VC++ warning C4250
+    void _Add_vtordisp2()
+    {} // Required to avoid VC++ warning C4250
+#    endif
 };
 
 // ===========================================================================
@@ -446,9 +409,9 @@ private:
 // ===========================================================================
 
 // A typedef for basic_gz_ostream<char>
-typedef basic_gz_ostream<char>     gz_ostream;
+typedef basic_gz_ostream<char> gz_ostream;
 // A typedef for basic_gz_ostream<wchar_t>
-typedef basic_gz_ostream<wchar_t>  gz_wostream;
+typedef basic_gz_ostream<wchar_t> gz_wostream;
 
 } // namespace seqan3::contrib
 

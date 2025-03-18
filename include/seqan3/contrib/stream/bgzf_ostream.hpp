@@ -38,31 +38,27 @@ namespace seqan3::contrib
 // Class basic_bgzf_ostreambuf
 // --------------------------------------------------------------------------
 
-template<
-    typename Elem,
-    typename Tr = std::char_traits<Elem>,
-    typename ElemA = std::allocator<Elem>,
-    typename ByteT = char,
-    typename ByteAT = std::allocator<ByteT>
->
+template <typename Elem,
+          typename Tr = std::char_traits<Elem>,
+          typename ElemA = std::allocator<Elem>,
+          typename ByteT = char,
+          typename ByteAT = std::allocator<ByteT>>
 class basic_bgzf_ostreambuf : public std::basic_streambuf<Elem, Tr>
 {
 private:
-
-    typedef std::basic_ostream<Elem, Tr>&                ostream_reference;
-    typedef ElemA                                        char_allocator_type;
-    typedef ByteT                                        byte_type;
-    typedef ByteAT                                       byte_allocator_type;
-    typedef byte_type*                                   byte_buffer_type;
-    typedef ConcurrentQueue<size_t, Suspendable<Limit> > job_queue_type;
+    typedef std::basic_ostream<Elem, Tr> & ostream_reference;
+    typedef ElemA char_allocator_type;
+    typedef ByteT byte_type;
+    typedef ByteAT byte_allocator_type;
+    typedef byte_type * byte_buffer_type;
+    typedef ConcurrentQueue<size_t, Suspendable<Limit>> job_queue_type;
 
 public:
-
-    typedef Tr                                traits_type;
-    typedef typename traits_type::char_type   char_type;
-    typedef typename traits_type::int_type    int_type;
-    typedef typename traits_type::pos_type    pos_type;
-    typedef typename traits_type::off_type    off_type;
+    typedef Tr traits_type;
+    typedef typename traits_type::char_type char_type;
+    typedef typename traits_type::int_type int_type;
+    typedef typename traits_type::pos_type pos_type;
+    typedef typename traits_type::off_type off_type;
 
     struct ScopedLock
     {
@@ -80,8 +76,8 @@ public:
     // One compressed block.
     struct OutputBuffer
     {
-        char    buffer[DefaultPageSize<detail::bgzf_compression>::MAX_BLOCK_SIZE];
-        size_t  size;
+        char buffer[DefaultPageSize<detail::bgzf_compression>::MAX_BLOCK_SIZE];
+        size_t size;
     };
 
     // Writes the output to the underlying stream when invoked.
@@ -89,11 +85,10 @@ public:
     {
         ostream_reference ostream;
 
-        BufferWriter(ostream_reference ostream) :
-            ostream(ostream)
+        BufferWriter(ostream_reference ostream) : ostream(ostream)
         {}
 
-        bool operator() (OutputBuffer const & outputBuffer)
+        bool operator()(OutputBuffer const & outputBuffer)
         {
             ostream.write(outputBuffer.buffer, outputBuffer.size);
             return ostream.good();
@@ -104,9 +99,9 @@ public:
     {
         typedef std::vector<char_type, char_allocator_type> TBuffer;
 
-        TBuffer         buffer;
-        size_t          size;
-        OutputBuffer    *outputBuffer;
+        TBuffer buffer;
+        size_t size;
+        OutputBuffer * outputBuffer;
 
         CompressionJob() :
             buffer(DefaultPageSize<detail::bgzf_compression>::VALUE / sizeof(char_type), 0),
@@ -116,25 +111,31 @@ public:
     };
 
     // string of recycable jobs
-    size_t                                 numThreads;
-    size_t                                 numJobs;
-    std::vector<CompressionJob>            jobs;
-    job_queue_type                         jobQueue;
-    job_queue_type                         idleQueue;
+    size_t numThreads;
+    size_t numJobs;
+    std::vector<CompressionJob> jobs;
+    job_queue_type jobQueue;
+    job_queue_type idleQueue;
     Serializer<OutputBuffer, BufferWriter> serializer;
-    size_t                                 currentJobId;
-    bool                                   currentJobAvail;
+    size_t currentJobId;
+    bool currentJobAvail;
 
     struct CompressionThread
     {
-        basic_bgzf_ostreambuf                        *streamBuf;
+        basic_bgzf_ostreambuf * streamBuf;
         CompressionContext<detail::bgzf_compression> compressionCtx;
 
         void operator()()
         {
-            ScopedLock readLock{[this] () mutable { unlockReading(this->streamBuf->jobQueue); }};
+            ScopedLock readLock{[this]() mutable
+                                {
+                                    unlockReading(this->streamBuf->jobQueue);
+                                }};
             // ScopedReadLock<TJobQueue> readLock(streamBuf->jobQueue);
-            ScopedLock writeLock{[this] () mutable { unlockWriting(this->streamBuf->idleQueue); }};
+            ScopedLock writeLock{[this]() mutable
+                                 {
+                                     unlockWriting(this->streamBuf->idleQueue);
+                                 }};
             // ScopedWriteLock{obQueue> writeLock{str}amBuf->idleQueue);
 
             // wait for a new job to become available
@@ -145,12 +146,14 @@ public:
                 if (!popFront(jobId, streamBuf->jobQueue))
                     return;
 
-                CompressionJob &job = streamBuf->jobs[jobId];
+                CompressionJob & job = streamBuf->jobs[jobId];
 
                 // compress block with zlib
-                job.outputBuffer->size = _compressBlock(
-                    job.outputBuffer->buffer, sizeof(job.outputBuffer->buffer),
-                    &job.buffer[0], job.size, compressionCtx);
+                job.outputBuffer->size = _compressBlock(job.outputBuffer->buffer,
+                                                        sizeof(job.outputBuffer->buffer),
+                                                        &job.buffer[0],
+                                                        job.size,
+                                                        compressionCtx);
 
                 success = releaseValue(streamBuf->serializer, job.outputBuffer);
                 appendValue(streamBuf->idleQueue, jobId);
@@ -160,11 +163,9 @@ public:
 
     // array of worker threads
     // using TFuture = decltype(std::async(CompressionThread{nullptr, CompressionContext<BgzfFile>{}, static_cast<size_t>(0)}));
-    std::vector<std::thread>  pool;
+    std::vector<std::thread> pool;
 
-    basic_bgzf_ostreambuf(ostream_reference ostream_,
-                         size_t numThreads = bgzf_thread_count,
-                         size_t jobsPerThread = 8) :
+    basic_bgzf_ostreambuf(ostream_reference ostream_, size_t numThreads = bgzf_thread_count, size_t jobsPerThread = 8) :
         numThreads(numThreads),
         numJobs(numThreads * jobsPerThread),
         jobQueue(numJobs),
@@ -193,7 +194,7 @@ public:
         currentJobAvail = popFront(currentJobId, idleQueue);
         assert(currentJobAvail);
 
-        CompressionJob &job = jobs[currentJobId];
+        CompressionJob & job = jobs[currentJobId];
         job.outputBuffer = aquireValue(serializer);
         this->setp(&job.buffer[0], &job.buffer[0] + (job.buffer.size() - 1));
     }
@@ -243,7 +244,7 @@ public:
         }
         if (compressBuffer(w))
         {
-            CompressionJob &job = jobs[currentJobId];
+            CompressionJob & job = jobs[currentJobId];
             this->setp(&job.buffer[0], &job.buffer[0] + (job.buffer.size() - 1));
             return c;
         }
@@ -258,7 +259,7 @@ public:
         int w = static_cast<int>(this->pptr() - this->pbase());
         if ((w != 0 || flushEmptyBuffer) && compressBuffer(w))
         {
-            CompressionJob &job = jobs[currentJobId];
+            CompressionJob & job = jobs[currentJobId];
             this->setp(&job.buffer[0], &job.buffer[0] + (job.buffer.size() - 1));
         }
         else
@@ -292,42 +293,57 @@ public:
     }
 
     // returns a reference to the output stream
-    ostream_reference get_ostream() const    { return serializer.worker.ostream; };
+    ostream_reference get_ostream() const
+    {
+        return serializer.worker.ostream;
+    };
 };
 
 // --------------------------------------------------------------------------
 // Class basic_bgzf_ostreambase
 // --------------------------------------------------------------------------
 
-template<
-    typename Elem,
-    typename Tr = std::char_traits<Elem>,
-    typename ElemA = std::allocator<Elem>,
-    typename ByteT = char,
-    typename ByteAT = std::allocator<ByteT>
->
-class basic_bgzf_ostreambase : virtual public std::basic_ios<Elem,Tr>
+template <typename Elem,
+          typename Tr = std::char_traits<Elem>,
+          typename ElemA = std::allocator<Elem>,
+          typename ByteT = char,
+          typename ByteAT = std::allocator<ByteT>>
+class basic_bgzf_ostreambase : virtual public std::basic_ios<Elem, Tr>
 {
 public:
-    typedef std::basic_ostream<Elem, Tr>&                         ostream_reference;
+    typedef std::basic_ostream<Elem, Tr> & ostream_reference;
     typedef basic_bgzf_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT> bgzf_streambuf_type;
 
-    basic_bgzf_ostreambase(ostream_reference ostream_)
-        : m_buf(ostream_)
+    basic_bgzf_ostreambase(ostream_reference ostream_) : m_buf(ostream_)
     {
-        this->init(&m_buf );
+        this->init(&m_buf);
     };
 
     // returns the underlying zip ostream object
-    bgzf_streambuf_type* rdbuf()            { return &m_buf; };
+    bgzf_streambuf_type * rdbuf()
+    {
+        return &m_buf;
+    };
     // returns the bgzf error state
-    int get_zerr() const                    { return m_buf.get_err(); };
+    int get_zerr() const
+    {
+        return m_buf.get_err();
+    };
     // returns the uncompressed data crc
-    long get_crc() const                    { return m_buf.get_crc(); };
+    long get_crc() const
+    {
+        return m_buf.get_crc();
+    };
     // returns the compressed data size
-    long get_out_size() const               { return m_buf.get_out_size(); };
+    long get_out_size() const
+    {
+        return m_buf.get_out_size();
+    };
     // returns the uncompressed data size
-    long get_in_size() const                { return m_buf.get_in_size(); };
+    long get_in_size() const
+    {
+        return m_buf.get_in_size();
+    };
 
 private:
     bgzf_streambuf_type m_buf;
@@ -337,21 +353,19 @@ private:
 // Class basic_bgzf_ostream
 // --------------------------------------------------------------------------
 
-template<
-    typename Elem,
-    typename Tr = std::char_traits<Elem>,
-    typename ElemA = std::allocator<Elem>,
-    typename ByteT = char,
-    typename ByteAT = std::allocator<ByteT>
->
+template <typename Elem,
+          typename Tr = std::char_traits<Elem>,
+          typename ElemA = std::allocator<Elem>,
+          typename ByteT = char,
+          typename ByteAT = std::allocator<ByteT>>
 class basic_bgzf_ostream :
-    public basic_bgzf_ostreambase<Elem,Tr,ElemA,ByteT,ByteAT>,
-    public std::basic_ostream<Elem,Tr>
+    public basic_bgzf_ostreambase<Elem, Tr, ElemA, ByteT, ByteAT>,
+    public std::basic_ostream<Elem, Tr>
 {
 public:
-    typedef basic_bgzf_ostreambase<Elem,Tr,ElemA,ByteT,ByteAT> bgzf_ostreambase_type;
-    typedef std::basic_ostream<Elem,Tr>                        ostream_type;
-    typedef ostream_type&                                      ostream_reference;
+    typedef basic_bgzf_ostreambase<Elem, Tr, ElemA, ByteT, ByteAT> bgzf_ostreambase_type;
+    typedef std::basic_ostream<Elem, Tr> ostream_type;
+    typedef ostream_type & ostream_reference;
 
     basic_bgzf_ostream(ostream_reference ostream_) :
         bgzf_ostreambase_type(ostream_),
@@ -359,9 +373,11 @@ public:
     {}
 
     // flush inner buffer and zipper buffer
-    basic_bgzf_ostream<Elem,Tr>& flush()
+    basic_bgzf_ostream<Elem, Tr> & flush()
     {
-        ostream_type::flush(); this->rdbuf()->flush(); return *this;
+        ostream_type::flush();
+        this->rdbuf()->flush();
+        return *this;
     };
 
     ~basic_bgzf_ostream()
@@ -371,10 +387,12 @@ public:
 
 private:
     static void put_long(ostream_reference out_, unsigned long x_);
-#ifdef _WIN32
-    void _Add_vtordisp1() { } // Required to avoid VC++ warning C4250
-    void _Add_vtordisp2() { } // Required to avoid VC++ warning C4250
-#endif
+#    ifdef _WIN32
+    void _Add_vtordisp1()
+    {} // Required to avoid VC++ warning C4250
+    void _Add_vtordisp2()
+    {} // Required to avoid VC++ warning C4250
+#    endif
 };
 
 // ===========================================================================

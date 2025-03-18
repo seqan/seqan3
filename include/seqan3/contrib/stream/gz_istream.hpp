@@ -24,21 +24,21 @@
 
 #pragma once
 
-#include <iostream>
 #include <cstring>
+#include <iostream>
 #include <vector>
 
 #include <seqan3/core/platform.hpp>
 
 #if SEQAN3_HAS_ZLIB
 
-#include <zlib.h>
+#    include <zlib.h>
 
 namespace seqan3::contrib
 {
 
 // Default gzip buffer size, change this to suite your needs.
-const size_t GZ_INPUT_DEFAULT_BUFFER_SIZE = 921600;
+size_t const GZ_INPUT_DEFAULT_BUFFER_SIZE = 921600;
 
 // --------------------------------------------------------------------------
 // Class basic_gz_istreambuf
@@ -50,38 +50,42 @@ template <typename Elem,
           typename Tr = std::char_traits<Elem>,
           typename ElemA = std::allocator<Elem>,
           typename ByteT = unsigned char,
-          typename ByteAT = std::allocator<ByteT>
-          >
-class basic_gz_istreambuf :
-    public std::basic_streambuf<Elem, Tr>
+          typename ByteAT = std::allocator<ByteT>>
+class basic_gz_istreambuf : public std::basic_streambuf<Elem, Tr>
 {
 public:
-    typedef std::basic_istream<Elem, Tr> &              istream_reference;
-    typedef ElemA                                       char_allocator_type;
-    typedef ByteT                                       byte_type;
-    typedef ByteAT                                      byte_allocator_type;
-    typedef byte_type *                                 byte_buffer_type;
-    typedef Tr                                          traits_type;
-    typedef typename Tr::char_type                      char_type;
-    typedef typename Tr::int_type                       int_type;
+    typedef std::basic_istream<Elem, Tr> & istream_reference;
+    typedef ElemA char_allocator_type;
+    typedef ByteT byte_type;
+    typedef ByteAT byte_allocator_type;
+    typedef byte_type * byte_buffer_type;
+    typedef Tr traits_type;
+    typedef typename Tr::char_type char_type;
+    typedef typename Tr::int_type int_type;
     typedef std::vector<byte_type, byte_allocator_type> byte_vector_type;
     typedef std::vector<char_type, char_allocator_type> char_vector_type;
 
     // Construct a unzip stream
     // More info on the following parameters can be found in the zlib documentation.
     basic_gz_istreambuf(istream_reference istream_,
-                          size_t window_size_,
-                          size_t read_buffer_size_,
-                          size_t input_buffer_size_);
+                        size_t window_size_,
+                        size_t read_buffer_size_,
+                        size_t input_buffer_size_);
 
     ~basic_gz_istreambuf();
 
     int_type underflow();
 
     // returns the compressed input istream
-    istream_reference get_istream()  { return m_istream; }
+    istream_reference get_istream()
+    {
+        return m_istream;
+    }
     // returns the zlib stream structure
-    z_stream & get_zip_stream()      { return m_zip_stream; }
+    z_stream & get_zip_stream()
+    {
+        return m_zip_stream;
+    }
 
 private:
     void put_back_from_zip_stream();
@@ -99,17 +103,11 @@ private:
 // Class basic_gz_istreambuf implementation
 // --------------------------------------------------------------------------
 
-template <typename Elem,
-          typename Tr,
-          typename ElemA,
-          typename ByteT,
-          typename ByteAT>
-basic_gz_istreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::basic_gz_istreambuf(
-    istream_reference istream_,
-    size_t window_size_,
-    size_t read_buffer_size_,
-    size_t input_buffer_size_
-    ) :
+template <typename Elem, typename Tr, typename ElemA, typename ByteT, typename ByteAT>
+basic_gz_istreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::basic_gz_istreambuf(istream_reference istream_,
+                                                                         size_t window_size_,
+                                                                         size_t read_buffer_size_,
+                                                                         size_t input_buffer_size_) :
     m_istream(istream_),
     m_input_buffer(input_buffer_size_),
     m_buffer(read_buffer_size_)
@@ -130,21 +128,13 @@ basic_gz_istreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::basic_gz_istreambuf(
                &(m_buffer[0]) + 4); // end position
 }
 
-template <typename Elem,
-          typename Tr,
-          typename ElemA,
-          typename ByteT,
-          typename ByteAT>
+template <typename Elem, typename Tr, typename ElemA, typename ByteT, typename ByteAT>
 basic_gz_istreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::~basic_gz_istreambuf()
 {
     inflateEnd(&m_zip_stream);
 }
 
-template <typename Elem,
-          typename Tr,
-          typename ElemA,
-          typename ByteT,
-          typename ByteAT>
+template <typename Elem, typename Tr, typename ElemA, typename ByteT, typename ByteAT>
 typename basic_gz_istreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::int_type
 basic_gz_istreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::underflow()
 {
@@ -157,29 +147,24 @@ basic_gz_istreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::underflow()
 
     std::memmove(&(m_buffer[0]) + (4 - n_putback), this->gptr() - n_putback, n_putback * sizeof(char_type));
 
-    int num = unzip_from_stream(&(m_buffer[0]) + 4,
-                                static_cast<std::streamsize>((m_buffer.size() - 4) * sizeof(char_type)));
+    int num =
+        unzip_from_stream(&(m_buffer[0]) + 4, static_cast<std::streamsize>((m_buffer.size() - 4) * sizeof(char_type)));
 
-    if (num <= 0)     // ERROR or EOF
+    if (num <= 0) // ERROR or EOF
         return traits_type::eof();
 
     // reset buffer pointers
-    this->setg(&(m_buffer[0]) + (4 - n_putback),         // beginning of putback area
-               &(m_buffer[0]) + 4,                       // read position
-               &(m_buffer[0]) + 4 + num);                // end of buffer
+    this->setg(&(m_buffer[0]) + (4 - n_putback), // beginning of putback area
+               &(m_buffer[0]) + 4,               // read position
+               &(m_buffer[0]) + 4 + num);        // end of buffer
 
     // return next character
     return *reinterpret_cast<unsigned char *>(this->gptr());
 }
 
-template <typename Elem,
-          typename Tr,
-          typename ElemA,
-          typename ByteT,
-          typename ByteAT>
-std::streamsize basic_gz_istreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::unzip_from_stream(
-    char_type * buffer_,
-    std::streamsize buffer_size_)
+template <typename Elem, typename Tr, typename ElemA, typename ByteT, typename ByteAT>
+std::streamsize basic_gz_istreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::unzip_from_stream(char_type * buffer_,
+                                                                                       std::streamsize buffer_size_)
 {
     m_zip_stream.next_out = (byte_buffer_type)buffer_;
     m_zip_stream.avail_out = static_cast<uInt>(buffer_size_ * sizeof(char_type));
@@ -209,11 +194,7 @@ std::streamsize basic_gz_istreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::unzip_from_
     return n_read;
 }
 
-template <typename Elem,
-          typename Tr,
-          typename ElemA,
-          typename ByteT,
-          typename ByteAT>
+template <typename Elem, typename Tr, typename ElemA, typename ByteT, typename ByteAT>
 size_t basic_gz_istreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::fill_input_buffer()
 {
     m_zip_stream.next_in = &(m_input_buffer[0]);
@@ -222,11 +203,7 @@ size_t basic_gz_istreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::fill_input_buffer()
     return m_zip_stream.avail_in = m_istream.gcount() * sizeof(char_type);
 }
 
-template <typename Elem,
-          typename Tr,
-          typename ElemA,
-          typename ByteT,
-          typename ByteAT>
+template <typename Elem, typename Tr, typename ElemA, typename ByteT, typename ByteAT>
 void basic_gz_istreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::put_back_from_zip_stream()
 {
     if (m_zip_stream.avail_in == 0)
@@ -248,26 +225,27 @@ template <typename Elem,
           typename Tr = std::char_traits<Elem>,
           typename ElemA = std::allocator<Elem>,
           typename ByteT = unsigned char,
-          typename ByteAT = std::allocator<ByteT>
-          >
-class basic_gz_istreambase :
-    virtual public std::basic_ios<Elem, Tr>
+          typename ByteAT = std::allocator<ByteT>>
+class basic_gz_istreambase : virtual public std::basic_ios<Elem, Tr>
 {
 public:
-    typedef std::basic_istream<Elem, Tr> &                        istream_reference;
+    typedef std::basic_istream<Elem, Tr> & istream_reference;
     typedef basic_gz_istreambuf<Elem, Tr, ElemA, ByteT, ByteAT> unzip_streambuf_type;
 
     basic_gz_istreambase(istream_reference ostream_,
-                          size_t window_size_,
-                          size_t read_buffer_size_,
-                          size_t input_buffer_size_) :
+                         size_t window_size_,
+                         size_t read_buffer_size_,
+                         size_t input_buffer_size_) :
         m_buf(ostream_, window_size_, read_buffer_size_, input_buffer_size_)
     {
         this->init(&m_buf);
     }
 
     // returns the underlying unzip istream object
-    unzip_streambuf_type * rdbuf() { return &m_buf; }
+    unzip_streambuf_type * rdbuf()
+    {
+        return &m_buf;
+    }
 
 private:
     unzip_streambuf_type m_buf;
@@ -294,18 +272,17 @@ template <typename Elem,
           typename Tr = std::char_traits<Elem>,
           typename ElemA = std::allocator<Elem>,
           typename ByteT = unsigned char,
-          typename ByteAT = std::allocator<ByteT>
-          >
+          typename ByteAT = std::allocator<ByteT>>
 class basic_gz_istream :
     public basic_gz_istreambase<Elem, Tr, ElemA, ByteT, ByteAT>,
     public std::basic_istream<Elem, Tr>
 {
 public:
     typedef basic_gz_istreambase<Elem, Tr, ElemA, ByteT, ByteAT> zip_istreambase_type;
-    typedef std::basic_istream<Elem, Tr>                          istream_type;
-    typedef istream_type &                                        istream_reference;
-    typedef ByteT                                                 byte_type;
-    typedef Tr                                                    traits_type;
+    typedef std::basic_istream<Elem, Tr> istream_type;
+    typedef istream_type & istream_reference;
+    typedef ByteT byte_type;
+    typedef Tr traits_type;
 
     // Construct a unzipper stream
     //
@@ -315,18 +292,21 @@ public:
     // input_buffer_size_
 
     basic_gz_istream(istream_reference istream_,
-                      size_t window_size_ = 31, // 15 (size) + 16 (gzip header)
-                      size_t read_buffer_size_ = GZ_INPUT_DEFAULT_BUFFER_SIZE,
-                      size_t input_buffer_size_ = GZ_INPUT_DEFAULT_BUFFER_SIZE) :
+                     size_t window_size_ = 31, // 15 (size) + 16 (gzip header)
+                     size_t read_buffer_size_ = GZ_INPUT_DEFAULT_BUFFER_SIZE,
+                     size_t input_buffer_size_ = GZ_INPUT_DEFAULT_BUFFER_SIZE) :
         zip_istreambase_type(istream_, window_size_, read_buffer_size_, input_buffer_size_),
         istream_type(this->rdbuf())
     {}
 
-#ifdef _WIN32
+#    ifdef _WIN32
+
 private:
-    void _Add_vtordisp1() {}  // Required to avoid VC++ warning C4250
-    void _Add_vtordisp2() {}  // Required to avoid VC++ warning C4250
-#endif
+    void _Add_vtordisp1()
+    {} // Required to avoid VC++ warning C4250
+    void _Add_vtordisp2()
+    {} // Required to avoid VC++ warning C4250
+#    endif
 };
 
 // ===========================================================================
@@ -334,9 +314,9 @@ private:
 // ===========================================================================
 
 // A typedef for basic_gz_istream<char>
-typedef basic_gz_istream<char>     gz_istream;
+typedef basic_gz_istream<char> gz_istream;
 // A typedef for basic_gz_istream<wchart>
-typedef basic_gz_istream<wchar_t>  gz_wistream;
+typedef basic_gz_istream<wchar_t> gz_wistream;
 
 } // namespace seqan3::contrib
 
