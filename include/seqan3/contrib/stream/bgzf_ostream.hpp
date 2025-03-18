@@ -237,7 +237,7 @@ public:
     int_type overflow(int_type c)
     {
         int w = static_cast<int>(this->pptr() - this->pbase());
-        if (c != static_cast<int_type>(EOF))
+        if (!Tr::eq_int_type(c, Tr::eof()))
         {
             *this->pptr() = c;
             ++w;
@@ -246,11 +246,11 @@ public:
         {
             CompressionJob & job = jobs[currentJobId];
             this->setp(&job.buffer[0], &job.buffer[0] + (job.buffer.size() - 1));
-            return c;
+            return Tr::not_eof(c);
         }
         else
         {
-            return EOF;
+            return Tr::eof();
         }
     }
 

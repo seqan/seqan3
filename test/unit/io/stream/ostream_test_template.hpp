@@ -75,4 +75,23 @@ TYPED_TEST_P(ostream, output_type_erased)
     EXPECT_EQ(buffer, TestFixture::compressed);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(ostream, concept_check, output, output_type_erased);
+TYPED_TEST_P(ostream, overflow)
+{
+    seqan3::test::tmp_directory tmp{};
+    auto filename = tmp.path() / "ostream_test";
+
+    {
+        std::ofstream of{filename};
+
+        TypeParam stream{of};
+
+        // Works for gz and bgzf, `deflate` with empty buffer is no error
+        // But not for bzip2, `BZ2_bzCompress` in `BZ_RUN` mode returns error (`BZ_FINISH` would be fine)
+        if constexpr (TestFixture::zero_out_os_byte)
+            EXPECT_NE(EOF, stream.rdbuf()->overflow(EOF));
+        else
+            EXPECT_EQ(EOF, stream.rdbuf()->overflow(EOF)); // Todo: Fix
+    }
+}
+
+REGISTER_TYPED_TEST_SUITE_P(ostream, concept_check, output, output_type_erased, overflow);

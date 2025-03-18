@@ -181,7 +181,7 @@ basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::overflow(
     if (zip_to_stream(this->pbase(), w))
     {
         this->setp(this->pbase(), this->epptr() - 1);
-        return c;
+        return traits_type::not_eof(c);
     }
     else
     {

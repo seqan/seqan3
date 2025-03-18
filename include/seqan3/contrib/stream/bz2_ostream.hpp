@@ -160,7 +160,7 @@ basic_bz2_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::overflow(
     typename basic_bz2_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::int_type c)
 {
     int w = static_cast<int>(this->pptr() - this->pbase());
-    if (c != EOF)
+    if (!Tr::eq_int_type(c, Tr::eof()))
     {
         *this->pptr() = c;
         ++w;
@@ -168,10 +168,10 @@ basic_bz2_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::overflow(
     if (bzip2_to_stream(this->pbase(), w))
     {
         this->setp(this->pbase(), this->epptr());
-        return c;
+        return Tr::not_eof(c);
     }
     else
-        return EOF;
+        return Tr::eof();
 }
 
 template <typename Elem, typename Tr, typename ElemA, typename ByteT, typename ByteAT>
