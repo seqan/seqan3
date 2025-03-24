@@ -128,18 +128,13 @@ inline void test_search_hamming(auto index,
 
     auto remove_predicate_ss = [&text, &orig_query, query_length](uint64_t const hit)
     {
-        seqan3::dna4_vector matched_seq =
-            text | seqan3::views::slice(hit, hit + query_length) | seqan3::ranges::to<seqan3::dna4_vector>();
-        return (matched_seq != orig_query);
+        return !std::ranges::equal(orig_query, seqan3::views::slice(text, hit, hit + query_length));
     };
 
     auto remove_predicate_trivial = [&](uint64_t const hit)
     {
         // filter only correct error distributions
-        seqan3::dna4_vector matched_seq =
-            text | seqan3::views::slice(hit, hit + query_length) | seqan3::ranges::to<seqan3::dna4_vector>();
-
-        if (orig_query != matched_seq)
+        if (!std::ranges::equal(orig_query, seqan3::views::slice(text, hit, hit + query_length)))
             return true;
 
         uint64_t lb = 0, rb = 0;
