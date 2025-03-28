@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     container:
-      image: ghcr.io/seqan/clang-19
+      image: ghcr.io/seqan/codechecker
       volumes:
         - /home/runner:/home/runner
     steps:

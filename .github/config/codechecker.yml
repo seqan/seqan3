@@ -5,6 +5,7 @@
 analyze:
   - --enable=bugprone
   - --enable=performance
+  - --enable=prefix:clang-diagnostic-shadow
   - --disable=bugprone-easily-swappable-parameters
   - --disable=cert-dcl58-cpp
   - --disable=clang-diagnostic-float-conversion
