@@ -16,6 +16,8 @@
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
 
+SEQAN3_DEPRECATED_HEADER("This header and its functionality is deprecated and will be removed in a future version of SeqAn. Please use the hibf-library (url: https://github.com/seqan/hibf) instead.");
+
 namespace seqan3
 {
 //!\brief Determines if the Interleaved Bloom Filter is compressed.

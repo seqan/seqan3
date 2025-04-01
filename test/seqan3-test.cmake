@@ -106,6 +106,9 @@ if (NOT TARGET seqan3::test)
     add_library (seqan3_test INTERFACE)
     target_compile_options (seqan3_test INTERFACE "-pedantic" "-Wall" "-Wextra")
 
+    #!TODO remove after release 3.4.0
+    target_compile_definitions (seqan3_test INTERFACE -DSEQAN3_DISABLE_DEPRECATED_WARNINGS)
+
     if (SEQAN3_WITH_WERROR)
         target_compile_options (seqan3_test INTERFACE "-Werror")
         message (STATUS "Building tests with -Werror.")
