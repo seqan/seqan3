@@ -27342,12 +27342,12 @@ public:
     {
         if (0 == m_size)
             return;
-        std::vector<size_type> C;
-        calculate_character_occurences(begin, end, C);
-        calculate_effective_alphabet_size(C, m_sigma);
-        if (m_sigma > alphabet_size)
+        if (std::any_of(begin, end, [](size_t value) { return value >= alphabet_size; }))
+        {
             throw std::domain_error{"The given text uses an alphabet that is larger than the explicitly given "
                                     "alphabet size."};
+        }
+        m_sigma = alphabet_size;
         int_vector<> intermediate_bitvector{};
         intermediate_bitvector.width(std::ceil(std::log2(m_sigma)));
         intermediate_bitvector.resize(m_size);
