@@ -352,7 +352,8 @@ PREDEFINED             = CEREAL_SERIALIZE_FUNCTION_NAME=serialize \
                          CEREAL_SAVE_MINIMAL_FUNCTION_NAME=save_minimal \
                          "SEQAN3_DOXYGEN_ONLY(x)= x" \
                          ${SEQAN3_DOXYGEN_PREDEFINED_NDEBUG} \
-                         SEQAN3_WORKAROUND_LITERAL=constexpr
+                         SEQAN3_WORKAROUND_LITERAL=constexpr \
+                         SEQAN3_DEPRECATED_HEADER(x)=
 EXPAND_AS_DEFINED      = SEQAN3_CPO_OVERLOAD_BODY \
                          SEQAN3_CPO_OVERLOAD
 SKIP_FUNCTION_MACROS   = NO

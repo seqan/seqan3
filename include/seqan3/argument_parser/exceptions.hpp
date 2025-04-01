@@ -13,6 +13,8 @@
 
 #include <seqan3/core/platform.hpp>
 
+SEQAN3_DEPRECATED_HEADER("This header and its functionality is deprecated and will be removed in a future version of SeqAn. Please use the sharg-parser (url: https://github.com/seqan/sharg-parser) instead.");
+
 namespace seqan3
 {
 /*!\brief Argument parser exception that is thrown whenever there is an error

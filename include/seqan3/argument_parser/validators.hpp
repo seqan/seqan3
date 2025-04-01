@@ -29,6 +29,8 @@
 #include <seqan3/utility/type_traits/basic.hpp>
 #include <seqan3/utility/views/join_with.hpp>
 
+SEQAN3_DEPRECATED_HEADER("This header and its functionality is deprecated and will be removed in a future version of SeqAn. Please use the sharg-parser (url: https://github.com/seqan/sharg-parser) instead.");
+
 namespace seqan3
 {
 
