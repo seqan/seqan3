@@ -1,3 +1,15 @@
-(ACT-,C-GT)
-(CTGATCGAG,AGGCTGN-A)
-(T-G-A-TC,G-AGTA-T)
+      0     
+        ACT-
+            
+        C-GT
+
+      0     .    
+        CTGATCGAG
+          | |    
+        AGGCTGN-A
+
+      0     .   
+        T-G-A-TC
+         |      
+        G-AGTA-T
+

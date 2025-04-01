@@ -11,6 +11,7 @@
 
 #include <iostream>
 
+#include <seqan3/alignment/aligned_sequence/debug_stream_alignment.hpp>
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/core/debug_stream/all.hpp>
 
