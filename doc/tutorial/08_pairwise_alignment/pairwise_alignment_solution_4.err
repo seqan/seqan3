@@ -2,4 +2,8 @@ Score: 62
 Begin: (4,0)
 End: (34,31)
 Alignment: 
-(GTACGGAC-T-AGCTACAACATTACGGACTAC,GGAC-GACATGACGTACGACTTTACGTACGAC)
+      0     .    :    .    :    .    :  
+        GTACGGAC-T-AGCTACAACATTACGGACTAC
+        | || ||| | |  ||| || ||||| || ||
+        GGAC-GACATGACGTACGACTTTACGTACGAC
+
