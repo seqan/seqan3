@@ -11,7 +11,7 @@ include (../cmake/diagnostics/list_unused_snippets.cmake)
 CPMGetPackage (googletest)
 
 option (SEQAN3_GENERATE_SNIPPETS "Whether seqan3 snippets should be generated and overwritten within the source tree."
-        ON)
+        OFF)
 
 add_library (snippet_main snippet_main.cpp)
 target_link_libraries (snippet_main PUBLIC seqan3::test gtest)
