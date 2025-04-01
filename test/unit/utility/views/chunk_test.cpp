@@ -9,7 +9,6 @@
 #include <ranges>
 #include <vector>
 
-#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/utility/views/chunk.hpp>
 #include <seqan3/utility/views/repeat.hpp>
