@@ -9,8 +9,6 @@ include (../seqan3-test.cmake)
 
 enable_testing ()
 
-option (SEQAN3_GENERATE_SNIPPETS "" OFF)
-
 add_subdirectory (../performance performance)
 add_subdirectory (../snippet snippet)
 add_subdirectory (../unit unit)
