@@ -14,47 +14,13 @@
 
 #include <seqan3/contrib/sdsl-lite.hpp>
 #include <seqan3/core/concept/cereal.hpp>
-#include <seqan3/core/detail/strong_type.hpp>
+//Todo: When removing, the contents of the following header can be moved into utility/bloom_filter/bloom_filter.hpp
+#include <seqan3/utility/bloom_filter/bloom_filter_strong_types.hpp>
 
 SEQAN3_DEPRECATED_HEADER("This header and its functionality is deprecated and will be removed in a future version of SeqAn. Please use the hibf-library (url: https://github.com/seqan/hibf) instead.");
 
 namespace seqan3
 {
-//!\brief Determines if the Interleaved Bloom Filter is compressed.
-//!\ingroup search_dream_index
-enum data_layout : bool
-{
-    uncompressed, //!< The Interleaved Bloom Filter is uncompressed.
-    compressed    //!< The Interleaved Bloom Filter is compressed.
-};
-
-//!\brief A strong type that represents the number of bins for the seqan3::interleaved_bloom_filter.
-//!\ingroup search_dream_index
-struct bin_count : public detail::strong_type<size_t, bin_count, detail::strong_type_skill::convert>
-{
-    using detail::strong_type<size_t, bin_count, detail::strong_type_skill::convert>::strong_type;
-};
-
-//!\brief A strong type that represents the number of bits for each bin in the seqan3::interleaved_bloom_filter.
-//!\ingroup search_dream_index
-struct bin_size : public detail::strong_type<size_t, bin_size, detail::strong_type_skill::convert>
-{
-    using detail::strong_type<size_t, bin_size, detail::strong_type_skill::convert>::strong_type;
-};
-
-//!\brief A strong type that represents the number of hash functions for the seqan3::interleaved_bloom_filter.
-//!\ingroup search_dream_index
-struct hash_function_count : public detail::strong_type<size_t, hash_function_count, detail::strong_type_skill::convert>
-{
-    using detail::strong_type<size_t, hash_function_count, detail::strong_type_skill::convert>::strong_type;
-};
-
-//!\brief A strong type that represents the bin index for the seqan3::interleaved_bloom_filter.
-//!\ingroup search_dream_index
-struct bin_index : public detail::strong_type<size_t, bin_index, detail::strong_type_skill::convert>
-{
-    using detail::strong_type<size_t, bin_index, detail::strong_type_skill::convert>::strong_type;
-};
 
 /*!\brief The IBF binning directory. A data structure that efficiently answers set-membership queries for multiple bins.
  * \ingroup search_dream_index

@@ -9,7 +9,11 @@
 
 #pragma once
 
-#include <seqan3/search/dream_index/interleaved_bloom_filter.hpp>
+#include <seqan3/contrib/sdsl-lite.hpp>
+#include <seqan3/core/concept/cereal.hpp>
+//Todo: When removing search/dream_index/interleaved_bloom_filter.hpp, the contents of the following header can be
+// moved into this file
+#include <seqan3/utility/bloom_filter/bloom_filter_strong_types.hpp>
 
 namespace seqan3
 {
