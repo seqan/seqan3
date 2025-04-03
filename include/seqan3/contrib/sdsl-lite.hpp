@@ -6862,14 +6862,48 @@ public:
         }
         bool operator==(iterator const & it) const
         {
-            return m_ivb == it.m_ivb and m_idx == it.m_idx;
+            assert(m_ivb);
+            assert(it.m_ivb);
+            assert(m_ivb == it.m_ivb);
+            return m_idx == it.m_idx;
         }
         bool operator!=(iterator const & it) const
         {
             return !(*this == it);
         }
-        inline difference_type operator-(iterator const & it)
+        bool operator<(iterator const & it) const
         {
+            assert(m_ivb);
+            assert(it.m_ivb);
+            assert(m_ivb == it.m_ivb);
+            return m_idx < it.m_idx;
+        }
+        bool operator>(iterator const & it) const
+        {
+            assert(m_ivb);
+            assert(it.m_ivb);
+            assert(m_ivb == it.m_ivb);
+            return m_idx > it.m_idx;
+        }
+        bool operator<=(iterator const & it) const
+        {
+            assert(m_ivb);
+            assert(it.m_ivb);
+            assert(m_ivb == it.m_ivb);
+            return m_idx <= it.m_idx;
+        }
+        bool operator>=(iterator const & it) const
+        {
+            assert(m_ivb);
+            assert(it.m_ivb);
+            assert(m_ivb == it.m_ivb);
+            return m_idx >= it.m_idx;
+        }
+        difference_type operator-(iterator const & it) const
+        {
+            assert(m_ivb);
+            assert(it.m_ivb);
+            assert(m_ivb == it.m_ivb);
             return (m_idx - it.m_idx);
         }
     };
