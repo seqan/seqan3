@@ -1,0 +1,108 @@
+From e59dbf474f3bc714a6ef53e101bc4f0e65a1bf82 Mon Sep 17 00:00:00 2001
+From: Simon Gene Gottlieb <simon@gottliebtfreitag.de>
+Date: Tue, 1 Apr 2025 15:24:33 +0200
+Subject: [PATCH 9/9] [FIX] include alignment_printer in debug_stream
+
+---
+ .../pairwise_alignment_solution_4.err          |  6 +++++-
+ .../pairwise_alignment_solution_5.err          |  6 +++++-
+ .../cigar_conversion/alignment_from_cigar.err  |  6 +++++-
+ .../alignment_from_cigar_io.err                | 18 +++++++++++++++---
+ .../align_cfg_output_examples.err              | 18 +++++++++++++++---
+ 5 files changed, 45 insertions(+), 9 deletions(-)
+
+diff --git a/doc/tutorial/08_pairwise_alignment/pairwise_alignment_solution_4.err b/doc/tutorial/08_pairwise_alignment/pairwise_alignment_solution_4.err
+index 1889cdb7a..4aa696a7e 100644
+--- a/doc/tutorial/08_pairwise_alignment/pairwise_alignment_solution_4.err
++++ b/doc/tutorial/08_pairwise_alignment/pairwise_alignment_solution_4.err
+@@ -2,4 +2,8 @@ Score: 62
+ Begin: (4,0)
+ End: (34,31)
+ Alignment: 
+-(GTACGGAC-T-AGCTACAACATTACGGACTAC,GGAC-GACATGACGTACGACTTTACGTACGAC)
++      0     .    :    .    :    .    :  
++        GTACGGAC-T-AGCTACAACATTACGGACTAC
++        | || ||| | |  ||| || ||||| || ||
++        GGAC-GACATGACGTACGACTTTACGTACGAC
++
+diff --git a/doc/tutorial/08_pairwise_alignment/pairwise_alignment_solution_5.err b/doc/tutorial/08_pairwise_alignment/pairwise_alignment_solution_5.err
+index 1889cdb7a..4aa696a7e 100644
+--- a/doc/tutorial/08_pairwise_alignment/pairwise_alignment_solution_5.err
++++ b/doc/tutorial/08_pairwise_alignment/pairwise_alignment_solution_5.err
+@@ -2,4 +2,8 @@ Score: 62
+ Begin: (4,0)
+ End: (34,31)
+ Alignment: 
+-(GTACGGAC-T-AGCTACAACATTACGGACTAC,GGAC-GACATGACGTACGACTTTACGTACGAC)
++      0     .    :    .    :    .    :  
++        GTACGGAC-T-AGCTACAACATTACGGACTAC
++        | || ||| | |  ||| || ||||| || ||
++        GGAC-GACATGACGTACGACTTTACGTACGAC
++
+diff --git a/test/snippet/alignment/cigar_conversion/alignment_from_cigar.err b/test/snippet/alignment/cigar_conversion/alignment_from_cigar.err
+index 269fcf4f8..c771bf5a9 100644
+--- a/test/snippet/alignment/cigar_conversion/alignment_from_cigar.err
++++ b/test/snippet/alignment/cigar_conversion/alignment_from_cigar.err
+@@ -1 +1,5 @@
+-(ACTGA,AC-GA)
++      0     .
++        ACTGA
++        || ||
++        AC-GA
++
+diff --git a/test/snippet/alignment/cigar_conversion/alignment_from_cigar_io.err b/test/snippet/alignment/cigar_conversion/alignment_from_cigar_io.err
+index 65e809957..43d4207db 100644
+--- a/test/snippet/alignment/cigar_conversion/alignment_from_cigar_io.err
++++ b/test/snippet/alignment/cigar_conversion/alignment_from_cigar_io.err
+@@ -1,3 +1,15 @@
+-(ACT-,C-GT)
+-(CTGATCGAG,AGGCTGN-A)
+-(T-G-A-TC,G-AGTA-T)
++      0     
++        ACT-
++            
++        C-GT
++
++      0     .    
++        CTGATCGAG
++          | |    
++        AGGCTGN-A
++
++      0     .   
++        T-G-A-TC
++         |      
++        G-AGTA-T
++
+diff --git a/test/snippet/alignment/configuration/align_cfg_output_examples.err b/test/snippet/alignment/configuration/align_cfg_output_examples.err
+index 43207860d..9dfe1222c 100644
+--- a/test/snippet/alignment/configuration/align_cfg_output_examples.err
++++ b/test/snippet/alignment/configuration/align_cfg_output_examples.err
+@@ -1,10 +1,22 @@
+ {score: -4}
+ {
+ alignment:
+-(ACGTA-G-C-,A-GTACGACG)}
++      0     .    :
++        ACGTA-G-C-
++        | ||| | | 
++        A-GTACGACG
++}
+ {score: -4, 
+ alignment:
+-(ACGTA-G-C-,A-GTACGACG)}
++      0     .    :
++        ACGTA-G-C-
++        | ||| | | 
++        A-GTACGACG
++}
+ {sequence1 id: 0, sequence2 id: 0, score: -4, begin: (0,0), end: (7,9), 
+ alignment:
+-(ACGTA-G-C-,A-GTACGACG)}
++      0     .    :
++        ACGTA-G-C-
++        | ||| | | 
++        A-GTACGACG
++}
+-- 
+2.49.0
+

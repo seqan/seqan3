@@ -1,7 +1,7 @@
-From ddaa2f283f1e7c6ec3ec8ef5b36b78a89ed94a2b Mon Sep 17 00:00:00 2001
+From 8ebc91358cec390e00b9e6acfa277ce5a19747f1 Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Wed, 22 Jan 2025 14:55:53 +0100
-Subject: [PATCH 5/8] [NOAPI][DETAIL] Update copyright
+Subject: [PATCH 5/9] [NOAPI][DETAIL] Update copyright
 
 ---
  test/unit/argument_parser/detail/format_help_test.cpp | 10 +++++-----
@@ -121,5 +121,5 @@ index 5cdd9cdea..ee0c810a5 100644
      testing::internal::CaptureStdout();
      EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
 -- 
-2.47.2
+2.49.0
 
