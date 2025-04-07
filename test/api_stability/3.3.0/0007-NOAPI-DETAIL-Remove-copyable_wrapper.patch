@@ -1,7 +1,7 @@
-From 6f15e1a5a5224fc29fabd183f7edcc85415224c0 Mon Sep 17 00:00:00 2001
+From 949aaedee9428bd4eb57bb7899230622a34322ab Mon Sep 17 00:00:00 2001
 From: Enrico Seiler <enrico.seiler@hotmail.de>
 Date: Wed, 22 Jan 2025 17:16:19 +0100
-Subject: [PATCH 7/8] [NOAPI][DETAIL] Remove copyable_wrapper
+Subject: [PATCH 7/9] [NOAPI][DETAIL] Remove copyable_wrapper
 
 ---
  test/snippet/core/detail/copyable_wrapper.cpp | 16 ----------------
@@ -41,5 +41,5 @@ index 2b24e3127..000000000
 -2
 -6
 -- 
-2.47.2
+2.49.0
 
