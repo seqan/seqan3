@@ -531,6 +531,7 @@ namespace seqan3::detail
  * | std::ranges::sized_range         |                                       | *lost*                                             |
  * | std::ranges::common_range        |                                       | *lost*                                             |
  * | std::ranges::output_range        |                                       | *preserved*                                        |
+ * | std::ranges::borrowed_range      |                                       | *preserved*                                        |
  * | seqan3::const_iterable_range     |                                       | <i>preserved</i>¹                                  |
  * |                                  |                                       |                                                    |
  * | std::ranges::range_reference_t   |                                       | std::ranges::range_reference_t<urng_t>             |
@@ -602,3 +603,12 @@ inline constexpr auto take_until_and_consume = take_until_fn<false, true>{};
 inline constexpr auto take_until_or_throw_and_consume = take_until_fn<true, true>{};
 
 } // namespace seqan3::detail
+
+namespace std::ranges
+{
+//!\cond
+template <std::ranges::view urng_t, typename fun_t, bool or_throw, bool and_consume>
+inline constexpr bool enable_borrowed_range<seqan3::detail::view_take_until<urng_t, fun_t, or_throw, and_consume>> =
+    enable_borrowed_range<urng_t>;
+//!\endcond
+} // namespace std::ranges

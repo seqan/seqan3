@@ -65,6 +65,8 @@ void do_concepts(adaptor_t && adaptor, bool const_it)
     EXPECT_FALSE(std::ranges::common_range<decltype(v1)>);
     EXPECT_EQ(seqan3::const_iterable_range<decltype(v1)>, const_it);
     EXPECT_TRUE((std::ranges::output_range<decltype(v1), char>));
+    EXPECT_TRUE(std::ranges::borrowed_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::borrowed_range<decltype(vec | adaptor)>);
 
     auto v2 = vec | seqan3::views::single_pass_input | adaptor;
 
@@ -77,6 +79,8 @@ void do_concepts(adaptor_t && adaptor, bool const_it)
     EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
     EXPECT_FALSE(seqan3::const_iterable_range<decltype(v2)>);
     EXPECT_FALSE((std::ranges::output_range<decltype(v2), char>)); // lost by single_pass_input
+    EXPECT_TRUE(std::ranges::borrowed_range<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::borrowed_range<decltype(vec | seqan3::views::single_pass_input | adaptor)>);
 
     // explicit test for non const-iterable views
     // https://github.com/seqan/seqan3/pull/1734#discussion_r408829267
