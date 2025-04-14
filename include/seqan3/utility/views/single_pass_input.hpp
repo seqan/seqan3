@@ -327,6 +327,7 @@ namespace seqan3::views
  * | std::ranges::sized_range         |                                       | *lost*                                             |
  * | std::ranges::common_range        |                                       | *lost*                                             |
  * | std::ranges::output_range        |                                       | *lost*                                             |
+ * | std::ranges::borrowed_range      |                                       | *preserved*                                        |
  * | seqan3::const_iterable_range     |                                       | *lost*                                             |
  * |                                  |                                       |                                                    |
  * | std::ranges::range_reference_t   |                                       | std::ranges::range_reference_t<urng_t>             |
@@ -346,3 +347,12 @@ inline constexpr auto single_pass_input = detail::adaptor_for_view_without_args<
 
 } // namespace seqan3::views
 //![adaptor_def]
+
+namespace std::ranges
+{
+//!\cond
+template <std::ranges::view urng_t>
+inline constexpr bool enable_borrowed_range<seqan3::detail::single_pass_input_view<urng_t>> =
+    enable_borrowed_range<urng_t>;
+//!\endcond
+} // namespace std::ranges

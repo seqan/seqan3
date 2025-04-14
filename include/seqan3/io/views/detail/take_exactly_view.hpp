@@ -549,6 +549,7 @@ namespace seqan3::detail
  * | std::ranges::sized_range         |                                       | ***guaranteed***                                   |
  * | std::ranges::common_range        |                                       | *preserved*                                        |
  * | std::ranges::output_range        |                                       | *preserved* except if `urng_t` is std::basic_string|
+ * | std::ranges::borrowed_range      |                                       | *preserved*                                        |
  * | seqan3::const_iterable_range     |                                       | *preserved*                                        |
  * |                                  |                                       |                                                    |
  * | std::ranges::range_reference_t   |                                       | std::ranges::range_reference_t<urng_t>             |
@@ -586,3 +587,12 @@ inline constexpr auto take_exactly = take_exactly_fn<false>{};
  */
 inline constexpr auto take_exactly_or_throw = take_exactly_fn<true>{};
 } // namespace seqan3::detail
+
+namespace std::ranges
+{
+//!\cond
+template <std::ranges::view urng_t, bool or_throw>
+inline constexpr bool enable_borrowed_range<seqan3::detail::view_take_exactly<urng_t, or_throw>> =
+    enable_borrowed_range<urng_t>;
+//!\endcond
+} // namespace std::ranges
