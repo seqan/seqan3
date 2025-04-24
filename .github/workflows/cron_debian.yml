@@ -37,7 +37,7 @@ jobs:
         id: source_package
         run: |
           mkdir source && cd source
-          git clone --depth 1 https://github.com/seqan/seqan3.git
+          git clone --depth 1 --branch "${{ github.ref_name }}" https://github.com/${{ github.repository }}.git
           mkdir package && cd package
           cmake ../seqan3
           make package_source
