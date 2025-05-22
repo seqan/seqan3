@@ -133,11 +133,16 @@ public:
     /*!\brief Construct from filename.
      * \param[in] filename      Path to the file you wish to open.
      * \param[in] fields_tag    A seqan3::fields tag. [optional]
+     * \param[in] openmode      The open mode for the file stream. [optional]
      *
      * \details
      *
      * In addition to the file name, you may specify a custom seqan3::fields type which may be easier than
      * defining all the template parameters.
+     *
+     * You may also specify the open mode for the file stream. `std::ios_base::out` and `std::ios::binary` will always
+     * be added regardless of the given open mode.
+     * `std::ios_base::app` can be used to open the file in append mode.
      *
      * ### Compression
      *
@@ -147,13 +152,12 @@ public:
      */
     sequence_file_output(std::filesystem::path filename,
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{},
-                         sequence_file_output_options output_options = sequence_file_output_options{}) :
-        options{std::move(output_options)},
+                         std::ios_base::openmode openmode = std::ios_base::out | std::ios::binary) :
         primary_stream{new std::ofstream{}, stream_deleter_default}
     {
         primary_stream->rdbuf()->pubsetbuf(stream_buffer.data(), stream_buffer.size());
         static_cast<std::basic_ofstream<char> *>(primary_stream.get())
-            ->open(filename, (options.append ? std::ios_base::app : std::ios_base::out) | std::ios::binary);
+            ->open(filename, openmode | std::ios_base::out | std::ios::binary);
 
         if (!primary_stream->good())
             throw file_open_error{"Could not open file " + filename.string() + " for writing."};

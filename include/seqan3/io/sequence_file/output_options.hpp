@@ -40,9 +40,6 @@ struct sequence_file_output_options
 
     //!\brief Complete header given for embl or genbank
     bool embl_genbank_complete_header = false;
-
-    //!\brief Whether to open the file in append mode.
-    bool append = false;
 };
 
 } // namespace seqan3
