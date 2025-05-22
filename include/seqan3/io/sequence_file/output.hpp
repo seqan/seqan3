@@ -146,12 +146,14 @@ public:
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
     sequence_file_output(std::filesystem::path filename,
-                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{},
+                         sequence_file_output_options output_options = sequence_file_output_options{}) :
+        options{std::move(output_options)},
         primary_stream{new std::ofstream{}, stream_deleter_default}
     {
         primary_stream->rdbuf()->pubsetbuf(stream_buffer.data(), stream_buffer.size());
         static_cast<std::basic_ofstream<char> *>(primary_stream.get())
-            ->open(filename, std::ios_base::out | std::ios::binary);
+            ->open(filename, (options.append ? std::ios_base::app : std::ios_base::out) | std::ios::binary);
 
         if (!primary_stream->good())
             throw file_open_error{"Could not open file " + filename.string() + " for writing."};
