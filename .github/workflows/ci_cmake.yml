@@ -35,20 +35,18 @@ jobs:
       matrix:
         include:
           - name: "Non-cyclic tests"
-            compiler: "gcc-14"
+            compiler: "gcc-latest"
             build: unit
             use_include_dependencies: "ON"
             cmake_depends_use_compiler: "OFF"
 
           - name: "External project"
-            compiler: "gcc-14"
+            compiler: "gcc-latest"
             build: external_project
             use_include_dependencies: "OFF"
             cmake_depends_use_compiler: "ON"
     container:
       image: ghcr.io/seqan/${{ matrix.compiler }}
-      volumes:
-        - /home/runner:/home/runner
     steps:
       - name: Checkout
         uses: actions/checkout@v4

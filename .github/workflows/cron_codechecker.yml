@@ -28,8 +28,6 @@ jobs:
     if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     container:
       image: ghcr.io/seqan/codechecker
-      volumes:
-        - /home/runner:/home/runner
     steps:
       - name: Run CodeChecker
         uses: seqan/actions/codechecker@main

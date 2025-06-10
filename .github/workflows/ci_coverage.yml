@@ -33,11 +33,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: ["gcc-14"]
+        compiler: ["gcc-latest"]
     container:
       image: ghcr.io/seqan/${{ matrix.compiler }}
-      volumes:
-        - /home/runner:/home/runner
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -75,18 +73,20 @@ jobs:
                 --filter ${GITHUB_WORKSPACE}/test/include/seqan3/test \
                 --exclude ${GITHUB_WORKSPACE}/include/seqan3/contrib \
                 --exclude ${GITHUB_WORKSPACE}/include/seqan3/std \
-                --exclude-lines-by-pattern '^\s*$' \
-                --exclude-lines-by-pattern '^\s*};$' \
-                --exclude-unreachable-branches \
+                --exclude-lines-by-pattern '^\s*}|^\s*};' \
                 --exclude-throw-branches \
                 --exclude-noncode-lines \
+                --exclude-unreachable-branches \
                 --merge-mode-functions separate \
                 -j \
                 --cobertura \
                 --output ${GITHUB_WORKSPACE}/build/coverage_report.xml
 
       - name: Submit coverage build
-        uses: codecov/codecov-action@v3.1.5
+        uses: codecov/codecov-action@v5.4.3
         with:
-          files: build/coverage_report.xml
+          disable_search: true
           fail_ci_if_error: false
+          files: build/coverage_report.xml
+          plugins: noop
+          token: ${{ secrets.CODECOV_TOKEN }}

@@ -27,21 +27,16 @@ defaults:
 jobs:
   build:
     name: ${{ matrix.build }} ${{ matrix.compiler }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     timeout-minutes: 300
     if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     strategy:
       fail-fast: false
       matrix:
-        compiler: ["clang-19", "clang-18", "clang-17", "gcc-14", "gcc-13", "gcc-12", "intel"]
+        compiler: ["clang-latest", "clang-second-latest", "clang-third-latest", "gcc-latest", "gcc-second-latest", "gcc-third-latest", "intel"]
         build: [unit, snippet, performance, header]
-        include:
-          - compiler: "intel"
-            cxx_flags: "-fp-model=strict -Wno-overriding-option"
     container:
       image: ghcr.io/seqan/${{ matrix.compiler }}
-      volumes:
-        - /home/runner:/home/runner
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -59,7 +54,6 @@ jobs:
         run: |
           mkdir build && cd build
           cmake ../test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=Release \
-                                            -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
                                             -DSEQAN3_BENCHMARK_MIN_TIME=0.01s
           case "${{ matrix.build }}" in
             unit) make gtest_main;;

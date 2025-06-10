@@ -32,11 +32,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: ["gcc-14", "gcc-13", "gcc-12"]
+        compiler: ["gcc-latest", "gcc-second-latest", "gcc-third-latest"]
     container:
       image: ghcr.io/seqan/${{ matrix.compiler }}
-      volumes:
-        - /home/runner:/home/runner
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -44,8 +42,7 @@ jobs:
       - name: Configure tests
         run: |
           mkdir build && cd build
-          cmake ../test/api_stability -DCMAKE_BUILD_TYPE=Release \
-                                      -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}"
+          cmake ../test/api_stability -DCMAKE_BUILD_TYPE=Release
 
       - name: Build tests
         working-directory: build

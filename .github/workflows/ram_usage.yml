@@ -30,7 +30,7 @@ defaults:
 jobs:
   build:
     name: RAM-Usage gcc${{ github.event.inputs.compiler }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     timeout-minutes: 300
     if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     steps:
