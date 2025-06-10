@@ -353,7 +353,10 @@ PREDEFINED             = CEREAL_SERIALIZE_FUNCTION_NAME=serialize \
                          "SEQAN3_DOXYGEN_ONLY(x)= x" \
                          ${SEQAN3_DOXYGEN_PREDEFINED_NDEBUG} \
                          SEQAN3_WORKAROUND_LITERAL=constexpr \
-                         SEQAN3_DEPRECATED_HEADER(x)=
+                         SEQAN3_DEPRECATED_HEADER(x)= \
+                         SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_START(x)= \
+                         SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_START(x, y)= \
+                         SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_STOP=
 EXPAND_AS_DEFINED      = SEQAN3_CPO_OVERLOAD_BODY \
                          SEQAN3_CPO_OVERLOAD
 SKIP_FUNCTION_MACROS   = NO
