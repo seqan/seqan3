@@ -34,25 +34,25 @@ jobs:
       fail-fast: false
       matrix:
         name: [ASan, TSan, UBSan]
-        os: [ubuntu-latest, macos-14]
+        os: [ubuntu-latest, macos-latest]
         build_type: [Release, RelWithDebInfo, Debug]
         exclude:
           # macOS llvm packages do not contain libarcher, which is required for TSan to handle OpenMP.
           # TSan runs on ubuntu with clang. Packages there contain libarcher.
           - name: "TSan"
-            os: macos-14
+            os: macos-latest
 
         include:
-          - os: macos-14
-            compiler: clang-19
+          - os: macos-latest
+            compiler: clang-latest
           - os: ubuntu-latest
-            compiler: gcc-14
-            image: ghcr.io/seqan/gcc-14
+            compiler: gcc-latest
+            image: ghcr.io/seqan/gcc-latest
 
           - name: "TSan"
             os: ubuntu-latest
-            compiler: clang-19
-            image: ghcr.io/seqan/clang-19
+            compiler: clang-latest
+            image: ghcr.io/seqan/clang-latest
             cxx_flags: "-fsanitize=thread"
             ctest_excludes: "-E async_input_buffer_snippet"
 
@@ -60,14 +60,14 @@ jobs:
             os: ubuntu-latest
             cxx_flags: "-fsanitize=address -Wno-maybe-uninitialized"
           - name: "ASan"
-            os: macos-14
+            os: macos-latest
             cxx_flags: "-fsanitize=address"
 
           - name: "UBSan"
             os: ubuntu-latest
             cxx_flags: "-fsanitize=undefined,float-divide-by-zero -Wno-maybe-uninitialized -Wno-stringop-overflow"
           - name: "UBSan"
-            os: macos-14
+            os: macos-latest
             cxx_flags: "-fsanitize=undefined,float-divide-by-zero,local-bounds,nullability"
             ctest_excludes: "-E tmp_directory_snippet_cmp_output"
 
@@ -75,8 +75,6 @@ jobs:
       # If an image is defined for a matrix entry, use it.
       # Otherwise, use the "empty"/'' image which means do not use a container at all.
       image: ${{ matrix.image || '' }}
-      volumes:
-        - /home/runner:/home/runner
     steps:
       - name: Checkout
         uses: actions/checkout@v4

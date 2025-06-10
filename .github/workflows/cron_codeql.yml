@@ -15,6 +15,7 @@ concurrency:
 
 env:
   SEQAN3_NO_VERSION_CHECK: 1
+  CODEQL_EXTRACTOR_CPP_AUTOINSTALL_DEPENDENCIES: false
   TZ: Europe/Berlin
 
 defaults:
@@ -29,9 +30,7 @@ jobs:
     permissions:
       security-events: write
     container:
-      image: ghcr.io/seqan/gcc-14
-      volumes:
-        - /home/runner:/home/runner
+      image: ghcr.io/seqan/gcc-second-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v4

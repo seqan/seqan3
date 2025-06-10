@@ -78,9 +78,11 @@ public:
      *
      * Constructs a new algorithm range by taking ownership over the passed algorithm buffer.
      */
+    SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_START(-Warray-bounds)
     explicit algorithm_result_generator_range(algorithm_executor_type && algorithm_executor) :
         algorithm_executor_ptr{std::make_unique<algorithm_executor_type>(std::move(algorithm_executor))}
     {}
+    SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_STOP
     //!\}
 
     /*!\name Iterators

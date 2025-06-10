@@ -33,15 +33,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: ["clang-19", "gcc-14", "gcc-12", "intel"]
+        compiler: ["clang-latest", "gcc-latest", "gcc-third-latest", "intel"]
         build: ["snippet", "performance", "header"]
-        include:
-          - compiler: "intel"
-            cxx_flags: "-fp-model=strict -Wno-overriding-option"
     container:
       image: ghcr.io/seqan/${{ matrix.compiler }}
-      volumes:
-        - /home/runner:/home/runner
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -53,7 +48,6 @@ jobs:
         run: |
           mkdir build && cd build
           cmake ../test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=Release \
-                                            -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
                                             -DSEQAN3_BENCHMARK_MIN_TIME=0.01s
           case "${{ matrix.build }}" in
             snippet) make gtest_main;;

@@ -23,7 +23,7 @@ defaults:
 jobs:
   update-cookbook:
     name: Update Cookbook
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     if: github.repository_owner == 'seqan'
     timeout-minutes: 15
     steps:
