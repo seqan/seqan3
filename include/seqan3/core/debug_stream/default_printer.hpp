@@ -200,16 +200,18 @@ struct default_printer :
         cigar_printer,                            // type seqan3::cigar
         // NOTE: alphabet_printer needs the integral_printer overload, otherwise it might have infinite recursion due to
         // char and uint being an alphabet
-        alphabet_printer,         // concept seqan3::alphabet
-        sam_flag_printer,         // type seqan3::sam_flag
-        simd_printer,             // concept simd::simd_concept<>
-        dynamic_bitset_printer,   // type seqan3::dynamic_bitset<>
+        alphabet_printer,       // concept seqan3::alphabet
+        sam_flag_printer,       // type seqan3::sam_flag
+        simd_printer,           // concept simd::simd_concept<>
+        dynamic_bitset_printer, // type seqan3::dynamic_bitset<>
+        // NOTE: In C++26, std::optional<T> is a view (and hence models std::ranges::input_range<>).
+        // So it needs to have priority over char_sequence_printer, integer_sequence_printer, and input_range_printer.
+        optional_printer,         // type std::optional<> or std::nullopt_t
         char_sequence_printer,    // concept std::range::input_range<> with char value_type
         integer_sequence_printer, // concept std::range::input_range<> with std::integral value_type
         sequence_printer, // concept seqan3::sequence<>, i.e. std::range::input_range<> with seqan3::alphabet value_type
         input_range_printer, // concept std::range::input_range<>
         strong_type_printer, // concept seqan3::detail::derived_from_strong_type<>
-        optional_printer,    // type std::optional<> or std::nullopt_t
         enumeration_printer, // types for which seqan3::enumeration_names is overloaded
         tuple_printer,       // concept seqan3::tuple_like<>
         std_byte_printer,    // type std::byte
