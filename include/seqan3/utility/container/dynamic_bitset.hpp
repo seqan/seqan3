@@ -11,6 +11,7 @@
 
 #include <bit>
 #include <istream>
+#include <vector>
 
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/debug_stream/debug_stream_type.hpp>
