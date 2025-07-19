@@ -55,9 +55,8 @@ TYPED_TEST_P(simulated_alignment_test, linear_alignment)
     (*col_it).up = this->gap;
     (*col_it).w_left = this->gap;
     ++col_it;
-    size_t step = 0;
 
-    for (; col_it != col.end(); ++col_it, ++step)
+    for (; col_it != col.end(); ++col_it)
     {
         (*col_it).current = (*col_it).up;
         (*col_it).up += this->gap;
