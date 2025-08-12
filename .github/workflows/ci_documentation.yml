@@ -34,12 +34,12 @@ jobs:
     steps:
       - name: Checkout
         if: github.event_name != 'pull_request_target'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # pull_request_target does not checkout the merge commit by default
       - name: Checkout
         if: github.event_name == 'pull_request_target'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: "refs/pull/${{ github.event.number }}/merge"
 
