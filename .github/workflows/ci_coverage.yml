@@ -83,7 +83,7 @@ jobs:
                 --output ${GITHUB_WORKSPACE}/build/coverage_report.xml
 
       - name: Submit coverage build
-        uses: codecov/codecov-action@v5.4.3
+        uses: codecov/codecov-action@v5.5.0
         with:
           disable_search: true
           fail_ci_if_error: false
