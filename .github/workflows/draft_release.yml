@@ -1,0 +1,80 @@
+# SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
+# SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
+# SPDX-License-Identifier: CC0-1.0
+
+name: Draft Release
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+
+concurrency:
+  group: draft-release-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TZ: Europe/Berlin
+
+defaults:
+  run:
+    shell: bash -Eeuxo pipefail {0}
+
+jobs:
+  build:
+    name: Create
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'seqan'
+    container:
+      image: ghcr.io/seqan/gcc-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.SEQAN_ACTIONS_PAT }}
+          path: seqan3
+
+      - name: Create packages
+        run: |
+          mkdir package && cd package
+          cmake ../seqan3
+          cpack
+          make package_source
+
+      - name: Create draft release
+        working-directory: package
+        env:
+            GH_TOKEN: ${{ secrets.SEQAN_ACTIONS_PAT }}
+            GH_REPO: ${{ github.repository }}
+        run: |
+          LATEST_RELEASE=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/seqan/seqan3/releases/latest --jq '.tag_name')
+          if [[ "${{ github.ref_name }}" =~ "-rc" ]]; then
+            NEXT_RELEASE=$(echo "${{ github.ref_name }}" | cut -f 1 -d '-')
+            LATEST_RC=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/seqan/seqan3/releases --jq 'first(.[]|select(.tag_name | contains("-rc") and contains("'${NEXT_RELEASE}'"))).tag_name')
+          else
+            LATEST_RC=""
+          fi
+
+          BODY="[![GitHub commits since latest release][version_diff_badge_latest_release]][version_diff_commits_latest_release]"
+          if [[ -n "${LATEST_RC}" ]]; then
+            BODY+=" [![GitHub commits since latest release candidate][version_diff_badge_latest_rc]][version_diff_commits_latest_rc]"
+          fi
+          BODY+="\n\n"
+          BODY+="[version_diff_badge_latest_release]: https://img.shields.io/github/commits-since/seqan/seqan3/${LATEST_RELEASE}/${{ github.ref_name }} \"Click to view commits\"\n"
+          BODY+="[version_diff_commits_latest_release]: https://github.com/seqan/seqan3/compare/${LATEST_RELEASE}...${{ github.ref_name }}\n"
+          if [[ -n "${LATEST_RC}" ]]; then
+            BODY+="[version_diff_badge_latest_rc]: https://img.shields.io/github/commits-since/seqan/seqan3/${LATEST_RC}/${{ github.ref_name }} \"Click to view commits\"\n"
+            BODY+="[version_diff_commits_latest_rc]: https://github.com/seqan/seqan3/compare/${LATEST_RC}...${{ github.ref_name }}\n"
+          fi
+          BODY+="Release ${{ github.ref_name }}"
+          echo -e "${BODY}" > tmp.md
+
+          gh release create ${{ github.ref_name }} seqan3-${{ github.ref_name }}* \
+            --verify-tag \
+            --draft \
+            --title "${{ github.ref_name }}" \
+            --generate-notes \
+            --notes-start-tag ${LATEST_RC:-${LATEST_RELEASE}} \
+            --notes-file tmp.md
+
