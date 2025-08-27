@@ -49,12 +49,13 @@ if (NOT EXISTS "${SEQAN3_DOXYGEN_STD_TAGFILE}" OR SEQAN3_DOXYGEN_STD_TAGFILE STR
     # When updating, check whether warnings in SEQAN3_TEST_DOXYGEN_FAIL_ON_WARNINGS are gone when removing sed filter.
     ExternalProject_Add (
         download-cppreference-doxygen-web-tag
-        URL "https://github.com/PeterFeicht/cppreference-doc/releases/download/v20241110/html-book-20241110.tar.xz"
-        URL_HASH SHA256=431e80862eb70fd4793a60d7d3b6c13c8605284978f9ea0529572e8fd1562cc6
+        URL "https://github.com/PeterFeicht/cppreference-doc/releases/download/v20250209/html-book-20250209.tar.xz"
+        URL_HASH SHA256=ac50671a1f52d7f0ab0911d14450eb35e8c2f812edd0e426b2cd1e3d9db91d6f
         TLS_VERIFY ON
         DOWNLOAD_DIR "${PROJECT_BINARY_DIR}"
         DOWNLOAD_NAME "html-book.tar.xz"
         DOWNLOAD_NO_EXTRACT YES
+        DOWNLOAD_NO_PROGRESS YES
         BINARY_DIR "${PROJECT_BINARY_DIR}"
         BUILD_BYPRODUCTS "${SEQAN3_DEFAULT_DOXYGEN_STD_TAGFILE}"
         CONFIGURE_COMMAND /bin/sh -c "xzcat html-book.tar.xz | tar -xf - cppreference-doxygen-web.tag.xml"

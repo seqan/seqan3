@@ -92,10 +92,10 @@ this should not be a problem.
 We promise to support the above compilers in the latest release of SeqAn3, or until all the following
 operating systems provide a newer supported compiler:
 
-| Operating System             | Supported Releases¹                    |
+| Operating System             | Supported Releases                     |
 |------------------------------|----------------------------------------|
-| RedHat Enterprise Linux      | the latest release ²                   |
-| CentOS Linux                 | the latest release ²                   |
+| RedHat Enterprise Linux      | the latest release ¹                   |
+| CentOS Linux                 | the latest release ¹                   |
 | SUSE Linux Enterprise Server | the latest release                     |
 | Debian GNU/Linux             | "stable" and "old-stable"              |
 | Ubuntu Linux                 | the two latest LTS releases            |
@@ -115,9 +115,7 @@ More platforms and compilers will be added during the SeqAn3 lifecycle, but some
 **We promise to provide good forward-compatibility with the C++ standard.** And we will strive to fix any warnings that
 are added by newer versions of a supported compiler.
 
-<small>¹ [This site](https://linuxlifecycle.com) provides a good overview of what the current release and its
-lifecycle is.</small><br>
-<small>² We consider CentOS 7 / RedHat Enterprise Linux (RHEL) 7 as being community-supported. That means issues and
+<small>¹ We consider CentOS 7 / RedHat Enterprise Linux (RHEL) 7 as being community-supported. That means issues and
 patches are welcome, but we do not actively test for those operating systems. See this related
 [issue](https://github.com/seqan/seqan3/issues/2244).</small>
 
