@@ -48,7 +48,7 @@ CPMDeclarePackage (googletest
                    SYSTEM TRUE
                    OPTIONS "BUILD_GMOCK OFF" "INSTALL_GTEST OFF" "CMAKE_MESSAGE_LOG_LEVEL WARNING")
 # doxygen-awesome
-set (SEQAN3_DOXYGEN_AWESOME_VERSION 2.3.4 CACHE STRING "")
+set (SEQAN3_DOXYGEN_AWESOME_VERSION 2.4.0 CACHE STRING "")
 CPMDeclarePackage (doxygen_awesome
                    NAME doxygen_awesome
                    VERSION ${SEQAN3_DOXYGEN_AWESOME_VERSION}
