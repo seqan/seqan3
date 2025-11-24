@@ -30,7 +30,7 @@ jobs:
       image: ghcr.io/seqan/gcc-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.SEQAN_ACTIONS_PAT }}
           path: seqan3
