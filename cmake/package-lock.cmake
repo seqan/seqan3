@@ -56,7 +56,7 @@ CPMDeclarePackage (doxygen_awesome
                    DOWNLOAD_ONLY TRUE
                    QUIET TRUE)
 # seqan2
-set (SEQAN3_SEQAN2_VERSION 2.5.1 CACHE STRING "")
+set (SEQAN3_SEQAN2_VERSION 2.5.2 CACHE STRING "")
 CPMDeclarePackage (seqan
                    NAME seqan
                    VERSION ${SEQAN3_SEQAN2_VERSION}
