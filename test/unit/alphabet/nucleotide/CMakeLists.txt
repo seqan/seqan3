@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
 # SPDX-License-Identifier: CC0-1.0
 
+seqan3_test (custom_alphabet_seqan2_dna_test.cpp)
 seqan3_test (dna4_test.cpp)
 seqan3_test (dna5_test.cpp)
 seqan3_test (dna15_test.cpp)
