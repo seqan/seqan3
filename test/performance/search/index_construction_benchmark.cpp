@@ -17,10 +17,18 @@
 #    include <seqan/index.h>
 #endif
 
+namespace benchmark
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+using Benchmark = benchmark::internal::Benchmark;
+#pragma GCC diagnostic pop
+} // namespace benchmark
+
 static constexpr int32_t max_length{50000};
 static constexpr size_t seed{0x6'12'6f};
 
-static void arguments(benchmark::internal::Benchmark * b)
+static void arguments(benchmark::Benchmark * b)
 {
 #ifndef NDEBUG
     constexpr std::array<int32_t, 2> values{50, 5000};

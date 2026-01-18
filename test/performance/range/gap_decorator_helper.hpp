@@ -16,6 +16,14 @@
 #include <seqan3/alignment/exception.hpp>
 #include <seqan3/alphabet/all.hpp>
 
+namespace benchmark
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+using Benchmark = benchmark::internal::Benchmark;
+#pragma GCC diagnostic pop
+} // namespace benchmark
+
 #define SEQAN3_LEN_LONG 1 << 18
 #define SEQAN3_LEN_SHORT 1 << 12
 
@@ -29,7 +37,7 @@
  *  | !SEQAN3_LONG_TESTS  |  1 << [4:2:12]   | [1, 5, 50] %
  *  | SEQAN3_LONG_TESTS   |  1 << [4:2:18]   | [1, 5, 25, 50, 75] %
  */
-void custom_arguments(benchmark::internal::Benchmark * b)
+void custom_arguments(benchmark::Benchmark * b)
 {
     std::vector<long long int> gap_percentages{1, 5, 50};
     long long int seq_len_max = SEQAN3_LEN_SHORT;

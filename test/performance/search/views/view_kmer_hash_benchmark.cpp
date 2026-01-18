@@ -13,6 +13,14 @@
 #    include <seqan/index.h>
 #endif // SEQAN3_HAS_SEQAN2
 
+namespace benchmark
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+using Benchmark = benchmark::internal::Benchmark;
+#pragma GCC diagnostic pop
+} // namespace benchmark
+
 inline benchmark::Counter bp_per_second(size_t const basepairs)
 {
     return benchmark::Counter(basepairs,
@@ -32,7 +40,7 @@ inline seqan3::shape make_gapped_shape(size_t const k)
     return shape;
 }
 
-static void arguments(benchmark::internal::Benchmark * b)
+static void arguments(benchmark::Benchmark * b)
 {
     for (int32_t sequence_length : {1000, 50000, /*1'000'000*/})
     {

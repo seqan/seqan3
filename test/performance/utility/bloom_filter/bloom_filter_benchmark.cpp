@@ -7,12 +7,20 @@
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/utility/bloom_filter/bloom_filter.hpp>
 
+namespace benchmark
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+using Benchmark = benchmark::internal::Benchmark;
+#pragma GCC diagnostic pop
+} // namespace benchmark
+
 inline benchmark::Counter hashes_per_second(size_t const count)
 {
     return benchmark::Counter(count, benchmark::Counter::kIsIterationInvariantRate, benchmark::Counter::OneK::kIs1000);
 }
 
-static void arguments(benchmark::internal::Benchmark * b)
+static void arguments(benchmark::Benchmark * b)
 {
     // Size of the IBF will be 2^bits bits
     for (int32_t bits = 15; bits <= 20; bits += 5)

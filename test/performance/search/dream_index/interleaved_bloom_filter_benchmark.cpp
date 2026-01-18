@@ -9,12 +9,20 @@
 #include <seqan3/utility/range/to.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
+namespace benchmark
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+using Benchmark = benchmark::internal::Benchmark;
+#pragma GCC diagnostic pop
+} // namespace benchmark
+
 inline benchmark::Counter hashes_per_second(size_t const count)
 {
     return benchmark::Counter(count, benchmark::Counter::kIsIterationInvariantRate, benchmark::Counter::OneK::kIs1000);
 }
 
-static void arguments(benchmark::internal::Benchmark * b)
+static void arguments(benchmark::Benchmark * b)
 {
     // Bins must be powers of two
     for (int32_t bins : {64, 8192})
