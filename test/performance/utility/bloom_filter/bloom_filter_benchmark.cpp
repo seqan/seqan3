@@ -4,16 +4,9 @@
 
 #include <benchmark/benchmark.h>
 
+#include <seqan3/test/compatibility/benchmark.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/utility/bloom_filter/bloom_filter.hpp>
-
-namespace benchmark
-{
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-using Benchmark = benchmark::internal::Benchmark;
-#pragma GCC diagnostic pop
-} // namespace benchmark
 
 inline benchmark::Counter hashes_per_second(size_t const count)
 {

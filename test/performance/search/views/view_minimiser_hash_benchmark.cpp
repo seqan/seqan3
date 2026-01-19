@@ -6,6 +6,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/search/views/minimiser_hash.hpp>
+#include <seqan3/test/compatibility/benchmark.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/performance/units.hpp>
 #include <seqan3/utility/views/zip.hpp>
@@ -15,14 +16,6 @@
 
 #    include <seqan/index.h>
 #endif // SEQAN3_HAS_SEQAN2
-
-namespace benchmark
-{
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-using Benchmark = benchmark::internal::Benchmark;
-#pragma GCC diagnostic pop
-} // namespace benchmark
 
 inline benchmark::Counter bp_per_second(size_t const basepairs)
 {

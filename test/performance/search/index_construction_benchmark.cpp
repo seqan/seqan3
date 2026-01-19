@@ -8,6 +8,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/views/rank_to.hpp>
 #include <seqan3/search/fm_index/all.hpp>
+#include <seqan3/test/compatibility/benchmark.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/seqan2.hpp>
 #include <seqan3/utility/range/to.hpp>
@@ -16,14 +17,6 @@
 #if SEQAN3_HAS_SEQAN2
 #    include <seqan/index.h>
 #endif
-
-namespace benchmark
-{
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-using Benchmark = benchmark::internal::Benchmark;
-#pragma GCC diagnostic pop
-} // namespace benchmark
 
 static constexpr int32_t max_length{50000};
 static constexpr size_t seed{0x6'12'6f};
