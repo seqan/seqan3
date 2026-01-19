@@ -15,14 +15,7 @@
 #include <seqan3/alignment/decorator/gap_decorator.hpp>
 #include <seqan3/alignment/exception.hpp>
 #include <seqan3/alphabet/all.hpp>
-
-namespace benchmark
-{
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-using Benchmark = benchmark::internal::Benchmark;
-#pragma GCC diagnostic pop
-} // namespace benchmark
+#include <seqan3/test/compatibility/benchmark.hpp>
 
 #define SEQAN3_LEN_LONG 1 << 18
 #define SEQAN3_LEN_SHORT 1 << 12
