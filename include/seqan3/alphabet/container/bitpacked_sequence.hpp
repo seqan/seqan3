@@ -87,7 +87,33 @@ private:
         //!\brief Update the sdsl-proxy.
         constexpr void on_update() noexcept
         {
+            // Alternative patch in the SDSL.
+            // The problem is that, in the Fedora build type, there is a warning about accessing lo_set[65],
+            // which is out of bounds (size is 64).
+            // However, during runtime, lo_set[65] is never actually accessed (bogus warning).
+            // Making `len > 64` undefined behaviour resolves the warning.
+            // Note that the SDSL uses an older C++ standard and has not `std::unreachable()` available.
+            // Also, `__builtin_unreachable()` is only valid for GCC and Clang. The SDSL also supports MSVC,
+            // where there is an equivalent but different builtin for that.
+            // The diff is for the amalgamated seqan3/contrib/sdsl-lite.hpp; but the patch should be applied upstream.
+            // ```diff
+            // diff --git a/include/seqan3/contrib/sdsl-lite.hpp b/include/seqan3/contrib/sdsl-lite.hpp
+            // index a82da4ac2..b59628a56 100644
+            // --- a/include/seqan3/contrib/sdsl-lite.hpp
+            // +++ b/include/seqan3/contrib/sdsl-lite.hpp
+            // @@ -510,6 +510,8 @@ constexpr uint32_t bits_impl<T>::sel11(uint64_t x, uint32_t i, uint32_t c)
+            //  template <typename T>
+            //  constexpr void bits_impl<T>::write_int(uint64_t * word, uint64_t x, uint8_t offset, const uint8_t len)
+            //  {
+            // +    if (len > 64)
+            // +        __builtin_unreachable();
+            //      x &= bits_impl<T>::lo_set[len];
+            //      if (offset + len < 64)
+            //      {
+            // ```
+            SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_START(-Warray-bounds)
             internal_proxy = base_t::to_rank();
+            SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY_STOP
         }
 
     public:
