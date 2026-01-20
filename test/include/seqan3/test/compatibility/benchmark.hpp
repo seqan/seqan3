@@ -69,12 +69,20 @@
  * ```
  *
  * ### Version 2
- * https://godbolt.org/z/1M9f8fojv
+ * https://godbolt.org/z/6ccEYY7hY
  *
- * We use an anonymous namespace within `benchmark` to resolve `Benchmark` from either location without triggering
- * deprecation warnings. The anonymous namespace brings both `benchmark` and `benchmark::internal` into scope, then
- * aliases the first available `Benchmark` type. This works for both old and new versions and is future-proof, albeit
- * harder to grasp (both code and intention).
+ * We use an anonymous namespace within `benchmark` that imports `benchmark::internal` via a using-directive.
+ * This brings the `Benchmark` class into scope without directly referencing it, allowing it to resolve from either
+ * `benchmark::internal::Benchmark` (old versions) or `benchmark::Benchmark` (new versions) without triggering
+ * deprecation warnings. This approach is future-proof, albeit harder to grasp (both code and intention).
+ *
+ * The anonymous namespace limits the effect of `using namespace` to the current file only. It gives the imported
+ * names internal linkage (conceptually).
+ * Without the anonymous namespace, it pollutes the benchmark namespace for everyone who includes this file. It has
+ * external visibility.
+ *
+ * When the new version looks up `benchmark::Benchmark`, the declaration in the direct namespace (`benchmark`) has
+ * precedence over the names introduced via the anonymous namespace.
  *
  * ```cpp
  * namespace benchmark
@@ -83,9 +91,7 @@
  * namespace
  * {
  *
- * using namespace benchmark;
  * using namespace benchmark::internal;
- * using Benchmark = Benchmark;
  *
  * }
  *
@@ -98,9 +104,7 @@ namespace benchmark
 namespace
 {
 
-using namespace benchmark;
 using namespace benchmark::internal;
-using Benchmark = Benchmark;
 
 } // namespace
 
