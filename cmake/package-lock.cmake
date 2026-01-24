@@ -31,7 +31,7 @@ CPMDeclarePackage (cereal
                    SYSTEM TRUE
                    OPTIONS "JUST_INSTALL_CEREAL ON" "CMAKE_MESSAGE_LOG_LEVEL WARNING")
 # benchmark
-set (SEQAN3_BENCHMARK_VERSION 1.9.4 CACHE STRING "")
+set (SEQAN3_BENCHMARK_VERSION 1.9.5 CACHE STRING "")
 CPMDeclarePackage (benchmark
                    NAME benchmark
                    VERSION ${SEQAN3_BENCHMARK_VERSION}
