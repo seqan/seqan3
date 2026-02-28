@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2026 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2026 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 /* Copied and adjusted from https://raw.githubusercontent.com/kloetzl/libdna/master/bench2/revcomp.cxx

@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2026 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2026 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 /*!\file
@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <seqan3/std/charconv>
 #include <array>
 #include <chrono>
 #include <fstream>
@@ -16,7 +17,6 @@
 #include <iostream>
 #include <optional>
 #include <regex>
-#include <seqan3/std/charconv>
 
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/detail/terminal.hpp>

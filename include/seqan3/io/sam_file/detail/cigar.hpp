@@ -1,5 +1,5 @@
-// SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
-// SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
+// SPDX-FileCopyrightText: 2006-2026 Knut Reinert & Freie Universität Berlin
+// SPDX-FileCopyrightText: 2016-2026 Knut Reinert & MPI für molekulare Genetik
 // SPDX-License-Identifier: BSD-3-Clause
 
 /*!\file
@@ -9,10 +9,10 @@
 
 #pragma once
 
+#include <seqan3/std/charconv>
 #include <algorithm>
 #include <concepts>
 #include <ranges>
-#include <seqan3/std/charconv>
 #include <sstream>
 
 #include <seqan3/alignment/detail/pairwise_alignment_concept.hpp>

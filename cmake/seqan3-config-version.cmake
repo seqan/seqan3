@@ -1,5 +1,5 @@
-# SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
-# SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
+# SPDX-FileCopyrightText: 2006-2026 Knut Reinert & Freie Universität Berlin
+# SPDX-FileCopyrightText: 2016-2026 Knut Reinert & MPI für molekulare Genetik
 # SPDX-License-Identifier: BSD-3-Clause
 
 # This file adds version support for `find_package(SEQAN3 3.1)`.

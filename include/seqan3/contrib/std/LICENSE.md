@@ -1,5 +1,5 @@
-Copyright (c) 2006-2025, Knut Reinert & Freie Universität Berlin
-Copyright (c) 2016-2025, Knut Reinert & MPI für molekulare Genetik
+Copyright (c) 2006-2026, Knut Reinert & Freie Universität Berlin
+Copyright (c) 2016-2026, Knut Reinert & MPI für molekulare Genetik
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
