@@ -124,9 +124,13 @@ IncludeCategories:
     Priority:        1
     SortPriority:    0
     CaseSensitive:   false
+  - Regex:           '(<seqan3/std/charconv>)'
+    Priority:        2
+    SortPriority:    1
+    CaseSensitive:   false
   - Regex:           '(<[[:alnum:]._]+>|<seqan3/std/.*>)'
     Priority:        2
-    SortPriority:    0
+    SortPriority:    2
     CaseSensitive:   false
   - Regex:           '<sdsl/'
     Priority:        3

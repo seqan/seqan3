@@ -11,9 +11,24 @@
 #ifndef SEQAN_STD_CHARCONV_SHIM
 #define SEQAN_STD_CHARCONV_SHIM
 
+#include <version> // From C++20 onwards, all feature macros should be defined here.
+
+// Workaround for llvm marking float charconv as unavailable
+#if defined(__APPLE__) && defined(_LIBCPP_VERSION)
+#    ifdef _LIBCPP___CHARCONV_FROM_CHARS_FLOATING_POINT_H
+#        warning This file needs to be included before any <charconv> include.
+#    endif
+#    if __has_include(<__configuration/availability.h>)
+#        include <__configuration/availability.h>
+#        undef _LIBCPP_AVAILABILITY_FROM_CHARS_FLOATING_POINT
+#        define _LIBCPP_AVAILABILITY_FROM_CHARS_FLOATING_POINT /* nothing */
+#        undef _LIBCPP_AVAILABILITY_HAS_FROM_CHARS_FLOATING_POINT
+#        define _LIBCPP_AVAILABILITY_HAS_FROM_CHARS_FLOATING_POINT /* nothing */
+#    endif
+#endif
+
 #include <charconv>
 #include <utility> // __cpp_lib_to_chars may be defined here as currently documented.
-#include <version> // From C++20 onwards, all feature macros should be defined here.
 
 /*!\defgroup std_charconv charconv
  * \ingroup std

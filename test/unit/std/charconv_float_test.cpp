@@ -6,12 +6,12 @@
 
 // make sure that including the std header does not produce any errors
 // see https://github.com/seqan/seqan3/issues/2352
+#include <seqan3/std/charconv>
 #include <charconv>
 #include <cmath>
 #include <concepts>
 #include <iostream>
 #include <limits>
-#include <seqan3/std/charconv>
 
 // =============================================================================
 // std::from_chars for float, double and long double
