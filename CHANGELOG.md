@@ -30,6 +30,16 @@ The following API changes should be documented as such:
 If possible, provide tooling that performs the changes, e.g. a shell-script.
 -->
 
+# 3.4.1
+
+## Notable Bug-fixes
+
+#### Misc
+  * Resolved an issue preventing `seqan3/std/charconv' from working on macOS
+    ([\#3399](https://github.com/seqan/seqan3/pull/3399)).
+  * Added a compatibility header to allow test compilation with both new and old version of google/benchmark
+    ([\#3397](https://github.com/seqan/seqan3/pull/3397)).
+
 # 3.4.0
 
 ## New features
