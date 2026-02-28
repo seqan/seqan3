@@ -1,40 +1,54 @@
 #!/usr/bin/env bash
 
-# SPDX-FileCopyrightText: 2006-2025 Knut Reinert & Freie Universität Berlin
-# SPDX-FileCopyrightText: 2016-2025 Knut Reinert & MPI für molekulare Genetik
+# SPDX-FileCopyrightText: 2006-2026 Knut Reinert & Freie Universität Berlin
+# SPDX-FileCopyrightText: 2016-2026 Knut Reinert & MPI für molekulare Genetik
 # SPDX-License-Identifier: BSD-3-Clause
 
 set -Eeuo pipefail
 
-usage="\
+USAGE="\
 SYNOPSIS
-    update_copyright.sh <oldyear> <newyear> <file1> [<file2>] [<file3>]...
+    adjust_copyright_years.sh [old_year=$(($(date +%Y) - 1))] [new_year=$(date +%Y)]
 
 DESCRIPTION
-    Updates the copyright year of files that are formatted in a certain way. And prints out the
-    copyright years that it ignores.
+    Updates the copyright year of files that are formatted in a certain way.
 
 EXAMPLES
-    ./test/scripts/update_copyright.sh 2020 2021 \$(find . -not -path '*/\.git/**' -and -not -path '*/submodules/*' -and -not -path '*/build/*' -and -not -iname '*.patch' -type f)
-        Updates all copyright entries from 2020 to 2021. Only scans non hidden directories. Does not scan build and
-        submodules directory.
-"
+    ./test/scripts/update_copyright.sh
+    ./test/scripts/update_copyright.sh 2022 # Overwrite old year
+    ./test/scripts/update_copyright.sh 2024 2025 # Overwrite old and new year"
 
-if [ $# -eq 0 ]; then
-    echo -e "$usage"
+# https://www.shellcheck.net/wiki/SC2235
+if [[ $# -gt 0 ]] && { [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; }; then
+    echo -e "${USAGE}"
+    exit 0
+fi
+
+if [[ $# -gt 2 ]]; then
+    echo -e "${USAGE}"
     exit 1
 fi
-# New update year
-oldyear=$1
-year=$2
-shift 2
 
-echo "Setting copyright dates from ${oldyear} to ${year}"
+OLD_YEAR="${1:-$(($(date +%Y) - 1))}"
+NEW_YEAR="${2:-$(date +%Y)}"
 
-for file in "$@"; do
-    perl -i -pe 's/^(.*SPDX-FileCopyrightText: [0-9]{4}-)'${oldyear}'(,? Knut Reinert.*$)/${1}'${year}'${2}/' $file
-    perl -ne 'print "'$file':$.: $_" if (/^.*SPDX-FileCopyrightText.*'${oldyear}'.*$/);' $file
-done
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+SEQAN3_ROOT="$(realpath "${SCRIPT_DIR}/../..")"
 
-echo "Manually adjust the year in the argument_parser, corresponding tests, and LICENSE.md."
-echo "Also provide an API Stability Patch for the argument_parser tests."
+get_files()
+{
+    find "${SEQAN3_ROOT}" \
+        -not -path "${SEQAN3_ROOT}"'/\.git/*' -and \
+        -not -path "${SEQAN3_ROOT}"'/build/*' -and \
+        -not -path "${SEQAN3_ROOT}"'/.vscode/*' -and \
+        -not -iname "*.patch" \
+        -type f \
+        -print0
+}
+
+echo "Updating copyright years from ${OLD_YEAR} to ${NEW_YEAR}"
+
+# https://www.shellcheck.net/wiki/SC2044
+while IFS= read -r -d '' file; do
+    perl -i -pe 's/^(.*[0-9]{4}-)'"${OLD_YEAR}"'(,? Knut Reinert.*$)/${1}'"${NEW_YEAR}"'${2}/' "${file}"
+done < <(get_files)
