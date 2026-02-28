@@ -4,8 +4,8 @@
 
 #include <benchmark/benchmark.h>
 
-#include <cstring>
 #include <seqan3/std/charconv>
+#include <cstring>
 #include <sstream>
 #include <string_view>
 

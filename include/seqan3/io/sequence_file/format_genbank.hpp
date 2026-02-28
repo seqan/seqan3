@@ -9,10 +9,10 @@
 
 #pragma once
 
+#include <seqan3/std/charconv>
 #include <algorithm>
 #include <iterator>
 #include <ranges>
-#include <seqan3/std/charconv>
 #include <string>
 #include <string_view>
 #include <vector>

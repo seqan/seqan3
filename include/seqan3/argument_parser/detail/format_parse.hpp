@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include <concepts>
 #include <seqan3/std/charconv>
+#include <concepts>
 #include <sstream>
 #include <string>
 #include <vector>

@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <seqan3/std/charconv>
 #include <array>
 #include <chrono>
 #include <fstream>
@@ -16,7 +17,6 @@
 #include <iostream>
 #include <optional>
 #include <regex>
-#include <seqan3/std/charconv>
 
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/detail/terminal.hpp>

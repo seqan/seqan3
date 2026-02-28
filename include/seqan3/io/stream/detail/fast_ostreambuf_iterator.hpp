@@ -10,12 +10,12 @@
 
 #pragma once
 
+#include <seqan3/std/charconv>
 #include <algorithm>
 #include <array>
 #include <cassert>
 #include <iterator>
 #include <ranges>
-#include <seqan3/std/charconv>
 
 #include <seqan3/io/stream/detail/stream_buffer_exposer.hpp>
 
