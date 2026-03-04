@@ -14,7 +14,7 @@ TEST(search_config_parallel, member_variable)
     { // default construction
         seqan3::search_cfg::parallel cfg{};
         EXPECT_FALSE(cfg.thread_count);
-        EXPECT_THROW(cfg.thread_count.value(), std::bad_optional_access);
+        EXPECT_THROW((void)cfg.thread_count.value(), std::bad_optional_access);
     }
 
     { // construct with value

@@ -209,7 +209,7 @@ public:
         assert(stream_buf != nullptr);
 
         if ((stream_buf->gptr() + 1) == stream_buf->egptr())
-            stream_buf->snextc(); // move right, then underflow()
+            (void)stream_buf->snextc(); // move right, then underflow()
         else
             stream_buf->gbump(1);
         return *this;
