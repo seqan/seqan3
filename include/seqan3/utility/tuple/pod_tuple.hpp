@@ -341,7 +341,8 @@ constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
  * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  */
 template <std::size_t i, template <typename...> typename t, typename... types>
-    requires (i < sizeof...(types)) && std::is_base_of_v<seqan3::pod_tuple<types...>, t<types...>>
+    requires (i < sizeof...(types)) && (!std::same_as<std::tuple<types...>, t<types...>>)
+          && std::is_base_of_v<seqan3::pod_tuple<types...>, t<types...>>
 struct tuple_element<i, t<types...>>
 {
     //!\brief Element type.
@@ -354,7 +355,8 @@ struct tuple_element<i, t<types...>>
  * \relates seqan3::pod_tuple
  */
 template <template <typename...> typename t, typename... types>
-    requires std::is_base_of_v<seqan3::pod_tuple<types...>, t<types...>>
+    requires (!std::same_as<std::tuple<types...>, t<types...>>)
+          && std::is_base_of_v<seqan3::pod_tuple<types...>, t<types...>>
 struct tuple_size<t<types...>> : public std::integral_constant<std::size_t, sizeof...(types)>
 {};
 

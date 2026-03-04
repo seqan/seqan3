@@ -800,7 +800,9 @@ namespace std
  *
  * \stableapi{Since version 3.1.}
  */
-template <std::size_t i, seqan3::detail::alphabet_tuple_like tuple_t>
+template <std::size_t i, typename tuple_t>
+    requires (!seqan3::detail::is_type_specialisation_of_v<tuple_t, std::tuple>)
+          && seqan3::detail::alphabet_tuple_like<tuple_t>
 struct tuple_element<i, tuple_t>
 {
     //!\brief Element type.
@@ -814,7 +816,9 @@ struct tuple_element<i, tuple_t>
  *
  * \stableapi{Since version 3.1.}
  */
-template <seqan3::detail::alphabet_tuple_like tuple_t>
+template <typename tuple_t>
+    requires (!seqan3::detail::is_type_specialisation_of_v<tuple_t, std::tuple>)
+          && seqan3::detail::alphabet_tuple_like<tuple_t>
 struct tuple_size<tuple_t> :
     public std::integral_constant<size_t, seqan3::list_traits::size<typename tuple_t::seqan3_required_types>>
 {};
