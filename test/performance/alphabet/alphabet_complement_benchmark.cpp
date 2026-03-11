@@ -8,6 +8,7 @@
 
 #include <benchmark/benchmark.h>
 
+#include <algorithm>
 #include <random>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
