@@ -202,6 +202,13 @@ Here is an example for a dna4-like alphabet:
 
 \snippet test/performance/simd_dna4.hpp cookbook
 
+# Adaptation of seqan2::Dna
+
+In case you want to use `seqan2::Dna` in your SeqAn3 application, you can adapt it to the SeqAn3 alphabet
+concepts by specialising the `seqan3::custom::alphabet` class template.
+
+\include test/unit/alphabet/nucleotide/custom_alphabet_seqan2_dna.hpp
+
 # All SeqAn documentation snippets
 
 The following lists all snippets that appear in our documentation.

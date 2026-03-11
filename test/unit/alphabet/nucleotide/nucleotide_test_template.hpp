@@ -10,13 +10,20 @@
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 
 template <typename t>
-using nucleotide = ::testing::Test;
+struct nucleotide : public ::testing::Test
+{
+    // Do not check the `trivial` concept, because `t` is a third party class and not trivial.
+    static constexpr bool skip_trivial_thirdparty = false;
+};
 
 TYPED_TEST_SUITE_P(nucleotide);
 
 TYPED_TEST_P(nucleotide, concept_check)
 {
-    EXPECT_TRUE(seqan3::trivial<TypeParam>);
+    if constexpr (!TestFixture::skip_trivial_thirdparty)
+    {
+        EXPECT_TRUE(seqan3::trivial<TypeParam>);
+    }
 
     EXPECT_TRUE(seqan3::nucleotide_alphabet<TypeParam>);
     EXPECT_TRUE(seqan3::nucleotide_alphabet<TypeParam &>);
@@ -26,10 +33,10 @@ TYPED_TEST_P(nucleotide, concept_check)
 
 TYPED_TEST_P(nucleotide, complement)
 {
-    EXPECT_EQ(seqan3::complement(TypeParam{}.assign_char('A')), TypeParam{}.assign_char('T'));
-    EXPECT_EQ(seqan3::complement(TypeParam{}.assign_char('C')), TypeParam{}.assign_char('G'));
-    EXPECT_EQ(seqan3::complement(TypeParam{}.assign_char('G')), TypeParam{}.assign_char('C'));
-    EXPECT_EQ(seqan3::complement(TypeParam{}.assign_char('T')), TypeParam{}.assign_char('A'));
+    EXPECT_EQ(seqan3::complement(seqan3::assign_char_to('A', TypeParam{})), seqan3::assign_char_to('T', TypeParam{}));
+    EXPECT_EQ(seqan3::complement(seqan3::assign_char_to('C', TypeParam{})), seqan3::assign_char_to('G', TypeParam{}));
+    EXPECT_EQ(seqan3::complement(seqan3::assign_char_to('G', TypeParam{})), seqan3::assign_char_to('C', TypeParam{}));
+    EXPECT_EQ(seqan3::complement(seqan3::assign_char_to('T', TypeParam{})), seqan3::assign_char_to('A', TypeParam{}));
 
     using vsize_t = std::decay_t<decltype(seqan3::alphabet_size<TypeParam>)>;
 
