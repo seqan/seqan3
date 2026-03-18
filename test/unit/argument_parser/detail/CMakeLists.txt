@@ -4,7 +4,7 @@
 
 find_path (SEQAN3_TEST_LICENSE_DIR
            NAMES LICENSE.md
-           HINTS "${SEQAN3_CLONE_DIR}")
+           HINTS "${SEQAN3_CLONE_DIR}" "${CMAKE_CURRENT_LIST_DIR}/../../../.." "${seqan3_test_unit_BINARY_DIR}/..")
 
 add_definitions (-DSEQAN3_TEST_LICENSE_DIR="${SEQAN3_TEST_LICENSE_DIR}")
 
