@@ -30,6 +30,14 @@ The following API changes should be documented as such:
 If possible, provide tooling that performs the changes, e.g. a shell-script.
 -->
 
+# 3.4.2
+
+## Notable Bug-fixes
+
+#### Misc
+  * Resolved warnings and errors arising with Clang 22 ([\#3404](https://github.com/seqan/seqan3/pull/3404)).
+  * Resolved a rare data race in the BGZF stream ([\#3406](https://github.com/seqan/seqan3/pull/3406)).
+
 # 3.4.1
 
 ## Notable Bug-fixes
