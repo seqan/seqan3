@@ -56,7 +56,7 @@ CPMDeclarePackage (doxygen_awesome
                    DOWNLOAD_ONLY TRUE
                    QUIET TRUE)
 # seqan2
-set (SEQAN3_SEQAN2_VERSION 2.5.2 CACHE STRING "")
+set (SEQAN3_SEQAN2_VERSION 2.5.3 CACHE STRING "")
 CPMDeclarePackage (seqan
                    NAME seqan
                    VERSION ${SEQAN3_SEQAN2_VERSION}
@@ -73,5 +73,9 @@ CPMDeclarePackage (use_ccache
                    SOURCE_SUBDIR ccache
                    SYSTEM TRUE
                    EXCLUDE_FROM_ALL TRUE)
+# sharg - only used for automatic version bumps for test/external_project/install-sharg.cmake
+set (SEQAN3_SHARG_VERSION 1.2.2 CACHE STRING "")
+# the following line is intentionally commented out
+#(VERSION ${SEQAN3_SHARG_VERSION} GITHUB_REPOSITORY seqan/sharg-parser)
 
 # cmake-format: on
