@@ -123,7 +123,14 @@ public:
     constexpr alignment_algorithm(alignment_algorithm &&) = default;                  //!< Defaulted
     constexpr alignment_algorithm & operator=(alignment_algorithm const &) = default; //!< Defaulted
     constexpr alignment_algorithm & operator=(alignment_algorithm &&) = default;      //!< Defaulted
-    ~alignment_algorithm() = default;                                                 //!< Defaulted
+#if SEQAN3_COMPILER_IS_GCC && (__GNUC__ >= 16)
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+    ~alignment_algorithm() = default; //!< Defaulted
+#if SEQAN3_COMPILER_IS_GCC && (__GNUC__ >= 16)
+#    pragma GCC diagnostic pop
+#endif
 
     /*!\brief Constructs the algorithm with the passed configuration.
      * \param cfg The configuration to be passed to the algorithm.
