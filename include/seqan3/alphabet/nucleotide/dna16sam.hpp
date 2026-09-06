@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <seqan3/alphabet/nucleotide/nucleotide_base.hpp>
 
 namespace seqan3

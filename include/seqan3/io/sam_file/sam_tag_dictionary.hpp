@@ -10,8 +10,10 @@
 #pragma once
 
 #include <concepts>
+#include <cstddef>
 #include <map>
 #include <variant>
+#include <vector>
 
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>

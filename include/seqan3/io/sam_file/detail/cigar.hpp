@@ -14,6 +14,7 @@
 #include <concepts>
 #include <ranges>
 #include <sstream>
+#include <vector>
 
 #include <seqan3/alignment/detail/pairwise_alignment_concept.hpp>
 #include <seqan3/alphabet/cigar/cigar.hpp>
