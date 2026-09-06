@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <seqan3/alphabet/quality/phred_base.hpp>
 
 namespace seqan3

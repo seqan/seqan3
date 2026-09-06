@@ -11,6 +11,7 @@
 
 #include <limits>
 #include <tuple>
+#include <vector>
 
 #include <seqan3/core/detail/template_inspection.hpp>
 
