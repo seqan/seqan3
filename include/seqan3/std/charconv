@@ -49,9 +49,14 @@
 // =========================================================================
 
 #if __cpp_lib_to_chars < 201611
+#    include <algorithm>
 #    include <cassert>
-#    include <concepts>
+#    include <cctype>
+#    include <cerrno>
+#    include <cstdlib>
 #    include <sstream>
+#    include <string>
+#    include <type_traits>
 
 namespace seqan3::contrib::charconv_float
 {
@@ -96,95 +101,96 @@ inline from_chars_result from_chars_floating_point(char const * first,
     // The functions strto[d/f/ld] used here are locale dependent but
     // setting the locale manually by std::setlocale is not thread safe.
     // So for the time being this workaround is locale dependent.
-    if (*first == '+') // + is permitted in function strto[d/f/ld] but not in from_chars
-        return {last, std::errc::invalid_argument};
+    // strto[d/f/ld] skip leading whitespace and accept a leading +, from_chars does neither.
+    if (first >= last || *first == '+' || std::isspace(static_cast<unsigned char>(*first)))
+        return {first, std::errc::invalid_argument};
 
-    float tmp{};
-    constexpr ptrdiff_t buffer_size = 100;
-    char buffer[buffer_size];
-
-    if (fmt != chars_format::general)
+    auto is_exponent = [](char const c)
     {
-        bool exponent_is_present{false};
-        for (auto it = first; it != last; ++it)
-        {
-            if (*it == 'e' || *it == 'E')
-            {
-                exponent_is_present = true;
-                break;
-            }
-        }
+        return c == 'e' || c == 'E';
+    };
 
-        if (fmt == chars_format::scientific && !exponent_is_present)
-            return {last, std::errc::invalid_argument};
+    bool const is_negative = *first == '-';
+    char const * const digits = first + is_negative;
+    bool const is_inf_or_nan = digits != last && (*digits == 'i' || *digits == 'I' || *digits == 'n' || *digits == 'N');
 
-        if (fmt == chars_format::fixed && exponent_is_present)
-            return {last, std::errc::invalid_argument};
-    }
+    // strto[d/f/ld] parse hexadecimal floats if the sequence has a 0x prefix, from_chars never accepts the prefix:
+    // "0x123" is parsed as the value "0" with unparsed remainder "x123". Hence, only the "0" is handed to strto[d/f/ld].
+    bool const has_hex_prefix = last - digits >= 2 && digits[0] == '0' && (digits[1] == 'x' || digits[1] == 'X');
+    char const * parse_last = has_hex_prefix ? digits + 1 : last;
+
+    // If fmt is fixed, the exponent is not part of the pattern and parsing stops before it.
+    if (fmt == chars_format::fixed && !is_inf_or_nan)
+        parse_last = std::find_if(first, parse_last, is_exponent);
+
+    // If fmt is hex, strto[d/f/ld] need the 0x prefix (after the sign) to parse the digits as hexadecimal.
+    // The prefix is subtracted from the number of parsed characters afterwards.
+    ptrdiff_t const prefix_size = (fmt == chars_format::hex && !is_inf_or_nan) ? 2 : 0;
 
     // In contrast to std::from_chars, std::strto[f/d/ld] does not treat the second
     // parameter (str_end) as "end of the sequence to parse" but merely as an out
-    // parameter to indicate where the parsing ended. Therefore, if [last] does
-    // not point to the end of a null-terminated string, a buffer is needed to
-    // represent the truncated sequence and ensure correct from_chars functionality.
-    char * start;
-
-    if ((*last != '\0') || fmt == chars_format::hex)
+    // parameter to indicate where the parsing ended. Therefore, a null-terminated
+    // copy of the sequence is needed to ensure correct from_chars functionality.
+    // Sequences that do not fit into the stack buffer are copied to the heap.
+    constexpr ptrdiff_t stack_buffer_size = 100;
+    char stack_buffer[stack_buffer_size];
+    std::string heap_buffer;
+    ptrdiff_t const buffer_size = (parse_last - first) + prefix_size + 1;
+    char * const buffer = [&]()
     {
-        // If hex format is explicitly expected, the 0x prefix is not allowed in the
-        // the original sequence according to the std::from_chars cppreference
-        // documentation.
-        // In order to use strto[f/d/ld], the prefix must be prepended to achieve
-        // correct parsing. This will also automatically lead to an error if the
-        // original sequence did contain a 0x prefix and thus reflect the correct
-        // requirements of std::from_chars.
-        ptrdiff_t offset{0};
-        if (fmt == chars_format::hex)
-        {
-            buffer[0] = '0';
-            buffer[1] = 'x';
-            offset = 2;
-        }
+        if (buffer_size <= stack_buffer_size)
+            return &stack_buffer[0];
 
-        std::copy(first, last, &buffer[offset]);
-        buffer[std::min<ptrdiff_t>(buffer_size - offset, last - first)] = '\0';
+        heap_buffer.resize(buffer_size);
+        return heap_buffer.data();
+    }();
 
-        start = &buffer[0];
-    }
-    else
+    char * buffer_end = std::copy(first, digits, buffer);
+    if (prefix_size)
     {
-        start = const_cast<char *>(first);
+        *buffer_end++ = '0';
+        *buffer_end++ = 'x';
     }
+    buffer_end = std::copy(digits, parse_last, buffer_end);
+    *buffer_end = '\0';
 
+    value_type tmp{};
     char * end;
+    int const previous_errno = errno;
+    errno = 0;
 
-    if constexpr (std::same_as<std::remove_reference_t<value_type>, float>)
+    if constexpr (std::is_same_v<std::remove_reference_t<value_type>, float>)
     {
-        tmp = strtof(start, &end);
+        tmp = strtof(buffer, &end);
     }
-    if constexpr (std::same_as<std::remove_reference_t<value_type>, double>)
+    if constexpr (std::is_same_v<std::remove_reference_t<value_type>, double>)
     {
-        tmp = strtod(start, &end);
+        tmp = strtod(buffer, &end);
     }
-    if constexpr (std::same_as<std::remove_reference_t<value_type>, long double>)
+    if constexpr (std::is_same_v<std::remove_reference_t<value_type>, long double>)
     {
-        tmp = strtold(start, &end);
+        tmp = strtold(buffer, &end);
     }
 
-    last = first + (end - start);
+    bool const is_out_of_range = errno == ERANGE;
+    errno = previous_errno;
 
-    if (errno == ERANGE)
-    {
-        return {last, std::errc::result_out_of_range};
-    }
-    else if (tmp == 0 && end == start)
-    {
-        return {last, std::errc::invalid_argument};
-    }
+    // If only the prepended prefix (or rather its "0") has been parsed, nothing of the original sequence matched.
+    char const * const ptr = first + std::max<ptrdiff_t>(0, (end - buffer) - prefix_size);
+
+    if (ptr == first)
+        return {first, std::errc::invalid_argument};
+
+    // If fmt is scientific, the exponent is required.
+    if (fmt == chars_format::scientific && !is_inf_or_nan && std::find_if(first, ptr, is_exponent) == ptr)
+        return {first, std::errc::invalid_argument};
+
+    if (is_out_of_range)
+        return {ptr, std::errc::result_out_of_range};
 
     // Success.
     value = tmp;
-    return {last, {}};
+    return {ptr, {}};
 }
 
 } // namespace seqan3::contrib::charconv_float
