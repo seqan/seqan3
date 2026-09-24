@@ -14,6 +14,6 @@ int main()
     using record_type = typename decltype(fin)::record_type;
 
     // Because `fin` is a range, we can access the first element by dereferencing fin.begin()
-    record_type rec = *fin.begin();
+    record_type rec = fin.front();
 }
 //![main]

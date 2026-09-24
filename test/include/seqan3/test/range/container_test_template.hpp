@@ -102,9 +102,9 @@ TYPED_TEST_P(container_over_dna4_test, iterators)
     TypeParam const t2{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
 
     // begin
-    EXPECT_EQ(*t1.begin(), 'A'_dna4);
+    EXPECT_EQ(t1.front(), 'A'_dna4);
     EXPECT_EQ(*t1.cbegin(), 'A'_dna4);
-    EXPECT_EQ(*t2.begin(), 'A'_dna4);
+    EXPECT_EQ(t2.front(), 'A'_dna4);
     EXPECT_EQ(*t2.cbegin(), 'A'_dna4);
 
     // end and arithmetic
@@ -117,7 +117,7 @@ TYPED_TEST_P(container_over_dna4_test, iterators)
     EXPECT_TRUE(t1.cend() == t1.end());
 
     // mutability
-    *t1.begin() = 'T'_dna4;
+    t1.front() = 'T'_dna4;
     EXPECT_RANGE_EQ(t1, "TCCGT"_dna4);
 }
 

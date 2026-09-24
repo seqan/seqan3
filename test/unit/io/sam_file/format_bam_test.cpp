@@ -591,8 +591,8 @@ TEST_F(bam_format, too_long_cigar_string_read)
 
         seqan3::sam_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
 
-        EXPECT_RANGE_EQ((*fin.begin()).cigar_sequence(), this->cigars[0]);
-        EXPECT_EQ((*fin.begin()).tags().size(), 0u); // redundant CG tag is removed
+        EXPECT_RANGE_EQ(fin.front().cigar_sequence(), this->cigars[0]);
+        EXPECT_EQ(fin.front().tags().size(), 0u); // redundant CG tag is removed
     }
 
     { // error: sam_tag_dictionary is not read

@@ -382,8 +382,8 @@ TYPED_TEST(pairwise_combine_test, begin)
     auto v = this->create_view();
     auto const cv{v};
 
-    EXPECT_EQ(*v.begin(), (std::tuple{'a', 'b'}));
-    EXPECT_EQ(*cv.begin(), (std::tuple{'a', 'b'}));
+    EXPECT_EQ(v.front(), (std::tuple{'a', 'b'}));
+    EXPECT_EQ(cv.front(), (std::tuple{'a', 'b'}));
     EXPECT_EQ(*std::ranges::cbegin(v), (std::tuple{'a', 'b'}));
 }
 
@@ -503,7 +503,7 @@ TEST(pairwise_combine_fn_test, output)
     std::vector orig{'a', 'b', 'c', 'd'};
     auto v = orig | seqan3::views::pairwise_combine;
 
-    *v.begin() = std::tuple{'x', 'y'};
+    v.front() = std::tuple{'x', 'y'};
 
     auto it = v.begin();
     EXPECT_EQ(*it, (std::tuple{'x', 'y'}));

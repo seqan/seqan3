@@ -17,7 +17,7 @@ int main()
         //![rev_def]
         //![def]
 
-        std::cout << *v.begin() << '\n';
+        std::cout << v.front() << '\n';
         //![all]
     }
 
@@ -27,9 +27,9 @@ int main()
         std::vector vec{1, 2, 3, 4, 5, 6};
         auto v = vec | std::views::reverse | std::views::drop(2);
 
-        std::cout << *v.begin() << '\n';
+        std::cout << v.front() << '\n';
         //![piped]
-        *v.begin() = 42; // now vec == {1, 2, 3, 42, 5, 6 } !!
+        v.front() = 42; // now vec == {1, 2, 3, 42, 5, 6 } !!
         //![assign_through]
     }
 }

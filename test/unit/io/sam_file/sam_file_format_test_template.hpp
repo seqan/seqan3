@@ -252,18 +252,18 @@ TYPED_TEST_P(sam_file_read, read_in_all_but_empty_data)
     typename TestFixture::stream_type istream{this->empty_input};
     seqan3::sam_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
 
-    EXPECT_TRUE((*fin.begin()).sequence().empty());
-    EXPECT_TRUE((*fin.begin()).id().empty());
-    EXPECT_TRUE((*fin.begin()).base_qualities().empty());
-    EXPECT_TRUE((*fin.begin()).cigar_sequence().empty());
-    EXPECT_TRUE(!(*fin.begin()).reference_id().has_value());
-    EXPECT_TRUE(!(*fin.begin()).reference_position().has_value());
-    EXPECT_EQ((*fin.begin()).flag(), seqan3::sam_flag{0u});
-    EXPECT_EQ((*fin.begin()).mapping_quality(), 0u);
-    EXPECT_TRUE(!(*fin.begin()).mate_reference_id().has_value());
-    EXPECT_TRUE(!(*fin.begin()).mate_position().has_value());
-    EXPECT_EQ((*fin.begin()).template_length(), int32_t{});
-    EXPECT_TRUE((*fin.begin()).tags().empty());
+    EXPECT_TRUE(fin.front().sequence().empty());
+    EXPECT_TRUE(fin.front().id().empty());
+    EXPECT_TRUE(fin.front().base_qualities().empty());
+    EXPECT_TRUE(fin.front().cigar_sequence().empty());
+    EXPECT_TRUE(!fin.front().reference_id().has_value());
+    EXPECT_TRUE(!fin.front().reference_position().has_value());
+    EXPECT_EQ(fin.front().flag(), seqan3::sam_flag{0u});
+    EXPECT_EQ(fin.front().mapping_quality(), 0u);
+    EXPECT_TRUE(!fin.front().mate_reference_id().has_value());
+    EXPECT_TRUE(!fin.front().mate_position().has_value());
+    EXPECT_EQ(fin.front().template_length(), int32_t{});
+    EXPECT_TRUE(fin.front().tags().empty());
 }
 
 TYPED_TEST_P(sam_file_read, read_in_almost_nothing)

@@ -178,13 +178,13 @@ public:
      */
     constexpr const_reference operator[](difference_type const SEQAN3_DOXYGEN_ONLY(n)) const noexcept
     {
-        return *single_value.begin();
+        return single_value.front();
     }
 
     //!\copydoc operator[]()
     constexpr reference operator[](difference_type const SEQAN3_DOXYGEN_ONLY(n)) noexcept
     {
-        return *single_value.begin();
+        return single_value.front();
     }
     //!}
 

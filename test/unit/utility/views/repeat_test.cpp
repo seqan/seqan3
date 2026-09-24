@@ -137,14 +137,14 @@ TEST(view, factory)
     {
         char const chr{'X'};
         auto v = seqan3::views::repeat(chr);
-        EXPECT_EQ(*v.begin(), chr);
+        EXPECT_EQ(v.front(), chr);
     }
 
     // string
     {
         std::string str{"foobar"};
         auto v = seqan3::views::repeat(str);
-        EXPECT_EQ(*v.begin(), str);
+        EXPECT_EQ(v.front(), str);
         EXPECT_EQ(v[2345], str);
     }
 
@@ -153,7 +153,7 @@ TEST(view, factory)
         std::string const input{"foobar"};
         auto view = std::views::take(input, 3);
         auto v = seqan3::views::repeat(view);
-        EXPECT_RANGE_EQ(*v.begin(), view);
+        EXPECT_RANGE_EQ(v.front(), view);
     }
 
     // combinability
@@ -191,7 +191,7 @@ constexpr char constexpr_view()
     auto v = seqan3::views::repeat(chr);
     v[1324] = 'X';
 
-    return *v.begin();
+    return v.front();
 }
 
 TEST(general, constexpr_context)

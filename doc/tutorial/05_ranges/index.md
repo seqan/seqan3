@@ -164,7 +164,7 @@ remaining (even) values, i.e.
 std::vector vec{1, 2, 3, 4, 5, 6};
 auto v = vec | // ...?
 
-std::cout << *v.begin() << '\n'; // should print 4
+std::cout << v.front() << '\n'; // should print 4
 ```
 \endassignment
 \solution

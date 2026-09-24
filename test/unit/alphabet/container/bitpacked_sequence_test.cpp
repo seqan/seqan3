@@ -25,7 +25,7 @@ TEST(bitpacked_sequence_test, issue1743_complement_on_proxy)
 {
     seqan3::bitpacked_sequence<seqan3::dna4> v{'A'_dna4};
 
-    auto proxy = *v.begin();
+    auto proxy = v.front();
     auto complement = seqan3::complement(proxy);
 
     EXPECT_SAME_TYPE(decltype(complement), seqan3::dna4);
