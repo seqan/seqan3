@@ -273,9 +273,9 @@ public:
 
     /*!\brief Construct from begin and end iterators of a given range over std::totally_ordered values, and the number
               of values per window.
-    * \param[in] urng1_iterator Iterator pointing to the first position of the first std::totally_ordered range.
-    * \param[in] urng1_sentinel Iterator pointing to the last position of the first std::totally_ordered range.
-    * \param[in] urng2_iterator Iterator pointing to the first position of the second std::totally_ordered range.
+    * \param[in] urng1_iterator_ Iterator pointing to the first position of the first std::totally_ordered range.
+    * \param[in] urng1_sentinel_ Iterator pointing to the last position of the first std::totally_ordered range.
+    * \param[in] urng2_iterator_ Iterator pointing to the first position of the second std::totally_ordered range.
     * \param[in] window_size The number of values in one window.
     *
     * \details
@@ -284,13 +284,13 @@ public:
     * shifts then by one to repeat this action. If a minimiser in consecutive windows is the same, it is returned only
     * once.
     */
-    basic_iterator(urng1_iterator_t urng1_iterator,
-                   urng1_sentinel_t urng1_sentinel,
-                   urng2_iterator_t urng2_iterator,
+    basic_iterator(urng1_iterator_t urng1_iterator_,
+                   urng1_sentinel_t urng1_sentinel_,
+                   urng2_iterator_t urng2_iterator_,
                    size_t window_size) :
-        urng1_iterator{std::move(urng1_iterator)},
-        urng1_sentinel{std::move(urng1_sentinel)},
-        urng2_iterator{std::move(urng2_iterator)}
+        urng1_iterator{std::move(urng1_iterator_)},
+        urng1_sentinel{std::move(urng1_sentinel_)},
+        urng2_iterator{std::move(urng2_iterator_)}
     {
         size_t size = std::ranges::distance(urng1_iterator, urng1_sentinel);
         window_size = std::min<size_t>(window_size, size);

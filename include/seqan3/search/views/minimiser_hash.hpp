@@ -85,7 +85,7 @@ struct minimiser_hash_fn
         if (shape.size() > window_size.get())
             throw std::invalid_argument{"The size of the shape cannot be greater than the window size."};
 
-        auto forward_strand = std::forward<urng_t>(urange) | seqan3::views::kmer_hash(shape)
+        auto forward_strand = urange | seqan3::views::kmer_hash(shape)
                             | std::views::transform(
                                   [seed](uint64_t i)
                                   {
