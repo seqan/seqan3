@@ -30,3 +30,4 @@ jobs:
           gpg_key: ${{ secrets.SEQAN_ACTIONS_GPG_KEY }}
           gpg_passphrase: ${{ secrets.SEQAN_ACTIONS_GPG_PASSPHRASE }}
           package_lock_file: cmake/package-lock.cmake
+          auto_merge: true
