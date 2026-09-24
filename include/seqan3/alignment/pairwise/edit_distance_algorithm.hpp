@@ -91,10 +91,7 @@ public:
         using std::get;
 
         for (auto && [sequence_pair, index] : indexed_sequence_pairs)
-            compute_single_pair(index,
-                                get<0>(sequence_pair),
-                                get<1>(sequence_pair),
-                                std::forward<callback_t>(callback));
+            compute_single_pair(index, get<0>(sequence_pair), get<1>(sequence_pair), callback);
     }
 
 private:

@@ -151,7 +151,7 @@ private:
                 search_result_type result{};
 
                 if constexpr (search_traits_type::output_query_id)
-                    result.query_id_ = std::move(idx);
+                    result.query_id_ = idx;
                 if constexpr (search_traits_type::output_index_cursor)
                     result.cursor_ = cursor;
                 if constexpr (search_traits_type::output_reference_id)
