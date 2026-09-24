@@ -96,9 +96,9 @@ TYPED_TEST(container_of_container, iterators)
     TypeParam const t2{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
 
     // begin
-    EXPECT_RANGE_EQ(*t1.begin(), "ACGT"_dna4);
+    EXPECT_RANGE_EQ(t1.front(), "ACGT"_dna4);
     EXPECT_RANGE_EQ(*t1.cbegin(), "ACGT"_dna4);
-    EXPECT_RANGE_EQ(*t2.begin(), "ACGT"_dna4);
+    EXPECT_RANGE_EQ(t2.front(), "ACGT"_dna4);
     EXPECT_RANGE_EQ(*t2.cbegin(), "ACGT"_dna4);
 
     // end and arithmetic
@@ -111,8 +111,8 @@ TYPED_TEST(container_of_container, iterators)
     EXPECT_TRUE(t1.cend() == t1.end());
 
     // writability
-    (*t1.begin())[0] = 'T'_dna4;
-    EXPECT_RANGE_EQ(*t1.begin(), "TCGT"_dna4);
+    t1.front()[0] = 'T'_dna4;
+    EXPECT_RANGE_EQ(t1.front(), "TCGT"_dna4);
 }
 
 TYPED_TEST(container_of_container, element_access)

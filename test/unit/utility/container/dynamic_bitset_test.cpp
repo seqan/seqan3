@@ -510,9 +510,9 @@ constexpr bool iterator_test()
     seqan3::dynamic_bitset t1{0b1111'0001'0000'1100};
     seqan3::dynamic_bitset const t2{0b1010'0001'0000'0011};
 
-    bool res = !*t1.begin();
+    bool res = !t1.front();
     res &= !*t1.cbegin();
-    res &= *t2.begin();
+    res &= t2.front();
     res &= *t2.cbegin();
 
     res &= *(t1.end() - 1);
@@ -522,7 +522,7 @@ constexpr bool iterator_test()
 
     res &= t1.end() == t1.cend();
 
-    *t1.begin() = true;
+    t1.front() = true;
     res &= t1 == seqan3::dynamic_bitset{0b1111'0001'0000'1101};
 
     return res;

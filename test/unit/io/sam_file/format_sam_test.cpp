@@ -276,7 +276,7 @@ TEST_F(sam_format, no_hd_line_in_header)
     std::istringstream istream{std::string{"@SQ\tSN:ref\tLN:34\nread1\t41\tref\t1\t61\t*\tref\t10\t300\tACGT\t!##$\n"}};
     seqan3::sam_file_input fin{istream, seqan3::format_sam{}, seqan3::fields<seqan3::field::id>{}};
 
-    EXPECT_EQ((*fin.begin()).id(), std::string{"read1"});
+    EXPECT_EQ(fin.front().id(), std::string{"read1"});
 }
 
 TEST_F(sam_format, windows_file)
@@ -284,7 +284,7 @@ TEST_F(sam_format, windows_file)
     std::istringstream istream(std::string("read1\t41\tref\t1\t61\t*\tref\t10\t300\tACGT\t!##$\r\n"));
     seqan3::sam_file_input fin{istream, seqan3::format_sam{}, seqan3::fields<seqan3::field::id>{}};
 
-    EXPECT_EQ((*fin.begin()).id(), std::string{"read1"});
+    EXPECT_EQ(fin.front().id(), std::string{"read1"});
 }
 
 TEST_F(sam_format, format_error_illegal_character_in_seq)
@@ -412,8 +412,8 @@ TEST_F(sam_format, issue2195)
         using seqan3::operator""_phred42;
         std::vector<seqan3::phred42> expected_quality = "*9<9;"_phred42;
 
-        EXPECT_RANGE_EQ((*fin.begin()).id(), std::string{"*r1"});
-        EXPECT_RANGE_EQ((*fin.begin()).base_qualities(), expected_quality);
+        EXPECT_RANGE_EQ(fin.front().id(), std::string{"*r1"});
+        EXPECT_RANGE_EQ(fin.front().base_qualities(), expected_quality);
     }
 
     {
@@ -423,7 +423,7 @@ TEST_F(sam_format, issue2195)
         using seqan3::operator""_phred42;
         std::vector<seqan3::phred42> expected_quality = "*1"_phred42;
 
-        EXPECT_RANGE_EQ((*fin.begin()).id(), std::string{""});
-        EXPECT_RANGE_EQ((*fin.begin()).base_qualities(), expected_quality);
+        EXPECT_RANGE_EQ(fin.front().id(), std::string{""});
+        EXPECT_RANGE_EQ(fin.front().base_qualities(), expected_quality);
     }
 }

@@ -192,9 +192,9 @@ TEST_F(zip_test, alignment_usage_2)
 TEST_F(zip_test, use_as_output_range)
 {
     auto zip_view = zip_common_range();
-    *zip_view.begin() = std::pair(23, "FF");
-    EXPECT_EQ(std::get<0>(*zip_view.begin()), 23);
-    EXPECT_EQ(std::get<1>(*zip_view.begin()), "FF");
+    zip_view.front() = std::pair(23, "FF");
+    EXPECT_EQ(std::get<0>(zip_view.front()), 23);
+    EXPECT_EQ(std::get<1>(zip_view.front()), "FF");
 
     size_t i{1u};
     for (auto && [elem_1, elem_2] : zip_view | std::views::drop(1))

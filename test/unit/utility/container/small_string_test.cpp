@@ -164,18 +164,18 @@ TEST(small_string, concat)
 TEST(small_string, begin)
 {
     seqan3::small_string s{"hello"};
-    EXPECT_EQ(*s.begin(), 'h');
+    EXPECT_EQ(s.front(), 'h');
     EXPECT_TRUE((std::is_same_v<decltype(s)::iterator, decltype(s.begin())>));
 
     seqan3::small_string<5> const cs{s};
-    EXPECT_EQ(*cs.begin(), 'h');
+    EXPECT_EQ(cs.front(), 'h');
     EXPECT_TRUE((std::is_same_v<decltype(cs)::const_iterator, decltype(cs.begin())>));
 }
 
 TEST(small_string, cbegin)
 {
     seqan3::small_string s{"hello"};
-    EXPECT_EQ(*s.begin(), 'h');
+    EXPECT_EQ(s.front(), 'h');
     EXPECT_TRUE((std::is_same_v<decltype(s)::const_iterator, decltype(s.cbegin())>));
 }
 

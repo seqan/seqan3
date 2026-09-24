@@ -56,7 +56,7 @@ struct iterator_fixture<outer_iterator> : alignment_matrix_base_test<test_type>
     template <typename lhs_t, typename rhs_t>
     static void expect_eq(lhs_t lhs, rhs_t rhs)
     {
-        EXPECT_EQ((*lhs.begin()).current, rhs);
+        EXPECT_EQ(lhs.front().current, rhs);
     }
 };
 

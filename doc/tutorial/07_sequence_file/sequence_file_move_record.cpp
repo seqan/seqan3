@@ -14,6 +14,6 @@ int main()
     seqan3::sequence_file_input fin{std::filesystem::current_path() / "my.fastq"};
     using record_type = typename decltype(fin)::record_type;
 
-    record_type rec = std::move(*fin.begin()); // avoid copying
+    record_type rec = std::move(fin.front()); // avoid copying
 }
 //![main]

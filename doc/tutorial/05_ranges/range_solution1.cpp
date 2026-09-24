@@ -21,5 +21,5 @@ int main()
                      return i * i;
                  });
 
-    std::cout << *v.begin() << '\n'; // prints 4
+    std::cout << v.front() << '\n'; // prints 4
 }

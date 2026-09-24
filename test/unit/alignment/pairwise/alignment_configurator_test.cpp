@@ -35,7 +35,7 @@ auto run_test(config_t const & cfg)
     using alignment_result_t = typename traits_t::alignment_result_type;
 
     alignment_result_t align_result{};
-    algorithm(*indexed_sequence_pairs.begin(),
+    algorithm(indexed_sequence_pairs.front(),
               [&](auto && res) mutable
               {
                   align_result = std::forward<decltype(res)>(res);
