@@ -238,7 +238,8 @@ protected:
                 stream_it.write_range(id);
                 stream_it.write_range(std::string_view{"; "});
                 stream_it.write_number(sequence_size);
-                stream_it.write_range(std::string_view{" BP.\n"});
+                stream_it.write_range(std::string_view{" BP."});
+                stream_it.write_end_of_line(options.add_carriage_return);
             }
         }
 
@@ -255,7 +256,8 @@ protected:
             // write beginning of sequence record
             stream_it.write_range(std::string_view{"SQ Sequence "});
             stream_it.write_number(sequence_size);
-            stream_it.write_range(std::string_view{" BP;\n"});
+            stream_it.write_range(std::string_view{" BP;"});
+            stream_it.write_end_of_line(options.add_carriage_return);
 
             // write sequence in chunks of 60 bp's with a space after 10 bp's
             auto char_sequence = sequence | views::to_char;

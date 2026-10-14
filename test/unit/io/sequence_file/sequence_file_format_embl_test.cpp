@@ -236,3 +236,20 @@ GGAGTATAAT ATATATATAT ATAT                                        24
 
     EXPECT_EQ(ostream.str(), comp);
 }
+
+TEST_F(write, options_add_carriage_return)
+{
+    options.add_carriage_return = true;
+
+    std::string crlf_comp{};
+    for (char const c : comp)
+    {
+        if (c == '\n')
+            crlf_comp.push_back('\r');
+        crlf_comp.push_back(c);
+    }
+
+    do_write_test();
+
+    EXPECT_EQ(ostream.str(), crlf_comp);
+}
