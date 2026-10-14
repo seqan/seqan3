@@ -273,18 +273,19 @@ protected:
                 using subrange_t = std::ranges::subrange<decltype(it), decltype(it), std::ranges::subrange_kind::sized>;
                 it = stream_it.write_range(subrange_t{it, current_end, chunk_size - steps});
                 stream_it = ' ';
-                written_chars += chunk_size;
+                written_chars += chunk_size - steps;
 
-                if (written_chars % 60 == 0)
+                if (written_chars % 60 == 0 && it != std::ranges::end(char_sequence)) // the last line is written below
                 {
                     stream_it.write_number(written_chars);
                     stream_it.write_end_of_line(options.add_carriage_return);
                 }
             }
 
-            // fill last line
-            auto characters_in_last_line = sequence_size % 60;
-            auto number_of_padding_needed = 65 - characters_in_last_line - characters_in_last_line / chunk_size;
+            // fill last line: a full line has 6 chunks of 10 bp's, each followed by a space
+            auto characters_in_last_line = (sequence_size - 1) % 60 + 1;
+            auto chunks_in_last_line = (characters_in_last_line + chunk_size - 1) / chunk_size;
+            auto number_of_padding_needed = 66 - characters_in_last_line - chunks_in_last_line;
             stream_it.write_range(views::repeat_n(' ', number_of_padding_needed));
             stream_it.write_number(sequence_size);
             stream_it.write_end_of_line(options.add_carriage_return);

@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <sstream>
+#include <string>
 
 #include <seqan3/io/sequence_file/format_embl.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
@@ -280,4 +281,42 @@ TEST_F(write, options_add_carriage_return)
     do_write_test();
 
     EXPECT_EQ(ostream.str(), crlf_comp);
+}
+
+TEST_F(write, last_line)
+{
+    std::string const expected{
+        R"(ID ID10; 10 BP.
+SQ Sequence 10 BP;
+AAAAAAAAAC                                                        10
+//
+ID ID55; 55 BP.
+SQ Sequence 55 BP;
+AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAC      55
+//
+ID ID60; 60 BP.
+SQ Sequence 60 BP;
+AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAC 60
+//
+ID ID120; 120 BP.
+SQ Sequence 120 BP;
+AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA 60
+AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAC 120
+//
+)"};
+
+    {
+        seqan3::sequence_file_output fout{ostream,
+                                          seqan3::format_embl{},
+                                          seqan3::fields<seqan3::field::seq, seqan3::field::id>{}};
+
+        for (size_t const length : {10u, 55u, 60u, 120u})
+        {
+            seqan3::dna5_vector sequence(length, 'A'_dna5);
+            sequence.back() = 'C'_dna5;
+            EXPECT_NO_THROW((fout.emplace_back(sequence, "ID" + std::to_string(length))));
+        }
+    }
+
+    EXPECT_EQ(ostream.str(), expected);
 }
