@@ -170,6 +170,35 @@ struct write : public sequence_file_data
     }
 };
 
+TEST_F(write, single_base_last_line)
+{
+    seqs = {"C"_dna5, seqan3::dna5_vector(61, 'A'_dna5), seqan3::dna5_vector(121, 'A'_dna5)};
+    for (auto & sequence : seqs)
+        sequence.back() = 'C'_dna5;
+
+    do_write_test();
+
+    std::string const comp{
+        R"(LOCUS       ID1                 1 bp
+ORIGIN
+        1 C
+//
+LOCUS       ID2                 61 bp
+ORIGIN
+        1 AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA
+       61 C
+//
+LOCUS       ID3 lala                 121 bp
+ORIGIN
+        1 AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA
+       61 AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA
+      121 C
+//
+)"};
+
+    EXPECT_EQ(ostream.str(), comp);
+}
+
 TEST_F(write, complete_header)
 {
     std::string comp{
