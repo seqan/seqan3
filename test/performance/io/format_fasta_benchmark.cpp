@@ -13,13 +13,16 @@
 #include <cstring>
 #include <sstream>
 
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/test/performance/units.hpp>
+#include <seqan3/utility/range/to.hpp>
 #include <seqan3/utility/views/convert.hpp>
 
 inline constexpr size_t iterations_per_run = 1024;
@@ -47,15 +50,17 @@ void seqan3_dna5_ostringstream_write(benchmark::State & state)
     seqan3::sequence_file_output fout{ostream,
                                       seqan3::format_fasta{},
                                       seqan3::fields<seqan3::field::id, seqan3::field::seq>{}};
+    seqan3::dna5_vector const seq =
+        fasta_seq | seqan3::views::char_to<seqan3::dna5> | seqan3::ranges::to<seqan3::dna5_vector>();
 
     for (auto _ : state)
     {
         for (size_t i = 0; i < iterations_per_run; ++i)
-            fout.emplace_back(fasta_seq, fasta_hdr);
+            fout.emplace_back(fasta_hdr, seq);
     }
 
     ostream = std::ostringstream{};
-    fout.emplace_back(fasta_seq, fasta_hdr);
+    fout.emplace_back(fasta_hdr, seq);
     size_t bytes_per_run = ostream.str().size() * iterations_per_run;
     state.counters["iterations_per_run"] = iterations_per_run;
     state.counters["bytes_per_run"] = bytes_per_run;
