@@ -223,7 +223,8 @@ protected:
             std::ranges::copy(std::string_view{"                 "}, stream_it);
             auto res = std::to_chars(&buffer[0], &buffer[0] + sizeof(buffer), sequence_size);
             std::copy(&buffer[0], res.ptr, stream_it);
-            std::ranges::copy(std::string_view{" bp\n"}, stream_it);
+            std::ranges::copy(std::string_view{" bp"}, stream_it);
+            detail::write_eol(stream_it, options.add_carriage_return);
         }
 
         // Sequence
@@ -237,7 +238,8 @@ protected:
         }
         else
         {
-            std::ranges::copy(std::string_view{"ORIGIN\n"}, stream_it);
+            std::ranges::copy(std::string_view{"ORIGIN"}, stream_it);
+            detail::write_eol(stream_it, options.add_carriage_return);
             auto seq = sequence | seqan3::views::chunk(60);
             size_t i = 0;
             size_t bp = 1;
@@ -253,10 +255,10 @@ protected:
                 std::ranges::copy(seq[i] | views::to_char | views::interleave(10, std::string_view{" "}), stream_it);
                 bp += 60;
                 ++i;
-                detail::write_eol(stream_it, false);
+                detail::write_eol(stream_it, options.add_carriage_return);
             }
             std::ranges::copy(std::string_view{"//"}, stream_it);
-            detail::write_eol(stream_it, false);
+            detail::write_eol(stream_it, options.add_carriage_return);
         }
     }
 };

@@ -238,6 +238,29 @@ SOURCE      .
     EXPECT_EQ(ostream.str(), comp);
 }
 
+TEST_F(write, options_add_carriage_return)
+{
+    options.add_carriage_return = true;
+
+    std::string comp{"LOCUS       ID1                 18 bp\r\n"
+                     "ORIGIN\r\n"
+                     "        1 ACGTTTTTTT TTTTTTTT\r\n"
+                     "//\r\n"
+                     "LOCUS       ID2                 82 bp\r\n"
+                     "ORIGIN\r\n"
+                     "        1 ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT\r\n"
+                     "       61 TTTTTTTTTT TTTTTTTTTT TT\r\n"
+                     "//\r\n"
+                     "LOCUS       ID3 lala                 7 bp\r\n"
+                     "ORIGIN\r\n"
+                     "        1 ACGTTTA\r\n"
+                     "//\r\n"};
+
+    do_write_test();
+
+    EXPECT_EQ(ostream.str(), comp);
+}
+
 TEST_F(write, last_line_with_single_base) // https://github.com/seqan/seqan3/issues/3439
 {
     std::string const expected{
