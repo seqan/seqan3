@@ -242,7 +242,7 @@ protected:
             size_t i = 0;
             size_t bp = 1;
 
-            while (bp < sequence_size)
+            while (bp <= sequence_size)
             {
                 // Sequence length with more than 9 digits are not possible in one genbank entry, maximal 350 kb are
                 // allowed. See: https://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html#SequenceLengthA

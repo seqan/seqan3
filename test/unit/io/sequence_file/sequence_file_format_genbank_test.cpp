@@ -237,3 +237,43 @@ SOURCE      .
 
     EXPECT_EQ(ostream.str(), comp);
 }
+
+TEST_F(write, last_line_with_single_base) // https://github.com/seqan/seqan3/issues/3439
+{
+    std::string const expected{
+        R"(LOCUS       ID1                 1 bp
+ORIGIN
+        1 C
+//
+LOCUS       ID60                 60 bp
+ORIGIN
+        1 AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAC
+//
+LOCUS       ID61                 61 bp
+ORIGIN
+        1 AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA
+       61 C
+//
+LOCUS       ID121                 121 bp
+ORIGIN
+        1 AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA
+       61 AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA
+      121 C
+//
+)"};
+
+    {
+        seqan3::sequence_file_output fout{ostream,
+                                          seqan3::format_genbank{},
+                                          seqan3::fields<seqan3::field::seq, seqan3::field::id>{}};
+
+        for (size_t const length : {1u, 60u, 61u, 121u})
+        {
+            seqan3::dna5_vector sequence(length, 'A'_dna5);
+            sequence.back() = 'C'_dna5;
+            EXPECT_NO_THROW((fout.emplace_back(sequence, "ID" + std::to_string(length))));
+        }
+    }
+
+    EXPECT_EQ(ostream.str(), expected);
+}
