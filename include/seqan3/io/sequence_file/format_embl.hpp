@@ -197,7 +197,7 @@ protected:
             detail::consume(stream_view | detail::take_until_or_throw(is_end)); // consume until "//"
         }
 
-        std::ranges::advance(stream_it, 3u, std::ranges::end(stream_view)); // Skip `//` and potentially '\n'
+        detail::consume(stream_view | detail::take_line); // Skip `//` and the line break
     }
 
     //!\copydoc sequence_file_output_format::write_sequence_record

@@ -146,6 +146,34 @@ ACCESSION   ID3
     do_read_test(standard_input);
 }
 
+TEST_F(read, carriage_return)
+{
+    std::string crlf_input{};
+    for (char const c : standard_input)
+    {
+        if (c == '\n')
+            crlf_input.push_back('\r');
+        crlf_input.push_back(c);
+    }
+    crlf_input += "\r\n";
+
+    std::stringstream istream{crlf_input};
+    seqan3::sequence_file_input fin{istream,
+                                    seqan3::format_genbank{},
+                                    seqan3::fields<seqan3::field::id, seqan3::field::seq>{}};
+    fin.options = options;
+
+    size_t i{};
+    for (auto & record : fin)
+    {
+        ASSERT_LT(i, 3u);
+        EXPECT_EQ(record.id(), ids[i]);
+        EXPECT_EQ(record.sequence(), seqs[i]);
+        ++i;
+    }
+    EXPECT_EQ(i, 3u);
+}
+
 // ----------------------------------------------------------------------------
 // writing
 // ----------------------------------------------------------------------------

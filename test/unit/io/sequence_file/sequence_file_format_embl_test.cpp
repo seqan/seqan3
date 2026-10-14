@@ -138,6 +138,34 @@ SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
     do_read_test(input);
 }
 
+TEST_F(read, carriage_return)
+{
+    std::string crlf_input{};
+    for (char const c : input)
+    {
+        if (c == '\n')
+            crlf_input.push_back('\r');
+        crlf_input.push_back(c);
+    }
+    crlf_input += "\r\n";
+
+    std::stringstream istream{crlf_input};
+    seqan3::sequence_file_input fin{istream,
+                                    seqan3::format_embl{},
+                                    seqan3::fields<seqan3::field::id, seqan3::field::seq>{}};
+    fin.options = options;
+
+    size_t i{};
+    for (auto & record : fin)
+    {
+        ASSERT_LT(i, 3u);
+        EXPECT_EQ(record.id(), ids[i]);
+        EXPECT_EQ(record.sequence(), seqs[i]);
+        ++i;
+    }
+    EXPECT_EQ(i, 3u);
+}
+
 TEST_F(read, multiple_lines_before_seq)
 {
     std::string input{
