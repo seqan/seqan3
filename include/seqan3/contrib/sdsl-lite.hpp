@@ -29,14 +29,15 @@
 #ifndef INCLUDED_SDSL3_BITS
 #define INCLUDED_SDSL3_BITS 
 #if defined(__x86_64__)
-#include <immintrin.h>
+# include <immintrin.h>
 #endif
 #if defined(__aarch64__) || defined(_M_ARM64)
-#include <arm_neon.h>
+# include <arm_neon.h>
 #endif
 #if defined(__powerpc__) || defined(__powerpc64__)
-#include <altivec.h>
+# include <altivec.h>
 #endif
+#include <bit>
 #include <stddef.h>
 #include <stdint.h>
 #ifdef __SSE4_2__
@@ -309,16 +310,16 @@ struct bits_impl
     static constexpr uint32_t _sel(uint64_t x, uint32_t i);
     static constexpr uint32_t sel11(uint64_t x, uint32_t i, uint32_t c = 0);
     static constexpr uint32_t hi11(uint64_t x);
-    static constexpr void write_int(uint64_t * word, uint64_t x, uint8_t offset = 0, const uint8_t len = 64);
-    static constexpr void write_int_and_move(uint64_t *& word, uint64_t x, uint8_t & offset, const uint8_t len);
-    static constexpr uint64_t read_int(uint64_t const * word, uint8_t offset = 0, const uint8_t len = 64);
-    static constexpr uint64_t read_int_bounded(uint64_t const * word, uint8_t offset = 0, const uint8_t len = 64);
-    static constexpr uint64_t read_int_and_move(uint64_t const *& word, uint8_t & offset, const uint8_t len = 64);
+    static constexpr void write_int(uint64_t * word, uint64_t x, uint8_t offset = 0, uint8_t const len = 64);
+    static constexpr void write_int_and_move(uint64_t *& word, uint64_t x, uint8_t & offset, uint8_t const len);
+    static constexpr uint64_t read_int(uint64_t const * word, uint8_t offset = 0, uint8_t const len = 64);
+    static constexpr uint64_t read_int_bounded(uint64_t const * word, uint8_t offset = 0, uint8_t const len = 64);
+    static constexpr uint64_t read_int_and_move(uint64_t const *& word, uint8_t & offset, uint8_t const len = 64);
     static constexpr uint64_t read_unary(uint64_t const * word, uint8_t offset = 0);
     static constexpr uint64_t read_unary_bounded(uint64_t const * word, uint8_t offset = 0);
     static constexpr uint64_t read_unary_and_move(uint64_t const *& word, uint8_t & offset);
-    static constexpr void move_right(uint64_t const *& word, uint8_t & offset, const uint8_t len);
-    static constexpr void move_left(uint64_t const *& word, uint8_t & offset, const uint8_t len);
+    static constexpr void move_right(uint64_t const *& word, uint8_t & offset, uint8_t const len);
+    static constexpr void move_left(uint64_t const *& word, uint8_t & offset, uint8_t const len);
     static constexpr uint64_t next(uint64_t const * word, uint64_t idx);
     static constexpr uint64_t prev(uint64_t const * word, uint64_t idx);
     static constexpr uint64_t rev(uint64_t x);
@@ -479,23 +480,7 @@ constexpr uint32_t bits_impl<T>::hi(uint64_t x)
 template <typename T>
 constexpr uint32_t bits_impl<T>::lo(uint64_t x)
 {
-#ifdef __SSE4_2__
-    if (x == 0)
-        return 0;
-    return __builtin_ctzll(x);
-#else
-    if (x & 1)
-        return 0;
-    if (x & 3)
-        return 1;
-    if (x & 7)
-        return 2;
-    if (x & 0x7FF)
-    {
-        return lt_lo[(x & 0x7FF) >> 3] + 3;
-    }
-    return lt_deBruijn_to_idx[((x & -x) * deBruijn64) >> 58];
-#endif
+    return x ? std::countr_zero(x) : 0;
 }
 template <typename T>
 constexpr uint32_t bits_impl<T>::hi11(uint64_t x)
@@ -508,7 +493,7 @@ constexpr uint32_t bits_impl<T>::sel11(uint64_t x, uint32_t i, uint32_t c)
     return sel((((x ^ 0x5555555555555555ULL) + 0x5555555555555555ULL + c) ^ 0x5555555555555555ULL) & x, i);
 }
 template <typename T>
-constexpr void bits_impl<T>::write_int(uint64_t * word, uint64_t x, uint8_t offset, const uint8_t len)
+constexpr void bits_impl<T>::write_int(uint64_t * word, uint64_t x, uint8_t offset, uint8_t const len)
 {
     x &= bits_impl<T>::lo_set[len];
     if (offset + len < 64)
@@ -528,7 +513,7 @@ constexpr void bits_impl<T>::write_int(uint64_t * word, uint64_t x, uint8_t offs
     }
 }
 template <typename T>
-constexpr void bits_impl<T>::write_int_and_move(uint64_t *& word, uint64_t x, uint8_t & offset, const uint8_t len)
+constexpr void bits_impl<T>::write_int_and_move(uint64_t *& word, uint64_t x, uint8_t & offset, uint8_t const len)
 {
     x &= bits_impl<T>::lo_set[len];
     if (offset + len < 64)
@@ -555,7 +540,7 @@ constexpr void bits_impl<T>::write_int_and_move(uint64_t *& word, uint64_t x, ui
     }
 }
 template <typename T>
-constexpr uint64_t bits_impl<T>::read_int(uint64_t const * word, uint8_t offset, const uint8_t len)
+constexpr uint64_t bits_impl<T>::read_int(uint64_t const * word, uint8_t offset, uint8_t const len)
 {
     uint64_t w1 = (*word) >> offset;
     if ((offset + len) > 64)
@@ -570,12 +555,12 @@ constexpr uint64_t bits_impl<T>::read_int(uint64_t const * word, uint8_t offset,
     }
 }
 template <typename T>
-constexpr uint64_t bits_impl<T>::read_int_bounded(uint64_t const * word, uint8_t offset, const uint8_t len)
+constexpr uint64_t bits_impl<T>::read_int_bounded(uint64_t const * word, uint8_t offset, uint8_t const len)
 {
     return ((*word) >> offset) & bits_impl<T>::lo_set[len];
 }
 template <typename T>
-constexpr uint64_t bits_impl<T>::read_int_and_move(uint64_t const *& word, uint8_t & offset, const uint8_t len)
+constexpr uint64_t bits_impl<T>::read_int_and_move(uint64_t const *& word, uint8_t & offset, uint8_t const len)
 {
     uint64_t w1 = (*word) >> offset;
     if ((offset = (offset + len)) >= 64)
@@ -664,7 +649,7 @@ constexpr uint64_t bits_impl<T>::read_unary_and_move(uint64_t const *& word, uin
     return 0;
 }
 template <typename T>
-constexpr void bits_impl<T>::move_right(uint64_t const *& word, uint8_t & offset, const uint8_t len)
+constexpr void bits_impl<T>::move_right(uint64_t const *& word, uint8_t & offset, uint8_t const len)
 {
     if ((offset += len) & 0xC0)
     {
@@ -673,7 +658,7 @@ constexpr void bits_impl<T>::move_right(uint64_t const *& word, uint8_t & offset
     }
 }
 template <typename T>
-constexpr void bits_impl<T>::move_left(uint64_t const *& word, uint8_t & offset, const uint8_t len)
+constexpr void bits_impl<T>::move_left(uint64_t const *& word, uint8_t & offset, uint8_t const len)
 {
     if ((offset -= len) & 0xC0)
     {
@@ -822,11 +807,6 @@ t1 binary_data(t1 const &, t2 const &)
 #include <map>
 #include <stdint.h>
 #include <string>
-#ifndef MSVC_COMPILER
-#define SDSL3_UNUSED __attribute__((unused))
-#else
-#define SDSL3_UNUSED 
-#endif
 namespace seqan3::contrib::sdsl
 {
 namespace util
@@ -838,7 +818,7 @@ uint64_t id();
 }
 namespace conf
 {
-const uint64_t SDSL3_BLOCK_SIZE = (uint64_t)1 << 22;
+uint64_t const SDSL3_BLOCK_SIZE = (uint64_t)1 << 22;
 constexpr char KEY_BWT[] = "bwt";
 constexpr char KEY_BWT_INT[] = "bwt_int";
 constexpr char KEY_SA[] = "sa";
@@ -939,8 +919,10 @@ using key_bwt_trait = key_bwt_trait_impl<width, void>;
 #include <iostream>
 #include <map>
 #include <memory>
+#include <span>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <type_traits>
 #include <typeinfo>
 #include <unordered_map>
@@ -955,19 +937,6 @@ namespace seqan3::contrib::sdsl
 #endif
 #if defined(__GNUC__) && !defined(COMPILER_CLANG)
 #define COMPILER_GCC 
-#endif
-#define SDSL3_FALLTHROUGH 
-#if defined(__has_cpp_attribute)
-# if __has_cpp_attribute(fallthrough)
-#undef SDSL3_FALLTHROUGH
-# if __cplusplus < 201500 && defined(COMPILER_GCC)
-#define SDSL3_FALLTHROUGH [[gnu::fallthrough]];
-# elif __cplusplus < 201500 && defined(COMPILER_CLANG)
-#define SDSL3_FALLTHROUGH [[clang::fallthrough]];
-# else
-#define SDSL3_FALLTHROUGH [[fallthrough]];
-# endif
-# endif
 #endif
 }
 #endif
@@ -1006,11 +975,11 @@ struct alphabet_tag
 {};
 struct byte_alphabet_tag
 {
-    static const uint8_t WIDTH = 8;
+    static uint8_t const WIDTH = 8;
 };
 struct int_alphabet_tag
 {
-    static const uint8_t WIDTH = 0;
+    static uint8_t const WIDTH = 0;
 };
 struct sa_sampling_tag
 {};
@@ -1067,6 +1036,7 @@ struct is_alphabet<t_alphabet, typename enable_if_type<typename t_alphabet::alph
 #define INCLUDED_SDSL3_SFSTREAM 
 #include <fstream>
 #include <string>
+#include <utility>
 #ifndef INCLUDED_SDSL3_RAM_FSTREAMBUF
 #define INCLUDED_SDSL3_RAM_FSTREAMBUF 
 #include <algorithm>
@@ -1183,7 +1153,7 @@ struct mm_alloc
     using timer = std::chrono::high_resolution_clock;
     timer::time_point timestamp;
     int64_t usage;
-    mm_alloc(timer::time_point t, int64_t u) : timestamp(t), usage(u){};
+    mm_alloc(timer::time_point t, int64_t u) : timestamp(t), usage(u) {};
 };
 struct mm_event
 {
@@ -1288,8 +1258,8 @@ private:
     memory_monitor & operator=(memory_monitor const &) = delete;
     static memory_monitor & the_monitor()
     {
-        static memory_monitor m;
-        return m;
+        static memory_monitor * const m = new memory_monitor;
+        return *m;
     }
 public:
     static void granularity(std::chrono::milliseconds ms)
@@ -1453,7 +1423,7 @@ inline int remove(std::string const & name)
     }
     return 0;
 }
-inline int rename(const std::string old_filename, const std::string new_filename)
+inline int rename(std::string const old_filename, std::string const new_filename)
 {
     auto & rf = memory_monitor::ram_fs();
     std::lock_guard<std::recursive_mutex> lock(rf.m_rlock);
@@ -1531,14 +1501,7 @@ inline size_t file_size(int const fd)
 }
 inline bool is_ram_file(std::string const & file)
 {
-    if (file.size() > 0)
-    {
-        if (file[0] == '@')
-        {
-            return true;
-        }
-    }
-    return false;
+    return file.starts_with('@');
 }
 inline bool is_ram_file(int const fd)
 {
@@ -1614,15 +1577,15 @@ private:
         pbump(x);
     }
 public:
-    virtual ~ram_filebuf(){};
-    ram_filebuf(){};
+    virtual ~ram_filebuf() {};
+    ram_filebuf() {};
     ram_filebuf(ram_fs::content_type & ram_file) : m_ram_file(&ram_file)
     {
         char * begin = m_ram_file->data();
         char * end = begin + m_ram_file->size();
         setg(begin, begin, end);
     }
-    std::streambuf * open(const std::string name, std::ios_base::openmode mode)
+    std::streambuf * open(std::string const name, std::ios_base::openmode mode)
     {
         if ((mode & std::ios_base::in) and !(mode & std::ios_base::trunc))
         {
@@ -1657,7 +1620,8 @@ public:
             {
             }
             else
-            {}
+            {
+            }
             setg(m_ram_file->data(), m_ram_file->data(), m_ram_file->data() + m_ram_file->size());
             setp(m_ram_file->data(), m_ram_file->data() + m_ram_file->size());
         }
@@ -1678,66 +1642,42 @@ public:
     }
     pos_type seekpos(pos_type sp, std::ios_base::openmode mode = std::ios_base::in | std::ios_base::out) override
     {
-        if (sp >= (pos_type)0 and sp <= (pos_type)m_ram_file->size())
-        {
-            setg(m_ram_file->data(), m_ram_file->data() + sp, m_ram_file->data() + m_ram_file->size());
-            setp(m_ram_file->data(), m_ram_file->data() + m_ram_file->size());
-            pbump64(sp);
-        }
-        else
-        {
-            if (mode & std::ios_base::out)
-            {
-                m_ram_file->reserve(sp);
-                m_ram_file->resize(sp, 0);
-                setg(m_ram_file->data(), m_ram_file->data() + sp, m_ram_file->data() + m_ram_file->size());
-                setp(m_ram_file->data(), m_ram_file->data() + m_ram_file->size());
-                pbump64(sp);
-            }
-            else
-            {
-                return pos_type(off_type(-1));
-            }
-        }
+        if (!m_ram_file || sp < pos_type(0) || !(mode & (std::ios_base::in | std::ios_base::out)))
+            return pos_type(off_type(-1));
+        if (sp > pos_type(m_ram_file->size()) && !(mode & std::ios_base::out))
+            return pos_type(off_type(-1));
+        off_type const read_pos = (mode & std::ios_base::in) ? off_type(sp) : get_pos();
+        off_type const write_pos = (mode & std::ios_base::out) ? off_type(sp) : (pbase() ? pptr() - pbase() : 0);
+        if (sp > pos_type(m_ram_file->size()))
+            m_ram_file->resize(off_type(sp), 0);
+        char * begin = m_ram_file->data();
+        char * end = begin ? begin + m_ram_file->size() : nullptr;
+        setg(begin, begin ? begin + read_pos : nullptr, end);
+        setp(begin, end);
+        if (write_pos)
+            pbump64(write_pos);
         return sp;
     }
-    pos_type pubseekoff(off_type off,
-                        std::ios_base::seekdir way,
-                        std::ios_base::openmode which = std::ios_base::in | std::ios_base::out)
+    pos_type seekoff(off_type off,
+                     std::ios_base::seekdir way,
+                     std::ios_base::openmode which = std::ios_base::in | std::ios_base::out) override
     {
-        if (std::ios_base::beg == way)
+        if (!m_ram_file)
+            return pos_type(off_type(-1));
+        off_type base = 0;
+        if (way == std::ios_base::cur)
         {
-            if (seekpos(off, which) == pos_type(-1))
-            {
-                return pos_type(-1);
-            }
+            if ((which & std::ios_base::in) && (which & std::ios_base::out))
+                return pos_type(off_type(-1));
+            base = (which & std::ios_base::in) ? get_pos() : (pbase() ? pptr() - pbase() : 0);
         }
-        else if (std::ios_base::cur == way)
-        {
-            if (seekpos(gptr() - eback() + off, which) == pos_type(-1))
-            {
-                return pos_type(-1);
-            }
-        }
-        else if (std::ios_base::end == way)
-        {
-            if (seekpos(egptr() - eback() + off, which) == pos_type(-1))
-            {
-                return pos_type(-1);
-            }
-        }
-        return gptr() - eback();
-    }
-    pos_type pubseekpos(pos_type sp, std::ios_base::openmode which = std::ios_base::in | std::ios_base::out)
-    {
-        if (seekpos(sp, which) == pos_type(-1))
-        {
-            return pos_type(-1);
-        }
-        else
-        {
-            return gptr() - eback();
-        }
+        else if (way == std::ios_base::end)
+            base = m_ram_file->size();
+        else if (way != std::ios_base::beg)
+            return pos_type(off_type(-1));
+        if (off < -base || off > std::numeric_limits<off_type>::max() - base)
+            return pos_type(off_type(-1));
+        return seekpos(base + off, which);
     }
     std::streamsize xsputn(char_type const * s, std::streamsize n) override
     {
@@ -1816,6 +1756,18 @@ public:
         this->init(m_streambuf);
         open(file, mode);
     }
+    void swap(osfstream & other)
+    {
+        std::ostream::swap(other);
+        std::swap(m_streambuf, other.m_streambuf);
+        m_file.swap(other.m_file);
+        set_rdbuf(m_streambuf);
+        other.set_rdbuf(other.m_streambuf);
+    }
+    friend void swap(osfstream & left, osfstream & right)
+    {
+        left.swap(right);
+    }
     buf_ptr_type open(std::string const & file, std::ios_base::openmode mode = std::ios_base::out)
     {
         delete m_streambuf;
@@ -1889,69 +1841,18 @@ public:
     }
     osfstream & seekp(pos_type pos)
     {
-        ios_base::iostate err = std::ios_base::iostate(std::ios_base::goodbit);
-        try
-        {
-            if (!this->fail())
-            {
-                pos_type p = 0;
-                if (is_ram_file(m_file))
-                {
-                    p = ((ram_filebuf *)m_streambuf)->pubseekpos(pos, std::ios_base::out);
-                }
-                else
-                {
-                    p = ((std::filebuf *)m_streambuf)->pubseekpos(pos, std::ios_base::out);
-                }
-                if (p == pos_type(off_type(-1)))
-                {
-                    err |= ios_base::failbit;
-                    this->setstate(err);
-                }
-            }
-        }
-        catch (...)
-        {
-            if (err)
-            {
-                this->setstate(err);
-            }
-        }
+        std::ostream::seekp(pos);
         return *this;
     }
     osfstream & seekp(off_type off, ios_base::seekdir way)
     {
-        ios_base::iostate err = std::ios_base::iostate(ios_base::goodbit);
-        try
-        {
-            if (!this->fail())
-            {
-                pos_type p = 0;
-                if (is_ram_file(m_file))
-                {
-                    p = ((ram_filebuf *)m_streambuf)->pubseekoff(off, way, std::ios_base::out);
-                }
-                else
-                {
-                    p = ((std::filebuf *)m_streambuf)->pubseekoff(off, way, std::ios_base::out);
-                }
-                if (p == pos_type(off_type(-1)))
-                {
-                    err |= ios_base::failbit;
-                    this->setstate(err);
-                }
-            }
-        }
-        catch (...)
-        {
-            if (err)
-            {
-                this->setstate(err);
-            }
-        }
+        std::ostream::seekp(off, way);
         return *this;
     }
-    std::streampos tellp();
+    std::streampos tellp()
+    {
+        return std::ostream::tellp();
+    }
 };
 class isfstream : public std::istream
 {
@@ -1969,6 +1870,18 @@ public:
     {
         this->init(m_streambuf);
         open(file, mode);
+    }
+    void swap(isfstream & other)
+    {
+        std::istream::swap(other);
+        std::swap(m_streambuf, other.m_streambuf);
+        m_file.swap(other.m_file);
+        set_rdbuf(m_streambuf);
+        other.set_rdbuf(other.m_streambuf);
+    }
+    friend void swap(isfstream & left, isfstream & right)
+    {
+        left.swap(right);
     }
     buf_ptr_type open(std::string const & file, std::ios_base::openmode mode = std::ios_base::in)
     {
@@ -2043,96 +1956,17 @@ public:
     }
     isfstream & seekg(pos_type pos)
     {
-        ios_base::iostate err = std::ios_base::iostate(std::ios_base::goodbit);
-        try
-        {
-            if (!this->fail())
-            {
-                pos_type p = 0;
-                if (is_ram_file(m_file))
-                {
-                    p = ((ram_filebuf *)m_streambuf)->pubseekpos(pos, std::ios_base::in);
-                }
-                else
-                {
-                    p = ((std::filebuf *)m_streambuf)->pubseekpos(pos, std::ios_base::in);
-                }
-                if (p == pos_type(off_type(-1)))
-                {
-                    err |= ios_base::failbit;
-                }
-            }
-        }
-        catch (...)
-        {
-            if (err)
-            {
-                this->setstate(err);
-            }
-        }
+        std::istream::seekg(pos);
         return *this;
     }
     isfstream & seekg(off_type off, ios_base::seekdir way)
     {
-        ios_base::iostate err = std::ios_base::iostate(ios_base::goodbit);
-        try
-        {
-            if (!this->fail())
-            {
-                pos_type p = 0;
-                if (is_ram_file(m_file))
-                {
-                    p = ((ram_filebuf *)m_streambuf)->pubseekoff(off, way, std::ios_base::in);
-                }
-                else
-                {
-                    p = ((std::filebuf *)m_streambuf)->pubseekoff(off, way, std::ios_base::in);
-                }
-                if (p == pos_type(off_type(-1)))
-                {
-                    err |= ios_base::failbit;
-                }
-            }
-        }
-        catch (...)
-        {
-            if (err)
-            {
-                this->setstate(err);
-            }
-        }
+        std::istream::seekg(off, way);
         return *this;
     }
     std::streampos tellg()
     {
-        ios_base::iostate err = std::ios_base::iostate(ios_base::goodbit);
-        pos_type p = pos_type(off_type(-1));
-        try
-        {
-            if (!this->fail())
-            {
-                if (is_ram_file(m_file))
-                {
-                    p = ((ram_filebuf *)m_streambuf)->pubseekoff(0, std::ios_base::cur);
-                }
-                else
-                {
-                    p = ((std::filebuf *)m_streambuf)->pubseekoff(0, std::ios_base::cur);
-                }
-                if (p == pos_type(off_type(-1)))
-                {
-                    err |= ios_base::failbit;
-                }
-            }
-        }
-        catch (...)
-        {
-            if (err)
-            {
-                this->setstate(err);
-            }
-        }
-        return p;
+        return std::istream::tellg();
     }
 };
 }
@@ -2480,7 +2314,7 @@ inline std::string create_js_body(std::string const & jsonsize)
 }
 template <>
 inline void
-write_structure_tree<HTML_FORMAT>(structure_tree_node const * v, std::ostream & out, SDSL3_UNUSED size_t level)
+write_structure_tree<HTML_FORMAT>(structure_tree_node const * v, std::ostream & out, [[maybe_unused]] size_t level)
 {
     std::stringstream json_data;
     write_structure_tree<JSON_FORMAT>(v, json_data);
@@ -2527,7 +2361,7 @@ namespace seqan3::contrib::sdsl
 {
 namespace util
 {
-SDSL3_UNUSED static bool verbose = false;
+[[maybe_unused]] static bool verbose = false;
 inline void set_verbose()
 {
     verbose = true;
@@ -2690,13 +2524,21 @@ std::string class_to_hash(T const & t)
 template <class T>
 std::string class_name(T const & t)
 {
-    std::string result = demangle2(typeid(t).name());
-    size_t template_pos = result.find("<");
-    if (template_pos != std::string::npos)
+    auto get_name = [&]
     {
-        result = result.erase(template_pos);
+        std::string result = demangle2(typeid(t).name());
+        size_t template_pos = result.find("<");
+        if (template_pos != std::string::npos)
+            result.erase(template_pos);
+        return result;
+    };
+    if constexpr (std::is_polymorphic_v<T>)
+        return get_name();
+    else
+    {
+        static std::string const name = get_name();
+        return name;
     }
-    return result;
 }
 inline char * str_from_errno()
 {
@@ -2861,22 +2703,12 @@ void util::expand_width(t_int_vec & v, uint8_t new_width)
 template <class t_int_vec>
 void util::_set_zero_bits(t_int_vec & v)
 {
-    std::for_each(v.data(),
-                  v.data() + ((v.bit_size() + 63) >> 6),
-                  [](uint64_t & value)
-                  {
-                      value = 0ULL;
-                  });
+    std::fill_n(v.data(), (v.bit_size() + 63) >> 6, 0ULL);
 }
 template <class t_int_vec>
 void util::_set_one_bits(t_int_vec & v)
 {
-    std::for_each(v.data(),
-                  v.data() + ((v.bit_size() + 63) >> 6),
-                  [](uint64_t & value)
-                  {
-                      value = -1ULL;
-                  });
+    std::fill_n(v.data(), (v.bit_size() + 63) >> 6, -1ULL);
 }
 inline void util::cyclic_shifts(uint64_t * vec, uint8_t & n, uint64_t k, uint8_t int_width)
 {
@@ -3177,7 +3009,9 @@ serialize(X const & x, std::ostream & out, structure_tree_node * v = nullptr, st
     return x.serialize(out, v, name);
 }
 template <typename X>
-typename std::enable_if<std::is_standard_layout<X>::value && std::is_trivially_default_constructible<X>::value && std::is_trivially_copyable<X>::value, uint64_t>::type
+typename std::enable_if<std::is_standard_layout<X>::value && std::is_trivially_default_constructible<X>::value
+                            && std::is_trivially_copyable<X>::value,
+                        uint64_t>::type
 serialize(X const & x, std::ostream & out, structure_tree_node * v = nullptr, std::string name = "")
 {
     return write_member(x, out, v, name);
@@ -3194,7 +3028,9 @@ typename std::enable_if<has_load<X>::value, void>::type load(X & x, std::istream
     x.load(in);
 }
 template <typename X>
-typename std::enable_if<std::is_standard_layout<X>::value && std::is_trivially_default_constructible<X>::value && std::is_trivially_copyable<X>::value, void>::type
+typename std::enable_if<std::is_standard_layout<X>::value && std::is_trivially_default_constructible<X>::value
+                            && std::is_trivially_copyable<X>::value,
+                        void>::type
 load(X & x, std::istream & in)
 {
     read_member(x, in);
@@ -3267,19 +3103,16 @@ bool load_vector_from_file(t_int_vec & v, std::string const & file, uint8_t num_
             else
             {
                 size_t idx = 0;
-                const size_t block_size = conf::SDSL3_BLOCK_SIZE * num_bytes;
+                size_t const block_size = conf::SDSL3_BLOCK_SIZE * num_bytes;
                 std::vector<uint8_t> buf(block_size);
                 uint64_t x = 0;
                 uint8_t cur_byte = 0;
                 do
                 {
                     in.read((char *)buf.data(), block_size);
-                    size_t read = in.gcount();
-                    uint8_t * begin = buf.data();
-                    uint8_t * end = begin + read;
-                    while (begin < end)
+                    for (uint8_t byte : std::span(buf).first(in.gcount()))
                     {
-                        x |= ((uint64_t)(*begin)) << (cur_byte * 8);
+                        x |= uint64_t(byte) << (cur_byte * 8);
                         ++cur_byte;
                         if (cur_byte == num_bytes)
                         {
@@ -3287,7 +3120,6 @@ bool load_vector_from_file(t_int_vec & v, std::string const & file, uint8_t num_
                             cur_byte = 0;
                             x = 0ULL;
                         }
-                        ++begin;
                     }
                 }
                 while (idx < v.size());
@@ -3462,7 +3294,7 @@ t_csa const & _idx_csa(t_csa const & t, csa_tag)
     return t;
 }
 template <typename t_cst>
-const typename t_cst::csa_type & _idx_csa(t_cst const & t, cst_tag)
+typename t_cst::csa_type const & _idx_csa(t_cst const & t, cst_tag)
 {
     return t.csa;
 }
@@ -3498,7 +3330,7 @@ void csXprintf(std::ostream & out,
                char sentinel = default_sentinel<t_idx>::value)
 {
     typename t_idx::index_category cat;
-    const typename t_idx::csa_type & csa = _idx_csa(idx, cat);
+    typename t_idx::csa_type const & csa = _idx_csa(idx, cat);
     std::vector<std::string> res(csa.size());
     bool truncate = false;
     for (std::string::const_iterator c = format.begin(), s = c; c != format.end(); s = c)
@@ -3507,8 +3339,9 @@ void csXprintf(std::ostream & out,
             ++c;
         if (c > s)
         {
-            std::vector<std::string> to_copy(csa.size(), std::string(s, c));
-            transform(res.begin(), res.end(), to_copy.begin(), res.begin(), std::plus<std::string>());
+            std::string_view literal(s, c);
+            for (auto & line : res)
+                line += literal;
         }
         if (c == format.end())
             break;
@@ -3558,7 +3391,7 @@ void csXprintf(std::ostream & out,
                 break;
             case 'U':
                 truncate = true;
-                SDSL3_FALLTHROUGH
+                [[fallthrough]];
             case 'T':
                 for (uint64_t k = 0; (w > 0 and k < w) or (0 == w and k < csa.size()); ++k)
                 {
@@ -3579,7 +3412,7 @@ void csXprintf(std::ostream & out,
                 break;
             case 'u':
                 truncate = true;
-                SDSL3_FALLTHROUGH
+                [[fallthrough]];
             case 't':
                 for (uint64_t k = 0; (w > 0 and k < w) or (0 == w and k < csa.size()); ++k)
                 {
@@ -4197,7 +4030,7 @@ typedef struct bfoot
 #define MM_BLOCK_OVERHEAD (sizeof(size_t) + sizeof(size_t))
 #define MIN_BLOCKSIZE (ALIGN(sizeof(mm_block_t) + sizeof(mm_block_foot_t)))
 #define UNMASK_SIZE(size) ((size) & ~1)
-#define ISFREE(size) ((size)&1)
+#define ISFREE(size) ((size) & 1)
 #define SETFREE(size) ((size) | 1)
 #define SPLIT_THRESHOLD (MIN_BLOCKSIZE)
 inline mm_block_t * block_cur(void * ptr)
@@ -4332,9 +4165,9 @@ private:
         size_t size_in_bytes = 0;
         size_t page_size_in_bytes = 0;
         size_t num_free_pages = 0;
-        const std::string meminfo_file = "/proc/meminfo";
-        const std::string ps_str = "Hugepagesize:";
-        const std::string pf_str = "HugePages_Free:";
+        std::string const meminfo_file = "/proc/meminfo";
+        std::string const ps_str = "Hugepagesize:";
+        std::string const pf_str = "HugePages_Free:";
         std::ifstream mifs(meminfo_file);
         if (mifs.is_open())
         {
@@ -4475,7 +4308,7 @@ private:
         }
     }
 public:
-    void init(SDSL3_UNUSED size_t size_in_bytes = 0)
+    void init([[maybe_unused]] size_t size_in_bytes = 0)
     {
 # ifdef MAP_HUGETLB
         if (size_in_bytes == 0)
@@ -4629,8 +4462,8 @@ public:
     }
     static hugepage_allocator & the_allocator()
     {
-        static hugepage_allocator a;
-        return a;
+        static hugepage_allocator * const a = new hugepage_allocator;
+        return *a;
     }
 };
 #endif
@@ -4692,7 +4525,7 @@ public:
 #endif
     }
     template <class t_vec>
-    static void resize(t_vec & v, const typename t_vec::size_type capacity)
+    static void resize(t_vec & v, typename t_vec::size_type const capacity)
     {
         uint64_t old_capacity_in_bytes = ((v.m_capacity + 63) >> 6) << 3;
         uint64_t new_capacity_in_bytes = ((capacity + 63) >> 6) << 3;
@@ -4797,7 +4630,7 @@ public:
 #endif
         return nullptr;
     }
-    static int mem_unmap(int fd, void * addr, const uint64_t size)
+    static int mem_unmap(int fd, void * addr, uint64_t const size)
     {
         if (addr == nullptr)
         {
@@ -4830,7 +4663,7 @@ public:
 #endif
         return -1;
     }
-    static int truncate_file_mmap(int fd, const uint64_t new_size)
+    static int truncate_file_mmap(int fd, uint64_t const new_size)
     {
         if (is_ram_file(fd))
         {
@@ -5034,14 +4867,16 @@ public:
     friend class coder::comma;
     friend class memory_manager;
     static constexpr uint8_t fixed_int_width = t_width;
-    float growth_factor = 1.5;
 private:
     size_type m_size;
     size_type m_capacity;
     uint64_t * m_data;
     int_width_type m_width;
-    void bit_resize(const size_type size, const value_type value);
-    void amortized_resize(const size_type size)
+public:
+    float growth_factor = 1.5;
+private:
+    void bit_resize(size_type const size, value_type const value);
+    void amortized_resize(size_type const size)
     {
         assert(growth_factor > 1.0);
         if constexpr (t_width != 0)
@@ -5222,15 +5057,15 @@ public:
             memory_manager::resize(*this, capacity * m_width);
         }
     }
-    void resize(const size_type size)
+    void resize(size_type const size)
     {
         resize(size, 0);
     }
-    void resize(const size_type size, const value_type value)
+    void resize(size_type const size, value_type const value)
     {
         bit_resize(size * m_width, value);
     }
-    void bit_resize(const size_type size);
+    void bit_resize(size_type const size);
     inline size_type size() const noexcept;
     static size_type max_size() noexcept
     {
@@ -5253,8 +5088,8 @@ public:
     {
         return m_data;
     }
-    value_type get_int(size_type idx, const uint8_t len = 64) const;
-    void set_int(size_type idx, value_type x, const uint8_t len = 64);
+    value_type get_int(size_type idx, uint8_t const len = 64) const;
+    void set_int(size_type idx, value_type x, uint8_t const len = 64);
     uint8_t width() const noexcept
     {
         return m_width;
@@ -5411,7 +5246,7 @@ public:
             return written_bytes;
         }
     };
-    const raw_wrapper raw = raw_wrapper(*this);
+    raw_wrapper const raw = raw_wrapper(*this);
 };
 template <class t_int_vector>
 class int_vector_reference
@@ -5420,8 +5255,8 @@ public:
     typedef typename t_int_vector::value_type value_type;
 private:
     typename t_int_vector::value_type * const m_word;
-    const uint8_t m_offset;
-    const uint8_t m_len;
+    uint8_t const m_offset;
+    uint8_t const m_len;
 public:
     int_vector_reference() = delete;
     constexpr int_vector_reference(int_vector_reference const &) noexcept = default;
@@ -5429,7 +5264,7 @@ public:
     int_vector_reference(value_type * word, uint8_t offset, uint8_t len) noexcept :
         m_word(word),
         m_offset(offset),
-        m_len(len){};
+        m_len(len) {};
     int_vector_reference & operator=(value_type x) noexcept
     {
         bits::write_int(m_word, x, m_offset, m_len);
@@ -5471,13 +5306,13 @@ public:
         --(*this);
         return val;
     }
-    int_vector_reference & operator+=(const value_type x) noexcept
+    int_vector_reference & operator+=(value_type const x) noexcept
     {
         value_type w = bits::read_int(m_word, m_offset, m_len);
         bits::write_int(m_word, w + x, m_offset, m_len);
         return *this;
     }
-    int_vector_reference & operator-=(const value_type x) noexcept
+    int_vector_reference & operator-=(value_type const x) noexcept
     {
         value_type w = bits::read_int(m_word, m_offset, m_len);
         bits::write_int(m_word, w - x, m_offset, m_len);
@@ -5527,7 +5362,7 @@ public:
     int_vector_reference() = delete;
     constexpr int_vector_reference(int_vector_reference const &) noexcept = default;
     constexpr int_vector_reference(int_vector_reference &&) noexcept = default;
-    int_vector_reference(uint64_t * word, uint8_t offset, uint8_t) noexcept : m_word(word), m_mask(1ULL << offset){};
+    int_vector_reference(uint64_t * word, uint8_t offset, uint8_t) noexcept : m_word(word), m_mask(1ULL << offset) {};
     int_vector_reference & operator=(bool x) noexcept
     {
         if (x)
@@ -5756,7 +5591,7 @@ class int_vector_const_iterator : public int_vector_iterator_base<t_int_vector>
 {
 public:
     typedef typename t_int_vector::value_type const_reference;
-    typedef const typename t_int_vector::value_type * pointer;
+    typedef typename t_int_vector::value_type const * pointer;
     typedef int_vector_const_iterator const_iterator;
     typedef typename t_int_vector::size_type size_type;
     typedef typename t_int_vector::difference_type difference_type;
@@ -5768,7 +5603,7 @@ public:
 private:
     using int_vector_iterator_base<t_int_vector>::m_offset;
     using int_vector_iterator_base<t_int_vector>::m_len;
-    const typename t_int_vector::value_type * m_word;
+    typename t_int_vector::value_type const * m_word;
 public:
     int_vector_const_iterator(t_int_vector const * v = nullptr, size_type idx = 0) :
         int_vector_iterator_base<t_int_vector>(v, idx),
@@ -5988,7 +5823,7 @@ void swap(int_vector<t_width> & v1, int_vector<t_width> & v2) noexcept
     std::swap(v1, v2);
 }
 template <uint8_t t_width>
-void int_vector<t_width>::bit_resize(const size_type size)
+void int_vector<t_width>::bit_resize(size_type const size)
 {
     if (size > m_capacity || m_data == nullptr)
     {
@@ -5997,7 +5832,7 @@ void int_vector<t_width>::bit_resize(const size_type size)
     m_size = size;
 }
 template <uint8_t t_width>
-void int_vector<t_width>::bit_resize(const size_type size, const value_type value)
+void int_vector<t_width>::bit_resize(size_type const size, value_type const value)
 {
     size_type old_size = m_size;
     bit_resize(size);
@@ -6005,7 +5840,7 @@ void int_vector<t_width>::bit_resize(const size_type size, const value_type valu
     util::set_to_value(*this, value, it);
 }
 template <uint8_t t_width>
-auto int_vector<t_width>::get_int(size_type idx, const uint8_t len) const -> value_type
+auto int_vector<t_width>::get_int(size_type idx, uint8_t const len) const -> value_type
 {
 #ifdef SDSL3_DEBUG
     if (idx + len > m_size)
@@ -6020,7 +5855,7 @@ auto int_vector<t_width>::get_int(size_type idx, const uint8_t len) const -> val
     return bits::read_int(m_data + (idx >> 6), idx & 0x3F, len);
 }
 template <uint8_t t_width>
-inline void int_vector<t_width>::set_int(size_type idx, value_type x, const uint8_t len)
+inline void int_vector<t_width>::set_int(size_type idx, value_type x, uint8_t const len)
 {
 #ifdef SDSL3_DEBUG
     if (idx + len > m_size)
@@ -6352,12 +6187,12 @@ int_vector_trait<64>::end(typename int_vector_trait<64>::int_vector_type * v) no
     return v->data() + v->size();
 }
 inline typename int_vector_trait<64>::const_iterator
-int_vector_trait<64>::begin(const typename int_vector_trait<64>::int_vector_type * v) noexcept
+int_vector_trait<64>::begin(typename int_vector_trait<64>::int_vector_type const * v) noexcept
 {
     return v->data();
 }
 inline typename int_vector_trait<64>::const_iterator
-int_vector_trait<64>::end(const typename int_vector_trait<64>::int_vector_type * v) noexcept
+int_vector_trait<64>::end(typename int_vector_trait<64>::int_vector_type const * v) noexcept
 {
     return v->data() + v->size();
 }
@@ -6372,12 +6207,12 @@ int_vector_trait<32>::end(typename int_vector_trait<32>::int_vector_type * v) no
     return ((uint32_t *)v->data()) + v->size();
 }
 inline typename int_vector_trait<32>::const_iterator
-int_vector_trait<32>::begin(const typename int_vector_trait<32>::int_vector_type * v) noexcept
+int_vector_trait<32>::begin(typename int_vector_trait<32>::int_vector_type const * v) noexcept
 {
     return (uint32_t *)v->data();
 }
 inline typename int_vector_trait<32>::const_iterator
-int_vector_trait<32>::end(const typename int_vector_trait<32>::int_vector_type * v) noexcept
+int_vector_trait<32>::end(typename int_vector_trait<32>::int_vector_type const * v) noexcept
 {
     return ((uint32_t *)v->data()) + v->size();
 }
@@ -6392,12 +6227,12 @@ int_vector_trait<16>::end(typename int_vector_trait<16>::int_vector_type * v) no
     return ((uint16_t *)v->data()) + v->size();
 }
 inline typename int_vector_trait<16>::const_iterator
-int_vector_trait<16>::begin(const typename int_vector_trait<16>::int_vector_type * v) noexcept
+int_vector_trait<16>::begin(typename int_vector_trait<16>::int_vector_type const * v) noexcept
 {
     return (uint16_t *)v->data();
 }
 inline typename int_vector_trait<16>::const_iterator
-int_vector_trait<16>::end(const typename int_vector_trait<16>::int_vector_type * v) noexcept
+int_vector_trait<16>::end(typename int_vector_trait<16>::int_vector_type const * v) noexcept
 {
     return ((uint16_t *)v->data()) + v->size();
 }
@@ -6412,12 +6247,12 @@ int_vector_trait<8>::end(typename int_vector_trait<8>::int_vector_type * v) noex
     return ((uint8_t *)v->data()) + v->size();
 }
 inline typename int_vector_trait<8>::const_iterator
-int_vector_trait<8>::begin(const typename int_vector_trait<8>::int_vector_type * v) noexcept
+int_vector_trait<8>::begin(typename int_vector_trait<8>::int_vector_type const * v) noexcept
 {
     return (uint8_t *)v->data();
 }
 inline typename int_vector_trait<8>::const_iterator
-int_vector_trait<8>::end(const typename int_vector_trait<8>::int_vector_type * v) noexcept
+int_vector_trait<8>::end(typename int_vector_trait<8>::int_vector_type const * v) noexcept
 {
     return ((uint8_t *)v->data()) + v->size();
 }
@@ -6450,7 +6285,7 @@ private:
     uint64_t m_buffersize = 8;
     uint64_t m_size = 0;
     uint64_t m_begin = 0;
-    void read_block(const uint64_t idx)
+    void read_block(uint64_t const idx)
     {
         m_begin = (idx / m_buffersize) * m_buffersize;
         if (m_begin >= m_size)
@@ -6493,7 +6328,7 @@ private:
             m_need_to_write = false;
         }
     }
-    uint64_t read(const uint64_t idx)
+    uint64_t read(uint64_t const idx)
     {
         assert(is_open());
         assert(idx < m_size);
@@ -6504,9 +6339,11 @@ private:
         }
         return m_buffer[idx - m_begin];
     }
-    void write(const uint64_t idx, const uint64_t value)
+    void write(uint64_t const idx, uint64_t const value)
     {
         assert(is_open());
+        if (!m_ofile.is_open())
+            throw std::ios_base::failure("int_vector_buffer: not open for writing");
         if (idx < m_begin or m_begin + m_buffersize <= idx)
         {
             write_block();
@@ -6524,10 +6361,10 @@ public:
     {
         m_buffer = int_vector<t_width>();
     }
-    int_vector_buffer(const std::string filename,
+    int_vector_buffer(std::string const filename,
                       std::ios::openmode mode = std::ios::in,
-                      const uint64_t buffer_size = 1024 * 1024,
-                      const uint8_t int_width = t_width,
+                      uint64_t const buffer_size = 1024 * 1024,
+                      uint8_t const int_width = t_width,
                       bool const is_plain = false)
     {
         m_filename = filename;
@@ -6543,8 +6380,11 @@ public:
         {
             m_offset = 8;
         }
-        m_ofile.open(m_filename, mode | std::ios::out | std::ios::binary);
-        assert(m_ofile.good());
+        if (mode & std::ios::out)
+        {
+            m_ofile.open(m_filename, mode | std::ios::binary);
+            assert(m_ofile.good());
+        }
         m_ifile.open(m_filename, std::ios::in | std::ios::binary);
         assert(m_ifile.good());
         if (mode & std::ios::in)
@@ -6575,12 +6415,22 @@ public:
         m_size(ivb.m_size),
         m_begin(ivb.m_begin)
     {
-        ivb.m_ifile.close();
-        ivb.m_ofile.close();
-        m_ifile.open(m_filename, std::ios::in | std::ios::binary);
-        m_ofile.open(m_filename, std::ios::in | std::ios::out | std::ios::binary);
-        assert(m_ifile.good());
-        assert(m_ofile.good());
+        bool const open = ivb.m_ifile.is_open();
+        bool const writable = ivb.m_ofile.is_open();
+        if (open)
+            ivb.m_ifile.close();
+        if (writable)
+            ivb.m_ofile.close();
+        if (open)
+        {
+            m_ifile.open(m_filename, std::ios::in | std::ios::binary);
+            assert(m_ifile.good());
+        }
+        if (writable)
+        {
+            m_ofile.open(m_filename, std::ios::in | std::ios::out | std::ios::binary);
+            assert(m_ofile.good());
+        }
         ivb.m_filename = "";
         ivb.m_buffer = int_vector<t_width>();
         ivb.m_need_to_write = false;
@@ -6595,15 +6445,27 @@ public:
     }
     int_vector_buffer<t_width> & operator=(int_vector_buffer && ivb)
     {
+        if (this == &ivb)
+            return *this;
         close();
-        ivb.m_ifile.close();
-        ivb.m_ofile.close();
+        bool const open = ivb.m_ifile.is_open();
+        bool const writable = ivb.m_ofile.is_open();
+        if (open)
+            ivb.m_ifile.close();
+        if (writable)
+            ivb.m_ofile.close();
         m_filename = ivb.m_filename;
-        m_ifile.open(m_filename, std::ios::in | std::ios::binary);
-        m_ofile.open(m_filename, std::ios::in | std::ios::out | std::ios::binary);
-        assert(m_ifile.good());
-        assert(m_ofile.good());
-        m_buffer = (int_vector<t_width> &&) ivb.m_buffer;
+        if (open)
+        {
+            m_ifile.open(m_filename, std::ios::in | std::ios::binary);
+            assert(m_ifile.good());
+        }
+        if (writable)
+        {
+            m_ofile.open(m_filename, std::ios::in | std::ios::out | std::ios::binary);
+            assert(m_ofile.good());
+        }
+        m_buffer = (int_vector<t_width> &&)ivb.m_buffer;
         m_need_to_write = ivb.m_need_to_write;
         m_offset = ivb.m_offset;
         m_buffersize = ivb.m_buffersize;
@@ -6657,15 +6519,16 @@ public:
     }
     bool good()
     {
-        return m_ifile.good() and m_ofile.good();
+        return m_ifile.good() and (!m_ofile.is_open() or m_ofile.good());
     }
     bool is_open()
     {
-        return m_ifile.is_open() and m_ofile.is_open();
-        ;
+        return m_ifile.is_open();
     }
     void reset()
     {
+        if (!m_ofile.is_open())
+            throw std::ios_base::failure("int_vector_buffer: not open for writing");
         assert(m_ifile.good());
         assert(m_ofile.good());
         m_ifile.close();
@@ -6684,7 +6547,7 @@ public:
     {
         return reference(this, idx);
     }
-    void push_back(const uint64_t value)
+    void push_back(uint64_t const value)
     {
         write(m_size, value);
     }
@@ -6692,7 +6555,7 @@ public:
     {
         if (is_open())
         {
-            if (!remove_file)
+            if (!remove_file && m_ofile.is_open())
             {
                 write_block();
                 if (0 < m_offset)
@@ -6713,8 +6576,11 @@ public:
             }
             m_ifile.close();
             assert(m_ifile.good());
-            m_ofile.close();
-            assert(m_ofile.good());
+            if (m_ofile.is_open())
+            {
+                m_ofile.close();
+                assert(m_ofile.good());
+            }
             if (remove_file)
             {
                 seqan3::contrib::sdsl::remove(m_filename);
@@ -6764,7 +6630,7 @@ public:
         }
         uint64_t operator++(int)
         {
-            uint64_t val = (uint64_t) * this;
+            uint64_t val = (uint64_t)*this;
             ++(*this);
             return val;
         }
@@ -6776,17 +6642,17 @@ public:
         }
         uint64_t operator--(int)
         {
-            uint64_t val = (uint64_t) * this;
+            uint64_t val = (uint64_t)*this;
             --(*this);
             return val;
         }
-        reference & operator+=(const uint64_t x)
+        reference & operator+=(uint64_t const x)
         {
             uint64_t w = m_int_vector_buffer->read(m_idx);
             m_int_vector_buffer->write(m_idx, w + x);
             return *this;
         }
-        reference & operator-=(const uint64_t x)
+        reference & operator-=(uint64_t const x)
         {
             uint64_t w = m_int_vector_buffer->read(m_idx);
             m_int_vector_buffer->write(m_idx, w - x);
@@ -6794,11 +6660,11 @@ public:
         }
         bool operator==(reference const & x) const
         {
-            return (uint64_t) * this == (uint64_t)x;
+            return (uint64_t)*this == (uint64_t)x;
         }
         bool operator<(reference const & x) const
         {
-            return (uint64_t) * this < (uint64_t)x;
+            return (uint64_t)*this < (uint64_t)x;
         }
     };
     class iterator
@@ -6926,6 +6792,7 @@ public:
 #include <string.h>
 #include <string>
 #include <unistd.h>
+#include <utility>
 namespace seqan3::contrib::sdsl
 {
 template <uint8_t t_width = 0, std::ios_base::openmode t_mode = std::ios_base::out | std::ios_base::in>
@@ -6939,7 +6806,7 @@ public:
     typedef typename int_vector<t_width>::int_width_type width_type;
     static constexpr uint8_t fixed_int_width = t_width;
 public:
-    const size_type append_block_size = 1000000;
+    size_type const append_block_size = 1000000;
 private:
     uint8_t * m_mapped_data = nullptr;
     uint64_t m_file_size_bytes = 0;
@@ -6947,13 +6814,23 @@ private:
     int m_fd = -1;
     int_vector<t_width> m_wrapper;
     std::string m_file_name;
-    bool m_delete_on_close;
+    bool m_delete_on_close = false;
+    void swap(int_vector_mapper & other) noexcept
+    {
+        std::swap(m_mapped_data, other.m_mapped_data);
+        std::swap(m_file_size_bytes, other.m_file_size_bytes);
+        std::swap(m_data_offset, other.m_data_offset);
+        std::swap(m_fd, other.m_fd);
+        m_wrapper.swap(other.m_wrapper);
+        m_file_name.swap(other.m_file_name);
+        std::swap(m_delete_on_close, other.m_delete_on_close);
+    }
 public:
     int_vector_mapper() = delete;
     int_vector_mapper(int_vector_mapper const &) = delete;
     int_vector_mapper & operator=(int_vector_mapper const &) = delete;
-public:
-    ~int_vector_mapper()
+private:
+    void close() noexcept
     {
         if (m_mapped_data)
         {
@@ -6994,6 +6871,8 @@ public:
                     }
                 }
             }
+            m_wrapper.m_data = nullptr;
+            m_wrapper.m_size = 0;
         }
         if (m_fd != -1)
         {
@@ -7013,38 +6892,31 @@ public:
                 }
             }
         }
-        m_wrapper.m_data = nullptr;
-        m_wrapper.m_size = 0;
+        m_mapped_data = nullptr;
+        m_fd = -1;
+    }
+public:
+    ~int_vector_mapper()
+    {
+        close();
     }
     int_vector_mapper(int_vector_mapper && ivm)
     {
-        m_wrapper.m_data = ivm.m_wrapper.m_data;
-        m_wrapper.m_size = ivm.m_wrapper.m_size;
-        m_wrapper.width(ivm.m_wrapper.width());
-        m_file_name = ivm.m_file_name;
-        m_delete_on_close = ivm.m_delete_on_close;
-        ivm.m_wrapper.m_data = nullptr;
-        ivm.m_wrapper.m_size = 0;
-        ivm.m_mapped_data = nullptr;
-        ivm.m_fd = -1;
+        swap(ivm);
     }
     int_vector_mapper & operator=(int_vector_mapper && ivm)
     {
-        m_wrapper.m_data = ivm.m_wrapper.m_data;
-        m_wrapper.m_size = ivm.m_wrapper.m_size;
-        m_wrapper.width(ivm.m_wrapper.width());
-        m_file_name = ivm.m_file_name;
-        m_delete_on_close = ivm.m_delete_on_close;
-        ivm.m_wrapper.m_data = nullptr;
-        ivm.m_wrapper.m_size = 0;
-        ivm.m_mapped_data = nullptr;
-        ivm.m_fd = -1;
+        if (this != &ivm)
+        {
+            swap(ivm);
+            ivm.close();
+        }
         return (*this);
     }
     int_vector_mapper(std::string const & key, cache_config const & config) :
         int_vector_mapper(cache_file_name(key, config))
     {}
-    int_vector_mapper(const std::string filename, bool is_plain = false, bool delete_on_close = false) :
+    int_vector_mapper(std::string const filename, bool is_plain = false, bool delete_on_close = false) :
         m_data_offset(0),
         m_file_name(filename),
         m_delete_on_close(delete_on_close)
@@ -7109,7 +6981,7 @@ public:
     {
         return m_wrapper.width();
     }
-    void width(const uint8_t new_int_width)
+    void width(uint8_t const new_int_width)
     {
         static_assert(t_mode & std::ios_base::out, "int_vector_mapper: must be opened in in+out mode for 'width'");
         m_wrapper.width(new_int_width);
@@ -7118,7 +6990,7 @@ public:
     {
         return m_wrapper.size();
     }
-    void bit_resize(const size_type bit_size)
+    void bit_resize(size_type const bit_size)
     {
         static_assert(t_mode & std::ios_base::out, "int_vector_mapper: must be opened in in+out mode for 'bit_resize'");
         size_type new_size_in_bytes = ((bit_size + 63) >> 6) << 3;
@@ -7152,7 +7024,7 @@ public:
         }
         m_wrapper.m_size = bit_size;
     }
-    void resize(const size_type size)
+    void resize(size_type const size)
     {
         static_assert(t_mode & std::ios_base::out, "int_vector_mapper: must be opened in in+out mode for 'resize'");
         size_type size_in_bits = size * width();
@@ -7202,11 +7074,11 @@ public:
         static_assert(t_mode & std::ios_base::out, "int_vector_mapper: must be opened in in+out mode for 'data'");
         return m_wrapper.data();
     }
-    value_type get_int(size_type idx, const uint8_t len = 64) const
+    value_type get_int(size_type idx, uint8_t const len = 64) const
     {
         return m_wrapper.get_int(idx, len);
     }
-    void set_int(size_type idx, value_type x, const uint8_t len = 64)
+    void set_int(size_type idx, value_type x, uint8_t const len = 64)
     {
         static_assert(t_mode & std::ios_base::out, "int_vector_mapper: must be opened in in+out mode for 'set_int'");
         m_wrapper.set_int(idx, x, len);
@@ -7361,16 +7233,17 @@ public:
     using difference_type = typename t_rac::difference_type;
     using pointer = value_type *;
     using reference = value_type &;
-    typedef const typename t_rac::value_type const_reference;
+    typedef typename t_rac::value_type const const_reference;
     typedef typename t_rac::size_type size_type;
     typedef random_access_const_iterator<t_rac> iterator;
 private:
-    t_rac const * m_rac;
-    typename t_rac::size_type m_idx;
+    t_rac const * m_rac = nullptr;
+    typename t_rac::size_type m_idx = 0;
     template <class t_RAC>
     friend typename random_access_const_iterator<t_RAC>::difference_type
     operator-(random_access_const_iterator<t_RAC> const & x, random_access_const_iterator<t_RAC> const & y);
 public:
+    random_access_const_iterator() = default;
     random_access_const_iterator(t_rac const * rac, size_type idx = 0) : m_rac(rac), m_idx(idx)
     {}
     const_reference operator*() const
@@ -7474,7 +7347,7 @@ struct random_access_container
     typedef random_access_const_iterator<random_access_container> iterator_type;
     t_F f;
     size_type m_size;
-    random_access_container(){};
+    random_access_container() {};
     random_access_container(t_F ff, size_type size) : f(ff), m_size(size)
     {}
     value_type operator[](size_type i) const
@@ -7571,26 +7444,34 @@ public:
         m_size = bv.size();
         m_superblocks = (m_size + t_bs) / t_bs;
         m_block_shift = bits::hi(t_bs);
-        size_type blocks = (m_size + 64) / 64;
-        size_type mem = blocks + m_superblocks + 1;
+        size_type words = (m_size + 63) / 64;
+        bool const padding_word = m_size % 64 == 0;
+        size_type mem = words + padding_word + m_superblocks + 1;
         m_data = int_vector<64>(mem);
         m_block_num = mem;
         uint64_t const * bvp = bv.data();
         size_type j = 0;
         size_type cum_sum = 0;
         size_type sample_rate = t_bs / 64;
-        for (size_type i = 0, sample_cnt = sample_rate; i < blocks; ++i, ++sample_cnt)
+        size_type sample_cnt = sample_rate;
+        auto append_word = [&](uint64_t word)
         {
             if (sample_cnt == sample_rate)
             {
-                m_data[j] = cum_sum;
+                m_data[j++] = cum_sum;
                 sample_cnt = 0;
-                j++;
             }
-            m_data[j] = bvp[i];
+            m_data[j] = word;
             cum_sum += bits::cnt(m_data[j]);
-            j++;
-        }
+            ++j;
+            ++sample_cnt;
+        };
+        for (size_type i = 0; i + 1 < words; ++i)
+            append_word(bvp[i]);
+        if (words)
+            append_word(bvp[words - 1] & bits::lo_set[m_size - (words - 1) * 64]);
+        if (padding_word)
+            append_word(0);
         m_data[j] = cum_sum;
         if (m_block_num > 1024 * 64)
         {
@@ -8011,11 +7892,11 @@ public:
     friend class select_support_hyb<1, k_sblock_rate>;
     friend class select_support_hyb<0, k_sblock_rate>;
 private:
-    static const uint32_t k_block_size;
-    static const uint32_t k_block_bytes;
-    static const uint32_t k_sblock_header_size;
-    static const uint32_t k_sblock_size;
-    static const uint32_t k_hblock_rate;
+    static uint32_t const k_block_size;
+    static uint32_t const k_block_bytes;
+    static uint32_t const k_sblock_header_size;
+    static uint32_t const k_sblock_size;
+    static uint32_t const k_hblock_rate;
     size_type m_size = 0;
     int_vector<8> m_trunk;
     int_vector<8> m_sblock_header;
@@ -8428,7 +8309,7 @@ private:
         }
     }
 public:
-    uint64_t get_int(size_type idx, const uint8_t len = 64) const
+    uint64_t get_int(size_type idx, uint8_t const len = 64) const
     {
         uint64_t res = 0;
         for (size_t i = 0; i < len; ++i)
@@ -8499,15 +8380,15 @@ public:
     }
 };
 template <uint32_t k_sblock_rate>
-const uint32_t hyb_vector<k_sblock_rate>::k_block_size = 256;
+uint32_t const hyb_vector<k_sblock_rate>::k_block_size = 256;
 template <uint32_t k_sblock_rate>
-const uint32_t hyb_vector<k_sblock_rate>::k_block_bytes = 32;
+uint32_t const hyb_vector<k_sblock_rate>::k_block_bytes = 32;
 template <uint32_t k_sblock_rate>
-const uint32_t hyb_vector<k_sblock_rate>::k_sblock_header_size = 8 + 2 * k_sblock_rate;
+uint32_t const hyb_vector<k_sblock_rate>::k_sblock_header_size = 8 + 2 * k_sblock_rate;
 template <uint32_t k_sblock_rate>
-const uint32_t hyb_vector<k_sblock_rate>::k_sblock_size = 256 * k_sblock_rate;
+uint32_t const hyb_vector<k_sblock_rate>::k_sblock_size = 256 * k_sblock_rate;
 template <uint32_t k_sblock_rate>
-const uint32_t hyb_vector<k_sblock_rate>::k_hblock_rate = (1U << 31) / 256;
+uint32_t const hyb_vector<k_sblock_rate>::k_hblock_rate = (1U << 31) / 256;
 template <uint8_t t_bp>
 struct rank_result
 {
@@ -8547,7 +8428,7 @@ public:
     {
         set_vector(v);
     }
-    const size_type rank(size_type i) const
+    size_type const rank(size_type i) const
     {
         assert(m_v != nullptr);
         assert(i <= m_v->size());
@@ -8681,11 +8562,11 @@ public:
             return rank_result<t_b>::adapt(hblock_rank + sblock_rank + block_rank, i);
         }
     }
-    const size_type operator()(size_type i) const
+    size_type const operator()(size_type i) const
     {
         return rank(i);
     }
-    const size_type size() const
+    size_type const size() const
     {
         return m_v->size();
     }
@@ -8747,16 +8628,28 @@ public:
     {
         set_vector(v);
     }
-    size_type select(size_type) const
+    size_type select(size_type i) const
     {
-        fprintf(stderr, "\nhyb_vector: select queries are not currently supported\n");
-        std::exit(EXIT_FAILURE);
+        assert(i > 0);
+        rank_support_hyb<t_b, k_sblock_rate> const rank(m_v);
+        if (i > rank(size()))
+            return size();
+        size_type begin = 0, end = size();
+        while (end - begin > 1)
+        {
+            size_type const mid = begin + (end - begin) / 2;
+            if (rank(mid) < i)
+                begin = mid;
+            else
+                end = mid;
+        }
+        return begin;
     }
-    const size_type operator()(size_type i) const
+    size_type const operator()(size_type i) const
     {
         return select(i);
     }
-    const size_type size() const
+    size_type const size() const
     {
         return m_v->size();
     }
@@ -8821,7 +8714,7 @@ public:
 namespace seqan3::contrib::sdsl
 {
 #if defined(__GNUC__)
-typedef unsigned int uint128_t __attribute__((mode(TI)));
+using uint128_t [[gnu::mode(TI)]] = unsigned int;
 #else
 class uint128_t
 {
@@ -8927,7 +8820,7 @@ public:
     {
         if (x < 64)
         {
-            auto high = (m_high << x) | (m_lo >> (64 - x));
+            auto high = (m_high << x) | ((m_lo >> (63 - x)) >> 1);
             auto lo = m_lo << x;
             return uint128_t(lo, high);
         }
@@ -8941,7 +8834,7 @@ public:
     {
         if (x < 64)
         {
-            auto lo = (m_lo >> x) | (m_high << (64 - x));
+            auto lo = (m_lo >> x) | ((m_high << (63 - x)) << 1);
             return uint128_t(lo, m_high >> x);
         }
         else
@@ -9177,33 +9070,53 @@ public:
     }
     inline uint256_t operator<<(int x) const
     {
-        if (x < 128)
-        {
-            uint128_t high = m_high << x;
-            uint128_t low = (((uint128_t)m_mid << 64) | m_lo);
-            high |= (low >> (128 - x));
-            low = low << x;
-            return uint256_t(low, low >> 64, high);
-        }
-        else
+        if (x >= 128)
         {
             uint128_t high = (((uint128_t)m_mid << 64) | m_lo) << (x - 128);
             return uint256_t(0, 0, high);
         }
+        uint64_t lo = m_lo, mid = m_mid, high_lo = m_high, high_hi = m_high >> 64;
+        if (x >= 64)
+        {
+            high_hi = high_lo;
+            high_lo = mid;
+            mid = lo;
+            lo = 0;
+        }
+        int const shift = x & 63;
+        if (shift)
+        {
+            high_hi = (high_hi << shift) | (high_lo >> (64 - shift));
+            high_lo = (high_lo << shift) | (mid >> (64 - shift));
+            mid = (mid << shift) | (lo >> (64 - shift));
+            lo <<= shift;
+        }
+        return uint256_t(lo, mid, (uint128_t(high_hi) << 64) | high_lo);
     }
     inline uint256_t operator>>(int x) const
     {
-        if (x < 128)
+        if (x >= 128)
         {
-            uint128_t low = (((uint128_t)m_mid << 64) | m_lo) >> x;
-            low |= ((m_high << (127 - x)) << 1);
-            return uint256_t(low, low >> 64, m_high >> x);
-        }
-        else
-        {
-            uint128_t low = (m_high >> (x - 128));
+            uint128_t low = m_high >> (x - 128);
             return uint256_t(low, low >> 64, 0);
         }
+        uint64_t lo = m_lo, mid = m_mid, high_lo = m_high, high_hi = m_high >> 64;
+        if (x >= 64)
+        {
+            lo = mid;
+            mid = high_lo;
+            high_lo = high_hi;
+            high_hi = 0;
+        }
+        int const shift = x & 63;
+        if (shift)
+        {
+            lo = (lo >> shift) | (mid << (64 - shift));
+            mid = (mid >> shift) | (high_lo << (64 - shift));
+            high_lo = (high_lo >> shift) | (high_hi << (64 - shift));
+            high_hi >>= shift;
+        }
+        return uint256_t(lo, mid, (uint128_t(high_hi) << 64) | high_lo);
     }
     inline uint256_t & operator=(uint64_t const & x)
     {
@@ -9493,19 +9406,19 @@ struct binomial_coefficients
     {
         MAX_LOG = (n > 128 ? 8 : (n > 64 ? 7 : 6))
     };
-    static const uint16_t MAX_SIZE = (1 << MAX_LOG);
+    static uint16_t const MAX_SIZE = (1 << MAX_LOG);
     typedef binomial_coefficients_trait<MAX_LOG> trait;
     typedef typename trait::number_type number_type;
     typedef binomial_table<MAX_SIZE, number_type> tBinom;
     static struct impl
     {
-        const number_type (&table)[MAX_SIZE + 1][MAX_SIZE + 1] =
+        number_type const (&table)[MAX_SIZE + 1][MAX_SIZE + 1] =
             tBinom::data.table;
         uint16_t space[n + 1];
 #ifndef RRR_NO_BS
-        static const uint16_t BINARY_SEARCH_THRESHOLD = n / MAX_LOG;
+        static uint16_t const BINARY_SEARCH_THRESHOLD = n / MAX_LOG;
 #else
-        static const uint16_t BINARY_SEARCH_THRESHOLD = 0;
+        static uint16_t const BINARY_SEARCH_THRESHOLD = 0;
 #endif
         number_type (&L1Mask)[MAX_SIZE + 1] = tBinom::data.L1Mask;
         number_type (&O1Mask)[MAX_SIZE] = tBinom::data.O1Mask;
@@ -9883,7 +9796,7 @@ private:
 public:
     rac_type const & bt = m_bt;
     bit_vector const & btnr = m_btnr;
-    rrr_vector(){};
+    rrr_vector() {};
     rrr_vector(rrr_vector const & v) :
         m_size(v.m_size),
         m_bt(v.m_bt),
@@ -10161,7 +10074,7 @@ template <uint8_t t_bit_pattern>
 struct rank_support_rrr_trait
 {
     typedef bit_vector::size_type size_type;
-    static size_type adjust_rank(size_type r, SDSL3_UNUSED size_type n)
+    static size_type adjust_rank(size_type r, [[maybe_unused]] size_type n)
     {
         return r;
     }
@@ -10199,7 +10112,7 @@ public:
     {
         set_vector(v);
     }
-    const size_type rank(size_type i) const
+    size_type const rank(size_type i) const
     {
         assert(m_v != nullptr);
         assert(i <= m_v->size());
@@ -10239,11 +10152,11 @@ public:
         uint16_t popcnt = rrr_helper_type::decode_popcount(bt, btnr, off);
         return rank_support_rrr_trait<t_b>::adjust_rank(rank + popcnt, i);
     }
-    const size_type operator()(size_type i) const
+    size_type const operator()(size_type i) const
     {
         return rank(i);
     }
-    const size_type size() const
+    size_type const size() const
     {
         return m_v->size();
     }
@@ -10391,11 +10304,11 @@ public:
     {
         return t_b ? select1(i) : select0(i);
     }
-    const size_type operator()(size_type i) const
+    size_type const operator()(size_type i) const
     {
         return select(i);
     }
-    const size_type size() const
+    size_type const size() const
     {
         return m_v->size();
     }
@@ -10685,7 +10598,7 @@ public:
         bit_pat_len = t_pat_len
     };
 public:
-    explicit rank_support_scan(bit_vector const * v = nullptr) : rank_support(v){};
+    explicit rank_support_scan(bit_vector const * v = nullptr) : rank_support(v) {};
     rank_support_scan(rank_support_scan const & rs) = default;
     rank_support_scan(rank_support_scan && rs) = default;
     rank_support_scan & operator=(rank_support_scan const & rs) = default;
@@ -11051,7 +10964,7 @@ public:
         m_v = f_v;
     }
     select_support(select_support const & f_v);
-    virtual ~select_support(){};
+    virtual ~select_support() {};
     virtual size_type select(size_type i) const = 0;
     virtual size_type operator()(size_type i) const = 0;
     virtual size_type serialize(std::ostream & out, structure_tree_node * v, std::string name) const = 0;
@@ -11500,7 +11413,7 @@ void select_support_mcl<t_b, t_pat_len>::init_slow(bit_vector const * v)
     if (m_v == nullptr)
         return;
     m_arg_cnt = select_support_trait<t_b, t_pat_len>::arg_cnt(*v);
-    const size_type SUPER_BLOCK_SIZE = 4096;
+    size_type const SUPER_BLOCK_SIZE = 4096;
     if (m_arg_cnt == 0)
         return;
     size_type sb = (m_arg_cnt + SUPER_BLOCK_SIZE - 1) / SUPER_BLOCK_SIZE;
@@ -11553,7 +11466,7 @@ void select_support_mcl<t_b, t_pat_len>::init_fast(bit_vector const * v)
     if (m_v == nullptr)
         return;
     m_arg_cnt = select_support_trait<t_b, t_pat_len>::arg_cnt(*v);
-    const size_type SUPER_BLOCK_SIZE = 64 * 64;
+    size_type const SUPER_BLOCK_SIZE = 64 * 64;
     if (m_arg_cnt == 0)
         return;
     size_type sb = (m_arg_cnt + SUPER_BLOCK_SIZE - 1) / SUPER_BLOCK_SIZE;
@@ -12060,7 +11973,7 @@ public:
         util::init_support(m_high_0_select, &m_high);
     }
     template <class t_itr>
-    sd_vector(const t_itr begin, const t_itr end)
+    sd_vector(t_itr const begin, t_itr const end)
     {
         if (begin == end)
         {
@@ -12133,7 +12046,7 @@ public:
         }
         return m_high[sel_high] and m_low[rank_low] == val_low;
     }
-    uint64_t get_int(size_type idx, const uint8_t len = 64) const
+    uint64_t get_int(size_type idx, uint8_t const len = 64) const
     {
         uint64_t i = idx + len - 1;
         uint64_t high_val = (i >> (m_wl));
@@ -12482,7 +12395,7 @@ public:
         if (nullptr != m_v)
         {
             size_type rank_0 = 0;
-            const size_type bs = 1ULL << (m_v->wl);
+            size_type const bs = 1ULL << (m_v->wl);
             size_type z = 0;
             size_type rank1 = 0;
             size_type zeros = m_v->size() - rank_1(m_v)(m_v->size());
@@ -12515,7 +12428,7 @@ public:
     }
     size_type select(size_type i) const
     {
-        const size_type bs = 1ULL << (m_v->wl);
+        size_type const bs = 1ULL << (m_v->wl);
         size_type j = m_pointer[(i - 1) / (64 * bs)] * 64;
         size_type rank1 = m_rank1[(i - 1) / (64 * bs)];
         size_type pos = 0;
@@ -12760,7 +12673,7 @@ public:
     {
         return serialize_empty_object(out, v, name, this);
     }
-    void load(std::istream &, SDSL3_UNUSED bit_vector const * v = nullptr)
+    void load(std::istream &, [[maybe_unused]] bit_vector const * v = nullptr)
     {
         set_vector(v);
     }
@@ -13074,10 +12987,6 @@ public:
             return (char_type)m_strat->m_char_select(((size_type)c) + 1);
         }
     };
-    const char2comp_type char2comp;
-    const comp2char_type comp2char;
-    C_type const & C;
-    sigma_type const & sigma;
 private:
     bit_vector_type m_char;
     rank_support_type m_char_rank;
@@ -13085,9 +12994,27 @@ private:
     C_type m_C;
     sigma_type m_sigma;
 public:
-    succinct_byte_alphabet() : char2comp(this), comp2char(this), C(m_C), sigma(m_sigma), m_sigma(0)
+    char2comp_type const char2comp;
+    comp2char_type const comp2char;
+    C_type const & C;
+    sigma_type const & sigma;
+    succinct_byte_alphabet() :
+        m_char(),
+        m_char_rank(),
+        m_char_select(),
+        m_C(),
+        m_sigma(0),
+        char2comp(this),
+        comp2char(this),
+        C(m_C),
+        sigma(m_sigma)
     {}
     succinct_byte_alphabet(int_vector_buffer<8> & text_buf, int_vector_size_type len) :
+        m_char(),
+        m_char_rank(),
+        m_char_select(),
+        m_C(),
+        m_sigma(0),
         char2comp(this),
         comp2char(this),
         C(m_C),
@@ -13124,29 +13051,29 @@ public:
         util::init_support(m_char_select, &m_char);
     }
     succinct_byte_alphabet(succinct_byte_alphabet const & strat) :
-        char2comp(this),
-        comp2char(this),
-        C(m_C),
-        sigma(m_sigma),
         m_char(strat.m_char),
         m_char_rank(strat.m_char_rank),
         m_char_select(strat.m_char_select),
         m_C(strat.m_C),
-        m_sigma(strat.m_sigma)
+        m_sigma(strat.m_sigma),
+        char2comp(this),
+        comp2char(this),
+        C(m_C),
+        sigma(m_sigma)
     {
         m_char_rank.set_vector(&m_char);
         m_char_select.set_vector(&m_char);
     }
     succinct_byte_alphabet(succinct_byte_alphabet && strat) :
-        char2comp(this),
-        comp2char(this),
-        C(m_C),
-        sigma(m_sigma),
         m_char(std::move(strat.m_char)),
         m_char_rank(std::move(strat.m_char_rank)),
         m_char_select(std::move(strat.m_char_select)),
         m_C(std::move(strat.m_C)),
-        m_sigma(std::move(strat.m_sigma))
+        m_sigma(std::move(strat.m_sigma)),
+        char2comp(this),
+        comp2char(this),
+        C(m_C),
+        sigma(m_sigma)
     {
         m_char_rank.set_vector(&m_char);
         m_char_select.set_vector(&m_char);
@@ -13275,8 +13202,8 @@ public:
             return c;
         }
     };
-    const char2comp_type char2comp{};
-    const comp2char_type comp2char{};
+    char2comp_type const char2comp{};
+    comp2char_type const comp2char{};
     C_type const & C;
     sigma_type const & sigma;
 private:
@@ -13439,10 +13366,6 @@ public:
             }
         }
     };
-    const char2comp_type char2comp;
-    const comp2char_type comp2char;
-    C_type const & C;
-    sigma_type const & sigma;
 private:
     bit_vector_type m_char;
     rank_support_type m_char_rank;
@@ -13461,7 +13384,20 @@ private:
         }
     }
 public:
-    int_alphabet() : char2comp(this), comp2char(this), C(m_C), sigma(m_sigma), m_sigma(0)
+    char2comp_type const char2comp;
+    comp2char_type const comp2char;
+    C_type const & C;
+    sigma_type const & sigma;
+    int_alphabet() :
+        m_char(),
+        m_char_rank(),
+        m_char_select(),
+        m_C(),
+        m_sigma(0),
+        char2comp(this),
+        comp2char(this),
+        C(m_C),
+        sigma(m_sigma)
     {}
     int_alphabet(int_vector_buffer<0> & text_buf, int_vector_size_type len) :
         char2comp(this),
@@ -13497,29 +13433,29 @@ public:
         m_C[idx] = sum;
     }
     int_alphabet(int_alphabet const & strat) :
-        char2comp(this),
-        comp2char(this),
-        C(m_C),
-        sigma(m_sigma),
         m_char(strat.m_char),
         m_char_rank(strat.m_char_rank),
         m_char_select(strat.m_char_select),
         m_C(strat.m_C),
-        m_sigma(strat.m_sigma)
+        m_sigma(strat.m_sigma),
+        char2comp(this),
+        comp2char(this),
+        C(m_C),
+        sigma(m_sigma)
     {
         m_char_rank.set_vector(&m_char);
         m_char_select.set_vector(&m_char);
     }
     int_alphabet(int_alphabet && strat) :
-        char2comp(this),
-        comp2char(this),
-        C(m_C),
-        sigma(m_sigma),
         m_char(std::move(strat.m_char)),
         m_char_rank(std::move(strat.m_char_rank)),
         m_char_select(std::move(strat.m_char_select)),
         m_C(std::move(strat.m_C)),
-        m_sigma(std::move(strat.m_sigma))
+        m_sigma(std::move(strat.m_sigma)),
+        char2comp(this),
+        comp2char(this),
+        C(m_C),
+        sigma(m_sigma)
     {
         m_char_rank.set_vector(&m_char);
         m_char_select.set_vector(&m_char);
@@ -13726,7 +13662,7 @@ inline void insert_lcp_values(int_vector<> & partial_lcp,
                               uint64_t lcp_value_offset)
 {
     std::string tmp_lcp_file = lcp_file + "_TMP";
-    const uint64_t buffer_size = 1000000;
+    uint64_t const buffer_size = 1000000;
     typedef int_vector<>::size_type size_type;
     int_vector_buffer<> lcp_buffer(lcp_file, std::ios::in, buffer_size);
     uint64_t n = lcp_buffer.size();
@@ -13776,7 +13712,7 @@ class buffered_char_queue
     typedef bit_vector::size_type size_type;
     typedef std::queue<uint8_t> tQ;
 private:
-    static const uint32_t m_buffer_size = 10000;
+    static uint32_t const m_buffer_size = 10000;
     uint8_t m_write_buf[m_buffer_size];
     uint8_t m_read_buf[m_buffer_size];
     size_type m_widx;
@@ -14059,7 +13995,10 @@ struct _byte_tree
     node_type m_c_to_leaf[fixed_sigma];
     uint64_t m_path[fixed_sigma];
     _byte_tree()
-    {}
+    {
+        std::fill_n(m_c_to_leaf, fixed_sigma, undef);
+        std::fill_n(m_path, fixed_sigma, 0);
+    }
     _byte_tree(std::vector<pc_node> const & temp_nodes, uint64_t & bv_size, t_wt const *)
     {
         m_nodes.resize(temp_nodes.size());
@@ -14673,7 +14612,7 @@ intersect(t_wt const & wt, std::vector<range_type> const & ranges, typename t_wt
     {
         auto end = std::remove_if(child_range.begin(),
                                   child_range.end(),
-                                  [&](const range_type & x)
+                                  [&](range_type const & x)
                                   {
                                       return empty(x);
                                   });
@@ -14753,7 +14692,7 @@ void _interval_symbols_rec(t_wt const & wt,
                            std::vector<typename t_wt::value_type> & cs,
                            std::vector<typename t_wt::size_type> & rank_c_i,
                            std::vector<typename t_wt::size_type> & rank_c_j,
-                           const typename t_wt::node_type & v)
+                           typename t_wt::node_type const & v)
 {
     using std::get;
     if (wt.is_leaf(v))
@@ -15313,7 +15252,7 @@ private:
 public:
     size_type const & sigma = m_sigma;
     bit_vector_type const & bv = m_bv;
-    wt_pc(){};
+    wt_pc() {};
     template <typename t_it>
     wt_pc(t_it begin, t_it end) : m_size(std::distance(begin, end))
     {
@@ -16057,9 +15996,9 @@ inline void construct_lcp_semi_extern_PHI(cache_config & config)
         store_to_cache(lcp, conf::KEY_LCP, config);
         return;
     }
-    const uint8_t log_q = 6;
-    const uint32_t q = 1 << log_q;
-    const uint64_t modq = bits::lo_set[log_q];
+    uint8_t const log_q = 6;
+    uint32_t const q = 1 << log_q;
+    uint64_t const modq = bits::lo_set[log_q];
     int_vector<64> plcp((n - 1 + q) >> log_q);
     for (size_type i = 0, sai_1 = 0; i < n; ++i)
     {
@@ -16148,8 +16087,8 @@ inline void construct_lcp_go(cache_config & config)
     int_vector<8> text;
     load_from_cache(text, conf::KEY_TEXT, config);
     int_vector_buffer<> sa_buf(cache_file_name(conf::KEY_SA, config));
-    const size_type n = sa_buf.size();
-    const size_type m = 254;
+    size_type const n = sa_buf.size();
+    size_type const m = 254;
     if (1 == n)
     {
         int_vector<> lcp(1, 0);
@@ -16198,7 +16137,7 @@ inline void construct_lcp_go(cache_config & config)
             rmq_stack[2] = 1;
             rmq_stack[3] = 0;
             size_type rmq_end = 3;
-            const size_type m_mod2 = m % 2;
+            size_type const m_mod2 = m % 2;
             uint8_t cur_c = alphabet[1];
             size_type big_val = 0;
             for (size_type i = 1, sai, cur_c_idx = 1, cur_c_cnt = cnt_c[alphabet[1] + 1]; i < n; ++i, --cur_c_cnt)
@@ -16436,7 +16375,7 @@ inline void construct_lcp_go(cache_config & config)
         store_to_cache(lcp_big, "lcp_big", config);
     }
     {
-        const size_type buffer_size = 1000000;
+        size_type const buffer_size = 1000000;
         int_vector_buffer<> lcp_big_buf(cache_file_name("lcp_big",
                                                         config));
         int_vector_buffer<8> lcp_sml_buf(cache_file_name("lcp_sml", config),
@@ -16472,8 +16411,8 @@ inline void construct_lcp_goPHI(cache_config & config)
     int_vector<8> text;
     load_from_cache(text, conf::KEY_TEXT, config);
     int_vector_buffer<> sa_buf(cache_file_name(conf::KEY_SA, config));
-    const size_type n = sa_buf.size();
-    const size_type m = 254;
+    size_type const n = sa_buf.size();
+    size_type const m = 254;
     if (1 == n)
     {
         int_vector<> lcp(1, 0);
@@ -16606,7 +16545,7 @@ inline void construct_lcp_goPHI(cache_config & config)
                 sa_n_1 = sa_buf[n - 1];
             }
             rank_support_v<> todo_rank(&todo);
-            const size_type bot = sa_n_1;
+            size_type const bot = sa_n_1;
             int_vector<> phi(nn, bot, bits::hi(n - 1) + 1);
             int_vector_buffer<8> bwt_buf(cache_file_name(conf::KEY_BWT, config));
             int_vector_buffer<8> lcp_sml_buf(cache_file_name("lcp_sml", config));
@@ -16656,7 +16595,7 @@ inline void construct_lcp_goPHI(cache_config & config)
         store_to_cache(lcp_big, "lcp_big", config);
     }
     {
-        const size_type buffer_size = 1000000;
+        size_type const buffer_size = 1000000;
         int_vector_buffer<> lcp_big_buf(cache_file_name("lcp_big",
                                                         config));
         int_vector_buffer<8> lcp_sml_buf(cache_file_name("lcp_sml", config),
@@ -18184,8 +18123,8 @@ struct libdivsufsort_config<int64_t>
 #define BUCKET_B(_c0,_c1) (bucket_B[((_c1) << 8) | (_c0)])
 #define BUCKET_BSTAR(_c0,_c1) (bucket_B[((_c0) << 8) | (_c1)])
 #else
-#define BUCKET_B(_c0,_c1) (bucket_B[(_c1)*ALPHABET_SIZE + (_c0)])
-#define BUCKET_BSTAR(_c0,_c1) (bucket_B[(_c0)*ALPHABET_SIZE + (_c1)])
+#define BUCKET_B(_c0,_c1) (bucket_B[(_c1) * ALPHABET_SIZE + (_c0)])
+#define BUCKET_BSTAR(_c0,_c1) (bucket_B[(_c0) * ALPHABET_SIZE + (_c1)])
 #endif
 #define STACK_PUSH(_a,_b,_c,_d) \
     do \
@@ -18223,7 +18162,7 @@ struct libdivsufsort_config<int64_t>
         (_e) = stack[ssize].e; \
     } \
     while (0)
-static const int32_t lg_table[256] = {
+static int32_t const lg_table[256] = {
     -1, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5,
     5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
     6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
@@ -18259,7 +18198,7 @@ inline int32_t ss_ilg(int64_t n)
 }
 #endif
 #if SS_BLOCKSIZE != 0
-static const int32_t sqq_table[256] = {
+static int32_t const sqq_table[256] = {
     0, 16, 22, 27, 32, 35, 39, 42, 45, 48, 50, 53, 55, 57, 59, 61, 64, 65, 67, 69, 71, 73,
     75, 76, 78, 80, 81, 83, 84, 86, 87, 89, 90, 91, 93, 94, 96, 97, 98, 99, 101, 102, 103, 104,
     106, 107, 108, 109, 110, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 128, 128,
@@ -18309,7 +18248,8 @@ inline int32_t ss_compare(uint8_t const * T, saidx_t const * p1, saidx_t const *
     for (U1 = T + depth + *p1, U2 = T + depth + *p2, U1n = T + *(p1 + 1) + 2, U2n = T + *(p2 + 1) + 2;
          (U1 < U1n) && (U2 < U2n) && (*U1 == *U2);
          ++U1, ++U2)
-    {}
+    {
+    }
     return U1 < U1n ? (U2 < U2n ? *U1 - *U2 : 1) : (U2 < U2n ? -1 : 0);
 }
 #if (SS_BLOCKSIZE != 1) && (SS_INSERTIONSORT_THRESHOLD != 1)
@@ -18482,7 +18422,8 @@ inline saidx_t * ss_partition(saidx_t const * PA, saidx_t * first, saidx_t * las
             *a = ~*a;
         }
         for (; (a < --b) && ((PA[*b] + depth) < (PA[*b + 1] + 1));)
-        {}
+        {
+        }
         if (b <= a)
         {
             break;
@@ -18577,7 +18518,8 @@ inline void ss_mintrosort(uint8_t const * T, saidx_t const * PA, saidx_t * first
         v = Td[PA[*a]];
         std::swap(*first, *a);
         for (b = first; (++b < last) && ((x = Td[PA[*b]]) == v);)
-        {}
+        {
+        }
         if (((a = b) < last) && (x < v))
         {
             for (; (++b < last) && ((x = Td[PA[*b]]) <= v);)
@@ -18590,7 +18532,8 @@ inline void ss_mintrosort(uint8_t const * T, saidx_t const * PA, saidx_t * first
             }
         }
         for (c = last; (b < --c) && ((x = Td[PA[*c]]) == v);)
-        {}
+        {
+        }
         if ((b < (d = c)) && (x > v))
         {
             for (; (b < --c) && ((x = Td[PA[*c]]) >= v);)
@@ -18819,7 +18762,8 @@ ss_inplacemerge(uint8_t const * T, saidx_t const * PA, saidx_t * first, saidx_t 
         if (x != 0)
         {
             while (*--last < 0)
-            {}
+            {
+            }
         }
         if (middle == last)
         {
@@ -19075,11 +19019,11 @@ inline void ss_swapmerge(uint8_t const * T,
 #define MERGE_CHECK(a,b,c) \
         do \
         { \
-            if (((c)&1) || (((c)&2) && (ss_compare(T, PA + GETIDX(*((a)-1)), PA + *(a), depth) == 0))) \
+            if (((c) & 1) || (((c) & 2) && (ss_compare(T, PA + GETIDX(*((a) - 1)), PA + *(a), depth) == 0))) \
             { \
                 *(a) = ~*(a); \
             } \
-            if (((c)&4) && ((ss_compare(T, PA + GETIDX(*((b)-1)), PA + *(b), depth) == 0))) \
+            if (((c) & 4) && ((ss_compare(T, PA + GETIDX(*((b) - 1)), PA + *(b), depth) == 0))) \
             { \
                 *(b) = ~*(b); \
             } \
@@ -19137,7 +19081,8 @@ inline void ss_swapmerge(uint8_t const * T,
                     if (first < lm)
                     {
                         for (; *--l < 0;)
-                        {}
+                        {
+                        }
                         next |= 4;
                     }
                     next |= 1;
@@ -19145,7 +19090,8 @@ inline void ss_swapmerge(uint8_t const * T,
                 else if (first < lm)
                 {
                     for (; *r < 0; ++r)
-                    {}
+                    {
+                    }
                     next |= 2;
                 }
             }
@@ -19477,7 +19423,8 @@ inline void tr_partition(saidx_t const * ISAd,
     saidx_t t, s;
     saidx_t x = 0;
     for (b = middle - 1; (++b < last) && ((x = ISAd[*b]) == v);)
-    {}
+    {
+    }
     if (((a = b) < last) && (x < v))
     {
         for (; (++b < last) && ((x = ISAd[*b]) <= v);)
@@ -19490,7 +19437,8 @@ inline void tr_partition(saidx_t const * ISAd,
         }
     }
     for (c = last; (b < --c) && ((x = ISAd[*c]) == v);)
-    {}
+    {
+    }
     if ((b < (d = c)) && (x > v))
     {
         for (; (b < --c) && ((x = ISAd[*c]) >= v);)
@@ -20176,12 +20124,14 @@ inline saidx_t sort_typeBstar(uint8_t const * T, saidx_t * SA, saidx_t * bucket_
         for (i = n - 1, j = m, c0 = T[n - 1]; 0 <= i;)
         {
             for (--i, c1 = c0; (0 <= i) && ((c0 = T[i]) >= c1); --i, c1 = c0)
-            {}
+            {
+            }
             if (0 <= i)
             {
                 t = i;
                 for (--i, c1 = c0; (0 <= i) && ((c0 = T[i]) <= c1); --i, c1 = c0)
-                {}
+                {
+                }
                 SA[ISAb[--j]] = ((t == 0) || (1 < (t - i))) ? t : ~t;
             }
         }
@@ -20403,7 +20353,8 @@ inline int _compare(uint8_t const * T, saidx_t Tsize, uint8_t const * P, saidx_t
     saidx_t i, j;
     int32_t r;
     for (i = suf + *match, j = *match, r = 0; (i < Tsize) && (j < Psize) && ((r = T[i] - P[j]) == 0); ++i, ++j)
-    {}
+    {
+    }
     *match = j;
     return (r == 0) ? -(j != Psize) : r;
 }
@@ -21262,7 +21213,7 @@ private:
     bit_vector_type m_marked;
     rank_type m_rank_marked;
 public:
-    inv_perm_support(){};
+    inv_perm_support() {};
     inv_perm_support(inv_perm_support const & p) :
         m_v(p.m_v),
         m_back_pointer(p.m_back_pointer),
@@ -21571,7 +21522,7 @@ public:
             for (uint32_t k = 0; k < m_max_level; ++k)
             {
                 size_type start = 0;
-                const uint64_t mask_new = 1ULL << (m_max_level - k - 1);
+                uint64_t const mask_new = 1ULL << (m_max_level - k - 1);
                 do
                 {
                     size_type i = start;
@@ -22260,7 +22211,7 @@ public:
     typedef sa_sampling_tag sampling_category;
     _sa_order_sampling()
     {}
-    _sa_order_sampling(cache_config const & cconfig, SDSL3_UNUSED t_csa const * csa = nullptr)
+    _sa_order_sampling(cache_config const & cconfig, [[maybe_unused]] t_csa const * csa = nullptr)
     {
         int_vector_buffer<> sa_buf(cache_file_name(conf::KEY_SA, cconfig));
         size_type n = sa_buf.size();
@@ -22316,7 +22267,7 @@ public:
     t_rank const & rank_marked = m_rank_marked;
     _text_order_sampling()
     {}
-    _text_order_sampling(cache_config const & cconfig, SDSL3_UNUSED t_csa const * csa = nullptr)
+    _text_order_sampling(cache_config const & cconfig, [[maybe_unused]] t_csa const * csa = nullptr)
     {
         int_vector_buffer<> sa_buf(cache_file_name(conf::KEY_SA, cconfig));
         size_type n = sa_buf.size();
@@ -22442,7 +22393,7 @@ public:
     t_select_isa const & select_marked_isa = m_select_marked_isa;
     _fuzzy_sa_sampling()
     {}
-    _fuzzy_sa_sampling(cache_config & cconfig, SDSL3_UNUSED t_csa const * csa = nullptr)
+    _fuzzy_sa_sampling(cache_config & cconfig, [[maybe_unused]] t_csa const * csa = nullptr)
     {
         {
             if (!cache_file_exists(conf::KEY_ISA, cconfig))
@@ -22649,7 +22600,7 @@ public:
     typedef sa_sampling_tag sampling_category;
     _bwt_sampling()
     {}
-    _bwt_sampling(cache_config const & cconfig, SDSL3_UNUSED t_csa const * csa = nullptr)
+    _bwt_sampling(cache_config const & cconfig, [[maybe_unused]] t_csa const * csa = nullptr)
     {
         int_vector_buffer<> sa_buf(cache_file_name(conf::KEY_SA, cconfig));
         int_vector_buffer<t_csa::alphabet_type::int_width> bwt_buf(
@@ -22782,7 +22733,7 @@ public:
     typedef isa_sampling_tag sampling_category;
     _isa_sampling()
     {}
-    _isa_sampling(cache_config const & cconfig, SDSL3_UNUSED sa_type const * sa_sample = nullptr)
+    _isa_sampling(cache_config const & cconfig, [[maybe_unused]] sa_type const * sa_sample = nullptr)
     {
         int_vector_buffer<> sa_buf(cache_file_name(conf::KEY_SA, cconfig));
         size_type n = sa_buf.size();
@@ -22816,7 +22767,7 @@ public:
         size_type ci = (i / sample_dens + 1) % this->size();
         return std::make_tuple(base_type::operator[](ci), ci * sample_dens);
     }
-    void load(std::istream & in, SDSL3_UNUSED sa_type const * sa_sample = nullptr)
+    void load(std::istream & in, [[maybe_unused]] sa_type const * sa_sample = nullptr)
     {
         base_type::load(in);
     }
@@ -22830,7 +22781,7 @@ public:
     {
         base_type::CEREAL_LOAD_FUNCTION_NAME(ar);
     }
-    void set_vector(SDSL3_UNUSED sa_type const *)
+    void set_vector([[maybe_unused]] sa_type const *)
     {}
 };
 template <uint8_t t_width = 0>
@@ -22862,8 +22813,8 @@ public:
     t_sel const & select_marked = m_select_marked;
     _text_order_isa_sampling_support()
     {}
-    _text_order_isa_sampling_support(SDSL3_UNUSED cache_config const & cconfig,
-                                     const typename std::enable_if<sa_type::text_order, sa_type *>::type sa_sample)
+    _text_order_isa_sampling_support([[maybe_unused]] cache_config const & cconfig,
+                                     typename std::enable_if<sa_type::text_order, sa_type *>::type const sa_sample)
     {
         m_select_marked = t_sel(&(sa_sample->marked));
         int_vector<> const * perm = (int_vector<> const *)sa_sample;
@@ -22988,7 +22939,8 @@ private:
 public:
     _fuzzy_isa_sampling_support()
     {}
-    _fuzzy_isa_sampling_support(SDSL3_UNUSED cache_config const & cconfig, sa_type const * sa_sample) : m_sa_p(sa_sample)
+    _fuzzy_isa_sampling_support([[maybe_unused]] cache_config const & cconfig, sa_type const * sa_sample) :
+        m_sa_p(sa_sample)
     {
         util::init_support(m_select_marked_sa, &(sa_sample->marked_sa));
     }
@@ -23202,13 +23154,13 @@ public:
             }
         }
     } data;
-    static const uint8_t min_codeword_length = 1;
+    static uint8_t const min_codeword_length = 1;
     static uint8_t encoding_length(uint64_t);
     template <bool t_sumup, bool t_inc, class t_iter>
-    static uint64_t decode(uint64_t const * data, const size_type start_idx, size_type n, t_iter it = (t_iter) nullptr);
-    static uint64_t decode_prefix_sum(uint64_t const * d, const size_type start_idx, size_type n);
+    static uint64_t decode(uint64_t const * data, size_type const start_idx, size_type n, t_iter it = (t_iter) nullptr);
+    static uint64_t decode_prefix_sum(uint64_t const * d, size_type const start_idx, size_type n);
     static uint64_t
-    decode_prefix_sum(uint64_t const * d, const size_type start_idx, const size_type end_idx, size_type n);
+    decode_prefix_sum(uint64_t const * d, size_type const start_idx, size_type const end_idx, size_type n);
     template <class int_vector>
     static bool encode(int_vector const & v, int_vector & z);
     template <class int_vector>
@@ -23234,7 +23186,7 @@ inline bool elias_delta<T>::encode(int_vector const & v, int_vector & z)
     z.width(v.width());
     size_type z_bit_size = 0;
     uint64_t w;
-    const uint64_t zero_val = v.width() < 64 ? (1ULL) << v.width() : 0;
+    uint64_t const zero_val = v.width() < 64 ? (1ULL) << v.width() : 0;
     for (typename int_vector::const_iterator it = v.begin(), end = v.end(); it != end; ++it)
     {
         if ((w = *it) == 0)
@@ -23286,7 +23238,7 @@ inline void elias_delta<T>::encode(uint64_t x, uint64_t *& z, uint8_t & offset)
 }
 template <typename T>
 inline uint64_t
-elias_delta<T>::decode_prefix_sum(uint64_t const * d, const size_type start_idx, const size_type end_idx, size_type n)
+elias_delta<T>::decode_prefix_sum(uint64_t const * d, size_type const start_idx, size_type const end_idx, size_type n)
 {
     if (n == 0)
         return 0;
@@ -23490,7 +23442,7 @@ start_decoding:
     return value;
 }
 template <typename T>
-inline uint64_t elias_delta<T>::decode_prefix_sum(uint64_t const * d, const size_type start_idx, size_type n)
+inline uint64_t elias_delta<T>::decode_prefix_sum(uint64_t const * d, size_type const start_idx, size_type n)
 {
     if (n == 0)
         return 0;
@@ -23630,7 +23582,7 @@ inline bool elias_delta<T>::decode(int_vector const & z, int_vector & v)
 }
 template <typename T>
 template <bool t_sumup, bool t_inc, class t_iter>
-inline uint64_t elias_delta<T>::decode(uint64_t const * d, const size_type start_idx, size_type n, t_iter it)
+inline uint64_t elias_delta<T>::decode(uint64_t const * d, size_type const start_idx, size_type n, t_iter it)
 {
     d += (start_idx >> 6);
     uint64_t value = 0;
@@ -23687,15 +23639,15 @@ public:
     typedef uint64_t value_type;
     typedef random_access_const_iterator<enc_vector> iterator;
     typedef iterator const_iterator;
-    typedef const value_type reference;
-    typedef const value_type const_reference;
+    typedef value_type const reference;
+    typedef value_type const const_reference;
     typedef value_type const * const_pointer;
     typedef ptrdiff_t difference_type;
     typedef int_vector<>::size_type size_type;
     typedef t_coder coder;
     typedef typename enc_vector_trait<t_width>::int_vector_type int_vector_type;
     typedef iv_tag index_category;
-    static const uint32_t sample_dens = t_dens;
+    static uint32_t const sample_dens = t_dens;
     typedef enc_vector enc_vec_type;
     int_vector<0> m_z;
 private:
@@ -23733,11 +23685,11 @@ public:
     {
         return 0 == m_size;
     }
-    const const_iterator begin() const
+    const_iterator const begin() const
     {
         return const_iterator(this, 0);
     }
-    const const_iterator end() const
+    const_iterator const end() const
     {
         return const_iterator(this, this->m_size);
     }
@@ -23756,12 +23708,12 @@ public:
     void CEREAL_SAVE_FUNCTION_NAME(archive_t & ar) const;
     template <typename archive_t>
     void CEREAL_LOAD_FUNCTION_NAME(archive_t & ar);
-    value_type sample(const size_type i) const;
+    value_type sample(size_type const i) const;
     uint32_t get_sample_dens() const
     {
         return t_dens;
     }
-    void get_inter_sampled_values(const size_type i, uint64_t * it) const
+    void get_inter_sampled_values(size_type const i, uint64_t * it) const
     {
         *(it++) = 0;
         if (i * t_dens + t_dens - 1 < size())
@@ -23780,7 +23732,7 @@ public:
 };
 template <class t_coder, uint32_t t_dens, uint8_t t_width>
 inline typename enc_vector<t_coder, t_dens, t_width>::value_type
-enc_vector<t_coder, t_dens, t_width>::operator[](const size_type i) const
+enc_vector<t_coder, t_dens, t_width>::operator[](size_type const i) const
 {
     assert(i + 1 != 0);
     assert(i < m_size);
@@ -23790,7 +23742,7 @@ enc_vector<t_coder, t_dens, t_width>::operator[](const size_type i) const
 }
 template <class t_coder, uint32_t t_dens, uint8_t t_width>
 inline typename enc_vector<t_coder, t_dens, t_width>::value_type
-enc_vector<t_coder, t_dens, t_width>::sample(const size_type i) const
+enc_vector<t_coder, t_dens, t_width>::sample(size_type const i) const
 {
     assert(i * get_sample_dens() + 1 != 0);
     assert(i * get_sample_dens() < m_size);
@@ -23807,7 +23759,7 @@ enc_vector<t_coder, t_dens, t_width>::enc_vector(Container const & c)
     typename Container::value_type v1 = *it, v2, max_sample_value = 0, x;
     size_type samples = 0;
     size_type z_size = 0;
-    for (size_type i = 0, no_sample = 0; it != end; ++it, ++i, --no_sample)
+    for (size_type no_sample = 0; it != end; ++it, --no_sample)
     {
         v2 = *it;
         if (!no_sample)
@@ -23885,7 +23837,7 @@ enc_vector<t_coder, t_dens, t_width>::enc_vector(int_vector_buffer<int_width> & 
         return;
     value_type v1 = 0, v2 = 0, max_sample_value = 0;
     size_type samples = 0, z_size = 0;
-    const size_type sd = get_sample_dens();
+    size_type const sd = get_sample_dens();
     for (size_type i = 0, no_sample = 0; i < n; ++i, --no_sample)
     {
         v2 = v_buf[i];
@@ -23973,7 +23925,7 @@ void enc_vector<t_coder, t_dens, t_width>::CEREAL_LOAD_FUNCTION_NAME(archive_t &
 namespace seqan3::contrib::sdsl
 {
 template <typename t_csa>
-typename t_csa::char_type first_row_symbol(const typename t_csa::size_type i, t_csa const & csa)
+typename t_csa::char_type first_row_symbol(typename t_csa::size_type const i, t_csa const & csa)
 {
     assert(i < csa.size());
     if (csa.sigma < 16)
@@ -24144,11 +24096,11 @@ public:
         size_type pos = m_csa.lf[i];
         return first_row_symbol(pos, m_csa);
     }
-    size_type rank(size_type i, const char_type c) const
+    size_type rank(size_type i, char_type const c) const
     {
         return m_csa.rank_bwt(i, c);
     }
-    size_type select(size_type i, const char_type c) const
+    size_type select(size_type i, char_type const c) const
     {
         return m_csa.select_bwt(i, c);
     }
@@ -24209,7 +24161,7 @@ public:
     typedef int_alphabet_tag alphabet_category;
 private:
     t_csa const & m_csa;
-    traverse_csa_wt(){};
+    traverse_csa_wt() {};
 public:
     traverse_csa_wt(t_csa const & csa_wt) : m_csa(csa_wt)
     {}
@@ -24239,7 +24191,7 @@ template <typename t_csa>
 class bwt_of_csa_wt
 {
 public:
-    typedef const typename t_csa::char_type value_type;
+    typedef typename t_csa::char_type const value_type;
     typedef typename t_csa::size_type size_type;
     typedef typename t_csa::char_type char_type;
     typedef typename t_csa::difference_type difference_type;
@@ -24248,7 +24200,7 @@ public:
     typedef typename t_csa::alphabet_category alphabet_category;
 private:
     t_csa const & m_csa;
-    bwt_of_csa_wt(){};
+    bwt_of_csa_wt() {};
 public:
     bwt_of_csa_wt(t_csa const & csa_wt) : m_csa(csa_wt)
     {}
@@ -24261,13 +24213,13 @@ public:
     {
         return m_csa.size();
     }
-    size_type rank(size_type i, const char_type c) const
+    size_type rank(size_type i, char_type const c) const
     {
         return m_csa.rank_bwt(i, c);
     }
-    size_type select(size_type i, const char_type c) const
+    size_type select(size_type i, char_type const c) const
     {
-        return m_csa.select(i, c);
+        return m_csa.select_bwt(i, c);
     }
     size_type empty() const
     {
@@ -24294,7 +24246,7 @@ public:
     typedef int_alphabet_tag alphabet_category;
 private:
     t_csa const & m_csa;
-    isa_of_csa_wt(){};
+    isa_of_csa_wt() {};
 public:
     isa_of_csa_wt(t_csa const & csa_wt) : m_csa(csa_wt)
     {}
@@ -24346,7 +24298,7 @@ public:
     typedef int_alphabet_tag alphabet_category;
 private:
     t_csa const & m_csa;
-    isa_of_csa_psi(){};
+    isa_of_csa_psi() {};
 public:
     isa_of_csa_psi(t_csa const & csa_wt) : m_csa(csa_wt)
     {}
@@ -24383,7 +24335,7 @@ template <typename t_csa>
 class first_row_of_csa
 {
 public:
-    typedef const typename t_csa::char_type value_type;
+    typedef typename t_csa::char_type const value_type;
     typedef typename t_csa::size_type size_type;
     typedef typename t_csa::difference_type difference_type;
     typedef random_access_const_iterator<first_row_of_csa> const_iterator;
@@ -24486,10 +24438,10 @@ public:
     typedef uint64_t value_type;
     typedef random_access_const_iterator<csa_sada> const_iterator;
     typedef const_iterator iterator;
-    typedef const value_type const_reference;
+    typedef value_type const const_reference;
     typedef const_reference reference;
     typedef const_reference * pointer;
-    typedef const pointer const_pointer;
+    typedef pointer const const_pointer;
     typedef int_vector<>::size_type size_type;
     typedef size_type csa_size_type;
     typedef ptrdiff_t difference_type;
@@ -24512,7 +24464,7 @@ public:
     typedef psi_tag extract_category;
     friend class traverse_csa_psi<csa_sada, true>;
     friend class traverse_csa_psi<csa_sada, false>;
-    static const uint32_t linear_decode_limit = 100000;
+    static uint32_t const linear_decode_limit = 100000;
 private:
     enc_vector_type m_psi;
     sa_sample_type m_sa_sample;
@@ -24527,17 +24479,17 @@ private:
         }
     }
 public:
-    const typename alphabet_type::char2comp_type & char2comp = m_alphabet.char2comp;
-    const typename alphabet_type::comp2char_type & comp2char = m_alphabet.comp2char;
-    const typename alphabet_type::C_type & C = m_alphabet.C;
-    const typename alphabet_type::sigma_type & sigma = m_alphabet.sigma;
+    typename alphabet_type::char2comp_type const & char2comp = m_alphabet.char2comp;
+    typename alphabet_type::comp2char_type const & comp2char = m_alphabet.comp2char;
+    typename alphabet_type::C_type const & C = m_alphabet.C;
+    typename alphabet_type::sigma_type const & sigma = m_alphabet.sigma;
     psi_type const & psi = m_psi;
-    const lf_type lf = lf_type(*this);
-    const bwt_type bwt = bwt_type(*this);
-    const isa_type isa = isa_type(*this);
-    const bwt_type L = bwt_type(*this);
-    const first_row_type F = first_row_type(*this);
-    const text_type text = text_type(*this);
+    lf_type const lf = lf_type(*this);
+    bwt_type const bwt = bwt_type(*this);
+    isa_type const isa = isa_type(*this);
+    bwt_type const L = bwt_type(*this);
+    first_row_type const F = first_row_type(*this);
+    text_type const text = text_type(*this);
     sa_sample_type const & sa_sample = m_sa_sample;
     isa_sample_type const & isa_sample = m_isa_sample;
     csa_sada()
@@ -24628,7 +24580,7 @@ public:
         return t_dens;
     }
 private:
-    size_type rank_bwt(size_type i, const char_type c) const
+    size_type rank_bwt(size_type i, char_type const c) const
     {
         comp_char_type cc = char2comp[c];
         if (cc == 0 and c != 0)
@@ -24637,7 +24589,7 @@ private:
             return 0;
         assert(i <= size());
         size_type lower_b, upper_b;
-        const size_type sd = m_psi.get_sample_dens();
+        size_type const sd = m_psi.get_sample_dens();
         size_type lower_sb = (C[cc] + sd - 1) / sd;
         size_type upper_sb = (C[cc + 1] + sd - 1) / sd;
         while (lower_sb + 1 < upper_sb)
@@ -24702,7 +24654,7 @@ private:
             return m_psi[lower_b] < i;
         }
     }
-    size_type select_bwt(size_type i, const char_type c) const
+    size_type select_bwt(size_type i, char_type const c) const
     {
         assert(i > 0);
         comp_char_type cc = char2comp[c];
@@ -24898,10 +24850,10 @@ public:
     typedef uint64_t value_type;
     typedef random_access_const_iterator<csa_wt> const_iterator;
     typedef const_iterator iterator;
-    typedef const value_type const_reference;
+    typedef value_type const const_reference;
     typedef const_reference reference;
     typedef const_reference * pointer;
-    typedef const pointer const_pointer;
+    typedef pointer const const_pointer;
     typedef int_vector<>::size_type size_type;
     typedef size_type csa_size_type;
     typedef ptrdiff_t difference_type;
@@ -24931,17 +24883,17 @@ private:
     mutable fast_cache csa_cache;
 #endif
 public:
-    const typename alphabet_type::char2comp_type & char2comp = m_alphabet.char2comp;
-    const typename alphabet_type::comp2char_type & comp2char = m_alphabet.comp2char;
-    const typename alphabet_type::C_type & C = m_alphabet.C;
-    const typename alphabet_type::sigma_type & sigma = m_alphabet.sigma;
-    const psi_type psi = psi_type(*this);
-    const lf_type lf = lf_type(*this);
-    const bwt_type bwt = bwt_type(*this);
-    const text_type text = text_type(*this);
-    const first_row_type F = first_row_type(*this);
-    const bwt_type L = bwt_type(*this);
-    const isa_type isa = isa_type(*this);
+    typename alphabet_type::char2comp_type const & char2comp = m_alphabet.char2comp;
+    typename alphabet_type::comp2char_type const & comp2char = m_alphabet.comp2char;
+    typename alphabet_type::C_type const & C = m_alphabet.C;
+    typename alphabet_type::sigma_type const & sigma = m_alphabet.sigma;
+    psi_type const psi = psi_type(*this);
+    lf_type const lf = lf_type(*this);
+    bwt_type const bwt = bwt_type(*this);
+    text_type const text = text_type(*this);
+    first_row_type const F = first_row_type(*this);
+    bwt_type const L = bwt_type(*this);
+    isa_type const isa = isa_type(*this);
     sa_sample_type const & sa_sample = m_sa_sample;
     isa_sample_type const & isa_sample = m_isa_sample;
     wavelet_tree_type const & wavelet_tree = m_wavelet_tree;
@@ -25021,11 +24973,11 @@ public:
     template <typename archive_t>
     void CEREAL_LOAD_FUNCTION_NAME(archive_t & ar);
 private:
-    size_type rank_bwt(size_type i, const char_type c) const
+    size_type rank_bwt(size_type i, char_type const c) const
     {
         return m_wavelet_tree.rank(i, c);
     }
-    size_type select_bwt(size_type i, const char_type c) const
+    size_type select_bwt(size_type i, char_type const c) const
     {
         assert(i > 0);
         char_type cc = char2comp[c];
@@ -25182,10 +25134,10 @@ public:
     typedef uint64_t value_type;
     typedef random_access_const_iterator<csa_bitcompressed> const_iterator;
     typedef const_iterator iterator;
-    typedef const value_type const_reference;
+    typedef value_type const const_reference;
     typedef const_reference reference;
     typedef const_reference * pointer;
-    typedef const pointer const_pointer;
+    typedef pointer const const_pointer;
     typedef int_vector<>::size_type size_type;
     typedef size_type csa_size_type;
     typedef ptrdiff_t difference_type;
@@ -25215,17 +25167,17 @@ private:
     isa_sample_type m_isa;
     alphabet_type m_alphabet;
 public:
-    const typename alphabet_type::char2comp_type & char2comp = m_alphabet.char2comp;
-    const typename alphabet_type::comp2char_type & comp2char = m_alphabet.comp2char;
-    const typename alphabet_type::C_type & C = m_alphabet.C;
-    const typename alphabet_type::sigma_type & sigma = m_alphabet.sigma;
-    const psi_type psi = psi_type(*this);
-    const lf_type lf = lf_type(*this);
-    const bwt_type bwt = bwt_type(*this);
-    const bwt_type L = bwt_type(*this);
+    typename alphabet_type::char2comp_type const & char2comp = m_alphabet.char2comp;
+    typename alphabet_type::comp2char_type const & comp2char = m_alphabet.comp2char;
+    typename alphabet_type::C_type const & C = m_alphabet.C;
+    typename alphabet_type::sigma_type const & sigma = m_alphabet.sigma;
+    psi_type const psi = psi_type(*this);
+    lf_type const lf = lf_type(*this);
+    bwt_type const bwt = bwt_type(*this);
+    bwt_type const L = bwt_type(*this);
     isa_type const & isa = m_isa;
-    const first_row_type F = first_row_type(*this);
-    const text_type text = text_type(*this);
+    first_row_type const F = first_row_type(*this);
+    text_type const text = text_type(*this);
     sa_sample_type const & sa_sample = m_sa;
     isa_sample_type const & isa_sample = m_isa;
     csa_bitcompressed()
@@ -25332,7 +25284,7 @@ public:
         return 1;
     }
 private:
-    size_type rank_bwt(size_type i, const char_type c) const
+    size_type rank_bwt(size_type i, char_type const c) const
     {
         comp_char_type cc = char2comp[c];
         if (cc == 0 and c != 0)
@@ -25354,7 +25306,7 @@ private:
             return psi[lower_b] < i;
         }
     }
-    size_type select_bwt(size_type i, const char_type c) const
+    size_type select_bwt(size_type i, char_type const c) const
     {
         comp_char_type cc = char2comp[c];
         if (cc == 0 and c != 0)
@@ -25386,7 +25338,7 @@ typename t_csa::size_type forward_search(
     t_pat_iter end,
     typename t_csa::size_type & l_res,
     typename t_csa::size_type & r_res,
-    SDSL3_UNUSED
+    [[maybe_unused]]
     typename std::enable_if<std::is_same<csa_tag, typename t_csa::index_category>::value, csa_tag>::type x = csa_tag())
 {
     assert(l <= r);
@@ -25445,7 +25397,7 @@ typename t_csa::size_type forward_search(
     typename t_csa::char_type c,
     typename t_csa::size_type & l_res,
     typename t_csa::size_type & r_res,
-    SDSL3_UNUSED
+    [[maybe_unused]]
     typename std::enable_if<std::is_same<csa_tag, typename t_csa::index_category>::value, csa_tag>::type x = csa_tag())
 {
     auto c_ptr = &c;
@@ -25459,7 +25411,7 @@ typename t_csa::size_type backward_search(
     typename t_csa::char_type c,
     typename t_csa::size_type & l_res,
     typename t_csa::size_type & r_res,
-    SDSL3_UNUSED
+    [[maybe_unused]]
     typename std::enable_if<std::is_same<csa_tag, typename t_csa::index_category>::value, csa_tag>::type x = csa_tag())
 {
     assert(l <= r);
@@ -25496,7 +25448,7 @@ typename t_csa::size_type backward_search(
     t_pat_iter end,
     typename t_csa::size_type & l_res,
     typename t_csa::size_type & r_res,
-    SDSL3_UNUSED
+    [[maybe_unused]]
     typename std::enable_if<std::is_same<csa_tag, typename t_csa::index_category>::value, csa_tag>::type x = csa_tag())
 {
     t_pat_iter it = end;
@@ -25526,7 +25478,7 @@ bidirectional_search(csa_wt<t_wt, t_dens, t_inv_dens, t_sa_sample_strat, t_isa, 
                      typename csa_wt<>::size_type & r_fwd_res,
                      typename csa_wt<>::size_type & l_bwd_res,
                      typename csa_wt<>::size_type & r_bwd_res,
-                     SDSL3_UNUSED typename std::enable_if<t_wt::lex_ordered, csa_tag>::type x = csa_tag())
+                     [[maybe_unused]] typename std::enable_if<t_wt::lex_ordered, csa_tag>::type x = csa_tag())
 {
     assert(l_fwd <= r_fwd);
     assert(r_fwd < csa_fwd.size());
@@ -25553,7 +25505,7 @@ template <class t_pat_iter,
           class t_alphabet_strat>
 typename csa_wt<>::size_type bidirectional_search_backward(
     csa_wt<t_wt, t_dens, t_inv_dens, t_sa_sample_strat, t_isa, t_alphabet_strat> const & csa_fwd,
-    SDSL3_UNUSED csa_wt<t_wt, t_dens, t_inv_dens, t_sa_sample_strat, t_isa, t_alphabet_strat> const & csa_bwd,
+    [[maybe_unused]] csa_wt<t_wt, t_dens, t_inv_dens, t_sa_sample_strat, t_isa, t_alphabet_strat> const & csa_bwd,
     typename csa_wt<>::size_type l_fwd,
     typename csa_wt<>::size_type r_fwd,
     typename csa_wt<>::size_type l_bwd,
@@ -25564,7 +25516,7 @@ typename csa_wt<>::size_type bidirectional_search_backward(
     typename csa_wt<>::size_type & r_fwd_res,
     typename csa_wt<>::size_type & l_bwd_res,
     typename csa_wt<>::size_type & r_bwd_res,
-    SDSL3_UNUSED typename std::enable_if<t_wt::lex_ordered, csa_tag>::type x = csa_tag())
+    [[maybe_unused]] typename std::enable_if<t_wt::lex_ordered, csa_tag>::type x = csa_tag())
 {
     t_pat_iter it = end;
     while (begin < it and r_fwd + 1 - l_fwd > 0)
@@ -25595,7 +25547,7 @@ template <class t_pat_iter,
           class t_isa,
           class t_alphabet_strat>
 typename csa_wt<t_wt>::size_type bidirectional_search_forward(
-    SDSL3_UNUSED csa_wt<t_wt, t_dens, t_inv_dens, t_sa_sample_strat, t_isa, t_alphabet_strat> const & csa_fwd,
+    [[maybe_unused]] csa_wt<t_wt, t_dens, t_inv_dens, t_sa_sample_strat, t_isa, t_alphabet_strat> const & csa_fwd,
     csa_wt<t_wt, t_dens, t_inv_dens, t_sa_sample_strat, t_isa, t_alphabet_strat> const & csa_bwd,
     typename csa_wt<>::size_type l_fwd,
     typename csa_wt<>::size_type r_fwd,
@@ -25607,7 +25559,7 @@ typename csa_wt<t_wt>::size_type bidirectional_search_forward(
     typename csa_wt<>::size_type & r_fwd_res,
     typename csa_wt<>::size_type & l_bwd_res,
     typename csa_wt<>::size_type & r_bwd_res,
-    SDSL3_UNUSED typename std::enable_if<t_wt::lex_ordered, csa_tag>::type x = csa_tag())
+    [[maybe_unused]] typename std::enable_if<t_wt::lex_ordered, csa_tag>::type x = csa_tag())
 {
     t_pat_iter it = begin;
     while (it < end and r_fwd + 1 - l_fwd > 0)
@@ -25646,7 +25598,7 @@ typename t_csx::size_type count(t_csx const & csx, t_pat_iter begin, t_pat_iter 
     return count(csx, begin, end, tag);
 }
 template <class t_csx>
-typename t_csx::size_type count(t_csx const & csx, const typename t_csx::string_type & pat)
+typename t_csx::size_type count(t_csx const & csx, typename t_csx::string_type const & pat)
 {
     typename t_csx::index_category tag;
     return count(csx, pat.begin(), pat.end(), tag);
@@ -25662,7 +25614,7 @@ template <class t_csa, class t_pat_iter, class t_rac = int_vector<64>>
 t_rac locate(t_csa const & csa,
              t_pat_iter begin,
              t_pat_iter end,
-             SDSL3_UNUSED
+             [[maybe_unused]]
              typename std::enable_if<std::is_same<csa_tag, typename t_csa::index_category>::value, csa_tag>::type x =
                  csa_tag())
 {
@@ -25676,7 +25628,7 @@ t_rac locate(t_csa const & csa,
     return occ;
 }
 template <class t_csx, class t_rac = int_vector<64>>
-t_rac locate(t_csx const & csx, const typename t_csx::string_type & pat)
+t_rac locate(t_csx const & csx, typename t_csx::string_type const & pat)
 {
     typename t_csx::index_category tag;
     return locate<t_csx, decltype(pat.begin()), t_rac>(csx, pat.begin(), pat.end(), tag);
@@ -25687,7 +25639,7 @@ typename t_csa::size_type extract(
     typename t_csa::size_type begin,
     typename t_csa::size_type end,
     t_text_iter text,
-    SDSL3_UNUSED
+    [[maybe_unused]]
     typename std::enable_if<std::is_same<csa_tag, typename t_csa::index_category>::value, csa_tag>::type x = csa_tag())
 {
     typename t_csa::extract_category extract_tag;
@@ -25735,7 +25687,7 @@ typename t_csa::string_type extract(
     t_csa const & csa,
     typename t_csa::size_type begin,
     typename t_csa::size_type end,
-    SDSL3_UNUSED
+    [[maybe_unused]]
     typename std::enable_if<std::is_same<csa_tag, typename t_csa::index_category>::value, csa_tag>::type x = csa_tag())
 {
     assert(end <= csa.size());
@@ -25836,7 +25788,7 @@ public:
             for (uint32_t k = 0; k < m_max_level; ++k)
             {
                 uint8_t width = m_max_level - k - 1;
-                const uint64_t mask = 1ULL << width;
+                uint64_t const mask = 1ULL << width;
                 uint64_t x = 0;
                 size_type zeros = 0;
                 int_vector_buffer<> zero_buf(zero_buf_file_name, std::ios::out, 1024 * 1024, m_max_level);
@@ -26454,8 +26406,8 @@ public:
     template <typename t_it>
     wt_ap(t_it begin, t_it end, std::string tmp_dir = ram_file_name("")) : m_size(std::distance(begin, end))
     {
-        const uint8_t wt_byte_width = wt_byte_type::alphabet_category::WIDTH;
-        const uint8_t wt_int_width = wt_int_type::alphabet_category::WIDTH;
+        uint8_t const wt_byte_width = wt_byte_type::alphabet_category::WIDTH;
+        uint8_t const wt_int_width = wt_int_type::alphabet_category::WIDTH;
         value_type max_symbol = 0;
         std::vector<std::pair<size_type, value_type>> char_freq;
         value_type pseudo_entries = 0;
@@ -26850,6 +26802,7 @@ struct balanced_shape
 #define INCLUDED_SDSL3_RANK_SUPPORT_INT 
 #include <array>
 #include <assert.h>
+#include <bit>
 #include <iosfwd>
 #include <stddef.h>
 #include <stdint.h>
@@ -26864,11 +26817,12 @@ namespace seqan3::contrib::sdsl
 {
 constexpr size_t floor_log2(size_t const n)
 {
-    return (n == 1) ? 0 : 1 + floor_log2(n >> 1);
+    assert(n != 0);
+    return std::bit_width(n) - 1;
 }
 constexpr size_t ceil_log2(size_t const n)
 {
-    return (n == 1) ? 0 : floor_log2(n - 1) + 1;
+    return std::bit_width(n - 1);
 }
 template <uint8_t alphabet_size>
 class rank_support_int
@@ -26879,7 +26833,7 @@ public:
     static_assert(alphabet_size > 2, "Rank support is only implemented on int_vectors with an alphabet size of > 2.");
 protected:
     template <typename uintX_t>
-    static constexpr uintX_t bm_rec(const uintX_t w, const uint8_t length, const uint8_t max_length)
+    static constexpr uintX_t bm_rec(uintX_t const w, uint8_t const length, uint8_t const max_length)
     {
         return (length >= max_length) ? w : bm_rec(w | (w << length), length << 1, max_length);
     }
@@ -26903,7 +26857,7 @@ protected:
     static constexpr uint8_t bits_per_word{(64 / sigma_bits) * sigma_bits};
     static constexpr uint64_t even_mask{bm_rec<uint64_t>(bits::lo_set[sigma_bits], sigma_bits * 2, 64)};
     static constexpr uint64_t carry_select_mask{bm_rec<uint64_t>(1ULL << sigma_bits, sigma_bits * 2, 64)};
-    static const std::array<uint64_t, alphabet_size> masks;
+    static std::array<uint64_t, alphabet_size> const masks;
     int_vector<> const * m_v;
 public:
     rank_support_int(int_vector<> const * v = nullptr)
@@ -26917,10 +26871,10 @@ public:
     rank_support_int & operator=(rank_support_int &&) = default;
     virtual ~rank_support_int()
     {}
-    virtual size_type rank(const size_type i, const value_type v) const = 0;
-    virtual size_type operator()(const size_type idx, const value_type v) const = 0;
-    virtual size_type prefix_rank(const size_type i, const value_type v) const = 0;
-    virtual size_type serialize(std::ostream & out, structure_tree_node * v, const std::string name) const = 0;
+    virtual size_type rank(size_type const i, value_type const v) const = 0;
+    virtual size_type operator()(size_type const idx, value_type const v) const = 0;
+    virtual size_type prefix_rank(size_type const i, value_type const v) const = 0;
+    virtual size_type serialize(std::ostream & out, structure_tree_node * v, std::string const name) const = 0;
     virtual void load(std::istream & in, int_vector<> const * v = nullptr) = 0;
     virtual void set_vector(int_vector<> const * v = nullptr) = 0;
 protected:
@@ -26928,13 +26882,13 @@ protected:
     {
         return ((masks[v] - w_even) & carry_select_mask) | (((masks[v] - w_odd) & carry_select_mask) << 1);
     }
-    static constexpr uint64_t set_positions_prefix(const uint64_t w, const value_type v) noexcept
+    static constexpr uint64_t set_positions_prefix(uint64_t const w, value_type const v) noexcept
     {
         uint64_t const w_even = even_mask & w;
         uint64_t const w_odd = even_mask & (w >> sigma_bits);
         return mask_prefix(v, w_even, w_odd);
     }
-    static constexpr uint64_t set_positions(const uint64_t w, const value_type v) noexcept
+    static constexpr uint64_t set_positions(uint64_t const w, value_type const v) noexcept
     {
         assert(v > 0);
         uint64_t const w_even = even_mask & w;
@@ -26945,32 +26899,32 @@ protected:
     }
     template <typename... value_t>
     static constexpr std::array<uint64_t, sizeof...(value_t)>
-    word_prefix_rank(const uint64_t word, const size_type bit_pos, const value_t... values) noexcept
+    word_prefix_rank(uint64_t const word, size_type const bit_pos, value_t const... values) noexcept
     {
         uint64_t const mask = bits::lo_set[(bit_pos % bits_per_word) + 1];
         uint64_t const w_even = even_mask & word;
         uint64_t const w_odd = even_mask & (word >> sigma_bits);
         return {(bits::cnt(mask_prefix(values, w_even, w_odd) & mask))...};
     }
-    static constexpr uint32_t word_rank(const uint64_t word, const size_type bit_pos, const value_type v) noexcept
+    static constexpr uint32_t word_rank(uint64_t const word, size_type const bit_pos, value_type const v) noexcept
     {
         return bits::cnt(set_positions(word, v) & bits::lo_set[(bit_pos & 0x3F) + 1]);
     }
-    static constexpr uint32_t full_word_prefix_rank(const uint64_t word, const value_type v) noexcept
+    static constexpr uint32_t full_word_prefix_rank(uint64_t const word, value_type const v) noexcept
     {
         return bits::cnt(set_positions_prefix(word, v));
     }
-    static constexpr uint32_t full_word_rank(const uint64_t word, const value_type v) noexcept
+    static constexpr uint32_t full_word_rank(uint64_t const word, value_type const v) noexcept
     {
         return bits::cnt(set_positions(word, v));
     }
-    static constexpr uint64_t extract_word(uint64_t const * data, const size_type word_position) noexcept
+    static constexpr uint64_t extract_word(uint64_t const * data, size_type const word_position) noexcept
     {
         return *(data + word_position);
     }
 };
 template <uint8_t alphabet_size>
-const std::array<uint64_t, alphabet_size> rank_support_int<alphabet_size>::masks = generate_mask_array();
+std::array<uint64_t, alphabet_size> const rank_support_int<alphabet_size>::masks = generate_mask_array();
 }
 #endif
 namespace seqan3::contrib::sdsl
@@ -27018,7 +26972,7 @@ public:
     {
         return word;
     }
-    size_type serialize(std::ostream & out, structure_tree_node * v = nullptr, const std::string name = "") const
+    size_type serialize(std::ostream & out, structure_tree_node * v = nullptr, std::string const name = "") const
     {
         structure_tree_node * child = structure_tree::add_child(v, name, seqan3::contrib::sdsl::util::class_name(*this));
         size_type written_bytes = seqan3::contrib::sdsl::serialize(word, out, child, "compressed_word");
@@ -27116,7 +27070,7 @@ public:
     rank_support_int_v & operator=(rank_support_int_v const &) = default;
     rank_support_int_v & operator=(rank_support_int_v &&) = default;
     ~rank_support_int_v() = default;
-    size_type rank(const size_type position, const value_type v) const
+    size_type rank(size_type const position, value_type const v) const
     {
         switch (v)
         {
@@ -27128,11 +27082,11 @@ public:
             return prefix_rank_impl<true>(position, v);
         }
     }
-    inline size_type operator()(const size_type position, const value_type v) const
+    inline size_type operator()(size_type const position, value_type const v) const
     {
         return rank(position, v);
     }
-    size_type prefix_rank(const size_type position, const value_type v) const
+    size_type prefix_rank(size_type const position, value_type const v) const
     {
         assert(position <= text_size);
         assert(v <= sigma);
@@ -27144,12 +27098,12 @@ public:
     {
         return text_size;
     }
-    value_type value_at(const size_type position) const
+    value_type value_at(size_type const position) const
     {
         assert(position < text_size);
         return superblocks[to_superblock_position(position)].value_at(position);
     }
-    size_type serialize(std::ostream & out, structure_tree_node * v = nullptr, const std::string name = "") const
+    size_type serialize(std::ostream & out, structure_tree_node * v = nullptr, std::string const name = "") const
     {
         structure_tree_node * child = structure_tree::add_child(v, name, util::class_name(*this));
         size_type written_bytes = seqan3::contrib::sdsl::serialize(superblocks, out, child, "superblocks_vector");
@@ -27191,7 +27145,7 @@ private:
         return position / values_per_superblock;
     }
     template <bool compute_prefix_delta>
-    size_type prefix_rank_impl(size_type const position, const value_type v) const
+    size_type prefix_rank_impl(size_type const position, value_type const v) const
     {
         assert(position <= text_size);
         if (unlikely(text_size == 0))
@@ -27238,7 +27192,7 @@ struct rank_support_int_v<alphabet_size, words_per_block, blocks_per_superblock>
         size_type bit_position = absolute_bit_position(position);
         return superblock_text[absolute_word_position(bit_position)][position % values_per_word];
     }
-    size_type serialize(std::ostream & out, structure_tree_node * v = nullptr, const std::string name = "") const
+    size_type serialize(std::ostream & out, structure_tree_node * v = nullptr, std::string const name = "") const
     {
         structure_tree_node * child = structure_tree::add_child(v, name, seqan3::contrib::sdsl::util::class_name(*this));
         size_type written_bytes = 0;
@@ -27311,14 +27265,14 @@ private:
         return bit_position / bits_per_word;
     }
     template <bool compute_prefix_delta>
-    static constexpr auto word_prefix_rank(const uint64_t word, const uint64_t bit_pos, const value_type v) ->
+    static constexpr auto word_prefix_rank(uint64_t const word, uint64_t const bit_pos, value_type const v) ->
         typename std::enable_if<compute_prefix_delta, size_type>::type
     {
         auto && prefix_rank = base_t::word_prefix_rank(word, bit_pos, v - 1, v);
         return prefix_rank[1] - prefix_rank[0];
     }
     template <bool compute_prefix_delta>
-    static constexpr auto word_prefix_rank(const uint64_t word, const uint64_t bit_pos, const value_type v) ->
+    static constexpr auto word_prefix_rank(uint64_t const word, uint64_t const bit_pos, value_type const v) ->
         typename std::enable_if<!compute_prefix_delta, size_type>::type
     {
         return base_t::word_prefix_rank(word, bit_pos, v)[0];
@@ -27382,7 +27336,12 @@ public:
     {
         if (0 == m_size)
             return;
-        if (std::any_of(begin, end, [](size_t value) { return value >= alphabet_size; }))
+        if (std::any_of(begin,
+                        end,
+                        [](size_t value)
+                        {
+                            return value >= alphabet_size;
+                        }))
         {
             throw std::domain_error{"The given text uses an alphabet that is larger than the explicitly given "
                                     "alphabet size."};
@@ -27567,7 +27526,7 @@ private:
     bit_vector_type m_marked;
     rank_type m_marked_rank;
 public:
-    inv_multi_perm_support(){};
+    inv_multi_perm_support() {};
     inv_multi_perm_support(iv_type const * perm, int_vector<> & iv, uint64_t chunksize) :
         m_perm(perm),
         m_chunksize(chunksize)
@@ -27772,7 +27731,7 @@ public:
 template <class t_rac>
 void _transform_to_compressed(int_vector<> & iv,
                               typename std::enable_if<!(std::is_same<t_rac, int_vector<>>::value), t_rac>::type & rac,
-                              const std::string filename)
+                              std::string const filename)
 {
     std::string tmp_file_name = tmp_file(filename, "_compress_int_vector");
     store_to_file(iv, tmp_file_name);
@@ -27784,7 +27743,7 @@ void _transform_to_compressed(int_vector<> & iv,
 template <class t_rac>
 void _transform_to_compressed(int_vector<> & iv,
                               typename std::enable_if<std::is_same<t_rac, int_vector<>>::value, t_rac>::type & rac,
-                              const std::string)
+                              std::string const)
 {
     rac = std::move(iv);
 }
@@ -28713,7 +28672,7 @@ struct _hutu_shape
         ht_node * rt;
         m_node() : qel(0), myhpq(0), lt(0), rt(0)
         {}
-        bool operator<(const m_node other)
+        bool operator<(m_node const other)
         {
             if (min_sum != other.min_sum)
             {
@@ -28725,7 +28684,7 @@ struct _hutu_shape
             }
             return j < other.j;
         }
-        bool operator>(const m_node other)
+        bool operator>(m_node const other)
         {
             return other < *this;
         }
@@ -29479,6 +29438,7 @@ using csa_sada_int = csa_sada<t_enc_vec, t_dens, t_inv_dens, t_sa_sample_strat, 
 #ifndef INCLUDED_SDSL3_BP_SUPPORT_SADA
 #define INCLUDED_SDSL3_BP_SUPPORT_SADA 
 #include <assert.h>
+#include <bit>
 #include <stdint.h>
 #ifndef INCLUDED_SDSL3_BP_SUPPORT_ALGORITHM
 #define INCLUDED_SDSL3_BP_SUPPORT_ALGORITHM 
@@ -29875,13 +29835,13 @@ void calculate_enclose(bit_vector const & bp, int_vector & enclose)
     }
     assert(opening_parenthesis.empty());
 }
-inline uint64_t near_find_close(bit_vector const & bp, const uint64_t i, const uint64_t block_size)
+inline uint64_t near_find_close(bit_vector const & bp, uint64_t const i, uint64_t const block_size)
 {
     typedef bit_vector::difference_type difference_type;
     difference_type excess_v = 1;
-    const uint64_t end = ((i + 1) / block_size + 1) * block_size;
-    const uint64_t l = (((i + 1) + 7) / 8) * 8;
-    const uint64_t r = (end / 8) * 8;
+    uint64_t const end = ((i + 1) / block_size + 1) * block_size;
+    uint64_t const l = (((i + 1) + 7) / 8) * 8;
+    uint64_t const r = (end / 8) * 8;
     for (uint64_t j = i + 1; j < std::min(end, l); ++j)
     {
         if (bp[j])
@@ -29925,14 +29885,14 @@ inline uint64_t near_find_close(bit_vector const & bp, const uint64_t i, const u
     }
     return i;
 }
-inline uint64_t near_find_closing(bit_vector const & bp, uint64_t i, uint64_t closings, const uint64_t block_size)
+inline uint64_t near_find_closing(bit_vector const & bp, uint64_t i, uint64_t closings, uint64_t const block_size)
 {
     typedef bit_vector::difference_type difference_type;
     difference_type excess_v = 0;
     difference_type succ_excess = -closings;
-    const uint64_t end = (i / block_size + 1) * block_size;
-    const uint64_t l = (((i) + 7) / 8) * 8;
-    const uint64_t r = (end / 8) * 8;
+    uint64_t const end = (i / block_size + 1) * block_size;
+    uint64_t const l = (((i) + 7) / 8) * 8;
+    uint64_t const r = (end / 8) * 8;
     for (uint64_t j = i; j < std::min(end, l); ++j)
     {
         if (bp[j])
@@ -29976,13 +29936,13 @@ inline uint64_t near_find_closing(bit_vector const & bp, uint64_t i, uint64_t cl
     return i - 1;
 }
 inline uint64_t
-near_fwd_excess(bit_vector const & bp, uint64_t i, bit_vector::difference_type rel, const uint64_t block_size)
+near_fwd_excess(bit_vector const & bp, uint64_t i, bit_vector::difference_type rel, uint64_t const block_size)
 {
     typedef bit_vector::difference_type difference_type;
     difference_type excess_v = rel;
-    const uint64_t end = (i / block_size + 1) * block_size;
-    const uint64_t l = (((i) + 7) / 8) * 8;
-    const uint64_t r = (end / 8) * 8;
+    uint64_t const end = (i / block_size + 1) * block_size;
+    uint64_t const l = (((i) + 7) / 8) * 8;
+    uint64_t const r = (end / 8) * 8;
     for (uint64_t j = i; j < std::min(end, l); ++j)
     {
         excess_v += 1 - 2 * bp[j];
@@ -30019,8 +29979,8 @@ near_fwd_excess(bit_vector const & bp, uint64_t i, bit_vector::difference_type r
 inline uint64_t near_rmq(bit_vector const & bp, uint64_t l, uint64_t r, bit_vector::difference_type & min_rel_ex)
 {
     typedef bit_vector::difference_type difference_type;
-    const uint64_t l8 = (((l + 1) + 7) / 8) * 8;
-    const uint64_t r8 = (r / 8) * 8;
+    uint64_t const l8 = (((l + 1) + 7) / 8) * 8;
+    uint64_t const r8 = (r / 8) * 8;
     difference_type excess_v = 0;
     difference_type min_pos = l;
     min_rel_ex = 0;
@@ -30066,13 +30026,13 @@ inline uint64_t near_rmq(bit_vector const & bp, uint64_t l, uint64_t r, bit_vect
     return min_pos;
 }
 inline uint64_t
-near_bwd_excess(bit_vector const & bp, uint64_t i, bit_vector::difference_type rel, const uint64_t block_size)
+near_bwd_excess(bit_vector const & bp, uint64_t i, bit_vector::difference_type rel, uint64_t const block_size)
 {
     typedef bit_vector::difference_type difference_type;
     difference_type excess_v = rel;
-    const difference_type begin = ((difference_type)(i) / block_size) * block_size;
-    const difference_type r = ((difference_type)(i) / 8) * 8;
-    const difference_type l = ((difference_type)((begin + 7) / 8)) * 8;
+    difference_type const begin = ((difference_type)(i) / block_size) * block_size;
+    difference_type const r = ((difference_type)(i) / 8) * 8;
+    difference_type const l = ((difference_type)((begin + 7) / 8)) * 8;
     for (difference_type j = i + 1; j >= std::max(r, begin); --j)
     {
         if (bp[j])
@@ -30112,13 +30072,13 @@ near_bwd_excess(bit_vector const & bp, uint64_t i, bit_vector::difference_type r
     }
     return i + 1;
 }
-inline uint64_t near_find_open(bit_vector const & bp, uint64_t i, const uint64_t block_size)
+inline uint64_t near_find_open(bit_vector const & bp, uint64_t i, uint64_t const block_size)
 {
     typedef bit_vector::difference_type difference_type;
     difference_type excess_v = -1;
-    const difference_type begin = ((difference_type)(i - 1) / block_size) * block_size;
-    const difference_type r = ((difference_type)(i - 1) / 8) * 8;
-    const difference_type l = ((difference_type)((begin + 7) / 8)) * 8;
+    difference_type const begin = ((difference_type)(i - 1) / block_size) * block_size;
+    difference_type const r = ((difference_type)(i - 1) / 8) * 8;
+    difference_type const l = ((difference_type)((begin + 7) / 8)) * 8;
     for (difference_type j = i - 1; j >= std::max(r, begin); --j)
     {
         if (bp[j])
@@ -30160,14 +30120,14 @@ inline uint64_t near_find_open(bit_vector const & bp, uint64_t i, const uint64_t
     }
     return i;
 }
-inline uint64_t near_find_opening(bit_vector const & bp, uint64_t i, const uint64_t openings, const uint64_t block_size)
+inline uint64_t near_find_opening(bit_vector const & bp, uint64_t i, uint64_t const openings, uint64_t const block_size)
 {
     typedef bit_vector::difference_type difference_type;
     difference_type excess_v = 0;
     difference_type succ_excess = openings;
-    const difference_type begin = ((difference_type)(i) / block_size) * block_size;
-    const difference_type r = ((difference_type)(i) / 8) * 8;
-    const difference_type l = ((difference_type)((begin + 7) / 8)) * 8;
+    difference_type const begin = ((difference_type)(i) / block_size) * block_size;
+    difference_type const r = ((difference_type)(i) / 8) * 8;
+    difference_type const l = ((difference_type)((begin + 7) / 8)) * 8;
     for (difference_type j = i; j >= std::max(r, begin); --j)
     {
         if (bp[j])
@@ -30209,7 +30169,7 @@ inline uint64_t near_find_opening(bit_vector const & bp, uint64_t i, const uint6
     }
     return i + 1;
 }
-inline uint64_t near_enclose(bit_vector const & bp, uint64_t i, const uint64_t block_size)
+inline uint64_t near_enclose(bit_vector const & bp, uint64_t i, uint64_t const block_size)
 {
     uint64_t opening_parentheses = 1;
     for (uint64_t j = i; j + block_size - 1 > i and j > 0; --j)
@@ -30227,13 +30187,13 @@ inline uint64_t near_enclose(bit_vector const & bp, uint64_t i, const uint64_t b
     }
     return i;
 }
-inline uint64_t near_rmq_open(bit_vector const & bp, const uint64_t begin, const uint64_t end)
+inline uint64_t near_rmq_open(bit_vector const & bp, uint64_t const begin, uint64_t const end)
 {
     typedef bit_vector::difference_type difference_type;
     difference_type min_excess = end - begin + 1, ex = 0;
     uint64_t result = end;
-    const uint64_t l = ((begin + 7) / 8) * 8;
-    const uint64_t r = (end / 8) * 8;
+    uint64_t const l = ((begin + 7) / 8) * 8;
+    uint64_t const r = (end / 8) * 8;
     for (uint64_t k = begin; k < std::min(end, l); ++k)
     {
         if (bp[k])
@@ -30598,13 +30558,8 @@ public:
             return;
         util::init_support(m_bp_rank, bp);
         util::init_support(m_bp_select, bp);
-        m_med_inner_blocks = 1;
-        while (m_med_inner_blocks < m_med_blocks)
-        {
-            m_med_inner_blocks <<= 1;
-            assert(m_med_inner_blocks != 0);
-        }
-        --m_med_inner_blocks;
+        assert(m_med_blocks <= (size_type{1} << 63));
+        m_med_inner_blocks = std::bit_ceil(m_med_blocks) - 1;
         assert((m_med_inner_blocks == 0) or (m_med_inner_blocks % 2 == 1));
         m_sml_block_min_max = int_vector<>(2 * m_sml_blocks, 0, bits::hi(t_sml_blk + 2) + 1);
         m_med_block_min_max = int_vector<>(2 * (m_med_blocks + m_med_inner_blocks), 0, bits::hi(2 * m_size + 2) + 1);
@@ -30743,16 +30698,16 @@ public:
         else
             return bwd_ex + 1;
     }
-    size_type rr_enclose(const size_type i, const size_type j) const
+    size_type rr_enclose(size_type const i, size_type const j) const
     {
         assert(j < m_size);
         assert((*m_bp)[i] == 1 and (*m_bp)[j] == 1);
-        const size_type mip1 = find_close(i) + 1;
+        size_type const mip1 = find_close(i) + 1;
         if (mip1 >= j)
             return size();
         return rmq_open(mip1, j);
     }
-    size_type rmq_open(const size_type l, const size_type r) const
+    size_type rmq_open(size_type const l, size_type const r) const
     {
         assert(r < m_bp->size());
         if (l >= r)
@@ -31103,7 +31058,7 @@ public:
     using difference_type = std::ptrdiff_t;
     using pointer = value_type *;
     using reference = value_type &;
-    typedef const value_type const_reference;
+    typedef value_type const const_reference;
     typedef typename Cst::size_type size_type;
     typedef cst_dfs_const_forward_iterator<Cst> iterator;
     typedef typename Cst::node_type node_type;
@@ -31134,7 +31089,7 @@ private:
     cst_dfs_const_forward_iterator() : m_cst(nullptr), m_visited(false), m_valid(false), m_stack_cache(nullptr)
     {}
 public:
-    cst_dfs_const_forward_iterator(Cst const * cst, const value_type node, bool visited = false, bool valid = true) :
+    cst_dfs_const_forward_iterator(Cst const * cst, value_type const node, bool visited = false, bool valid = true) :
         m_visited(visited),
         m_valid(valid),
         m_stack_cache(nullptr)
@@ -31242,7 +31197,7 @@ public:
     using difference_type = std::ptrdiff_t;
     using pointer = value_type *;
     using reference = value_type &;
-    typedef const value_type const_reference;
+    typedef value_type const const_reference;
     typedef typename Cst::size_type size_type;
     typedef cst_bottom_up_const_forward_iterator<Cst> iterator;
 private:
@@ -31252,7 +31207,7 @@ private:
 public:
     cst_bottom_up_const_forward_iterator() : m_cst(nullptr), m_valid(false)
     {}
-    cst_bottom_up_const_forward_iterator(Cst const * cst, const value_type node, bool valid = true) : m_valid(valid)
+    cst_bottom_up_const_forward_iterator(Cst const * cst, value_type const node, bool valid = true) : m_valid(valid)
     {
         m_cst = cst;
         m_v = node;
@@ -31309,7 +31264,7 @@ public:
     using difference_type = std::ptrdiff_t;
     using pointer = value_type *;
     using reference = value_type &;
-    typedef const value_type const_reference;
+    typedef value_type const const_reference;
     typedef typename Cst::size_type size_type;
     typedef cst_bfs_iterator<Cst, Queue> iterator;
     typedef Queue queue_type;
@@ -31318,7 +31273,7 @@ private:
     queue_type m_queue;
     bool m_valid;
 public:
-    cst_bfs_iterator(Cst const * cst, const value_type node, bool valid = true, bool end_it = false)
+    cst_bfs_iterator(Cst const * cst, value_type const node, bool valid = true, bool end_it = false)
     {
         m_cst = cst;
         m_valid = valid;
@@ -31547,10 +31502,10 @@ public:
     typedef typename t_csa::value_type value_type;
     typedef random_access_const_iterator<_lcp_support_sada> const_iterator;
     typedef const_iterator iterator;
-    typedef const value_type const_reference;
+    typedef value_type const const_reference;
     typedef const_reference reference;
     typedef const_reference * pointer;
-    typedef const pointer const_pointer;
+    typedef pointer const const_pointer;
     typedef int_vector<>::size_type size_type;
     typedef ptrdiff_t difference_type;
     typedef t_bitvec bit_vector_type;
@@ -31897,13 +31852,13 @@ public:
     using pointer = value_type *;
     using reference = value_type &;
     using node_type = typename t_cst::node_type;
-    using const_reference = const node_type;
+    using const_reference = node_type const;
     using iterator_type = cst_node_child_proxy_iterator<t_cst>;
 private:
     t_cst const * m_cst;
     node_type m_cur_node;
 public:
-    cst_node_child_proxy_iterator() : m_cst(nullptr){};
+    cst_node_child_proxy_iterator() : m_cst(nullptr) {};
     cst_node_child_proxy_iterator(t_cst const * cst, node_type v) : m_cst(cst), m_cur_node(v)
     {}
     cst_node_child_proxy_iterator(iterator_type const & it) : m_cst(it.m_cst), m_cur_node(it.m_cur_node)
@@ -31945,8 +31900,8 @@ private:
     t_cst const * m_cst;
 public:
     cst_node_child_proxy() = delete;
-    explicit cst_node_child_proxy(t_cst const * cst, node_type v) : m_parent(v), m_cst(cst){};
-    cst_node_child_proxy(cst_node_child_proxy const & p) : m_parent(p.m_parent), m_cst(p.m_cst){};
+    explicit cst_node_child_proxy(t_cst const * cst, node_type v) : m_parent(v), m_cst(cst) {};
+    cst_node_child_proxy(cst_node_child_proxy const & p) : m_parent(p.m_parent), m_cst(p.m_cst) {};
 public:
     node_type operator[](size_type i) const
     {
@@ -32517,20 +32472,20 @@ public:
         size_type r = m_bp_support.find_close(v);
         return m_bp_rank10(r + 1) - m_bp_rank10(v);
     }
-    node_type leftmost_leaf(const node_type v) const
+    node_type leftmost_leaf(node_type const v) const
     {
         return m_bp_select10(m_bp_rank10(v) + 1) - 1;
     }
-    node_type rightmost_leaf(const node_type v) const
+    node_type rightmost_leaf(node_type const v) const
     {
         size_type r = m_bp_support.find_close(v);
         return m_bp_select10(m_bp_rank10(r + 1)) - 1;
     }
-    size_type lb(const node_type v) const
+    size_type lb(node_type const v) const
     {
         return m_bp_rank10(v);
     }
-    size_type rb(const node_type v) const
+    size_type rb(node_type const v) const
     {
         size_type r = m_bp_support.find_close(v);
         return m_bp_rank10(r + 1) - 1;
@@ -32559,7 +32514,7 @@ public:
         else
             return root();
     }
-    node_type child(node_type v, const char_type c, size_type & char_pos) const
+    node_type child(node_type v, char_type const c, size_type & char_pos) const
     {
         if (is_leaf(v))
             return root();
@@ -32588,7 +32543,7 @@ public:
                 return root();
         }
     }
-    node_type child(node_type v, const char_type c) const
+    node_type child(node_type v, char_type const c) const
     {
         size_type char_pos;
         return child(v, c, char_pos);
@@ -32683,7 +32638,7 @@ public:
         node_type right_leaf = select_leaf(get_char_pos(right, i, m_csa) + 1);
         return lca(left_leaf, right_leaf);
     }
-    node_type wl(node_type v, const char_type c) const
+    node_type wl(node_type v, char_type const c) const
     {
         size_type left = m_bp_rank10(v);
         size_type right = is_leaf(v) ? left : m_bp_rank10(m_bp_support.find_close(v)) - 1;
@@ -32804,10 +32759,10 @@ public:
     typedef typename int_vector<>::value_type value_type;
     typedef random_access_const_iterator<dac_vector> const_iterator;
     typedef const_iterator iterator;
-    typedef const value_type const_reference;
+    typedef value_type const const_reference;
     typedef const_reference reference;
     typedef const_reference * pointer;
-    typedef const pointer const_pointer;
+    typedef pointer const const_pointer;
     typedef int_vector<>::size_type size_type;
     typedef ptrdiff_t difference_type;
     typedef t_rank rank_support_type;
@@ -32871,11 +32826,11 @@ public:
     {
         return 0 == m_level_pointer_and_rank[2];
     }
-    const const_iterator begin() const
+    const_iterator const begin() const
     {
         return const_iterator(this, 0);
     }
-    const const_iterator end() const
+    const_iterator const end() const
     {
         return const_iterator(this, size());
     }
@@ -32961,7 +32916,7 @@ dac_vector<t_b, t_rank>::dac_vector(Container const & c)
     m_data.resize(sum_blocks);
     assert(last_block_size > 0);
     int_vector<64> cnt = m_level_pointer_and_rank;
-    const uint64_t mask = bits::lo_set[t_b];
+    uint64_t const mask = bits::lo_set[t_b];
     for (size_type i = 0, j = 0; i < n; ++i)
     {
         val = c[i];
@@ -33028,7 +32983,7 @@ dac_vector<t_b, t_rank>::dac_vector(int_vector_buffer<int_width> & v_buf)
     m_data.resize(sum_blocks);
     assert(last_block_size > 0);
     int_vector<64> cnt = m_level_pointer_and_rank;
-    const uint64_t mask = bits::lo_set[t_b];
+    uint64_t const mask = bits::lo_set[t_b];
     for (size_type i = 0, j = 0; i < n; ++i)
     {
         val = v_buf[i];
@@ -33126,15 +33081,15 @@ public:
     typedef uint64_t value_type;
     typedef random_access_const_iterator<vlc_vector> iterator;
     typedef iterator const_iterator;
-    typedef const value_type reference;
-    typedef const value_type const_reference;
+    typedef value_type const reference;
+    typedef value_type const const_reference;
     typedef value_type const * const_pointer;
     typedef ptrdiff_t difference_type;
     typedef int_vector<>::size_type size_type;
     typedef t_coder coder;
     typedef iv_tag index_category;
     typedef typename vlc_vector_trait<t_width>::int_vector_type int_vector_type;
-    static const uint32_t sample_dens = t_dens;
+    static uint32_t const sample_dens = t_dens;
     bit_vector m_z;
 private:
     int_vector_type m_sample_pointer;
@@ -33170,11 +33125,11 @@ public:
     {
         return 0 == m_size;
     }
-    const const_iterator begin() const
+    const_iterator const begin() const
     {
         return const_iterator(this, 0);
     }
-    const const_iterator end() const
+    const_iterator const end() const
     {
         return const_iterator(this, this->m_size);
     }
@@ -33193,9 +33148,9 @@ public:
     void CEREAL_SAVE_FUNCTION_NAME(archive_t & ar) const;
     template <typename archive_t>
     void CEREAL_LOAD_FUNCTION_NAME(archive_t & ar);
-    value_type sample(const size_type i) const;
+    value_type sample(size_type const i) const;
     uint32_t get_sample_dens() const;
-    void set_sample_dens(const uint32_t sdens);
+    void set_sample_dens(uint32_t const sdens);
 };
 template <class t_coder, uint32_t t_dens, uint8_t t_width>
 inline uint32_t vlc_vector<t_coder, t_dens, t_width>::get_sample_dens() const
@@ -33206,13 +33161,13 @@ inline uint32_t vlc_vector<t_coder, t_dens, t_width>::get_sample_dens() const
         return t_dens;
 }
 template <class t_coder, uint32_t t_dens, uint8_t t_width>
-inline void vlc_vector<t_coder, t_dens, t_width>::set_sample_dens(const uint32_t sdens)
+inline void vlc_vector<t_coder, t_dens, t_width>::set_sample_dens(uint32_t const sdens)
 {
     m_sample_dens = sdens;
 }
 template <class t_coder, uint32_t t_dens, uint8_t t_width>
 inline typename vlc_vector<t_coder, t_dens, t_width>::value_type
-vlc_vector<t_coder, t_dens, t_width>::operator[](const size_type i) const
+vlc_vector<t_coder, t_dens, t_width>::operator[](size_type const i) const
 {
     assert(i + 1 != 0);
     assert(i < m_size);
@@ -33338,10 +33293,10 @@ public:
     typedef typename t_vlc_vec::value_type value_type;
     typedef random_access_const_iterator<lcp_vlc> const_iterator;
     typedef const_iterator iterator;
-    typedef const value_type const_reference;
+    typedef value_type const const_reference;
     typedef const_reference reference;
     typedef const_reference * pointer;
-    typedef const pointer const_pointer;
+    typedef pointer const const_pointer;
     typedef typename t_vlc_vec::size_type size_type;
     typedef typename t_vlc_vec::difference_type difference_type;
     typedef t_vlc_vec vlc_vec_type;
@@ -33458,7 +33413,7 @@ private:
     t_cst const * m_cst;
 public:
     lcp_fully() = default;
-    lcp_fully(t_cst const * cst) : m_cst(cst){};
+    lcp_fully(t_cst const * cst) : m_cst(cst) {};
     lcp_fully(lcp_fully const &) = default;
     lcp_fully(lcp_fully &&) = default;
     lcp_fully & operator=(lcp_fully const &) = default;
@@ -33712,11 +33667,11 @@ public:
     {
         return v.second - v.first + 1;
     }
-    node_type leftmost_leaf(const node_type v) const
+    node_type leftmost_leaf(node_type const v) const
     {
         return node_type(v.first, v.first);
     }
-    node_type rightmost_leaf(const node_type v) const
+    node_type rightmost_leaf(node_type const v) const
     {
         return node_type(v.second, v.second);
     }
@@ -33892,7 +33847,7 @@ public:
         }
         return lca(m_csa.psi[v.first], m_csa.psi[v.second]);
     }
-    node_type wl(node_type v, const char_type c) const
+    node_type wl(node_type v, char_type const c) const
     {
         size_type l, r;
         std::tie(l, r) = v;
@@ -33906,8 +33861,8 @@ public:
     }
     node_type parent(node_type v) const
     {
-        const leaf_type l = v.first;
-        const leaf_type r = v.second;
+        leaf_type const l = v.first;
+        leaf_type const r = v.second;
         node_type left_parent = root();
         node_type right_parent = root();
         if (l > 0)
@@ -34075,7 +34030,7 @@ cst_fully<t_csa, t_delta, t_s_support, t_b, t_depth, t_sample_leaves>::cst_fully
     }
     else
     {
-        const size_type n = cst.size();
+        size_type const n = cst.size();
         m_delta = (bits::hi(n - 1) + 1) * (bits::hi(bits::hi(n - 1)) + 1);
         if (m_delta < 2)
         {
@@ -34092,11 +34047,11 @@ cst_fully<t_csa, t_delta, t_s_support, t_b, t_depth, t_sample_leaves>::cst_fully
         size_type leaf_idx = 0;
         for (size_type i = 0; i < cst.size(); i++)
         {
-            const size_type d = i + 1;
+            size_type const d = i + 1;
             if (d + delta_half <= cst.size() and d % delta_half == 0)
             {
                 auto const node = cst.select_leaf(leaf_idx + 1);
-                const size_type id = cst.id(node);
+                size_type const id = cst.id(node);
                 if (!is_sampled[id])
                 {
                     is_sampled[id] = true;
@@ -34113,11 +34068,11 @@ cst_fully<t_csa, t_delta, t_s_support, t_b, t_depth, t_sample_leaves>::cst_fully
             if (it.visit() == 1 and cst.is_leaf(*it) == false)
             {
                 auto const node = *it;
-                const size_type d = cst.depth(node);
+                size_type const d = cst.depth(node);
                 if (d % delta_half == 0)
                 {
                     auto v = cst.sl(node, delta_half);
-                    const size_type id = cst.id(v);
+                    size_type const id = cst.id(v);
                     if (!is_sampled[id])
                     {
                         is_sampled[id] = true;
@@ -34285,14 +34240,14 @@ private:
             return node.cipos - 1;
         }
     }
-    inline size_type nsv(SDSL3_UNUSED size_type i, size_type ipos) const
+    inline size_type nsv([[maybe_unused]] size_type i, size_type ipos) const
     {
         size_type cipos = m_bp_support.find_close(ipos);
         size_type result = m_bp_support.rank(cipos);
         return result;
     }
     inline size_type
-    psv(SDSL3_UNUSED size_type i, size_type ipos, size_type cipos, size_type & psvpos, size_type & psvcpos) const
+    psv([[maybe_unused]] size_type i, size_type ipos, size_type cipos, size_type & psvpos, size_type & psvcpos) const
     {
         if ((cipos + (size_type)m_csa.sigma) >= m_bp.size())
         {
@@ -34671,7 +34626,7 @@ public:
             }
         }
     }
-    node_type child(node_type const & v, const char_type c, size_type & char_pos) const
+    node_type child(node_type const & v, char_type const c, size_type & char_pos) const
     {
         if (is_leaf(v))
             return root();
@@ -34726,7 +34681,7 @@ public:
         }
         return root();
     }
-    node_type child(node_type const & v, const char_type c) const
+    node_type child(node_type const & v, char_type const c) const
     {
         size_type char_pos;
         return child(v, c, char_pos);
@@ -34839,7 +34794,7 @@ public:
         }
         return node_type(new_i, new_j, new_ipos, new_icpos, jp1pos);
     }
-    node_type wl(node_type const & v, const char_type c) const
+    node_type wl(node_type const & v, char_type const c) const
     {
         size_type c_left = m_csa.bwt.rank(v.i, c);
         size_type c_right = m_csa.bwt.rank(v.j + 1, c);
@@ -35089,7 +35044,7 @@ struct bp_interval
         j(j),
         ipos(ipos),
         cipos(cipos),
-        jp1pos(jp1pos){};
+        jp1pos(jp1pos) {};
     bp_interval(bp_interval const & iv) = default;
     bp_interval(bp_interval && iv) = default;
     bool operator<(bp_interval const & interval) const
