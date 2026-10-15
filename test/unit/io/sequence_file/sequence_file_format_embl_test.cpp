@@ -5,8 +5,10 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <list>
 #include <sstream>
 #include <string>
+#include <type_traits>
 
 #include <seqan3/io/sequence_file/format_embl.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
@@ -305,18 +307,28 @@ AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAC 120
 //
 )"};
 
+    auto write_records = [](auto sequence_type)
     {
-        seqan3::sequence_file_output fout{ostream,
-                                          seqan3::format_embl{},
-                                          seqan3::fields<seqan3::field::seq, seqan3::field::id>{}};
+        using sequence_t = typename decltype(sequence_type)::type;
+        std::ostringstream ostream;
 
-        for (size_t const length : {10u, 55u, 60u, 120u})
         {
-            seqan3::dna5_vector sequence(length, 'A'_dna5);
-            sequence.back() = 'C'_dna5;
-            EXPECT_NO_THROW((fout.emplace_back(sequence, "ID" + std::to_string(length))));
-        }
-    }
+            seqan3::sequence_file_output fout{ostream,
+                                              seqan3::format_embl{},
+                                              seqan3::fields<seqan3::field::seq, seqan3::field::id>{}};
 
-    EXPECT_EQ(ostream.str(), expected);
+            for (size_t const length : {10u, 55u, 60u, 120u})
+            {
+                sequence_t sequence(length, 'A'_dna5);
+                sequence.back() = 'C'_dna5;
+                EXPECT_NO_THROW((fout.emplace_back(sequence, "ID" + std::to_string(length))));
+            }
+        }
+
+        return ostream.str();
+    };
+
+    EXPECT_EQ(write_records(std::type_identity<seqan3::dna5_vector>{}), expected);
+    // Sequences that are not random access are written by a different code path.
+    EXPECT_EQ(write_records(std::type_identity<std::list<seqan3::dna5>>{}), expected);
 }
