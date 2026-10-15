@@ -162,7 +162,7 @@ public:
             {
                 size_t i = 0;
                 for (; it != end && i < buffer_space; ++it, ++i)
-                    *stream_buf->pptr() = *it;
+                    stream_buf->pptr()[i] = *it;
                 stream_buf->pbump(i);
             }
 

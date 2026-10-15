@@ -5,6 +5,7 @@
 #include <gtest/gtest.h>
 
 #include <iterator>
+#include <ranges>
 
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
 #include <seqan3/test/expect_same_type.hpp>
@@ -76,6 +77,50 @@ TEST(fast_ostreambuf_iterator, write_range_ensure_overflow)
     std::string rng{"veryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryverylargerange"};
 
     it.write_range(rng);
+
+    EXPECT_EQ(ostr.str().substr(0, 78),
+              std::string_view{"veryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryverylargerange"});
+}
+
+TEST(fast_ostreambuf_iterator, write_range_not_sized)
+{
+    std::string rng{"test\ntestest"};
+    auto not_sized = rng
+                   | std::views::filter(
+                         [](char)
+                         {
+                             return true;
+                         });
+    static_assert(!std::ranges::sized_range<decltype(not_sized)>);
+
+    std::ostringstream ostr{};
+    seqan3::detail::fast_ostreambuf_iterator<char> it{*ostr.rdbuf()};
+
+    it.write_range(not_sized);
+
+    EXPECT_EQ(ostr.str(), std::string_view{"test\ntestest"});
+}
+
+TEST(fast_ostreambuf_iterator, write_range_not_sized_ensure_overflow)
+{
+    // ensure that buffer overflows at least once
+    // With libstdc++, the buffer must not be smaller than the capacity of an empty std::string (15 characters).
+    // Otherwise, the content of the buffer is lost on overflow.
+    std::ostringstream ostr;
+    char buf[40];
+    ostr.rdbuf()->pubsetbuf(buf, sizeof buf);
+
+    seqan3::detail::fast_ostreambuf_iterator<char> it{*ostr.rdbuf()};
+
+    std::string rng{"veryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryverylargerange"};
+    auto not_sized = rng
+                   | std::views::filter(
+                         [](char)
+                         {
+                             return true;
+                         });
+
+    it.write_range(not_sized);
 
     EXPECT_EQ(ostr.str().substr(0, 78),
               std::string_view{"veryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryverylargerange"});

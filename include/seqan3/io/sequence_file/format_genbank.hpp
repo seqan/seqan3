@@ -109,7 +109,6 @@ protected:
         position_buffer = stream.tellg();
 
         auto stream_view = detail::istreambuf(stream);
-        auto stream_it = std::ranges::begin(stream_view);
 
         if (!(std::ranges::equal(stream_view | detail::take_until_or_throw(is_cntrl || is_blank),
                                  std::string{"LOCUS"})))
@@ -183,7 +182,7 @@ protected:
             detail::consume(stream_view | detail::take_until_or_throw(is_end)); // consume until "//"
         }
 
-        std::ranges::advance(stream_it, 3u, std::ranges::end(stream_view)); // Skip `//` and potentially '\n'
+        detail::consume(stream_view | detail::take_line); // Skip `//` and the line break
     }
 
     //!\copydoc sequence_file_output_format::write_sequence_record
@@ -223,7 +222,8 @@ protected:
             std::ranges::copy(std::string_view{"                 "}, stream_it);
             auto res = std::to_chars(&buffer[0], &buffer[0] + sizeof(buffer), sequence_size);
             std::copy(&buffer[0], res.ptr, stream_it);
-            std::ranges::copy(std::string_view{" bp\n"}, stream_it);
+            std::ranges::copy(std::string_view{" bp"}, stream_it);
+            detail::write_eol(stream_it, options.add_carriage_return);
         }
 
         // Sequence
@@ -237,12 +237,13 @@ protected:
         }
         else
         {
-            std::ranges::copy(std::string_view{"ORIGIN\n"}, stream_it);
+            std::ranges::copy(std::string_view{"ORIGIN"}, stream_it);
+            detail::write_eol(stream_it, options.add_carriage_return);
             auto seq = sequence | seqan3::views::chunk(60);
             size_t i = 0;
             size_t bp = 1;
 
-            while (bp < sequence_size)
+            while (bp <= sequence_size)
             {
                 // Sequence length with more than 9 digits are not possible in one genbank entry, maximal 350 kb are
                 // allowed. See: https://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html#SequenceLengthA
@@ -253,10 +254,10 @@ protected:
                 std::ranges::copy(seq[i] | views::to_char | views::interleave(10, std::string_view{" "}), stream_it);
                 bp += 60;
                 ++i;
-                detail::write_eol(stream_it, false);
+                detail::write_eol(stream_it, options.add_carriage_return);
             }
             std::ranges::copy(std::string_view{"//"}, stream_it);
-            detail::write_eol(stream_it, false);
+            detail::write_eol(stream_it, options.add_carriage_return);
         }
     }
 };

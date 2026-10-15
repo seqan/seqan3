@@ -146,6 +146,34 @@ ACCESSION   ID3
     do_read_test(standard_input);
 }
 
+TEST_F(read, carriage_return)
+{
+    std::string crlf_input{};
+    for (char const c : standard_input)
+    {
+        if (c == '\n')
+            crlf_input.push_back('\r');
+        crlf_input.push_back(c);
+    }
+    crlf_input += "\r\n";
+
+    std::stringstream istream{crlf_input};
+    seqan3::sequence_file_input fin{istream,
+                                    seqan3::format_genbank{},
+                                    seqan3::fields<seqan3::field::id, seqan3::field::seq>{}};
+    fin.options = options;
+
+    size_t i{};
+    for (auto & record : fin)
+    {
+        ASSERT_LT(i, 3u);
+        EXPECT_EQ(record.id(), ids[i]);
+        EXPECT_EQ(record.sequence(), seqs[i]);
+        ++i;
+    }
+    EXPECT_EQ(i, 3u);
+}
+
 // ----------------------------------------------------------------------------
 // writing
 // ----------------------------------------------------------------------------
@@ -236,4 +264,67 @@ SOURCE      .
     do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
+}
+
+TEST_F(write, options_add_carriage_return)
+{
+    options.add_carriage_return = true;
+
+    std::string comp{"LOCUS       ID1                 18 bp\r\n"
+                     "ORIGIN\r\n"
+                     "        1 ACGTTTTTTT TTTTTTTT\r\n"
+                     "//\r\n"
+                     "LOCUS       ID2                 82 bp\r\n"
+                     "ORIGIN\r\n"
+                     "        1 ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT\r\n"
+                     "       61 TTTTTTTTTT TTTTTTTTTT TT\r\n"
+                     "//\r\n"
+                     "LOCUS       ID3 lala                 7 bp\r\n"
+                     "ORIGIN\r\n"
+                     "        1 ACGTTTA\r\n"
+                     "//\r\n"};
+
+    do_write_test();
+
+    EXPECT_EQ(ostream.str(), comp);
+}
+
+TEST_F(write, last_line_with_single_base) // https://github.com/seqan/seqan3/issues/3439
+{
+    std::string const expected{
+        R"(LOCUS       ID1                 1 bp
+ORIGIN
+        1 C
+//
+LOCUS       ID60                 60 bp
+ORIGIN
+        1 AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAC
+//
+LOCUS       ID61                 61 bp
+ORIGIN
+        1 AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA
+       61 C
+//
+LOCUS       ID121                 121 bp
+ORIGIN
+        1 AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA
+       61 AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA
+      121 C
+//
+)"};
+
+    {
+        seqan3::sequence_file_output fout{ostream,
+                                          seqan3::format_genbank{},
+                                          seqan3::fields<seqan3::field::seq, seqan3::field::id>{}};
+
+        for (size_t const length : {1u, 60u, 61u, 121u})
+        {
+            seqan3::dna5_vector sequence(length, 'A'_dna5);
+            sequence.back() = 'C'_dna5;
+            EXPECT_NO_THROW((fout.emplace_back(sequence, "ID" + std::to_string(length))));
+        }
+    }
+
+    EXPECT_EQ(ostream.str(), expected);
 }

@@ -33,6 +33,7 @@
 #include <seqan3/io/views/detail/take_until_view.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
+#include <seqan3/utility/views/chunk.hpp>
 #include <seqan3/utility/views/repeat_n.hpp>
 
 namespace seqan3
@@ -197,7 +198,7 @@ protected:
             detail::consume(stream_view | detail::take_until_or_throw(is_end)); // consume until "//"
         }
 
-        std::ranges::advance(stream_it, 3u, std::ranges::end(stream_view)); // Skip `//` and potentially '\n'
+        detail::consume(stream_view | detail::take_line); // Skip `//` and the line break
     }
 
     //!\copydoc sequence_file_output_format::write_sequence_record
@@ -238,7 +239,8 @@ protected:
                 stream_it.write_range(id);
                 stream_it.write_range(std::string_view{"; "});
                 stream_it.write_number(sequence_size);
-                stream_it.write_range(std::string_view{" BP.\n"});
+                stream_it.write_range(std::string_view{" BP."});
+                stream_it.write_end_of_line(options.add_carriage_return);
             }
         }
 
@@ -255,37 +257,65 @@ protected:
             // write beginning of sequence record
             stream_it.write_range(std::string_view{"SQ Sequence "});
             stream_it.write_number(sequence_size);
-            stream_it.write_range(std::string_view{" BP;\n"});
+            stream_it.write_range(std::string_view{" BP;"});
+            stream_it.write_end_of_line(options.add_carriage_return);
 
-            // write sequence in chunks of 60 bp's with a space after 10 bp's
+            // write sequence in lines of 60 bp's with a space after 10 bp's
             auto char_sequence = sequence | views::to_char;
-            auto it = std::ranges::begin(char_sequence);
-            size_t written_chars{0};
-            uint8_t chunk_size{10u};
 
-            while (it != std::ranges::end(char_sequence))
+            if constexpr (std::ranges::random_access_range<decltype(char_sequence)>)
             {
-                auto current_end = it;
-                size_t steps = std::ranges::advance(current_end, chunk_size, std::ranges::end(char_sequence));
+                size_t written_chars{0};
 
-                using subrange_t = std::ranges::subrange<decltype(it), decltype(it), std::ranges::subrange_kind::sized>;
-                it = stream_it.write_range(subrange_t{it, current_end, chunk_size - steps});
-                stream_it = ' ';
-                written_chars += chunk_size;
-
-                if (written_chars % 60 == 0)
+                for (auto && line : char_sequence | views::chunk(60))
                 {
+                    for (auto && block : line | views::chunk(10))
+                    {
+                        stream_it.write_range(block);
+                        stream_it = ' ';
+                    }
+
+                    // A full line has 6 blocks of 10 bp's, each followed by a space. Pad shorter lines to the same width.
+                    size_t const line_size = std::min<size_t>(sequence_size - written_chars, 60u);
+                    size_t const number_of_blocks = (line_size + 9u) / 10u;
+                    written_chars += line_size;
+                    stream_it.write_range(views::repeat_n(' ', 66u - line_size - number_of_blocks));
                     stream_it.write_number(written_chars);
                     stream_it.write_end_of_line(options.add_carriage_return);
                 }
             }
+            else // views::chunk is slow for ranges that are not random access.
+            {
+                auto it = std::ranges::begin(char_sequence);
+                size_t written_chars{0};
+                uint8_t chunk_size{10u};
 
-            // fill last line
-            auto characters_in_last_line = sequence_size % 60;
-            auto number_of_padding_needed = 65 - characters_in_last_line - characters_in_last_line / chunk_size;
-            stream_it.write_range(views::repeat_n(' ', number_of_padding_needed));
-            stream_it.write_number(sequence_size);
-            stream_it.write_end_of_line(options.add_carriage_return);
+                while (it != std::ranges::end(char_sequence))
+                {
+                    auto current_end = it;
+                    size_t steps = std::ranges::advance(current_end, chunk_size, std::ranges::end(char_sequence));
+
+                    using subrange_t =
+                        std::ranges::subrange<decltype(it), decltype(it), std::ranges::subrange_kind::sized>;
+                    it = stream_it.write_range(subrange_t{it, current_end, chunk_size - steps});
+                    stream_it = ' ';
+                    written_chars += chunk_size - steps;
+
+                    if (written_chars % 60 == 0 && it != std::ranges::end(char_sequence)) // last line is written below
+                    {
+                        stream_it.write_number(written_chars);
+                        stream_it.write_end_of_line(options.add_carriage_return);
+                    }
+                }
+
+                // fill last line: a full line has 6 chunks of 10 bp's, each followed by a space
+                auto characters_in_last_line = (sequence_size - 1) % 60 + 1;
+                auto chunks_in_last_line = (characters_in_last_line + chunk_size - 1) / chunk_size;
+                auto number_of_padding_needed = 66 - characters_in_last_line - chunks_in_last_line;
+                stream_it.write_range(views::repeat_n(' ', number_of_padding_needed));
+                stream_it.write_number(sequence_size);
+                stream_it.write_end_of_line(options.add_carriage_return);
+            }
 
             // write end-of-record-symbol
             stream_it.write_range(std::string_view{"//"});

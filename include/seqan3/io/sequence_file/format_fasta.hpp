@@ -36,6 +36,7 @@
 #include <seqan3/io/views/detail/take_until_view.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
+#include <seqan3/utility/views/chunk.hpp>
 
 namespace seqan3
 {
@@ -379,18 +380,29 @@ private:
 
         if (options.fasta_letters_per_line > 0)
         {
-            /* Using `views::interleave` is probably the way to go but that needs performance-tuning.*/
-            auto it = std::ranges::begin(char_sequence);
-            auto end = std::ranges::end(char_sequence);
-
-            while (it != end)
+            if constexpr (std::ranges::random_access_range<decltype(char_sequence)>
+                          || std::ranges::sized_range<decltype(char_sequence)>)
             {
-                /* Note: This solution is slightly suboptimal for sized but non-random-access ranges.*/
-                auto current_end = it;
-                size_t steps = std::ranges::advance(current_end, options.fasta_letters_per_line, end);
-                using subrange_t = std::ranges::subrange<decltype(it), decltype(it), std::ranges::subrange_kind::sized>;
-                it = stream_it.write_range(subrange_t{it, current_end, (options.fasta_letters_per_line - steps)});
-                stream_it.write_end_of_line(options.add_carriage_return);
+                for (auto && line : char_sequence | views::chunk(options.fasta_letters_per_line))
+                {
+                    stream_it.write_range(line);
+                    stream_it.write_end_of_line(options.add_carriage_return);
+                }
+            }
+            else // views::chunk is slow for ranges that are neither random access nor sized.
+            {
+                auto it = std::ranges::begin(char_sequence);
+                auto end = std::ranges::end(char_sequence);
+
+                while (it != end)
+                {
+                    auto current_end = it;
+                    size_t steps = std::ranges::advance(current_end, options.fasta_letters_per_line, end);
+                    using subrange_t =
+                        std::ranges::subrange<decltype(it), decltype(it), std::ranges::subrange_kind::sized>;
+                    it = stream_it.write_range(subrange_t{it, current_end, (options.fasta_letters_per_line - steps)});
+                    stream_it.write_end_of_line(options.add_carriage_return);
+                }
             }
         }
         else

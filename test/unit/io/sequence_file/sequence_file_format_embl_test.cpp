@@ -5,7 +5,10 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <list>
 #include <sstream>
+#include <string>
+#include <type_traits>
 
 #include <seqan3/io/sequence_file/format_embl.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
@@ -138,6 +141,34 @@ SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
     do_read_test(input);
 }
 
+TEST_F(read, carriage_return)
+{
+    std::string crlf_input{};
+    for (char const c : input)
+    {
+        if (c == '\n')
+            crlf_input.push_back('\r');
+        crlf_input.push_back(c);
+    }
+    crlf_input += "\r\n";
+
+    std::stringstream istream{crlf_input};
+    seqan3::sequence_file_input fin{istream,
+                                    seqan3::format_embl{},
+                                    seqan3::fields<seqan3::field::id, seqan3::field::seq>{}};
+    fin.options = options;
+
+    size_t i{};
+    for (auto & record : fin)
+    {
+        ASSERT_LT(i, 3u);
+        EXPECT_EQ(record.id(), ids[i]);
+        EXPECT_EQ(record.sequence(), seqs[i]);
+        ++i;
+    }
+    EXPECT_EQ(i, 3u);
+}
+
 TEST_F(read, multiple_lines_before_seq)
 {
     std::string input{
@@ -235,4 +266,69 @@ GGAGTATAAT ATATATATAT ATAT                                        24
     do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
+}
+
+TEST_F(write, options_add_carriage_return)
+{
+    options.add_carriage_return = true;
+
+    std::string crlf_comp{};
+    for (char const c : comp)
+    {
+        if (c == '\n')
+            crlf_comp.push_back('\r');
+        crlf_comp.push_back(c);
+    }
+
+    do_write_test();
+
+    EXPECT_EQ(ostream.str(), crlf_comp);
+}
+
+TEST_F(write, last_line)
+{
+    std::string const expected{
+        R"(ID ID10; 10 BP.
+SQ Sequence 10 BP;
+AAAAAAAAAC                                                        10
+//
+ID ID55; 55 BP.
+SQ Sequence 55 BP;
+AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAC      55
+//
+ID ID60; 60 BP.
+SQ Sequence 60 BP;
+AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAC 60
+//
+ID ID120; 120 BP.
+SQ Sequence 120 BP;
+AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA 60
+AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAC 120
+//
+)"};
+
+    auto write_records = [](auto sequence_type)
+    {
+        using sequence_t = typename decltype(sequence_type)::type;
+        std::ostringstream ostream;
+
+        {
+            seqan3::sequence_file_output fout{ostream,
+                                              seqan3::format_embl{},
+                                              seqan3::fields<seqan3::field::seq, seqan3::field::id>{}};
+
+            for (size_t const length : {10u, 55u, 60u, 120u})
+            {
+                sequence_t sequence(length, 'A'_dna5);
+                sequence.back() = 'C'_dna5;
+                EXPECT_NO_THROW((fout.emplace_back(sequence, "ID" + std::to_string(length))));
+            }
+        }
+
+        return ostream.str();
+    };
+
+    EXPECT_EQ(write_records(std::type_identity<seqan3::dna5_vector>{}), expected);
+    // Sequences that are not random access are written by a different code path.
+    EXPECT_EQ(write_records(std::type_identity<std::list<seqan3::dna5>>{}), expected);
 }
