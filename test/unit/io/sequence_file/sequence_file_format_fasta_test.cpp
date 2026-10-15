@@ -5,6 +5,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <list>
 #include <ranges>
 #include <sstream>
 #include <string>
@@ -248,6 +249,56 @@ TEST_F(write, options_letters_per_line)
     do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
+}
+
+TEST_F(write, options_letters_per_line_not_random_access)
+{
+    options.fasta_letters_per_line = 7;
+
+    std::string comp{
+        ">TEST 1\n"
+        "ACGT\n"
+        ">Test2\n"
+        "AGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\n"
+        "AGGCTGN\n"
+        ">Test3\n"
+        "GGAGTAT\nAATATAT\nATATATA\nTAT\n"};
+
+    auto write_records = [this](auto make_sequence)
+    {
+        std::ostringstream output;
+
+        {
+            seqan3::sequence_file_output fout{output,
+                                              seqan3::format_fasta{},
+                                              seqan3::fields<seqan3::field::seq, seqan3::field::id>{}};
+            fout.options = options;
+
+            for (unsigned i = 0; i < 3; ++i)
+                EXPECT_NO_THROW((fout.emplace_back(make_sequence(seqs[i]), ids[i])));
+        }
+
+        return output.str();
+    };
+
+    // Sized ranges that are not random access, and ranges that are neither, are written by different code paths.
+    EXPECT_EQ(write_records(
+                  [](seqan3::dna5_vector const & sequence)
+                  {
+                      return std::list<seqan3::dna5>(sequence.begin(), sequence.end());
+                  }),
+              comp);
+    EXPECT_EQ(write_records(
+                  [](seqan3::dna5_vector const & sequence)
+                  {
+                      return sequence
+                           | std::views::filter(
+                                 [](seqan3::dna5)
+                                 {
+                                     return true;
+                                 });
+                  }),
+              comp);
 }
 
 TEST_F(write, options_legacy_id_marker)
