@@ -11,11 +11,6 @@ nothing additionial. This mode might be necessary for CMake to properly detect Z
 When `DO_TIME` is `1`, every call will generate a `ram_usage.*` file with an unique extension containing the output
 of `time -v`.
 
-## process_compiler_error_log.py
-
-Processes the output of compiling tests (`make`) and extracts errors.
-Used in the API Stability and Latest Libraries workflow to create issues containing error messages.
-
 ## ram_usage.py
 
 Processes a logfile containing all `time -v` outputs of `g++_ram.sh` and creates a table.
