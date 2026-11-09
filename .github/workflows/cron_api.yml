@@ -28,6 +28,9 @@ jobs:
   build:
     name: API-Stability ${{ matrix.compiler }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
     if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     strategy:
       fail-fast: false
@@ -70,7 +73,7 @@ jobs:
         if: failure() && github.repository_owner == 'seqan'
         run: gh issue reopen ${{ env.ISSUE }}
         env:
-          GH_TOKEN: ${{ secrets.SEQAN_ACTIONS_PAT }}
+          GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
 
       - name: Find Comment
@@ -89,5 +92,5 @@ jobs:
           issue-number: ${{ env.ISSUE }}
           body: ${{ steps.comment-body.outputs.body }}
           edit-mode: replace
-          token: ${{ secrets.SEQAN_ACTIONS_PAT }}
+          token: ${{ github.token }}
 
