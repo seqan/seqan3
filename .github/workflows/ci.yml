@@ -1,0 +1,88 @@
+# SPDX-FileCopyrightText: 2006-2026 Knut Reinert & Freie Universität Berlin
+# SPDX-FileCopyrightText: 2016-2026 Knut Reinert & MPI für molekulare Genetik
+# SPDX-License-Identifier: CC0-1.0
+
+# Staged CI: cheap checks -> Linux unit tests -> everything else. A later stage only starts if the earlier ones passed,
+# so a formatting error costs one short Lint job instead of a full CI run.
+#
+#   Stage 1  Lint (ci_lint.yml), License (ci_license.yml)
+#   Stage 2  Unit Linux (ci_linux.yml)
+#   Stage 3  CMake, Coverage, Unit macOS, Linux
+#
+# Runs PR code, therefore only `pull_request`: read-only GITHUB_TOKEN, no secrets for fork PRs. If Lint fails,
+# lint_autofix.yml (from the default branch) pushes the formatting fix, which starts CI again.
+# The only required status check is "CI result" (plus "Documentation", which stays a separate workflow).
+
+name: CI
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+  workflow_dispatch:
+
+# Replaces the cancel_running_workflows job of the old lint workflow: a new push to a PR cancels all stages.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'push' }}
+
+permissions:
+  contents: read
+
+jobs:
+  # Stage 1. As in all of the repository's workflows: on forks, only when started by hand.
+  lint:
+    name: Lint
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/ci_lint.yml
+  license:
+    name: License
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/ci_license.yml
+
+  # Stage 2
+  linux:
+    name: Unit Linux
+    needs: [lint, license]
+    uses: ./.github/workflows/ci_linux.yml
+
+  # Stage 3. Coverage gets the Codecov token; the other stages need no secrets.
+  cmake:
+    name: CMake
+    needs: linux
+    uses: ./.github/workflows/ci_cmake.yml
+  coverage:
+    name: Coverage
+    needs: linux
+    uses: ./.github/workflows/ci_coverage.yml
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  macos:
+    name: Unit macOS
+    needs: linux
+    uses: ./.github/workflows/ci_macos.yml
+  misc:
+    name: Linux
+    needs: linux
+    uses: ./.github/workflows/ci_misc.yml
+
+  # The single required check. Required checks cannot simply list the stages: a skipped job reports "Success", and a
+  # skipped matrix job reports under its unexpanded name. This gate runs always and fails unless every stage
+  # succeeded (skipped and cancelled count as failure).
+  result:
+    name: CI result
+    if: always() && (github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch')
+    needs: [lint, license, linux, cmake, coverage, macos, misc]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check stage results
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          for result in ${RESULTS}; do
+            if [[ ${result} != success ]]; then
+              echo "::error::Not every CI stage succeeded: ${RESULTS}"
+              exit 1
+            fi
+          done

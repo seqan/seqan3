@@ -20,13 +20,23 @@ jobs:
   update_cpm:
     name: Update CPM
     runs-on: ubuntu-latest
+    environment: pr-bot # deployment branch: main
     timeout-minutes: 15
     if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     steps:
+      - name: Create App token
+        id: token
+        uses: actions/create-github-app-token@v3 # locked via actions.lock
+        with:
+          client-id: ${{ vars.SEQAN_PR_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.SEQAN_PR_BOT_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
       - name: Run update CPM
         uses: seqan/actions/update_cpm_package_lock@main
         with:
-          token: ${{ secrets.SEQAN_ACTIONS_PAT }}
+          token: ${{ steps.token.outputs.token }}
           gpg_key: ${{ secrets.SEQAN_ACTIONS_GPG_KEY }}
           gpg_passphrase: ${{ secrets.SEQAN_ACTIONS_GPG_PASSPHRASE }}
           package_lock_file: cmake/package-lock.cmake

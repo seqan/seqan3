@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2006-2026 Knut Reinert & Freie Universität Berlin
+# SPDX-FileCopyrightText: 2016-2026 Knut Reinert & MPI für molekulare Genetik
+# SPDX-License-Identifier: CC0-1.0
+
+# Publishes documentation previews to https://seqan.github.io/docs-preview/seqan/seqan3/<pr>/ (user/ and developer/
+# below a landing page) and deletes them when the PR is closed. Details: seqan/actions/.github/workflows/docs_preview.yml.
+
+name: Documentation Preview
+
+on:
+  workflow_run: # zizmor: ignore[dangerous-triggers] -- privileged half; the called workflow treats PR data as data only
+    workflows: [Documentation]
+    types: [completed]
+  pull_request_target: # zizmor: ignore[dangerous-triggers] -- no checkout; uses the repository name and PR number only
+    types: [closed]
+
+permissions: {}
+
+jobs:
+  preview:
+    name: Documentation Preview
+    uses: seqan/actions/.github/workflows/docs_preview.yml@main
+    with:
+      developer_documentation: true # artifacts documentation and documentation-developer
+    permissions:
+      actions: read
+      pull-requests: read
+    # Only this secret. This job has no environment, but GitHub resolves it with the environment of the called jobs
+    # (`docs-preview`).
+    secrets:
+      SEQAN_PR_BOT_KEY: ${{ secrets.SEQAN_PR_BOT_KEY }}

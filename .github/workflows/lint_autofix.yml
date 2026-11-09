@@ -1,0 +1,29 @@
+# SPDX-FileCopyrightText: 2006-2026 Knut Reinert & Freie Universität Berlin
+# SPDX-FileCopyrightText: 2016-2026 Knut Reinert & MPI für molekulare Genetik
+# SPDX-License-Identifier: CC0-1.0
+
+# Pushes a formatting commit to a PR whose CI failed in Lint. Runs from the default branch; the called workflow only
+# reads the PR as data. Details: seqan/actions/.github/workflows/lint_autofix.yml.
+
+name: Lint Autofix
+
+on:
+  workflow_run: # zizmor: ignore[dangerous-triggers] -- privileged half; the called workflow treats PR data as data only
+    workflows: [CI]
+    types: [completed]
+
+permissions: {}
+
+jobs:
+  autofix:
+    name: Lint Autofix
+    uses: seqan/actions/.github/workflows/lint_autofix.yml@main
+    permissions:
+      contents: read
+      pull-requests: read
+    # Only these secrets. This job has no environment, but GitHub resolves them with the environment of the called job
+    # that uses them (`pr-bot`).
+    secrets:
+      SEQAN_PR_BOT_KEY: ${{ secrets.SEQAN_PR_BOT_KEY }}
+      SEQAN_ACTIONS_GPG_KEY: ${{ secrets.SEQAN_ACTIONS_GPG_KEY }}
+      SEQAN_ACTIONS_GPG_PASSPHRASE: ${{ secrets.SEQAN_ACTIONS_GPG_PASSPHRASE }}

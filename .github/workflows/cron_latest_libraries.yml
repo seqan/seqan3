@@ -18,7 +18,6 @@ concurrency:
 env:
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
-  ISSUE: 2747 # Issue number to use for reporting failures
 
 defaults:
   run:
@@ -28,6 +27,8 @@ jobs:
   build:
     name: ${{ matrix.build }} ${{ matrix.compiler }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 300
     if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     strategy:
@@ -65,58 +66,4 @@ jobs:
       - name: Build tests
         working-directory: build
         run: |
-          make -k 2>&1 | tee build.log
-
-      - name: Setup Python
-        if: ${{ failure() }}
-        uses: actions/setup-python@v7
-        with:
-          python-version: '3.x'
-
-      - name: Process Log
-        if: ${{ failure() }}
-        run: |
-          FILE=".github/ISSUE_TEMPLATE/cron_comment_template.md"
-          python3 .github/workflows/scripts/process_compiler_error_log.py build/build.log >> $FILE
-
-      - name: Create comment body
-        if: always()
-        id: comment-body
-        run: |
-          if [[ "${{ job.status }}" == "success" ]]; then
-            echo "body=Success ${{ matrix.build }} on ${{ matrix.compiler }}" >> $GITHUB_OUTPUT
-          else
-            FILE=".github/ISSUE_TEMPLATE/cron_comment_template.md"
-            URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-            sed -i "s@{{ build }}@${{ matrix.build }}@" $FILE
-            sed -i "s@{{ compiler }}@${{ matrix.compiler }}@" $FILE
-            sed -i "s@{{ url }}@$URL@" $FILE
-            echo "body<<EOF" >> $GITHUB_OUTPUT
-            cat $FILE >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Reopen issue
-        if: failure() && github.repository_owner == 'seqan'
-        run: gh issue reopen ${{ env.ISSUE }}
-        env:
-          GH_TOKEN: ${{ secrets.SEQAN_ACTIONS_PAT }}
-          GH_REPO: ${{ github.repository }}
-
-      - name: Find Comment
-        if: always() && github.repository_owner == 'seqan'
-        uses: peter-evans/find-comment@v4
-        id: find_comment
-        with:
-          issue-number: ${{ env.ISSUE }}
-          body-includes: ${{ matrix.build }} on ${{ matrix.compiler }}
-
-      - name: Update comment
-        if: always() && github.repository_owner == 'seqan'
-        uses: peter-evans/create-or-update-comment@v5
-        with:
-          comment-id: ${{ steps.find_comment.outputs.comment-id }}
-          issue-number: ${{ env.ISSUE }}
-          body: ${{ steps.comment-body.outputs.body }}
-          edit-mode: replace
-          token: ${{ secrets.SEQAN_ACTIONS_PAT }}
+          make -k

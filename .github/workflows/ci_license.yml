@@ -5,17 +5,8 @@
 name: License
 
 on:
-  push:
-    branches:
-      - 'main'
-  pull_request:
-    types:
-      - unlabeled
+  workflow_call:
   workflow_dispatch:
-
-concurrency:
-  group: license-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.event_name != 'push' }}
 
 env:
   TZ: Europe/Berlin
@@ -29,7 +20,7 @@ jobs:
     name: REUSE Compliance
     runs-on: ubuntu-latest
     timeout-minutes: 120
-    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'lint'
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
         uses: actions/checkout@v7
