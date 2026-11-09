@@ -5,17 +5,8 @@
 name: CMake
 
 on:
-  push:
-    branches:
-      - 'main'
-  pull_request:
-    types:
-      - unlabeled
+  workflow_call:
   workflow_dispatch:
-
-concurrency:
-  group: cmake-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.event_name != 'push' }}
 
 env:
   SEQAN3_NO_VERSION_CHECK: 1
@@ -29,7 +20,7 @@ jobs:
   build:
     name: ${{ matrix.name }}
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'lint'
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     strategy:
       fail-fast: false
       matrix:

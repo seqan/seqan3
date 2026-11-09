@@ -5,17 +5,11 @@
 name: Coverage
 
 on:
-  push:
-    branches:
-      - 'main'
-  pull_request:
-    types:
-      - unlabeled
+  workflow_call:
+    secrets:
+      CODECOV_TOKEN:
+        required: false
   workflow_dispatch:
-
-concurrency:
-  group: coverage-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: false
 
 env:
   SEQAN3_NO_VERSION_CHECK: 1
@@ -29,7 +23,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: ${{ matrix.compiler }}
-    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'lint'
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     strategy:
       fail-fast: false
       matrix:

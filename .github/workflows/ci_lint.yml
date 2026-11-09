@@ -2,46 +2,44 @@
 # SPDX-FileCopyrightText: 2016-2026 Knut Reinert & MPI für molekulare Genetik
 # SPDX-License-Identifier: CC0-1.0
 
+# Stage 1 of ci.yml. Check only: formats the checkout with seqan/actions/lint and fails if that changed anything.
+# The CI run then ends early (later stages are skipped), and lint_autofix.yml pushes the formatting commit, which
+# starts a new CI run. The diff is shown in the job summary, for PRs the bot cannot push to.
+
 name: Lint
 
 on:
-  pull_request_target:
+  workflow_call:
 
-env:
-  TZ: Europe/Berlin
+permissions:
+  contents: read
 
 defaults:
   run:
     shell: bash -Eeuxo pipefail {0}
 
 jobs:
-  # Cancel other workflows that are dependent on this workflow by adding jobs that have the same concurrency group.
-  cancel_running_workflows:
-    name: Cancel ${{ matrix.workflow}}
-    strategy:
-      fail-fast: false
-      matrix:
-        workflow: ["linux", "macos", "misc", "coverage", "cmake", "documentation"]
-    concurrency:
-      group: ${{ matrix.workflow }}-${{ github.event.pull_request.number }}
-      cancel-in-progress: true
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Cancel ${{ matrix.workflow }}"
-        run: echo "Cancelling ${{ matrix.workflow }}"
   lint:
     name: Lint
-    concurrency:
-      group: lint-${{ github.event.pull_request.number }}
-      cancel-in-progress: true
-    needs: cancel_running_workflows
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Run lint
+      - name: Checkout
+        uses: actions/checkout@v7 # locked via actions.lock
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # Files changed since: the PR's base (pull_request), the previous tip (push), or the last commit (dispatch).
+      - name: Format
         uses: seqan/actions/lint@main
         with:
-          clang_format: 18
-          token: ${{ secrets.SEQAN_ACTIONS_PAT }}
-          gpg_key: ${{ secrets.SEQAN_ACTIONS_GPG_KEY }}
-          gpg_passphrase: ${{ secrets.SEQAN_ACTIONS_GPG_PASSPHRASE }}
+          base: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD~1' }}
+
+      - name: Check
+        run: |
+          if ! git diff --quiet; then
+            { echo '### Formatting required'; echo '```diff'; git diff; echo '```'; } >> "${GITHUB_STEP_SUMMARY}"
+            echo "::error::Formatting required. The bot pushes a fix if the PR allows edits by maintainers."
+            exit 1
+          fi
