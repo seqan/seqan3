@@ -2,21 +2,25 @@
 # SPDX-FileCopyrightText: 2016-2026 Knut Reinert & MPI für molekulare Genetik
 # SPDX-License-Identifier: CC0-1.0
 
+# Builds and tests the documentation. PRs: upload the HTML; docs_preview.yml publishes it from the default branch.
+# Push to main: deploy to docs.seqan.de from a separate job, so the server key never shares a job with
+# CMake/Doxygen. Stays a separate workflow (not a CI stage) so that the preview appears as soon as this finishes.
+
 name: Documentation
 
 on:
   push:
     branches:
       - 'main'
-  pull_request_target:
-    types:
-      - unlabeled
-      - closed
+  pull_request:
   workflow_dispatch:
 
 concurrency:
   group: documentation-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name != 'push' }}
+
+permissions:
+  contents: read
 
 env:
   SEQAN3_NO_VERSION_CHECK: 1
@@ -30,19 +34,12 @@ jobs:
   build:
     name: Documentation
     runs-on: ubuntu-latest
-    if: ( github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'lint' ) && github.event.action != 'closed'
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
-        if: github.event_name != 'pull_request_target'
-        uses: actions/checkout@v7
-
-      # pull_request_target does not checkout the merge commit by default
-      - name: Checkout
-        if: github.event_name == 'pull_request_target'
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7 # locked via actions.lock
         with:
-          ref: "refs/pull/${{ github.event.number }}/merge"
-          allow-unsafe-pr-checkout: true
+          persist-credentials: false
 
       - name: Install Doxygen
         uses: seqan/actions/setup-doxygen@main
@@ -58,38 +55,51 @@ jobs:
         working-directory: build
         run: ctest . -j --output-on-failure --no-tests=error
 
-      - name: Deploy Preview
-        if: github.event_name == 'pull_request_target'
-        uses: seqan/actions/documentation_deploy_preview@main
+      # For docs_preview.yml (PRs) and the deploy job below. docs_preview.yml expects these artifact names.
+      - name: Upload documentation
+        uses: actions/upload-artifact@v7 # locked via actions.lock
         with:
-          deploy_host: ${{ secrets.DEPLOY_HOST }}
-          deploy_user: ${{ secrets.DEPLOY_USER }}
-          deploy_ssh_key: ${{ secrets.DEPLOY_SSH_KEY }}
-          deploy_base_path: ${{ secrets.DEPLOY_PREVIEW_BASE_PATH }}
-          source_path_user_doc: build/doc_usr/html
-          source_path_developer_doc: build/doc_dev/html
-          token: ${{ secrets.SEQAN_ACTIONS_PAT }}
+          name: documentation
+          path: build/doc_usr/html/
+          retention-days: 7
+          if-no-files-found: error
 
-      - name: Deploy Documentation
-        if: github.event_name == 'push'
+      - name: Upload developer documentation
+        uses: actions/upload-artifact@v7 # locked via actions.lock
+        with:
+          name: documentation-developer
+          path: build/doc_dev/html/
+          retention-days: 7
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy Documentation
+    needs: build
+    if: github.repository_owner == 'seqan' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: server-deploy # deployment branches: main; holds the server key
+    steps:
+      - name: Download documentation
+        uses: actions/download-artifact@v8 # locked via actions.lock
+        with:
+          name: documentation
+          path: html_user
+
+      - name: Download developer documentation
+        uses: actions/download-artifact@v8 # locked via actions.lock
+        with:
+          name: documentation-developer
+          path: html_dev
+
+      # Plain rsync with a pinned host key (no third-party deploy action): the key grants the whole server.
+      # Same targets as before.
+      - name: Deploy
         uses: seqan/actions/documentation_deploy_production@main
         with:
           deploy_host: ${{ secrets.DEPLOY_HOST }}
           deploy_user: ${{ secrets.DEPLOY_USER }}
           deploy_ssh_key: ${{ secrets.DEPLOY_SSH_KEY }}
-          source_path_user_doc: build/doc_usr/html/
+          source_path_user_doc: html_user/
           deploy_path_user_doc: ${{ secrets.DEPLOY_PRODUCTION_BASE_PATH }}/main_user
-          source_path_developer_doc: build/doc_dev/html/
+          source_path_developer_doc: html_dev/
           deploy_path_developer_doc: ${{ secrets.DEPLOY_PRODUCTION_BASE_PATH }}/main_dev
-  delete:
-      name: Delete Preview
-      runs-on: ubuntu-latest
-      if: github.repository_owner == 'seqan' && github.event_name == 'pull_request_target' && github.event.action == 'closed'
-      steps:
-      - name: Delete Preview
-        uses: seqan/actions/documentation_delete_preview@main
-        with:
-          deploy_host: ${{ secrets.DEPLOY_HOST }}
-          deploy_user: ${{ secrets.DEPLOY_USER }}
-          deploy_ssh_key: ${{ secrets.DEPLOY_SSH_KEY }}
-          deploy_base_path: ${{ secrets.DEPLOY_PREVIEW_BASE_PATH }}
