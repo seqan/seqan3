@@ -1,0 +1,37 @@
+# SPDX-FileCopyrightText: 2006-2026 Knut Reinert & Freie Universität Berlin
+# SPDX-FileCopyrightText: 2016-2026 Knut Reinert & MPI für molekulare Genetik
+# SPDX-License-Identifier: CC0-1.0
+
+# Submits the CPM packages (cmake/package-lock.cmake) and the CPM version (cmake/CPM.cmake) of every change on main to
+# the dependency graph, e.g. when the PR of cron_cpm.yml is merged.
+# Problems (e.g. a disabled dependency graph) are warnings, not failures.
+
+name: Dependency Submission
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'cmake/package-lock.cmake'
+      - 'cmake/CPM.cmake'
+  workflow_dispatch:
+
+# Only the latest snapshot counts: a newer push cancels an older submission that has not finished.
+concurrency:
+  group: dependency-submission-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  submit:
+    name: Dependency Submission
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
+    timeout-minutes: 10
+    permissions:
+      contents: write # dependency submission API
+    steps:
+      - name: Submit CPM dependencies
+        uses: seqan/actions/cpm_dependency_submission@main
+        with:
+          package_lock_file: cmake/package-lock.cmake
